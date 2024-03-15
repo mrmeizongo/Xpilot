@@ -1,3 +1,8 @@
+// Forbid copy of object
+#define CLASS_NO_COPY(c)        \
+    c(const c &other) = delete; \
+    c &operator=(const c &) = delete;
+
 // #define INPUT_RANGE 3
 
 // #define AIL_CEN_MEM 0

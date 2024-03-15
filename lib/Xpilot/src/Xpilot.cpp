@@ -85,11 +85,11 @@ void Xpilot::processInput(void)
 
     if (modePulses >= RECEIVER_LOW && modePulses <= RECEIVER_HIGH)
     {
-        if (abs(modePulses - RECEIVER_LOW) < RECEIVER_THRESHOLD && currentMode != STABILIZE)
+        if (abs(modePulses - RECEIVER_LOW) < MODE_THRESHOLD && currentMode != STABILIZE)
             currentMode = STABILIZE;
-        else if (abs(modePulses - RECEIVER_MID) < RECEIVER_THRESHOLD && currentMode != FBW)
+        else if (abs(modePulses - RECEIVER_MID) < MODE_THRESHOLD && currentMode != FBW)
             currentMode = FBW;
-        else if (abs(modePulses - RECEIVER_HIGH) < RECEIVER_THRESHOLD && currentMode != MANUAL)
+        else if (abs(modePulses - RECEIVER_HIGH) < MODE_THRESHOLD && currentMode != MANUAL)
             currentMode = MANUAL;
     }
     interrupts();
@@ -130,6 +130,16 @@ void Xpilot::processIMU(void)
         ahrs_yaw += 360.0;
     if (ahrs_yaw > 360.0)
         ahrs_yaw -= 360.0;
+
+    // if (ahrs_roll < 0)
+    //     ahrs_roll += 360.0;
+    // if (ahrs_roll > 360.0)
+    //     ahrs_roll -= 360.0;
+
+    // if (ahrs_pitch < 0)
+    //     ahrs_pitch += 360.0;
+    // if (ahrs_pitch > 360.0)
+    //     ahrs_pitch -= 360.0;
 }
 
 void Xpilot::processOutput(void)
@@ -138,9 +148,6 @@ void Xpilot::processOutput(void)
     elevator_out = map(elevatorPulseWidth, 1000, 2000, 0, 180);
 
     modeController(xpilot);
-
-    aileron_out = constrain(aileron_out, 0, 180);
-    elevator_out = constrain(elevator_out, 0, 180);
 
     aileronServo.write(aileron_out);
     elevatorServo.write(elevator_out);

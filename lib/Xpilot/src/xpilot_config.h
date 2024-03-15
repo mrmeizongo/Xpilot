@@ -9,9 +9,17 @@
 #define ELEVPIN_OUT 10
 
 #define INPUTRANGES 3
-#define RECEIVER_THRESHOLD 200
+#define MODE_THRESHOLD 200
 #define RECEIVER_LOW 1000
 #define RECEIVER_MID 1500
 #define RECEIVER_HIGH 2000
+
+#define ROLL_LIMIT 50
+#define PITCH_LIMIT 50
+
+// Forbid copy of object
+#define CLASS_NO_COPY(c)        \
+    c(const c &other) = delete; \
+    c &operator=(const c &) = delete;
 
 #define DEBUG 1

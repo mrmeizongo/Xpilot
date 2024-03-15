@@ -40,6 +40,8 @@ class Xpilot
 {
 public:
     Xpilot(void);
+    CLASS_NO_COPY(Xpilot);
+
     void setup(void);
 
     enum Mode : uint8_t
@@ -54,6 +56,8 @@ public:
     friend void manualMode(Xpilot &);
     friend void flyByWireMode(Xpilot &);
     friend void stabilizeMode(Xpilot &);
+
+    // friend class SRV_Channel;
 
     Mode getCurrentMode(void) { return currentMode; }
 
