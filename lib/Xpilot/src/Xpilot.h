@@ -42,24 +42,16 @@ public:
     Xpilot(void);
     CLASS_NO_COPY(Xpilot);
 
-    void setup(void);
-
-    enum Mode : uint8_t
+    enum FLIGHT_MODE : uint8_t
     {
         MANUAL = 1,
         FBW,
         STABILIZE
     };
 
-    // Flying modes. 0 - MANUAL, 1 - FBW, 2 - STABILIZE
-    friend void modeController(Xpilot &);
-    friend void manualMode(Xpilot &);
-    friend void flyByWireMode(Xpilot &);
-    friend void stabilizeMode(Xpilot &);
+    friend class Mode; // Flight mode controller
 
-    // friend class SRV_Channel;
-
-    Mode getCurrentMode(void) { return currentMode; }
+    void setup(void);
 
     void processIMU(void);
     void processInput(void);
@@ -67,6 +59,16 @@ public:
 
     void get_imu_scaled(void);
     void mahoganyQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float deltat);
+
+    FLIGHT_MODE getCurrentMode() { return currentMode; }
+    void setCurrentMode(FLIGHT_MODE _currentMode)
+    {
+        currentMode = _currentMode;
+#if DEBUG
+        Serial.print("Flight mode: ");
+        Serial.println(currentMode);
+#endif
+    }
 
 #ifdef DEBUG
     void print_imu(void);
@@ -78,19 +80,18 @@ private:
     MPU9250 imu;
     I2Cdev i2c;
 
-    Mode currentMode = MANUAL;
-
     bool inputCalibrated = false;
 
-    byte aileronPinInt;            // Interrupt pin for aileron
+    unsigned char aileronPinInt;   // Interrupt pin for aileron
     unsigned char aileron_out = 0; // Aileron servo val
     int aileronPulseWidth = 0;     // Aileron values obtained from transmitter
 
-    byte elevatorPinInt;            // Interrupt pin for elevator
+    unsigned char elevatorPinInt;   // Interrupt pin for elevator
     unsigned char elevator_out = 0; // Elevator servo val
     int elevatorPulseWidth = 0;     // Elevator values obtained from transmitter
 
-    byte modePinInt; // Interrupt pin for flight mode
+    unsigned char modePinInt; // Interrupt pin to read mode
+    FLIGHT_MODE currentMode;
 
     Servo aileronServo;  // Aileron servo channel
     Servo elevatorServo; // Elevator servo channel

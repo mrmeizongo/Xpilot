@@ -49,7 +49,7 @@ void loop()
         last_ms = now_ms;
     }
 
-    if (xpilot.getCurrentMode() != Xpilot::Mode::MANUAL)
+    if (xpilot.getCurrentMode() != Xpilot::FLIGHT_MODE::MANUAL)
         xpilot.processIMU();
 
     xpilot.processOutput();

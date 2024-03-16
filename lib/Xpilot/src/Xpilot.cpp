@@ -1,5 +1,5 @@
 #include "Xpilot.h"
-#include "mode.cpp"
+#include "mode.h"
 #include <utils.cpp>
 
 // These are the free parameters in the Mahony filter and fusion scheme,
@@ -20,9 +20,6 @@ void aileronInterrupt(void);
 // Elevator variables
 volatile long elevatorCurrentTIme, elevatorStartTime, elevatorPulses = 0;
 void elevatorInterrupt(void);
-
-// Mode variables
-volatile long modeCurrentTIme, modeStartTime, modePulses = 0;
 // -------------------------
 
 Xpilot::Xpilot(void)
@@ -67,11 +64,7 @@ void Xpilot::setup(void)
     pinMode(elevatorPinInt, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(elevatorPinInt), elevatorInterrupt, CHANGE);
 
-    // Mode setup
-    // Mode pin uses pin change interrupts
-    pinMode(modePinInt, INPUT_PULLUP);
-    PCICR |= B00000100;
-    PCMSK2 |= B00010000;
+    mode.init(xpilot);
 }
 
 void Xpilot::processInput(void)
@@ -83,15 +76,7 @@ void Xpilot::processInput(void)
     if (elevatorPulses >= RECEIVER_LOW && elevatorPulses <= RECEIVER_HIGH)
         elevatorPulseWidth = elevatorPulses;
 
-    if (modePulses >= RECEIVER_LOW && modePulses <= RECEIVER_HIGH)
-    {
-        if (abs(modePulses - RECEIVER_LOW) < MODE_THRESHOLD && currentMode != STABILIZE)
-            currentMode = STABILIZE;
-        else if (abs(modePulses - RECEIVER_MID) < MODE_THRESHOLD && currentMode != FBW)
-            currentMode = FBW;
-        else if (abs(modePulses - RECEIVER_HIGH) < MODE_THRESHOLD && currentMode != MANUAL)
-            currentMode = MANUAL;
-    }
+    mode.setMode();
     interrupts();
 }
 
@@ -147,7 +132,7 @@ void Xpilot::processOutput(void)
     aileron_out = map(aileronPulseWidth, 1000, 2000, 0, 180);
     elevator_out = map(elevatorPulseWidth, 1000, 2000, 0, 180);
 
-    modeController(xpilot);
+    mode.updateMode();
 
     aileronServo.write(aileron_out);
     elevatorServo.write(elevator_out);
@@ -289,16 +274,6 @@ void elevatorInterrupt(void)
     {
         elevatorPulses = elevatorCurrentTIme - elevatorStartTime;
         elevatorStartTime = elevatorCurrentTIme;
-    }
-}
-
-ISR(PCINT2_vect)
-{
-    modeCurrentTIme = micros();
-    if (modeCurrentTIme > modeStartTime)
-    {
-        modePulses = modeCurrentTIme - modeStartTime;
-        modeStartTime = modeCurrentTIme;
     }
 }
 // ----------------------------
