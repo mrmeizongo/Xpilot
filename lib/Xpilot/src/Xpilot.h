@@ -42,7 +42,7 @@ public:
     Xpilot(void);
     CLASS_NO_COPY(Xpilot);
 
-    enum FLIGHT_MODE : uint8_t
+    enum class FLIGHT_MODE : uint8_t
     {
         MANUAL = 1,
         FBW,
@@ -66,7 +66,7 @@ public:
         currentMode = _currentMode;
 #if DEBUG
         Serial.print("Flight mode: ");
-        Serial.println(currentMode);
+        Serial.println((int)currentMode);
 #endif
     }
 
@@ -84,14 +84,15 @@ private:
 
     unsigned char aileronPinInt;   // Interrupt pin for aileron
     unsigned char aileron_out = 0; // Aileron servo val
+    byte rollLimit = 0;            // Aileron deflection limit
     int aileronPulseWidth = 0;     // Aileron values obtained from transmitter
 
     unsigned char elevatorPinInt;   // Interrupt pin for elevator
     unsigned char elevator_out = 0; // Elevator servo val
+    byte pitchLimit = 0;            // Elevator deflection limit
     int elevatorPulseWidth = 0;     // Elevator values obtained from transmitter
 
-    unsigned char modePinInt; // Interrupt pin to read mode
-    FLIGHT_MODE currentMode;
+    FLIGHT_MODE currentMode = FLIGHT_MODE::MANUAL;
 
     Servo aileronServo;  // Aileron servo channel
     Servo elevatorServo; // Elevator servo channel

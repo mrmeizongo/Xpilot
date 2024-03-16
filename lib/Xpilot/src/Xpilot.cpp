@@ -26,7 +26,6 @@ Xpilot::Xpilot(void)
 {
     aileronPinInt = AILPIN_INT;
     elevatorPinInt = ELEVPIN_INT;
-    modePinInt = MODEPIN_INT;
 }
 
 void Xpilot::setup(void)
@@ -64,7 +63,7 @@ void Xpilot::setup(void)
     pinMode(elevatorPinInt, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(elevatorPinInt), elevatorInterrupt, CHANGE);
 
-    mode.init(xpilot);
+    mode.init();
 }
 
 void Xpilot::processInput(void)
@@ -129,10 +128,13 @@ void Xpilot::processIMU(void)
 
 void Xpilot::processOutput(void)
 {
-    aileron_out = map(aileronPulseWidth, 1000, 2000, 0, 180);
-    elevator_out = map(elevatorPulseWidth, 1000, 2000, 0, 180);
+    aileron_out = map(aileronPulseWidth, 1000, 2000, rollLimit, 180 - rollLimit);
+    elevator_out = map(elevatorPulseWidth, 1000, 2000, pitchLimit, 180 - pitchLimit);
 
     mode.updateMode();
+
+    aileron_out = constrain(aileron_out, rollLimit, 180 - rollLimit);
+    elevator_out = constrain(elevator_out, pitchLimit, 180 - pitchLimit);
 
     aileronServo.write(aileron_out);
     elevatorServo.write(elevator_out);

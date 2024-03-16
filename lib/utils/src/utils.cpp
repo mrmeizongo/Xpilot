@@ -14,14 +14,3 @@ void vector_normalize(float a[3])
     a[1] /= mag;
     a[2] /= mag;
 }
-
-// simple pid controller
-int pid_ctrl(int error, float *integral, int *previous, float kp, float ki, float kd, float deltaT)
-{
-    int proportional = error;
-    *integral += (error * deltaT);
-    float derivative = (float)((error - (*previous)) / deltaT);
-    *previous = error;
-    int output = (int)((kp * proportional) + (ki * (*integral)) + (kd * derivative));
-    return output;
-}
