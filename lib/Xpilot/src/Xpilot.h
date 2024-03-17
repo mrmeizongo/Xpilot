@@ -84,12 +84,12 @@ private:
 
     unsigned char aileronPinInt;   // Interrupt pin for aileron
     unsigned char aileron_out = 0; // Aileron servo val
-    byte rollLimit = 0;            // Aileron deflection limit
+    byte rollDeflectionLim = 0;    // Aileron deflection limit
     int aileronPulseWidth = 0;     // Aileron values obtained from transmitter
 
     unsigned char elevatorPinInt;   // Interrupt pin for elevator
     unsigned char elevator_out = 0; // Elevator servo val
-    byte pitchLimit = 0;            // Elevator deflection limit
+    byte pitchDeflectinLim = 0;     // Elevator deflection limit
     int elevatorPulseWidth = 0;     // Elevator values obtained from transmitter
 
     FLIGHT_MODE currentMode = FLIGHT_MODE::MANUAL;

@@ -13,8 +13,13 @@
 #define RECEIVER_MID 1500
 #define RECEIVER_HIGH 2000
 
-#define DEFAULT_ROLL_LIMIT 45
-#define DEFAULT_PITCH_LIMIT 45
+#define ROLL_LIMIT 45
+#define PITCH_LIMIT 45
+
+#define AILERON_DEFLECTION_LIM 40
+#define ELEVATOR_DEFLECTION_LIM 40
+
+#define CENTER_SRV_POS 90
 
 // Forbid copy of object
 #define CLASS_NO_COPY(c)        \
