@@ -21,7 +21,7 @@
 
 #define CENTER_SRV_POS 90
 
-// Forbid copy of object
+// Forbid copying of object
 #define CLASS_NO_COPY(c)        \
     c(const c &other) = delete; \
     c &operator=(const c &) = delete;

@@ -6,14 +6,14 @@ class Mode
 public:
     Mode();
     void init();
-    void setMode();
-    void updateMode();
+    void update();
+    void set();
 
 private:
     unsigned char modePinInt; // Interrupt pin to read mode
-    void manualMode(Xpilot &xpilot);
-    void FBWMode(Xpilot &xpilot);
-    void stabilizeMode(Xpilot &xpilot);
+    void manualMode();
+    void FBWMode();
+    void stabilizeMode();
 };
 
 extern Mode mode;

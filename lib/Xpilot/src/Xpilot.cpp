@@ -75,7 +75,7 @@ void Xpilot::processInput(void)
     if (elevatorPulses >= RECEIVER_LOW && elevatorPulses <= RECEIVER_HIGH)
         elevatorPulseWidth = elevatorPulses;
 
-    mode.setMode();
+    mode.set();
     interrupts();
 }
 
@@ -129,12 +129,12 @@ void Xpilot::processIMU(void)
 void Xpilot::processOutput(void)
 {
     aileron_out = map(aileronPulseWidth, 1000, 2000, rollDeflectionLim, 180 - rollDeflectionLim);
-    elevator_out = map(elevatorPulseWidth, 1000, 2000, pitchDeflectinLim, 180 - pitchDeflectinLim);
+    elevator_out = map(elevatorPulseWidth, 1000, 2000, pitchDeflectionLim, 180 - pitchDeflectionLim);
 
-    mode.updateMode();
+    mode.update();
 
     aileron_out = constrain(aileron_out, rollDeflectionLim, 180 - rollDeflectionLim);
-    elevator_out = constrain(elevator_out, pitchDeflectinLim, 180 - pitchDeflectinLim);
+    elevator_out = constrain(elevator_out, pitchDeflectionLim, 180 - pitchDeflectionLim);
 
     aileronServo.write(aileron_out);
     elevatorServo.write(elevator_out);

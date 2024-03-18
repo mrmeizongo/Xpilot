@@ -40,6 +40,8 @@ class Xpilot
 {
 public:
     Xpilot(void);
+
+    // Prevent this class from being copied
     CLASS_NO_COPY(Xpilot);
 
     enum class FLIGHT_MODE : uint8_t
@@ -63,11 +65,8 @@ public:
     FLIGHT_MODE getCurrentMode() { return currentMode; }
     void setCurrentMode(FLIGHT_MODE _currentMode)
     {
-        currentMode = _currentMode;
-#if DEBUG
-        Serial.print("Flight mode: ");
-        Serial.println((int)currentMode);
-#endif
+        if (currentMode != _currentMode)
+            currentMode = _currentMode;
     }
 
 #ifdef DEBUG
@@ -89,7 +88,7 @@ private:
 
     unsigned char elevatorPinInt;   // Interrupt pin for elevator
     unsigned char elevator_out = 0; // Elevator servo val
-    byte pitchDeflectinLim = 0;     // Elevator deflection limit
+    byte pitchDeflectionLim = 0;    // Elevator deflection limit
     int elevatorPulseWidth = 0;     // Elevator values obtained from transmitter
 
     FLIGHT_MODE currentMode = FLIGHT_MODE::MANUAL;
