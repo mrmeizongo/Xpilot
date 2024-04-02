@@ -18,30 +18,41 @@ Mode::Mode()
 void Mode::init()
 {
     // Mode setup
-    // Mode pin uses pin change interrupts to read tx channel 6 data
+    // Mode pin uses pin change interrupts to read tx channel data
+    // Mode channel should be set up correctly on the tx & rx
     pinMode(modePinInt, INPUT_PULLUP);
     PCICR |= B00000100;
     PCMSK2 |= B00010000;
 }
 
-void Mode::set()
+// Update flight mode from mode switch position
+void Mode::update()
 {
     if (modePulses >= RECEIVER_LOW && modePulses <= RECEIVER_HIGH)
     {
-        if (abs(modePulses - RECEIVER_LOW) < MODE_THRESHOLD)
+        if (abs(modePulses - RECEIVER_LOW) < INPUT_THRESHOLD)
         {
+            if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
+                return;
+
             xpilot.rollDeflectionLim = AILERON_DEFLECTION_LIM;
             xpilot.pitchDeflectionLim = ELEVATOR_DEFLECTION_LIM;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
         }
-        else if (abs(modePulses - RECEIVER_MID) < MODE_THRESHOLD)
+        else if (abs(modePulses - RECEIVER_MID) < INPUT_THRESHOLD)
         {
+            if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
+                return;
+
             xpilot.rollDeflectionLim = AILERON_DEFLECTION_LIM;
             xpilot.pitchDeflectionLim = ELEVATOR_DEFLECTION_LIM;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
         }
-        else if (abs(modePulses - RECEIVER_HIGH) < MODE_THRESHOLD)
+        else if (abs(modePulses - RECEIVER_HIGH) < INPUT_THRESHOLD)
         {
+            if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::MANUAL)
+                return;
+
             xpilot.rollDeflectionLim = 0;
             xpilot.pitchDeflectionLim = 0;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::MANUAL);
@@ -49,7 +60,7 @@ void Mode::set()
     }
 }
 
-void Mode::update()
+void Mode::process()
 {
     switch (xpilot.getCurrentMode())
     {
@@ -63,7 +74,10 @@ void Mode::update()
         stabilizeMode();
         break;
     default:
-        manualMode();
+#if DEBUG
+        Serial.println("Invalid mode. Defaulting to FBW.");
+#endif
+        FBWMode();
         break;
     }
 }
@@ -73,19 +87,18 @@ void Mode::update()
 void Mode::manualMode()
 {
     // This is to stop the fluctuation experienced in center position due to stick drift
-    xpilot.aileron_out = isCentered(xpilot.aileron_out) ? CENTER_SRV_POS : xpilot.aileron_out;
-    xpilot.elevator_out = isCentered(xpilot.elevator_out) ? CENTER_SRV_POS : xpilot.elevator_out;
+    xpilot.aileron_out = isCentered(xpilot.aileron_out) ? CENTER_DEFLECTION_POS : xpilot.aileron_out;
+    xpilot.elevator_out = isCentered(xpilot.elevator_out) ? CENTER_DEFLECTION_POS : xpilot.elevator_out;
 }
 
 // FBW mode is like manual mode
 // Roll and pitch follow stick input up to set limits
 void Mode::FBWMode()
 {
-    xpilot.aileron_out = isCentered(xpilot.aileron_out) ? CENTER_SRV_POS : xpilot.aileron_out;
-    xpilot.elevator_out = isCentered(xpilot.elevator_out) ? CENTER_SRV_POS : xpilot.elevator_out;
+    manualMode();
 
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT) ? xpilot.aileron_out : CENTER_SRV_POS;
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : CENTER_SRV_POS;
+    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT) ? xpilot.aileron_out : CENTER_DEFLECTION_POS;
+    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : CENTER_DEFLECTION_POS;
 }
 
 // Roll and pitch follow stick input up to set limits
@@ -99,25 +112,30 @@ void Mode::stabilizeMode()
     float rollStabilize = isCentered(xpilot.aileron_out) ? desiredRoll * kp : 0;
     float pitchStabilize = isCentered(xpilot.elevator_out) ? desiredPitch * kp : 0;
 
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out + rollStabilize, ROLL_LIMIT) ? xpilot.aileron_out + rollStabilize : CENTER_SRV_POS;
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out - pitchStabilize, PITCH_LIMIT) ? xpilot.elevator_out - pitchStabilize : CENTER_SRV_POS;
+    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT) ? xpilot.aileron_out + rollStabilize : CENTER_DEFLECTION_POS;
+    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out - pitchStabilize : CENTER_DEFLECTION_POS;
 }
 
 // Helper functions
 bool isCentered(unsigned char stickInput)
 {
-    return abs(stickInput - CENTER_SRV_POS) <= 3;
+    return abs(stickInput - CENTER_DEFLECTION_POS) <= 3;
 }
 
 // Allow input based on angle
-bool allowInput(float angle, unsigned char stickInput, float angleLimit)
+bool allowInput(float angle, unsigned char input, float angleLimit)
 {
-    // If we haven't reached the angle limit, allow input
-    if (abs(angle) <= angleLimit)
+    // If we haven't reached the angle limit or we're not touching the input sticks, allow input
+    if (abs(angle) <= angleLimit || isCentered(input))
         return true;
 
     // If limit is reached, prevent increasing it but allow decreasing
-    return (angle <= -angleLimit && stickInput <= CENTER_SRV_POS) || (angle >= angleLimit && stickInput >= CENTER_SRV_POS);
+    // Typically, both roll and pitch angle readings from the IMU are 0 when level
+    // Roll angle is positive when rolling left and negative when rolling right, pitch angle is negative pitching down and positive when pitching up
+    // Aileron stick input is positive when pushed left and negative when pushed right
+    // Elevator stick input is positive when pushed up and negative when pushed down
+    // Stick and servo positions are 90 when centered, increases up to limit 180 when rolling left or pitching up and decreases up to limit 0 otherwise
+    return (angle > 0 && input < CENTER_DEFLECTION_POS) || (angle < 0 && input > CENTER_DEFLECTION_POS);
 }
 // --------------------------------------
 

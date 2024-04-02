@@ -30,7 +30,6 @@ THE SOFTWARE.
 
 #pragma once
 
-#include <Arduino.h>
 #include <I2Cdev.h>
 #include <MPU9250.h>
 #include <Servo.h>
@@ -54,6 +53,7 @@ public:
     friend class Mode; // Flight mode controller
 
     void setup(void);
+    void loop(void);
 
     void processIMU(void);
     void processInput(void);
@@ -65,11 +65,14 @@ public:
     FLIGHT_MODE getCurrentMode() { return currentMode; }
     void setCurrentMode(FLIGHT_MODE _currentMode)
     {
-        if (currentMode != _currentMode)
-            currentMode = _currentMode;
+#if DEBUG
+        Serial.print("Flight mode: ");
+        Serial.println((uint8_t)_currentMode);
+#endif
+        currentMode = _currentMode;
     }
 
-#ifdef DEBUG
+#if IO_DEBUG
     void print_imu(void);
     void print_input(void);
     void print_output(void);
@@ -78,8 +81,6 @@ public:
 private:
     MPU9250 imu;
     I2Cdev i2c;
-
-    bool inputCalibrated = false;
 
     unsigned char aileronPinInt;   // Interrupt pin for aileron
     unsigned char aileron_out = 0; // Aileron servo val
@@ -91,7 +92,7 @@ private:
     byte pitchDeflectionLim = 0;    // Elevator deflection limit
     int elevatorPulseWidth = 0;     // Elevator values obtained from transmitter
 
-    FLIGHT_MODE currentMode = FLIGHT_MODE::MANUAL;
+    FLIGHT_MODE currentMode = FLIGHT_MODE::MANUAL; // FBW is default mode
 
     Servo aileronServo;  // Aileron servo channel
     Servo elevatorServo; // Elevator servo channel

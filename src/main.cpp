@@ -31,8 +31,6 @@ THE SOFTWARE.
 #include <Arduino.h>
 #include <Xpilot.h>
 
-unsigned long now_ms, last_ms = 0;
-
 void setup()
 {
     xpilot.setup();
@@ -40,17 +38,5 @@ void setup()
 
 void loop()
 {
-    // Read input, read imu data, process output to servos
-    // Process input at 50Hz, everything else runs at loop speed
-    now_ms = millis();
-    if (now_ms - last_ms >= 20)
-    {
-        xpilot.processInput();
-        last_ms = now_ms;
-    }
-
-    if (xpilot.getCurrentMode() != Xpilot::FLIGHT_MODE::MANUAL)
-        xpilot.processIMU();
-
-    xpilot.processOutput();
+    xpilot.loop();
 }

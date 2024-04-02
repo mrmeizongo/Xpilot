@@ -9,12 +9,21 @@
 #define Ki 0.0
 
 // Globals for AHRS loop timing
-unsigned long now = 0, last = 0; // micros() timers
-float dt = 0;                    // loop time in seconds
+unsigned long now_us = 0, last_us = 0; // micros() timers
+float dt = 0;                          // loop time in seconds
+// -------------------------
+
+// Timer variables
+unsigned long nowMs, inputLastMs, debugLastMs = 0;
+
+#if LOOP_DEBUG
+unsigned long lastMs = 0;
+#endif
 // -------------------------
 
 // Aileron variables
-volatile long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
+volatile long aileronCurrentTime,
+    aileronStartTime, aileronPulses = 0;
 void aileronInterrupt(void);
 
 // Elevator variables
@@ -46,13 +55,13 @@ void Xpilot::setup(void)
     // test mpu for connection after initialization
     while (!imu.testConnection())
     {
-#if DEBUG
+#if IO_DEBUG
         Serial.println("No MPU found! Check connection");
 #endif
         delay(1000);
     }
 
-    // Both ailerons and elevators use hardware interrupts for accuracy and also due to hardware limitations
+    // Both ailerons and elevators use hardware interrupts for accuracy and also due to pin limitations on the atmega328p chip
     // Aileron setup
     aileronServo.attach(AILPIN_OUT);
     pinMode(aileronPinInt, INPUT_PULLUP);
@@ -66,6 +75,40 @@ void Xpilot::setup(void)
     mode.init();
 }
 
+// Main execution xpilot execution loop
+void Xpilot::loop(void)
+{
+    // Read input, read imu data, process output to servos
+    // Process input at 50Hz, everything else runs at loop speed
+    nowMs = millis();
+    if (nowMs - inputLastMs >= 20)
+    {
+        xpilot.processInput();
+        inputLastMs = nowMs;
+    }
+
+    if (xpilot.getCurrentMode() != Xpilot::FLIGHT_MODE::MANUAL)
+        xpilot.processIMU();
+
+    xpilot.processOutput();
+
+#if IO_DEBUG
+    if (nowMs - debugLastMs >= 1000)
+    {
+        xpilot.print_imu();
+        xpilot.print_input();
+        xpilot.print_output();
+        debugLastMs = nowMs;
+    }
+#endif
+
+#if LOOP_DEBUG
+    lastMs = millis();
+    Serial.print("Loop time: ");
+    Serial.println(lastMs - nowMs / 1000);
+#endif
+}
+
 void Xpilot::processInput(void)
 {
     noInterrupts();
@@ -75,16 +118,16 @@ void Xpilot::processInput(void)
     if (elevatorPulses >= RECEIVER_LOW && elevatorPulses <= RECEIVER_HIGH)
         elevatorPulseWidth = elevatorPulses;
 
-    mode.set();
+    mode.update();
     interrupts();
 }
 
 void Xpilot::processIMU(void)
 {
     get_imu_scaled();
-    now = micros();
-    dt = (now - last) * 1e-6; // seconds since last update
-    last = now;
+    now_us = micros();
+    dt = (now_us - last_us) * 1e-6; // seconds since last update
+    last_us = now_us;
 
     //  Standard orientation: X North, Y West, Z Up
     //  Tait-Bryan angles as well as Euler angles are
@@ -114,16 +157,6 @@ void Xpilot::processIMU(void)
         ahrs_yaw += 360.0;
     if (ahrs_yaw > 360.0)
         ahrs_yaw -= 360.0;
-
-    // if (ahrs_roll < 0)
-    //     ahrs_roll += 360.0;
-    // if (ahrs_roll > 360.0)
-    //     ahrs_roll -= 360.0;
-
-    // if (ahrs_pitch < 0)
-    //     ahrs_pitch += 360.0;
-    // if (ahrs_pitch > 360.0)
-    //     ahrs_pitch -= 360.0;
 }
 
 void Xpilot::processOutput(void)
@@ -131,7 +164,7 @@ void Xpilot::processOutput(void)
     aileron_out = map(aileronPulseWidth, 1000, 2000, rollDeflectionLim, 180 - rollDeflectionLim);
     elevator_out = map(elevatorPulseWidth, 1000, 2000, pitchDeflectionLim, 180 - pitchDeflectionLim);
 
-    mode.update();
+    mode.process();
 
     aileron_out = constrain(aileron_out, rollDeflectionLim, 180 - rollDeflectionLim);
     elevator_out = constrain(elevator_out, pitchDeflectionLim, 180 - pitchDeflectionLim);
@@ -279,5 +312,40 @@ void elevatorInterrupt(void)
     }
 }
 // ----------------------------
+
+// IO Debug functions
+#if IO_DEBUG
+void Xpilot::print_imu(void)
+{
+    Serial.print("Yaw: ");
+    Serial.println(ahrs_yaw);
+    Serial.print("Roll: ");
+    Serial.println(ahrs_roll);
+    Serial.print("Pitch: ");
+    Serial.println(ahrs_pitch);
+    Serial.println();
+}
+
+void Xpilot::print_input(void)
+{
+    Serial.print("Elevator Pulse: ");
+    Serial.println(elevatorPulseWidth);
+    Serial.print("Aileron Pulse: ");
+    Serial.println(aileronPulseWidth);
+    Serial.print("Flight Mode: ");
+    Serial.println((int)currentMode);
+    Serial.println();
+}
+
+void Xpilot::print_output(void)
+{
+    Serial.print("Elevator: ");
+    Serial.println(elevator_out);
+    Serial.print("Aileron: ");
+    Serial.println(aileron_out);
+    Serial.println();
+}
+#endif
+// ---------------------------
 
 Xpilot xpilot;

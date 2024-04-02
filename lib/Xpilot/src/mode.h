@@ -1,4 +1,5 @@
-#include <Arduino.h>
+#pragma once
+
 #include "Xpilot.h"
 
 class Mode
@@ -7,7 +8,7 @@ public:
     Mode();
     void init();
     void update();
-    void set();
+    void process();
 
 private:
     unsigned char modePinInt; // Interrupt pin to read mode
