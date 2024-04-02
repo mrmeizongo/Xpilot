@@ -4,11 +4,11 @@
 volatile long modeCurrentTIme, modeStartTime, modePulses = 0;
 
 // Propportional gain. Keep number low; increase as needed
-unsigned char kp = 2;
+uint8_t kp = 2;
 
 // Helper functions
-bool isCentered(unsigned char stickInput);
-bool allowInput(float angle, unsigned char stickInput, float angleLimit);
+bool isCentered(uint8_t stickInput);
+bool allowInput(float angle, uint8_t stickInput, uint8_t angleLimit);
 
 Mode::Mode()
 {
@@ -58,6 +58,15 @@ void Mode::update()
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::MANUAL);
         }
     }
+    else
+    {
+        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
+            return;
+
+        xpilot.rollDeflectionLim = AILERON_DEFLECTION_LIM;
+        xpilot.pitchDeflectionLim = ELEVATOR_DEFLECTION_LIM;
+        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
+    }
 }
 
 void Mode::process()
@@ -74,6 +83,7 @@ void Mode::process()
         stabilizeMode();
         break;
     default:
+        // Should not get here, but if we do, default to manual mode i.e flight mode 1
 #if DEBUG
         Serial.println("Invalid mode. Defaulting to FBW.");
 #endif
@@ -117,13 +127,13 @@ void Mode::stabilizeMode()
 }
 
 // Helper functions
-bool isCentered(unsigned char stickInput)
+bool isCentered(uint8_t stickInput)
 {
     return abs(stickInput - CENTER_DEFLECTION_POS) <= 3;
 }
 
 // Allow input based on angle
-bool allowInput(float angle, unsigned char input, float angleLimit)
+bool allowInput(float angle, uint8_t input, uint8_t angleLimit)
 {
     // If we haven't reached the angle limit or we're not touching the input sticks, allow input
     if (abs(angle) <= angleLimit || isCentered(input))
@@ -149,5 +159,6 @@ ISR(PCINT2_vect)
         modeStartTime = modeCurrentTIme;
     }
 }
+// --------------------------------------
 
 Mode mode;

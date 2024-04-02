@@ -9,13 +9,13 @@ RUDD is directly connected to receiver for now as stabilization input is only ap
 Work is in progress to include RUDD control
 
 During testing I used a GY-91 10DOF sensor for testing but an MPU9250 will work as it is the same 9DOF sensor on the GY-91.
-I did not use the barometer/altitude sensor output for this program(pull requests are welcome).
+I did not utilize the barometer/altitude sensor output for this program(pull requests are welcome).
 
 I utilized the MP9250 and Mahogany AHRS library by Jeff Rowberg so a big thank you to Jeff. [MPU9250-AHRS](https://github.com/jremington/MPU-9250-AHRS)
 
 ## Setup
 
-Connect GY-91 / MPU9250 to Arduino Nano as shown below
+Connect GY-91/MPU9250 to Arduino Nano as shown below
 
 | PIN | VALUE |
 | :-: | :---: |
@@ -24,5 +24,35 @@ Connect GY-91 / MPU9250 to Arduino Nano as shown below
 | SCL |  A5   |
 | SDA |  A4   |
 
-To get receiver input to the Arduino Nano, I used hardware interrupts(pins 2 & 3) for the aileron and elevator respectively, and pin change interrupts for the mode switch.
-These pins numbers can be reconfigured in [xpilot_config.h](lib/Xpilot/src/xpilot_config.h)
+Connect receiver to Arduino Nano as shown below
+
+| CHANNEL  | PIN |
+| :------: | :-: |
+| Aileron  |  2  |
+| Elevator |  3  |
+|   Mode   |  4  |
+
+Connect aileron and elevator servos to Arduino Nano as shown below
+
+| CHANNEL  | PIN |
+| :------: | :-: |
+| Aileron  |  9  |
+| Elevator | 10  |
+
+These pin numbers with the exception of GY-91/MPU9250 can be reconfigured in [xpilot_config.h](lib/Xpilot/src/xpilot_config.h)
+
+## Flight modes
+
+There are 3 flight modes; modes 1 = manual/acro, 2 = fly-by-wire, and 3 - stabilize.
+
+|   Flight mode   |                     Description                      |
+| :-------------: | :--------------------------------------------------: |
+| Manual/Acro - 1 | Manual flight control surface movement, passthrough  |
+| Fly-by-wire - 2 |  Roll and pitch follow stick input up to set limits  |
+|  Stabilize - 3  | Like fly-by-wire with wing-leveling on stick release |
+
+Fly-by-wire mode is the most popular among inexperienced flyers. That is also the default mode of operation if mode switch has not been configured.
+Note that there is currently no aileron and rudder mixing available to coordinate turns.
+This is mainly due to a limited(2) number of hardware interrupt pins on the atmega328p chip. I'm considering using pin change interrupts for rudder channel input in a subsequent release.
+
+Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.

@@ -15,6 +15,7 @@ float dt = 0;                          // loop time in seconds
 
 // Timer variables
 unsigned long nowMs, inputLastMs, debugLastMs = 0;
+// -------------------------
 
 #if LOOP_DEBUG
 unsigned long lastMs = 0;
@@ -83,21 +84,21 @@ void Xpilot::loop(void)
     nowMs = millis();
     if (nowMs - inputLastMs >= 20)
     {
-        xpilot.processInput();
+        processInput();
         inputLastMs = nowMs;
     }
 
-    if (xpilot.getCurrentMode() != Xpilot::FLIGHT_MODE::MANUAL)
-        xpilot.processIMU();
+    if (currentMode != FLIGHT_MODE::MANUAL)
+        processIMU();
 
-    xpilot.processOutput();
+    processOutput();
 
 #if IO_DEBUG
     if (nowMs - debugLastMs >= 1000)
     {
-        xpilot.print_imu();
-        xpilot.print_input();
-        xpilot.print_output();
+        print_imu();
+        print_input();
+        print_output();
         debugLastMs = nowMs;
     }
 #endif
@@ -151,8 +152,8 @@ void Xpilot::processIMU(void)
 
     // http://www.ngdc.noaa.gov/geomag-web/#declination
     // conventional nav, yaw increases CW from North, corrected for local magnetic declination
-
     ahrs_yaw = -ahrs_yaw + 11.5;
+
     if (ahrs_yaw < 0)
         ahrs_yaw += 360.0;
     if (ahrs_yaw > 360.0)
@@ -161,8 +162,8 @@ void Xpilot::processIMU(void)
 
 void Xpilot::processOutput(void)
 {
-    aileron_out = map(aileronPulseWidth, 1000, 2000, rollDeflectionLim, 180 - rollDeflectionLim);
-    elevator_out = map(elevatorPulseWidth, 1000, 2000, pitchDeflectionLim, 180 - pitchDeflectionLim);
+    aileron_out = map8(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDeflectionLim, 180 - rollDeflectionLim);
+    elevator_out = map8(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDeflectionLim, 180 - pitchDeflectionLim);
 
     mode.process();
 
