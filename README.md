@@ -40,7 +40,7 @@ However, the Nano, GY-91 and servos can be powered from one 5VDC power source. I
 | Aileron  |  9  |
 | Elevator | 10  |
 
-These pin numbers with the exception of GY-91/MPU9250 can be reconfigured in [xpilot_config.h](lib/Xpilot/src/xpilot_config.h)
+These pin numbers with the exception of GY-91/MPU9250 can be reconfigured in [xpilot_config.h](lib/Xpilot/src/xpilot_config.h).
 Ensure all components share a common ground. The Nano and GY-91/MPU9250 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
 
 ## Flight modes
