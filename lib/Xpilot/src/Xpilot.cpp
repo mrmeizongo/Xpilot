@@ -14,8 +14,12 @@ float dt = 0;                          // loop time in seconds
 // -------------------------
 
 // Timer variables
-unsigned long nowMs, inputLastMs, debugLastMs = 0;
+unsigned long nowMs, inputLastMs = 0;
 // -------------------------
+
+#if IO_DEBUG
+unsigned long debugLastMs = 0;
+#endif
 
 #if LOOP_DEBUG
 unsigned long lastMs = 0;
