@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <Arduino.h>
 #include <Xpilot.h>
 
+Xpilot xpilot;
 void setup()
 {
     xpilot.setup();
