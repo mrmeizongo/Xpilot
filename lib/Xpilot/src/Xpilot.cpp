@@ -110,7 +110,7 @@ void Xpilot::loop(void)
 #if LOOP_DEBUG
     lastMs = millis();
     Serial.print("Loop time: ");
-    Serial.println(lastMs - nowMs / 1000);
+    Serial.println(lastMs - nowMs);
 #endif
 }
 
@@ -166,8 +166,8 @@ void Xpilot::processIMU(void)
 
 void Xpilot::processOutput(void)
 {
-    aileron_out = map8(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDeflectionLim, 180 - rollDeflectionLim);
-    elevator_out = map8(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDeflectionLim, 180 - pitchDeflectionLim);
+    aileron_out = map(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDeflectionLim, 180 - rollDeflectionLim);
+    elevator_out = map(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDeflectionLim, 180 - pitchDeflectionLim);
 
     mode.process();
 
@@ -352,5 +352,3 @@ void Xpilot::print_output(void)
 }
 #endif
 // ---------------------------
-
-Xpilot xpilot;

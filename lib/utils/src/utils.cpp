@@ -15,9 +15,13 @@ void vector_normalize(float a[3])
     a[2] /= mag;
 }
 
-// Default Arduino map function returns value of type long
-// For this project, that is overkill so to save some space, we return uint8_t instead(max 255)
-uint8_t map8(int x, uint16_t in_min, uint16_t in_max, uint8_t out_min, uint8_t out_max)
-{
-    return ((x - in_min) * (out_max - out_min)) / ((in_max - in_min) + out_min);
-}
+// simple pid controller
+// int pid_ctrl(int error, float *integral, int *previous, float kp, float ki, float kd, float deltaT)
+// {
+//     int proportional = error;
+//     *integral += (error * deltaT);
+//     float derivative = (float)((error - (*previous)) / deltaT);
+//     *previous = error;
+//     int output = (int)((kp * proportional) + (ki * (*integral)) + (kd * derivative));
+//     return output;
+// }

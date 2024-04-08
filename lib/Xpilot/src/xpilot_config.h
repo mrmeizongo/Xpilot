@@ -19,12 +19,12 @@
 #define RECEIVER_HIGH 2000
 
 // In degree radians
-#define ROLL_LIMIT 50
-#define PITCH_LIMIT 50
+#define ROLL_LIMIT 45
+#define PITCH_LIMIT 45
 
 // In angles
-#define AILERON_DEFLECTION_LIM 45
-#define ELEVATOR_DEFLECTION_LIM 45
+#define AILERON_DEFLECTION_LIM 35
+#define ELEVATOR_DEFLECTION_LIM 35
 
 #define CENTER_DEFLECTION_POS 90
 
@@ -36,5 +36,5 @@
 // Set to 1 to enable the respective debugging, zero otherwise
 // To enable any of the XX_DEBUG, set DEBUG to 1
 #define DEBUG 1
-#define LOOP_DEBUG 1
+#define LOOP_DEBUG 0
 #define IO_DEBUG 1
