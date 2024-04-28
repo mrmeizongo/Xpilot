@@ -35,6 +35,6 @@
 
 // Set to 1 to enable the respective debugging, zero otherwise
 // To enable any of the XX_DEBUG, set DEBUG to 1
-#define DEBUG 1
+#define DEBUG 0
 #define LOOP_DEBUG 0
-#define IO_DEBUG 1
+#define IO_DEBUG 0

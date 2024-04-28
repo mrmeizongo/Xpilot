@@ -9,22 +9,24 @@
 #define Ki 0.0
 
 // Globals for AHRS loop timing
-unsigned long now_us = 0, last_us = 0; // micros() timers
-float dt = 0;                          // loop time in seconds
+unsigned long nowUs = 0, lastUs = 0; // micros() timers
+float dt = 0;                        // loop time in seconds
 // -------------------------
 
 // Timer variables
-unsigned long nowMs, inputLastMs, debugLastMs = 0;
-// -------------------------
+unsigned long nowMs, inputLastMs = 0;
+
+#if IO_DEBUG
+unsigned long debugLastMs = 0;
+#endif
 
 #if LOOP_DEBUG
-unsigned long lastMs = 0;
+unsigned long loopLastMs = 0;
 #endif
 // -------------------------
 
 // Aileron variables
-volatile long aileronCurrentTime,
-    aileronStartTime, aileronPulses = 0;
+volatile long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
 void aileronInterrupt(void);
 
 // Elevator variables
@@ -40,15 +42,18 @@ Xpilot::Xpilot(void)
 
 void Xpilot::setup(void)
 {
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(MODEPIN_INT)
-#error "Ensure interrupt pins are defined"
+#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
+#error "Ensure interrupt pins for aileron and elevator are defined"
 #endif
 
     Wire.begin();
 #if DEBUG
     Serial.begin(9600);
     while (!Serial)
-        ;
+    {
+        Serial.println("Serial port communication cannot be established.");
+        delay(1000);
+    }
 #endif
 
     // initialize device
@@ -88,9 +93,11 @@ void Xpilot::loop(void)
         inputLastMs = nowMs;
     }
 
+    // Only run IMU processing in auto modes i.e FBW, STABILIZE
     if (currentMode != FLIGHT_MODE::MANUAL)
         processIMU();
 
+    // Output to servos
     processOutput();
 
 #if IO_DEBUG
@@ -104,9 +111,9 @@ void Xpilot::loop(void)
 #endif
 
 #if LOOP_DEBUG
-    lastMs = millis();
+    loopLastMs = millis();
     Serial.print("Loop time: ");
-    Serial.println(lastMs - nowMs);
+    Serial.println(loopLastMs - nowMs);
 #endif
 }
 
@@ -125,10 +132,10 @@ void Xpilot::processInput(void)
 
 void Xpilot::processIMU(void)
 {
+    nowUs = micros();
     get_imu_scaled();
-    now_us = micros();
-    dt = (now_us - last_us) * 1e-6; // seconds since last update
-    last_us = now_us;
+    dt = (nowUs - lastUs) * 1e-6; // seconds since last update
+    lastUs = nowUs;
 
     //  Standard orientation: X North, Y West, Z Up
     //  Tait-Bryan angles as well as Euler angles are
@@ -202,7 +209,6 @@ void Xpilot::get_imu_scaled(void)
     Mxyz[1] = (float)my;
     Mxyz[2] = (float)mz;
 
-    // apply offsets and scale factors from Magneto
     for (i = 0; i < 3; i++)
         temp[i] = (Mxyz[i] - M_B[i]);
     Mxyz[0] = M_Ainv[0][0] * temp[0] + M_Ainv[0][1] * temp[1] + M_Ainv[0][2] * temp[2];
@@ -215,7 +221,7 @@ void Xpilot::get_imu_scaled(void)
 // the error between estimated reference vectors and measured ones.
 void Xpilot::mahoganyQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float deltat)
 {
-    // Vector to hold integral error for Mahony method
+    // Vector to hold integral error for Mahogany method
     static float eInt[3] = {0.0, 0.0, 0.0};
     // short name local variable for readability
     float q1 = q[0], q2 = q[1], q3 = q[2], q4 = q[3];

@@ -30,7 +30,6 @@ THE SOFTWARE.
 
 #pragma once
 
-#include <I2Cdev.h>
 #include <MPU9250.h>
 #include <Servo.h>
 #include "xpilot_config.h"
@@ -80,19 +79,18 @@ public:
 
 private:
     MPU9250 imu;
-    I2Cdev i2c;
 
     uint8_t aileronPinInt;          // Interrupt pin for aileron
-    uint8_t aileron_out = 0;        // Aileron servo val
+    int16_t aileron_out = 0;        // Aileron servo val
     uint8_t rollDeflectionLim = 0;  // Aileron deflection limit
     uint16_t aileronPulseWidth = 0; // Aileron values obtained from transmitter
 
     uint8_t elevatorPinInt;          // Interrupt pin for elevator
-    uint8_t elevator_out = 0;        // Elevator servo val
+    int16_t elevator_out = 0;        // Elevator servo val
     uint8_t pitchDeflectionLim = 0;  // Elevator deflection limit
     uint16_t elevatorPulseWidth = 0; // Elevator values obtained from transmitter
 
-    FLIGHT_MODE currentMode = FLIGHT_MODE::MANUAL; // FBW is default mode
+    FLIGHT_MODE currentMode = FLIGHT_MODE::MANUAL; // MANUAL is default mode
 
     Servo aileronServo;  // Aileron servo channel
     Servo elevatorServo; // Elevator servo channel

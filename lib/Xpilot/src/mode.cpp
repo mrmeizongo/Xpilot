@@ -4,7 +4,7 @@
 volatile long modeCurrentTIme, modeStartTime, modePulses = 0;
 
 // Propportional gain. Keep number low; increase as needed
-uint8_t kp = 2;
+uint8_t stabilizeKp = 3;
 
 // Helper functions
 bool isCentered(uint8_t stickInput);
@@ -74,11 +74,11 @@ void Mode::process()
         stabilizeMode();
         break;
     default:
-        // Should not get here, but if we do, default to FBW mode i.e flight mode 2
+        // Should not get here, but if we do, default to manual mode i.e flight mode 1
 #if DEBUG
-        Serial.println("Invalid mode. Defaulting to FBW.");
+        Serial.println("Invalid mode. Defaulting to manual.");
 #endif
-        FBWMode();
+        manualMode();
         break;
     }
 }
@@ -98,16 +98,8 @@ void Mode::FBWMode()
 {
     manualMode();
 
-    float desiredLimitRoll = ROLL_LIMIT - abs(xpilot.ahrs_roll);
-    float desiredLimitPitch = PITCH_LIMIT - abs(xpilot.ahrs_pitch);
-    desiredLimitRoll *= kp;
-    desiredLimitPitch *= kp;
-
-    desiredLimitRoll = xpilot.ahrs_roll > 0 ? desiredLimitRoll : -(desiredLimitRoll);
-    desiredLimitPitch = xpilot.ahrs_pitch > 0 ? desiredLimitPitch : -(desiredLimitPitch);
-
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT) ? xpilot.aileron_out : CENTER_DEFLECTION_POS + desiredLimitRoll;
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : CENTER_DEFLECTION_POS - desiredLimitPitch;
+    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT) ? xpilot.aileron_out : CENTER_DEFLECTION_POS;
+    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : CENTER_DEFLECTION_POS;
 }
 
 // Roll and pitch follow stick input up to set limits
@@ -117,19 +109,15 @@ void Mode::stabilizeMode()
 {
     float rollStabilize = 0 - xpilot.ahrs_roll;
     float pitchStabilize = 0 - xpilot.ahrs_pitch;
-    rollStabilize = isCentered(xpilot.aileron_out) ? rollStabilize * kp : 0;
-    pitchStabilize = isCentered(xpilot.elevator_out) ? pitchStabilize * kp : 0;
 
-    float desiredLimitRoll = ROLL_LIMIT - abs(xpilot.ahrs_roll);
-    float desiredLimitPitch = PITCH_LIMIT - abs(xpilot.ahrs_pitch);
-    desiredLimitRoll *= kp;
-    desiredLimitPitch *= kp;
+    rollStabilize = isCentered(xpilot.aileron_out) ? rollStabilize : 0;
+    pitchStabilize = isCentered(xpilot.elevator_out) ? pitchStabilize : 0;
 
-    desiredLimitRoll = xpilot.ahrs_roll > 0 ? desiredLimitRoll : -(desiredLimitRoll);
-    desiredLimitPitch = xpilot.ahrs_pitch > 0 ? desiredLimitPitch : -(desiredLimitPitch);
+    rollStabilize *= stabilizeKp;
+    pitchStabilize *= stabilizeKp;
 
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT) ? xpilot.aileron_out + rollStabilize : CENTER_DEFLECTION_POS + desiredLimitRoll;
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out - pitchStabilize : CENTER_DEFLECTION_POS - desiredLimitPitch;
+    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT) ? xpilot.aileron_out + rollStabilize : CENTER_DEFLECTION_POS + rollStabilize;
+    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out - pitchStabilize : CENTER_DEFLECTION_POS - pitchStabilize;
 }
 
 // Helper functions
@@ -151,7 +139,7 @@ bool allowInput(float angle, uint8_t input, uint8_t angleLimit)
     // Aileron stick input is positive when pushed left and negative when pushed right
     // Elevator stick input is positive when pushed up and negative when pushed down
     // Stick and servo positions are 90 when centered, increases up to limit 180 when rolling left or pitching up and decreases up to limit 0 otherwise
-    return (angle > 0 && input < CENTER_DEFLECTION_POS) || (angle < 0 && input > CENTER_DEFLECTION_POS);
+    return (angle > 0 && input > CENTER_DEFLECTION_POS) || (angle < 0 && input < CENTER_DEFLECTION_POS);
 }
 // --------------------------------------
 
