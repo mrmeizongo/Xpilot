@@ -2,6 +2,8 @@
 
 ### Developed using PlatformIO on vscode
 
+### Servos need to be installed correctly for this to work.
+
 Flight stabilization system intended to run on the atmega328 chip in the Arduino Nano and UNO microcontrollers.
 Designed with a 3-channel system(AIL, ELEV, \*RUDD) in mind; some modifications are necessary to convert it for a 2-channel system.
 
