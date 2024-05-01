@@ -5,8 +5,8 @@
 // These are the free parameters in the Mahony filter and fusion scheme,
 // Kp for proportional feedback, Ki for integral.
 // With the MPU-9250, angles start oscillating at Kp=40. Ki does not seem to help and is not required.
-#define Kp 25.0
-#define Ki 0.0
+#define imuKp 25.0
+#define imuKi 0.0
 
 // Globals for AHRS loop timing
 unsigned long nowUs = 0, lastUs = 0; // micros() timers
@@ -260,21 +260,21 @@ void Xpilot::mahoganyQuaternionUpdate(float ax, float ay, float az, float gx, fl
     ex = (ay * vz - az * vy) + (my * wz - mz * wy);
     ey = (az * vx - ax * vz) + (mz * wx - mx * wz);
     ez = (ax * vy - ay * vx) + (mx * wy - my * wx);
-    if (Ki > 0.0f)
+    if (imuKi > 0.0f)
     {
         eInt[0] += ex; // accumulate integral error
         eInt[1] += ey;
         eInt[2] += ez;
         // Apply I feedback
-        gx += Ki * eInt[0];
-        gy += Ki * eInt[1];
-        gz += Ki * eInt[2];
+        gx += imuKi * eInt[0];
+        gy += imuKi * eInt[1];
+        gz += imuKi * eInt[2];
     }
 
     // Apply P feedback
-    gx = gx + Kp * ex;
-    gy = gy + Kp * ey;
-    gz = gz + Kp * ez;
+    gx = gx + imuKp * ex;
+    gy = gy + imuKp * ey;
+    gz = gz + imuKp * ez;
 
     // Integrate rate of change of quaternion
     // small correction 1/11/2022, see https://github.com/kriswiner/MPU9250/issues/447
