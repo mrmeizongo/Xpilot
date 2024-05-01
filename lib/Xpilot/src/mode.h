@@ -30,8 +30,6 @@ THE SOFTWARE.
 */
 #pragma once
 
-#include "Xpilot.h"
-
 class Mode
 {
 public:

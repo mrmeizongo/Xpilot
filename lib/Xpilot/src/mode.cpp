@@ -1,3 +1,4 @@
+#include <Xpilot.h>
 #include "mode.h"
 
 // Mode channel input timer variables. See setMode and ISR functions
