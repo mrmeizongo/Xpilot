@@ -15,6 +15,12 @@ void vector_normalize(float a[3])
     a[2] /= mag;
 }
 
+// Replaces arduino default map() function which uses long type, consuming more resources than is required
+int16_t map16(int16_t x, int16_t in_min, int16_t in_max, int16_t out_min, int16_t out_max)
+{
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 // simple pid controller
 // int pid_ctrl(int error, float *integral, int *previous, float kp, float ki, float kd, float deltaT)
 // {

@@ -169,8 +169,8 @@ void Xpilot::processIMU(void)
 
 void Xpilot::processOutput(void)
 {
-    aileron_out = map(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDeflectionLim, 180 - rollDeflectionLim);
-    elevator_out = map(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDeflectionLim, 180 - pitchDeflectionLim);
+    aileron_out = map16(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDeflectionLim, 180 - rollDeflectionLim);
+    elevator_out = map16(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDeflectionLim, 180 - pitchDeflectionLim);
 
     mode.process();
 
