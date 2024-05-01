@@ -169,8 +169,8 @@ void Xpilot::processIMU(void)
 
 void Xpilot::processOutput(void)
 {
-    aileron_out = map16(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDeflectionLim, 180 - rollDeflectionLim);
-    elevator_out = map16(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDeflectionLim, 180 - pitchDeflectionLim);
+    aileron_out = map(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDeflectionLim, 180 - rollDeflectionLim);
+    elevator_out = map(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDeflectionLim, 180 - pitchDeflectionLim);
 
     mode.process();
 
@@ -188,9 +188,9 @@ void Xpilot::get_imu_scaled(void)
     imu.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
 
     // 250 LSB(d/s) default to radians/s
-    Gxyz[0] = ((float)gx - G_off[0]) * gscale;
-    Gxyz[1] = ((float)gy - G_off[1]) * gscale;
-    Gxyz[2] = ((float)gz - G_off[2]) * gscale;
+    Gxyz[0] = ((float)gx - G_off[0]) * gScale;
+    Gxyz[1] = ((float)gy - G_off[1]) * gScale;
+    Gxyz[2] = ((float)gz - G_off[2]) * gScale;
 
     Axyz[0] = (float)ax;
     Axyz[1] = (float)ay;
@@ -203,7 +203,7 @@ void Xpilot::get_imu_scaled(void)
     Axyz[0] = A_Ainv[0][0] * temp[0] + A_Ainv[0][1] * temp[1] + A_Ainv[0][2] * temp[2];
     Axyz[1] = A_Ainv[1][0] * temp[0] + A_Ainv[1][1] * temp[1] + A_Ainv[1][2] * temp[2];
     Axyz[2] = A_Ainv[2][0] * temp[0] + A_Ainv[2][1] * temp[1] + A_Ainv[2][2] * temp[2];
-    vector_normalize(Axyz);
+    vectorNormalize(Axyz);
 
     Mxyz[0] = (float)mx;
     Mxyz[1] = (float)my;
@@ -214,7 +214,7 @@ void Xpilot::get_imu_scaled(void)
     Mxyz[0] = M_Ainv[0][0] * temp[0] + M_Ainv[0][1] * temp[1] + M_Ainv[0][2] * temp[2];
     Mxyz[1] = M_Ainv[1][0] * temp[0] + M_Ainv[1][1] * temp[1] + M_Ainv[1][2] * temp[2];
     Mxyz[2] = M_Ainv[2][0] * temp[0] + M_Ainv[2][1] * temp[1] + M_Ainv[2][2] * temp[2];
-    vector_normalize(Mxyz);
+    vectorNormalize(Mxyz);
 }
 
 // Mahogany scheme uses proportional and integral filtering on
