@@ -1,5 +1,6 @@
 #include <Xpilot.h>
 #include "mode.h"
+#include "config.h"
 
 // Mode channel input timer variables. See setMode and ISR functions
 volatile long modeCurrentTIme, modeStartTime, modePulses = 0;

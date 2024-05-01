@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include <MPU9250.h>
 #include <Servo.h>
-#include "xpilot_config.h"
+#include "config.h"
 
 class Xpilot
 {
