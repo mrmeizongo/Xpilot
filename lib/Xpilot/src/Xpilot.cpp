@@ -149,7 +149,8 @@ void Xpilot::loop(void)
 
 void Xpilot::processInput(void)
 {
-    noInterrupts();
+    uint8_t oldSREG = SREG;
+    cli();
     if (aileronPulses >= RECEIVER_LOW && aileronPulses <= RECEIVER_HIGH)
         aileronPulseWidth = aileronPulses;
 
@@ -157,7 +158,7 @@ void Xpilot::processInput(void)
         elevatorPulseWidth = elevatorPulses;
 
     mode.update();
-    interrupts();
+    SREG = oldSREG;
 }
 
 void Xpilot::processIMU(void)
