@@ -44,7 +44,7 @@ public:
 
     enum class FLIGHT_MODE : uint8_t
     {
-        MANUAL = 1,
+        PASSTHROUGH = 1,
         FBW,
         STABILIZE
     };
@@ -90,7 +90,7 @@ private:
     uint8_t pitchDeflectionLim = 0;  // Elevator deflection limit
     uint16_t elevatorPulseWidth = 0; // Elevator values obtained from transmitter
 
-    FLIGHT_MODE currentMode = FLIGHT_MODE::MANUAL; // MANUAL is default mode
+    FLIGHT_MODE currentMode = FLIGHT_MODE::PASSTHROUGH; // MANUAL is default mode
 
     Servo aileronServo;  // Aileron servo channel
     Servo elevatorServo; // Elevator servo channel

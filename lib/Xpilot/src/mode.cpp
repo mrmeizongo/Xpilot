@@ -29,6 +29,7 @@ THE SOFTWARE.
 */
 
 #include <Xpilot.h>
+#include <PID_v1.h>
 #include "Mode.h"
 
 // Mode channel input timer variables. See setMode and ISR functions
@@ -81,12 +82,12 @@ void Mode::update()
         }
         else if (abs(modePulses - RECEIVER_HIGH) < INPUT_THRESHOLD)
         {
-            if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::MANUAL)
+            if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::PASSTHROUGH)
                 return;
 
             xpilot.rollDeflectionLim = 0;
             xpilot.pitchDeflectionLim = 0;
-            xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::MANUAL);
+            xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::PASSTHROUGH);
         }
     }
 }
@@ -95,7 +96,7 @@ void Mode::process()
 {
     switch (xpilot.getCurrentMode())
     {
-    case Xpilot::FLIGHT_MODE::MANUAL:
+    case Xpilot::FLIGHT_MODE::PASSTHROUGH:
         manualMode();
         break;
     case Xpilot::FLIGHT_MODE::FBW:

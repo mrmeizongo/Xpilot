@@ -124,7 +124,7 @@ void Xpilot::loop(void)
     }
 
     // Only run IMU processing in auto modes i.e FBW, STABILIZE
-    if (currentMode != FLIGHT_MODE::MANUAL)
+    if (currentMode != FLIGHT_MODE::PASSTHROUGH)
         processIMU();
 
     // Output to servos
