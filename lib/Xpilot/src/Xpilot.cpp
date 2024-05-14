@@ -29,8 +29,8 @@ THE SOFTWARE.
 */
 
 #include "Xpilot.h"
-#include "mode.h"
-#include <utils.cpp>
+#include "Mode.h"
+#include <Utils.cpp>
 
 // These are the free parameters in the Mahony filter and fusion scheme,
 // Kp for proportional feedback, Ki for integral.
