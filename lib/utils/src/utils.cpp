@@ -33,7 +33,7 @@ THE SOFTWARE.
 #define gScale (250. / 32768.0) * (PI / 180.0) // gyro default 250 LSB per d/s -> rad/s
 #define vectorDot(a, b) (((a[0]) * (b[0])) + ((a[1]) * (b[1])) + ((a[2]) * (b[2])))
 
-void vectorNormalize(float a[3])
+void vectorNormalize(double a[3])
 {
     float mag = sqrt(vectorDot(a, a));
     a[0] /= mag;

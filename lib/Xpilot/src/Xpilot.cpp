@@ -40,7 +40,7 @@ THE SOFTWARE.
 
 // Globals for AHRS loop timing
 unsigned long nowUs = 0, lastUs = 0; // micros() timers
-float dt = 0;                        // loop time in seconds
+double dt = 0;                       // loop time in seconds
 // -------------------------
 
 // Timer variables
@@ -214,18 +214,18 @@ void Xpilot::processOutput(void)
 
 void Xpilot::get_imu_scaled(void)
 {
-    float temp[3];
+    double temp[3];
     int i;
     imu.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
 
     // 250 LSB(d/s) default to radians/s
-    Gxyz[0] = ((float)gx - G_off[0]) * gScale;
-    Gxyz[1] = ((float)gy - G_off[1]) * gScale;
-    Gxyz[2] = ((float)gz - G_off[2]) * gScale;
+    Gxyz[0] = ((double)gx - G_off[0]) * gScale;
+    Gxyz[1] = ((double)gy - G_off[1]) * gScale;
+    Gxyz[2] = ((double)gz - G_off[2]) * gScale;
 
-    Axyz[0] = (float)ax;
-    Axyz[1] = (float)ay;
-    Axyz[2] = (float)az;
+    Axyz[0] = (double)ax;
+    Axyz[1] = (double)ay;
+    Axyz[2] = (double)az;
 
     // apply offsets (bias) and scale factors from Magneto
     for (i = 0; i < 3; i++)
@@ -236,9 +236,9 @@ void Xpilot::get_imu_scaled(void)
     Axyz[2] = A_Ainv[2][0] * temp[0] + A_Ainv[2][1] * temp[1] + A_Ainv[2][2] * temp[2];
     vectorNormalize(Axyz);
 
-    Mxyz[0] = (float)mx;
-    Mxyz[1] = (float)my;
-    Mxyz[2] = (float)mz;
+    Mxyz[0] = (double)mx;
+    Mxyz[1] = (double)my;
+    Mxyz[2] = (double)mz;
 
     for (i = 0; i < 3; i++)
         temp[i] = (Mxyz[i] - M_B[i]);
@@ -250,28 +250,28 @@ void Xpilot::get_imu_scaled(void)
 
 // Mahogany scheme uses proportional and integral filtering on
 // the error between estimated reference vectors and measured ones.
-void Xpilot::mahoganyQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float deltat)
+void Xpilot::mahoganyQuaternionUpdate(double ax, double ay, double az, double gx, double gy, double gz, double mx, double my, double mz, double deltat)
 {
     // Vector to hold integral error for Mahogany method
-    static float eInt[3] = {0.0, 0.0, 0.0};
+    static double eInt[3] = {0.0, 0.0, 0.0};
     // short name local variable for readability
-    float q1 = q[0], q2 = q[1], q3 = q[2], q4 = q[3];
-    float norm;
-    float hx, hy, bx, bz;
-    float vx, vy, vz, wx, wy, wz;
-    float ex, ey, ez;
+    double q1 = q[0], q2 = q[1], q3 = q[2], q4 = q[3];
+    double norm;
+    double hx, hy, bx, bz;
+    double vx, vy, vz, wx, wy, wz;
+    double ex, ey, ez;
 
     // Auxiliary variables to avoid repeated arithmetic
-    float q1q1 = q1 * q1;
-    float q1q2 = q1 * q2;
-    float q1q3 = q1 * q3;
-    float q1q4 = q1 * q4;
-    float q2q2 = q2 * q2;
-    float q2q3 = q2 * q3;
-    float q2q4 = q2 * q4;
-    float q3q3 = q3 * q3;
-    float q3q4 = q3 * q4;
-    float q4q4 = q4 * q4;
+    double q1q1 = q1 * q1;
+    double q1q2 = q1 * q2;
+    double q1q3 = q1 * q3;
+    double q1q4 = q1 * q4;
+    double q2q2 = q2 * q2;
+    double q2q3 = q2 * q3;
+    double q2q4 = q2 * q4;
+    double q3q3 = q3 * q3;
+    double q3q4 = q3 * q4;
+    double q4q4 = q4 * q4;
 
     // Reference direction of Earth's magnetic field
     hx = 2.0f * mx * (0.5f - q3q3 - q4q4) + 2.0f * my * (q2q3 - q1q4) + 2.0f * mz * (q2q4 + q1q3);
@@ -312,9 +312,9 @@ void Xpilot::mahoganyQuaternionUpdate(float ax, float ay, float az, float gx, fl
     gx = gx * (0.5 * deltat); // pre-multiply common factors
     gy = gy * (0.5 * deltat);
     gz = gz * (0.5 * deltat);
-    float qa = q1;
-    float qb = q2;
-    float qc = q3;
+    double qa = q1;
+    double qb = q2;
+    double qc = q3;
     q1 += (-qb * gx - qc * gy - q4 * gz);
     q2 += (qa * gx + qc * gz - q4 * gy);
     q3 += (qa * gy - qb * gz + q4 * gx);

@@ -59,7 +59,7 @@ public:
     void processOutput(void);
 
     void get_imu_scaled(void);
-    void mahoganyQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float deltat);
+    void mahoganyQuaternionUpdate(double ax, double ay, double az, double gx, double gy, double gz, double mx, double my, double mz, double deltat);
 
     FLIGHT_MODE getCurrentMode() { return currentMode; }
     void setCurrentMode(FLIGHT_MODE _currentMode)
@@ -99,31 +99,31 @@ private:
 
     // vvvvvvvvvvvvvvvvvv  VERY VERY IMPORTANT vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     // These are the previously determined offsets and scale factors for accelerometer and magnetometer, using MPU9250_cal and Magneto 1.2
-    float A_B[3]{539.75, 218.36, 834.53};
-    float A_Ainv[3][3]{{0.51280, 0.00230, 0.00202},
-                       {0.00230, 0.51348, -0.00126},
-                       {0.00202, -0.00126, 0.50368}};
+    double A_B[3]{539.75, 218.36, 834.53};
+    double A_Ainv[3][3]{{0.51280, 0.00230, 0.00202},
+                        {0.00230, 0.51348, -0.00126},
+                        {0.00202, -0.00126, 0.50368}};
 
     // mag offsets and correction matrix
-    float M_B[3]{18.15, 28.05, -36.09};
-    float M_Ainv[3][3]{{0.68093, 0.00084, 0.00923},
-                       {0.00084, 0.69281, 0.00103},
-                       {0.00923, 0.00103, 0.64073}};
+    double M_B[3]{18.15, 28.05, -36.09};
+    double M_Ainv[3][3]{{0.68093, 0.00084, 0.00923},
+                        {0.00084, 0.69281, 0.00103},
+                        {0.00923, 0.00103, 0.64073}};
 
-    float G_off[3] = {-299.7, 113.2, 202.4}; // raw offsets, determined for gyro at rest
+    double G_off[3] = {-299.7, 113.2, 202.4}; // raw offsets, determined for gyro at rest
     // ^^^^^^^^^^^^^^^^^^^ VERY VERY IMPORTANT ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     // Raw data from IMU and scaled as vector
     int16_t ax, ay, az;
     int16_t gx, gy, gz;
     int16_t mx, my, mz;
-    float Axyz[3];
-    float Gxyz[3];
-    float Mxyz[3];
+    double Axyz[3];
+    double Gxyz[3];
+    double Mxyz[3];
 
     // Vector to hold quaternion values from AHRS algorithm
-    float q[4] = {1.0, 0.0, 0.0, 0.0};
-    float ahrs_yaw, ahrs_pitch, ahrs_roll = 0; // Euler angle output
+    double q[4] = {1.0, 0.0, 0.0, 0.0};
+    double ahrs_yaw, ahrs_pitch, ahrs_roll = 0; // Euler angle output
 };
 
 extern Xpilot xpilot;
