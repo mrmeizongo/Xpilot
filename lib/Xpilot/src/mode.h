@@ -41,7 +41,7 @@ public:
 private:
     unsigned char modePinInt; // Interrupt pin to read mode
 
-    void manualMode();
+    void passthroughMode();
     void FBWMode();
     void stabilizeMode();
 };

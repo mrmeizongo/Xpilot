@@ -105,7 +105,7 @@ void Mode::process()
     switch (xpilot.getCurrentMode())
     {
     case Xpilot::FLIGHT_MODE::PASSTHROUGH:
-        manualMode();
+        passthroughMode();
         break;
     case Xpilot::FLIGHT_MODE::FBW:
         FBWMode();
@@ -118,14 +118,14 @@ void Mode::process()
 #if DEBUG
         Serial.println("Invalid mode. Defaulting to passthrough.");
 #endif
-        manualMode();
+        passthroughMode();
         break;
     }
 }
 
 // Manual mode gives full control of the rc plane flight surfaces
 // No stabilization and no deflection limits on flight surfaces
-void Mode::manualMode()
+void Mode::passthroughMode()
 {
     // This is to stop the fluctuation experienced in center position due to stick drift
     xpilot.aileron_out = isCentered(xpilot.aileron_out) ? CENTER_DEFLECTION_POS : xpilot.aileron_out;
@@ -136,7 +136,7 @@ void Mode::manualMode()
 // Roll and pitch follow stick input up to set limits
 void Mode::FBWMode()
 {
-    manualMode();
+    passthroughMode();
     float rollStabilize = ROLL_LIMIT - abs(xpilot.ahrs_roll);
     float pitchStabilize = PITCH_LIMIT - abs(xpilot.ahrs_pitch);
     rollStabilize = xpilot.ahrs_roll >= 0 ? rollStabilize : -(rollStabilize);
