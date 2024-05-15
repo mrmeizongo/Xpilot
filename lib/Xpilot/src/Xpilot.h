@@ -123,7 +123,9 @@ private:
 
     // Vector to hold quaternion values from AHRS algorithm
     double q[4] = {1.0, 0.0, 0.0, 0.0};
-    double ahrs_yaw, ahrs_pitch, ahrs_roll = 0; // Euler angle output
+
+    // double ahrs_yaw;
+    double ahrs_pitch, ahrs_roll = 0; // Euler angle output
 };
 
 extern Xpilot xpilot;

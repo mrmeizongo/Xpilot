@@ -182,20 +182,20 @@ void Xpilot::processIMU(void)
     // MALFUNCTION for certain combinations of angles! See https://en.wikipedia.org/wiki/Gimbal_lock
     ahrs_roll = atan2((q[0] * q[1] + q[2] * q[3]), 0.5 - (q[1] * q[1] + q[2] * q[2]));
     ahrs_pitch = asin(2.0 * (q[0] * q[2] - q[1] * q[3]));
-    ahrs_yaw = atan2((q[1] * q[2] + q[0] * q[3]), 0.5 - (q[2] * q[2] + q[3] * q[3]));
-    // to degrees
-    ahrs_yaw *= 180.0 / PI;
+    // ahrs_yaw = atan2((q[1] * q[2] + q[0] * q[3]), 0.5 - (q[2] * q[2] + q[3] * q[3]));
+    //  to degrees
+    // ahrs_yaw *= 180.0 / PI;
     ahrs_pitch *= 180.0 / PI;
     ahrs_roll *= 180.0 / PI;
 
     // http://www.ngdc.noaa.gov/geomag-web/#declination
     // conventional nav, yaw increases CW from North, corrected for local magnetic declination
-    ahrs_yaw = -ahrs_yaw + 11.5;
+    // ahrs_yaw = -ahrs_yaw + 11.5;
 
-    if (ahrs_yaw < 0)
-        ahrs_yaw += 360.0;
-    if (ahrs_yaw > 360.0)
-        ahrs_yaw -= 360.0;
+    // if (ahrs_yaw < 0)
+    //     ahrs_yaw += 360.0;
+    // if (ahrs_yaw > 360.0)
+    //     ahrs_yaw -= 360.0;
 }
 
 void Xpilot::processOutput(void)
@@ -355,8 +355,8 @@ void elevatorInterrupt(void)
 #if IO_DEBUG
 void Xpilot::print_imu(void)
 {
-    Serial.print("Yaw: ");
-    Serial.println(ahrs_yaw);
+    // Serial.print("Yaw: ");
+    // Serial.println(ahrs_yaw);
     Serial.print("Roll: ");
     Serial.println(ahrs_roll);
     Serial.print("Pitch: ");
