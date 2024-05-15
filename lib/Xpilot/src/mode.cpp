@@ -29,7 +29,6 @@ THE SOFTWARE.
 */
 
 #include <Xpilot.h>
-#include <PID_v1.h>
 #include "Mode.h"
 
 // Mode channel input timer variables. See setMode and ISR functions
@@ -67,8 +66,11 @@ void Mode::update()
             if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
                 return;
 
-            xpilot.rollDeflectionLim = AILERON_DEFLECTION_LIM;
-            xpilot.pitchDeflectionLim = ELEVATOR_DEFLECTION_LIM;
+            xpilot.rollDefLowLim = AILERON_DEFLECTION_LIM;
+            xpilot.rollDefHiLim = 180 - AILERON_DEFLECTION_LIM;
+
+            xpilot.pitchDefLowLim = ELEVATOR_DEFLECTION_LIM;
+            xpilot.pitchDefHiLim = 180 - ELEVATOR_DEFLECTION_LIM;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
         }
         else if (abs(modePulses - RECEIVER_MID) < INPUT_THRESHOLD)
@@ -76,8 +78,11 @@ void Mode::update()
             if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
                 return;
 
-            xpilot.rollDeflectionLim = AILERON_DEFLECTION_LIM;
-            xpilot.pitchDeflectionLim = ELEVATOR_DEFLECTION_LIM;
+            xpilot.rollDefLowLim = AILERON_DEFLECTION_LIM;
+            xpilot.rollDefHiLim = 180 - AILERON_DEFLECTION_LIM;
+
+            xpilot.pitchDefLowLim = ELEVATOR_DEFLECTION_LIM;
+            xpilot.pitchDefHiLim = 180 - ELEVATOR_DEFLECTION_LIM;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
         }
         else if (abs(modePulses - RECEIVER_HIGH) < INPUT_THRESHOLD)
@@ -85,8 +90,11 @@ void Mode::update()
             if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::PASSTHROUGH)
                 return;
 
-            xpilot.rollDeflectionLim = 0;
-            xpilot.pitchDeflectionLim = 0;
+            xpilot.rollDefLowLim = 0;
+            xpilot.rollDefHiLim = 180;
+
+            xpilot.pitchDefLowLim = 0;
+            xpilot.pitchDefHiLim = 180;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::PASSTHROUGH);
         }
     }

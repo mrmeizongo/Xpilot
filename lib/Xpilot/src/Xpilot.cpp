@@ -200,13 +200,13 @@ void Xpilot::processIMU(void)
 
 void Xpilot::processOutput(void)
 {
-    aileron_out = map(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDeflectionLim, 180 - rollDeflectionLim);
-    elevator_out = map(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDeflectionLim, 180 - pitchDeflectionLim);
+    aileron_out = map(aileronPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, rollDefLowLim, rollDefHiLim);
+    elevator_out = map(elevatorPulseWidth, RECEIVER_LOW, RECEIVER_HIGH, pitchDefLowLim, pitchDefHiLim);
 
     mode.process();
 
-    aileron_out = constrain(aileron_out, rollDeflectionLim, 180 - rollDeflectionLim);
-    elevator_out = constrain(elevator_out, pitchDeflectionLim, 180 - pitchDeflectionLim);
+    aileron_out = constrain(aileron_out, rollDefLowLim, rollDefHiLim);
+    elevator_out = constrain(elevator_out, pitchDefLowLim, pitchDefHiLim);
 
     aileronServo.write(aileron_out);
     elevatorServo.write(elevator_out);
