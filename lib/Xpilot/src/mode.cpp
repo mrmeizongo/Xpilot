@@ -114,9 +114,9 @@ void Mode::process()
         stabilizeMode();
         break;
     default:
-        // Should not get here, but if we do, default to manual mode i.e flight mode 1
+        // Should not get here, but if we do, default to passthrough mode i.e flight mode 1
 #if DEBUG
-        Serial.println("Invalid mode. Defaulting to manual.");
+        Serial.println("Invalid mode. Defaulting to passthrough.");
 #endif
         manualMode();
         break;
