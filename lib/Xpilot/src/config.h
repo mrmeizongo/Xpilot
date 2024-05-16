@@ -53,10 +53,14 @@ THE SOFTWARE.
 #define PITCH_LIMIT 45
 
 // In angles
-#define AILERON_DEFLECTION_LIM 45
-#define ELEVATOR_DEFLECTION_LIM 45
+// #define AILERON_DEFLECTION_LIM 45
+// #define ELEVATOR_DEFLECTION_LIM 45
+// #define CENTER_DEFLECTION_POS 90
 
-#define CENTER_DEFLECTION_POS 90
+// Servo
+#define SERVO_MIN_PWM 1000
+#define SERVO_MAX_PWM 2000
+#define SERVO_MID_PWM 1500
 
 // Forbid copying of object
 #define CLASS_NO_COPY(c)        \

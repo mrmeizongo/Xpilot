@@ -80,16 +80,16 @@ public:
 private:
     MPU9250 imu;
 
-    uint8_t aileronPinInt;          // Interrupt pin for aileron
-    int16_t aileron_out = 0;        // Aileron servo val
-    uint8_t rollDefLowLim = 0;      // Aileron deflection low limit
-    uint8_t rollDefHiLim = 0;       // Aileron deflection high limit
+    uint8_t aileronPinInt;   // Interrupt pin for aileron
+    int16_t aileron_out = 0; // Aileron servo val
+    // uint8_t rollDefLowLim = 0;      // Aileron deflection low limit
+    // uint8_t rollDefHiLim = 0;       // Aileron deflection high limit
     uint16_t aileronPulseWidth = 0; // Aileron values obtained from transmitter through interrupts
 
-    uint8_t elevatorPinInt;          // Interrupt pin for elevator
-    int16_t elevator_out = 0;        // Elevator servo val
-    uint8_t pitchDefLowLim = 0;      // Elevator deflection low limit
-    uint8_t pitchDefHiLim = 0;       // Elevator deflection high limit
+    uint8_t elevatorPinInt;   // Interrupt pin for elevator
+    int16_t elevator_out = 0; // Elevator servo val
+    // uint8_t pitchDefLowLim = 0;      // Elevator deflection low limit
+    // uint8_t pitchDefHiLim = 0;       // Elevator deflection high limit
     uint16_t elevatorPulseWidth = 0; // Elevator values obtained from transmitter through interrupts
 
     FLIGHT_MODE currentMode = FLIGHT_MODE::PASSTHROUGH; // PASSTHROUGH is default mode

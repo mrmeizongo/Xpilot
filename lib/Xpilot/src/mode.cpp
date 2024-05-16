@@ -35,11 +35,11 @@ THE SOFTWARE.
 volatile long modeCurrentTIme, modeStartTime, modePulses = 0;
 
 // Propportional gain. Keep number low; increase as needed
-uint8_t stabilizeKp = 2;
+uint8_t stabilizeKp = 7;
 
 // Helper functions
-bool isCentered(uint8_t stickInput);
-bool allowInput(float angle, uint8_t stickInput, uint8_t angleLimit, bool reverse = false);
+bool isCentered(int16_t stickInput);
+bool allowInput(double angle, int16_t stickInput, uint8_t angleLimit, bool reverse = false);
 
 Mode::Mode()
 {
@@ -66,11 +66,6 @@ void Mode::update()
             if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
                 return;
 
-            xpilot.rollDefLowLim = AILERON_DEFLECTION_LIM;
-            xpilot.rollDefHiLim = 180 - AILERON_DEFLECTION_LIM;
-
-            xpilot.pitchDefLowLim = ELEVATOR_DEFLECTION_LIM;
-            xpilot.pitchDefHiLim = 180 - ELEVATOR_DEFLECTION_LIM;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
         }
         else if (abs(modePulses - RECEIVER_MID) < INPUT_THRESHOLD)
@@ -78,11 +73,6 @@ void Mode::update()
             if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
                 return;
 
-            xpilot.rollDefLowLim = AILERON_DEFLECTION_LIM;
-            xpilot.rollDefHiLim = 180 - AILERON_DEFLECTION_LIM;
-
-            xpilot.pitchDefLowLim = ELEVATOR_DEFLECTION_LIM;
-            xpilot.pitchDefHiLim = 180 - ELEVATOR_DEFLECTION_LIM;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
         }
         else if (abs(modePulses - RECEIVER_HIGH) < INPUT_THRESHOLD)
@@ -90,11 +80,6 @@ void Mode::update()
             if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::PASSTHROUGH)
                 return;
 
-            xpilot.rollDefLowLim = 0;
-            xpilot.rollDefHiLim = 180;
-
-            xpilot.pitchDefLowLim = 0;
-            xpilot.pitchDefHiLim = 180;
             xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::PASSTHROUGH);
         }
     }
@@ -128,8 +113,8 @@ void Mode::process()
 void Mode::passthroughMode()
 {
     // This is to stop the fluctuation experienced in center position due to stick drift
-    xpilot.aileron_out = isCentered(xpilot.aileron_out) ? CENTER_DEFLECTION_POS : xpilot.aileron_out;
-    xpilot.elevator_out = isCentered(xpilot.elevator_out) ? CENTER_DEFLECTION_POS : xpilot.elevator_out;
+    xpilot.aileron_out = isCentered(xpilot.aileron_out) ? SERVO_MID_PWM : xpilot.aileron_out;
+    xpilot.elevator_out = isCentered(xpilot.elevator_out) ? SERVO_MID_PWM : xpilot.elevator_out;
 }
 
 // FBW mode is like manual mode
@@ -145,8 +130,8 @@ void Mode::FBWMode()
     rollStabilize *= stabilizeKp;
     pitchStabilize *= stabilizeKp;
 
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out : CENTER_DEFLECTION_POS + rollStabilize;
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : CENTER_DEFLECTION_POS - pitchStabilize;
+    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out : SERVO_MID_PWM + rollStabilize;
+    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : SERVO_MID_PWM - pitchStabilize;
 }
 
 // Roll and pitch follow stick input up to set limits
@@ -165,18 +150,18 @@ void Mode::stabilizeMode()
     rollStabilize *= stabilizeKp;
     pitchStabilize *= stabilizeKp;
 
-    xpilot.aileron_out = allowRoll ? xpilot.aileron_out + rollStabilize : CENTER_DEFLECTION_POS + rollStabilize;
-    xpilot.elevator_out = allowPitch ? xpilot.elevator_out - pitchStabilize : CENTER_DEFLECTION_POS - pitchStabilize;
+    xpilot.aileron_out = allowRoll ? xpilot.aileron_out + rollStabilize : SERVO_MID_PWM + rollStabilize;
+    xpilot.elevator_out = allowPitch ? xpilot.elevator_out - pitchStabilize : SERVO_MID_PWM - pitchStabilize;
 }
 
 // Helper functions
-bool isCentered(uint8_t stickInput)
+bool isCentered(int16_t stickInput)
 {
-    return abs(stickInput - CENTER_DEFLECTION_POS) <= 3;
+    return abs(stickInput - SERVO_MID_PWM) <= 20;
 }
 
 // Allow input based on angle
-bool allowInput(float angle, uint8_t input, uint8_t angleLimit, bool reverse /*=false*/)
+bool allowInput(double angle, int16_t input, uint8_t angleLimit, bool reverse)
 {
     // If we haven't reached the angle limit or we're not touching the input sticks, allow input
     if (abs(angle) < angleLimit)
@@ -189,9 +174,9 @@ bool allowInput(float angle, uint8_t input, uint8_t angleLimit, bool reverse /*=
     // Elevator stick input is positive when pushed up and negative when pushed down
     // Stick and servo positions are 90 when centered, increases up to limit 180 when rolling left or pitching up and decreases up to limit 0 otherwise
     if (reverse)
-        return (angle > 0 && input < CENTER_DEFLECTION_POS) || (angle < 0 && input > CENTER_DEFLECTION_POS);
+        return (angle > 0 && input < SERVO_MID_PWM) || (angle < 0 && input > SERVO_MID_PWM);
     else
-        return (angle > 0 && input > CENTER_DEFLECTION_POS) || (angle < 0 && input < CENTER_DEFLECTION_POS);
+        return (angle > 0 && input > SERVO_MID_PWM) || (angle < 0 && input < SERVO_MID_PWM);
 }
 // --------------------------------------
 
