@@ -4,27 +4,29 @@
 // Please keep this in mind as you use this piece of software.
 
 /* ============================================
-Xpilot library code is placed under the MIT license
-Copyright (c) 2024 by
-Author: Jamal Meizongo (mrmeizongo@outlook.com)
+Flight stabilization software
+    Copyright (C) 2024 Jamal Meizongo (mrmeizongo@outlook.com)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
 
@@ -80,22 +82,23 @@ public:
 private:
     MPU9250 imu;
 
-    uint8_t aileronPinInt;   // Interrupt pin for aileron
-    int16_t aileron_out = 0; // Aileron servo val
-    // uint8_t rollDefLowLim = 0;      // Aileron deflection low limit
-    // uint8_t rollDefHiLim = 0;       // Aileron deflection high limit
+    /*
+     * Aileron control variables
+     */
+    Servo aileronServo;             // Aileron servo channel
+    uint8_t aileronPinInt;          // Interrupt pin for aileron
+    int16_t aileron_out = 0;        // Aileron servo output variable
     uint16_t aileronPulseWidth = 0; // Aileron values obtained from transmitter through interrupts
 
-    uint8_t elevatorPinInt;   // Interrupt pin for elevator
-    int16_t elevator_out = 0; // Elevator servo val
-    // uint8_t pitchDefLowLim = 0;      // Elevator deflection low limit
-    // uint8_t pitchDefHiLim = 0;       // Elevator deflection high limit
+    /*
+     *   Elevator control variables
+     */
+    Servo elevatorServo;             // Elevator servo channel
+    uint8_t elevatorPinInt;          // Interrupt pin for elevator
+    int16_t elevator_out = 0;        // Elevator servo output variable
     uint16_t elevatorPulseWidth = 0; // Elevator values obtained from transmitter through interrupts
 
     FLIGHT_MODE currentMode = FLIGHT_MODE::PASSTHROUGH; // PASSTHROUGH is default mode
-
-    Servo aileronServo;  // Aileron servo channel
-    Servo elevatorServo; // Elevator servo channel
 
     // vvvvvvvvvvvvvvvvvv  VERY VERY IMPORTANT vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     // These are the previously determined offsets and scale factors for accelerometer and magnetometer, using MPU9250_cal and Magneto 1.2
