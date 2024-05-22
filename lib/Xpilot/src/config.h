@@ -38,8 +38,8 @@ Flight stabilization software
 #define AILPIN_INT 2
 #define ELEVPIN_INT 3
 #define MODEPIN_INT 4
-// #define THROTTLEPIN_INT 5
-// #define RUDDPIN_INT 6
+// #define RUDDPIN_INT 5
+// #define THROTTLEPIN_INT 6
 
 #define AILPIN_OUT 9
 #define ELEVPIN_OUT 10
