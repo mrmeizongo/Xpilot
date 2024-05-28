@@ -119,7 +119,7 @@ void Mode::FBWMode()
 
     xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out : SERVO_MID_PWM + rollStabilize;
     xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : SERVO_MID_PWM - pitchStabilize;
-    xpilot.rudder_out = isCentered(xpilot.rudder_out) ? SERVO_MID_PWM : xpilot.rudder_out;
+    xpilot.rudder_out = xpilot.rudder_out;
 }
 
 // Roll and pitch follow stick input up to set limits
