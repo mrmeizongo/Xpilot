@@ -43,7 +43,7 @@ Flight stabilization software
 
 #define AILPIN_OUT 9
 #define ELEVPIN_OUT 10
-// #define RUDDPIN_OUT 11
+#define RUDDPIN_OUT 11
 
 #define INPUT_THRESHOLD 200
 #define RECEIVER_LOW 1000
