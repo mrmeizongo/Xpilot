@@ -46,23 +46,23 @@ Mode::Mode()
 }
 
 // Update flight mode from mode switch position
-void Mode::update()
+void Mode::update(long pulseIn)
 {
-    if (abs(xpilot.modePulseWidth - RECEIVER_LOW) < INPUT_THRESHOLD)
+    if (abs(pulseIn - RECEIVER_LOW) < INPUT_THRESHOLD)
     {
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
             return;
 
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
     }
-    else if (abs(xpilot.modePulseWidth - RECEIVER_MID) < INPUT_THRESHOLD)
+    else if (abs(pulseIn - RECEIVER_MID) < INPUT_THRESHOLD)
     {
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
             return;
 
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
     }
-    else if (abs(xpilot.modePulseWidth - RECEIVER_HIGH) < INPUT_THRESHOLD)
+    else if (abs(pulseIn - RECEIVER_HIGH) < INPUT_THRESHOLD)
     {
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::PASSTHROUGH)
             return;

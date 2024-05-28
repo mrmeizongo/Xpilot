@@ -35,13 +35,10 @@ class Mode
 {
 public:
     Mode();
-    // void init();
-    void update();
+    void update(long pulseIn);
     void process();
 
 private:
-    unsigned char modePinInt; // Interrupt pin to read mode
-
     void passthroughMode();
     void FBWMode();
     void stabilizeMode();

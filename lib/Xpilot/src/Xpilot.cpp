@@ -162,9 +162,15 @@ void Xpilot::loop(void)
 
 #if LOOP_DEBUG
     loopLastMs = millis();
+    Serial.print("Loop time: ");
+    long loopMillis = loopLastMs - nowMs;
+    Serial.print(loopMillis);
+    Serial.println("ms");
     Serial.print("Loop rate: ");
-    Serial.print((double)(1000 / (loopLastMs - nowMs)));
+    loopMillis = loopMillis <= 0 ? 1 : loopMillis; // To prevent division by 0
+    Serial.print(1000 / loopMillis);
     Serial.println("Hz");
+    Serial.println();
 #endif
 }
 
@@ -173,7 +179,7 @@ void Xpilot::processInput(void)
     uint8_t oldSREG = SREG;
     cli();
     if (modePulses >= RECEIVER_LOW && modePulses <= RECEIVER_HIGH)
-        modePulseWidth = modePulses;
+        mode.update(modePulses);
 
     if (aileronPulses >= RECEIVER_LOW && aileronPulses <= RECEIVER_HIGH)
         aileronPulseWidth = aileronPulses;
@@ -184,7 +190,6 @@ void Xpilot::processInput(void)
     if (rudderPulses >= RECEIVER_LOW && rudderPulses <= RECEIVER_HIGH)
         rudderPulseWidth = rudderPulses;
 
-    mode.update();
     SREG = oldSREG;
 }
 

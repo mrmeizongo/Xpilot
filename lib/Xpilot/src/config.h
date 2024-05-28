@@ -66,7 +66,7 @@ Flight stabilization software
 // Servo PWM range
 // Edit this to suit your servo PWN values
 // You can find these values in the datasheet that comes with your servo
-// These values are conservative and will work for most servos
+// These values are conservative and should work for most servos
 #define SERVO_MIN_PWM 1000
 #define SERVO_MAX_PWM 2000
 #define SERVO_MID_PWM 1500
@@ -78,6 +78,6 @@ Flight stabilization software
 
 // Set to 1 to enable the respective debugging, zero otherwise
 // To enable any of the XX_DEBUG, set DEBUG to 1 first
-#define DEBUG 1
+#define DEBUG 0
 #define LOOP_DEBUG 0
-#define IO_DEBUG 1
+#define IO_DEBUG 0
