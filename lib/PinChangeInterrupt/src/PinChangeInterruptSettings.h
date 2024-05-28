@@ -90,7 +90,7 @@ That is done by the macros. */
 #define PCINT_ALINKAGE
 
 // force compile all enabled port ISRs (with .a linkage)
-// #define PCINT_COMPILE_ENABLED_ISR
+#define PCINT_COMPILE_ENABLED_ISR
 
 #endif
 
@@ -106,17 +106,20 @@ Port1 has I2C on higher pins, ordering is fine
 Port2 has USART and Pin Interrupt on lower pins,
 move the priority down
 Its more likely the user will use pin 4-7
+
+NOTE: Priority rearranged because we are using pins 2-5
+Pin 5 has higher priority as that is the mode pin
 */
 #if !defined(PCINT_CALLBACK_PORT2)
 #define PCINT_CALLBACK_PORT2                     \
-    PCINT_CALLBACK(4, 20);                       \
     PCINT_CALLBACK(5, 21);                       \
+    PCINT_CALLBACK(2, 18); /* Pin Interrupt 0 */ \
+    PCINT_CALLBACK(3, 19); /* Pin Interrupt 1 */ \
+    PCINT_CALLBACK(4, 20);                       \
     PCINT_CALLBACK(6, 22);                       \
     PCINT_CALLBACK(7, 23);                       \
     PCINT_CALLBACK(0, 16); /* USART RX */        \
-    PCINT_CALLBACK(1, 17); /* USART TX */        \
-    PCINT_CALLBACK(2, 18); /* Pin Interrupt 0 */ \
-    PCINT_CALLBACK(3, 19); /* Pin Interrupt 1 */
+    PCINT_CALLBACK(1, 17); /* USART TX */
 #endif
 
 // deactivate crystal and reset pins by default
