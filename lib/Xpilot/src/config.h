@@ -37,8 +37,8 @@ Flight stabilization software
 // Mode switch uses pin change interrupts
 #define AILPIN_INT 2
 #define ELEVPIN_INT 3
-#define MODEPIN_INT 4
-// #define RUDDPIN_INT 5
+#define RUDDPIN_INT 4
+#define MODEPIN_INT 5
 // #define THROTTLEPIN_INT 6
 
 #define AILPIN_OUT 9
@@ -66,6 +66,6 @@ Flight stabilization software
 
 // Set to 1 to enable the respective debugging, zero otherwise
 // To enable any of the XX_DEBUG, set DEBUG to 1 first
-#define DEBUG 0
+#define DEBUG 1
 #define LOOP_DEBUG 0
-#define IO_DEBUG 0
+#define IO_DEBUG 1

@@ -55,7 +55,7 @@ void Mode::init()
     // Mode channel should be set up correctly on the tx & rx
     pinMode(modePinInt, INPUT_PULLUP);
     PCICR |= B00000100;
-    PCMSK2 |= B00010000;
+    PCMSK2 |= B00100000;
 }
 
 // Update flight mode from mode switch position
