@@ -33,9 +33,6 @@ Flight stabilization software
 #include <Xpilot.h>
 #include "Mode.h"
 
-// Mode channel input timer variables. See setMode and ISR functions
-volatile long modeCurrentTIme, modeStartTime, modePulses = 0;
-
 // Propportional gain. Keep number low; increase as needed
 uint8_t stabilizeKp = 8;
 
@@ -45,45 +42,32 @@ bool allowInput(double angle, int16_t stickInput, uint8_t angleLimit, bool rever
 
 Mode::Mode()
 {
-    modePinInt = MODEPIN_INT;
-}
-
-void Mode::init()
-{
-    // Mode setup
-    // Mode pin uses pin change interrupts to read tx channel data
-    // Mode channel should be set up correctly on the tx & rx
-    pinMode(modePinInt, INPUT_PULLUP);
-    PCICR |= B00000100;
-    PCMSK2 |= B00100000;
+    // Empty for now
 }
 
 // Update flight mode from mode switch position
 void Mode::update()
 {
-    if (modePulses >= RECEIVER_LOW && modePulses <= RECEIVER_HIGH)
+    if (abs(xpilot.modePulseWidth - RECEIVER_LOW) < INPUT_THRESHOLD)
     {
-        if (abs(modePulses - RECEIVER_LOW) < INPUT_THRESHOLD)
-        {
-            if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
-                return;
+        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
+            return;
 
-            xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
-        }
-        else if (abs(modePulses - RECEIVER_MID) < INPUT_THRESHOLD)
-        {
-            if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
-                return;
+        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
+    }
+    else if (abs(xpilot.modePulseWidth - RECEIVER_MID) < INPUT_THRESHOLD)
+    {
+        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
+            return;
 
-            xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
-        }
-        else if (abs(modePulses - RECEIVER_HIGH) < INPUT_THRESHOLD)
-        {
-            if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::PASSTHROUGH)
-                return;
+        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
+    }
+    else if (abs(xpilot.modePulseWidth - RECEIVER_HIGH) < INPUT_THRESHOLD)
+    {
+        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::PASSTHROUGH)
+            return;
 
-            xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::PASSTHROUGH);
-        }
+        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::PASSTHROUGH);
     }
 }
 
@@ -117,6 +101,7 @@ void Mode::passthroughMode()
     // This is to stop the fluctuation experienced in center position due to stick drift
     xpilot.aileron_out = isCentered(xpilot.aileron_out) ? SERVO_MID_PWM : xpilot.aileron_out;
     xpilot.elevator_out = isCentered(xpilot.elevator_out) ? SERVO_MID_PWM : xpilot.elevator_out;
+    xpilot.rudder_out = isCentered(xpilot.rudder_out) ? SERVO_MID_PWM : xpilot.rudder_out;
 }
 
 // FBW mode is like manual mode
@@ -134,6 +119,7 @@ void Mode::FBWMode()
 
     xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out : SERVO_MID_PWM + rollStabilize;
     xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : SERVO_MID_PWM - pitchStabilize;
+    xpilot.rudder_out = isCentered(xpilot.rudder_out) ? SERVO_MID_PWM : xpilot.rudder_out;
 }
 
 // Roll and pitch follow stick input up to set limits
@@ -154,6 +140,7 @@ void Mode::stabilizeMode()
 
     xpilot.aileron_out = allowRoll ? xpilot.aileron_out + rollStabilize : SERVO_MID_PWM + rollStabilize;
     xpilot.elevator_out = allowPitch ? xpilot.elevator_out - pitchStabilize : SERVO_MID_PWM - pitchStabilize;
+    xpilot.rudder_out = isCentered(xpilot.rudder_out) ? SERVO_MID_PWM : xpilot.rudder_out;
 }
 
 // Helper functions
@@ -179,18 +166,6 @@ bool allowInput(double angle, int16_t input, uint8_t angleLimit, bool reverse)
         return (angle > 0 && input < SERVO_MID_PWM) || (angle < 0 && input > SERVO_MID_PWM);
     else
         return (angle > 0 && input > SERVO_MID_PWM) || (angle < 0 && input < SERVO_MID_PWM);
-}
-// --------------------------------------
-
-// Pin change interrupt function
-ISR(PCINT2_vect)
-{
-    modeCurrentTIme = micros();
-    if (modeCurrentTIme > modeStartTime)
-    {
-        modePulses = modeCurrentTIme - modeStartTime;
-        modeStartTime = modeCurrentTIme;
-    }
 }
 // --------------------------------------
 

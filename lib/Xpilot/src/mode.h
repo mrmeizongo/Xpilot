@@ -35,7 +35,7 @@ class Mode
 {
 public:
     Mode();
-    void init();
+    // void init();
     void update();
     void process();
 

@@ -32,6 +32,7 @@ Flight stabilization software
 
 #include "Xpilot.h"
 #include "Mode.h"
+#include <PinChangeInterrupt.h>
 #include <Utils.cpp>
 
 // These are the free parameters in the Mahony filter and fusion scheme,
@@ -59,23 +60,33 @@ unsigned long loopLastMs = 0;
 
 // Aileron variables
 volatile long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
-void aileronInterrupt(void);
 
 // Elevator variables
 volatile long elevatorCurrentTIme, elevatorStartTime, elevatorPulses = 0;
-void elevatorInterrupt(void);
+
+// Rudder variables
+volatile long rudderCurrentTIme, rudderStartTime, rudderPulses = 0;
+
+// Mode variables
+volatile long modeCurrentTime, modeStartTime, modePulses = 0;
 // -------------------------
 
 Xpilot::Xpilot(void)
 {
-    aileronPinInt = AILPIN_INT;
-    elevatorPinInt = ELEVPIN_INT;
+    aileronInputPin = AILPIN_INPUT;
+    elevatorInputPin = ELEVPIN_INPUT;
+    rudderInputPin = RUDDPIN_INPUT;
+    modeInputPin = MODEPIN_INPUT;
+
+    aileronOutputPin = AILPIN_OUTPUT;
+    elevatorOutputPin = ELEVPIN_OUTPUT;
+    rudderOutputPin = RUDDPIN_OUTPUT;
 }
 
 void Xpilot::setup(void)
 {
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
-#error "Ensure interrupt pins for aileron and elevator are defined"
+#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT) || !defined(MODEPIN_INT)
+#error "Ensure interrupt pins for aileron, elevator, rudder and mode are defined"
 #endif
 
     Wire.begin();
@@ -99,18 +110,25 @@ void Xpilot::setup(void)
         delay(1000);
     }
 
-    // Both ailerons and elevators use hardware interrupts for accuracy and also due to pin limitations on the atmega328p chip
+    // All input pins use pin change interrupts
     // Aileron setup
-    aileronServo.attach(AILPIN_OUT);
-    pinMode(aileronPinInt, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(aileronPinInt), aileronInterrupt, CHANGE);
+    aileronServo.attach(aileronOutputPin);
+    pinMode(aileronInputPin, INPUT_PULLUP);
+    attachPinChangeInterrupt(AILPIN_INT, CHANGE);
 
     // Elevator setup
-    elevatorServo.attach(ELEVPIN_OUT);
-    pinMode(elevatorPinInt, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(elevatorPinInt), elevatorInterrupt, CHANGE);
+    elevatorServo.attach(elevatorOutputPin);
+    pinMode(elevatorInputPin, INPUT_PULLUP);
+    attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
 
-    mode.init();
+    // Rudder setup
+    rudderServo.attach(rudderOutputPin);
+    pinMode(rudderInputPin, INPUT_PULLUP);
+    attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
+
+    // Mode setup
+    pinMode(modeInputPin, INPUT_PULLUP);
+    attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
 }
 
 // Main execution xpilot execution loop
@@ -154,11 +172,17 @@ void Xpilot::processInput(void)
 {
     uint8_t oldSREG = SREG;
     cli();
+    if (modePulses >= RECEIVER_LOW && modePulses <= RECEIVER_HIGH)
+        modePulseWidth = modePulses;
+
     if (aileronPulses >= RECEIVER_LOW && aileronPulses <= RECEIVER_HIGH)
         aileronPulseWidth = aileronPulses;
 
     if (elevatorPulses >= RECEIVER_LOW && elevatorPulses <= RECEIVER_HIGH)
         elevatorPulseWidth = elevatorPulses;
+
+    if (rudderPulses >= RECEIVER_LOW && rudderPulses <= RECEIVER_HIGH)
+        rudderPulseWidth = rudderPulses;
 
     mode.update();
     SREG = oldSREG;
@@ -185,34 +209,37 @@ void Xpilot::processIMU(void)
     // MALFUNCTION for certain combinations of angles! See https://en.wikipedia.org/wiki/Gimbal_lock
     ahrs_roll = atan2((q[0] * q[1] + q[2] * q[3]), 0.5 - (q[1] * q[1] + q[2] * q[2]));
     ahrs_pitch = asin(2.0 * (q[0] * q[2] - q[1] * q[3]));
-    // ahrs_yaw = atan2((q[1] * q[2] + q[0] * q[3]), 0.5 - (q[2] * q[2] + q[3] * q[3]));
+    ahrs_yaw = atan2((q[1] * q[2] + q[0] * q[3]), 0.5 - (q[2] * q[2] + q[3] * q[3]));
     //  to degrees
-    // ahrs_yaw *= 180.0 / PI;
+    ahrs_yaw *= 180.0 / PI;
     ahrs_pitch *= 180.0 / PI;
     ahrs_roll *= 180.0 / PI;
 
     // http://www.ngdc.noaa.gov/geomag-web/#declination
     // conventional nav, yaw increases CW from North, corrected for local magnetic declination
-    // ahrs_yaw = -ahrs_yaw + 11.5;
+    ahrs_yaw = -ahrs_yaw + 11.5;
 
-    // if (ahrs_yaw < 0)
-    //     ahrs_yaw += 360.0;
-    // if (ahrs_yaw > 360.0)
-    //     ahrs_yaw -= 360.0;
+    if (ahrs_yaw < 0)
+        ahrs_yaw += 360.0;
+    if (ahrs_yaw > 360.0)
+        ahrs_yaw -= 360.0;
 }
 
 void Xpilot::processOutput(void)
 {
     aileron_out = constrain(aileronPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM);
     elevator_out = constrain(elevatorPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    rudder_out = constrain(rudderPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM);
 
     mode.process();
 
     aileron_out = constrain(aileron_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
     elevator_out = constrain(elevator_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    rudder_out = constrain(rudderPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM);
 
     aileronServo.writeMicroseconds(aileron_out);
     elevatorServo.writeMicroseconds(elevator_out);
+    rudderServo.writeMicroseconds(rudder_out);
 }
 
 void Xpilot::get_imu_scaled(void)
@@ -332,8 +359,9 @@ void Xpilot::mahoganyQuaternionUpdate(double ax, double ay, double az, double gx
     q[3] = q4 * norm;
 }
 
-// Interrupt functions
-void aileronInterrupt(void)
+// ISR
+
+void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
     aileronCurrentTime = micros();
     if (aileronCurrentTime > aileronStartTime)
@@ -343,13 +371,33 @@ void aileronInterrupt(void)
     }
 }
 
-void elevatorInterrupt(void)
+void PinChangeInterruptEvent(ELEVPIN_INT)(void)
 {
     elevatorCurrentTIme = micros();
     if (elevatorCurrentTIme > elevatorStartTime)
     {
         elevatorPulses = elevatorCurrentTIme - elevatorStartTime;
         elevatorStartTime = elevatorCurrentTIme;
+    }
+}
+
+void PinChangeInterruptEvent(RUDDPIN_INT)(void)
+{
+    rudderCurrentTIme = micros();
+    if (rudderCurrentTIme > rudderStartTime)
+    {
+        rudderPulses = rudderCurrentTIme - rudderStartTime;
+        rudderStartTime = rudderCurrentTIme;
+    }
+}
+
+void PinChangeInterruptEvent(MODEPIN_INT)(void)
+{
+    modeCurrentTime = micros();
+    if (modeCurrentTime > modeStartTime)
+    {
+        modePulses = modeCurrentTime - modeStartTime;
+        modeStartTime = modeCurrentTime;
     }
 }
 // ----------------------------
@@ -364,6 +412,8 @@ void Xpilot::print_imu(void)
     Serial.println(ahrs_roll);
     Serial.print("Pitch: ");
     Serial.println(ahrs_pitch);
+    Serial.print("Yaw: ");
+    Serial.println(ahrs_yaw);
     Serial.println();
 }
 
@@ -373,6 +423,8 @@ void Xpilot::print_input(void)
     Serial.println(elevatorPulseWidth);
     Serial.print("Aileron Pulse: ");
     Serial.println(aileronPulseWidth);
+    Serial.print("Rudder Pulse: ");
+    Serial.println(rudderPulseWidth);
     Serial.print("Flight Mode: ");
     Serial.println((int)currentMode);
     Serial.println();
@@ -380,10 +432,12 @@ void Xpilot::print_input(void)
 
 void Xpilot::print_output(void)
 {
-    Serial.print("Elevator: ");
+    Serial.print("Elevator Servo: ");
     Serial.println(elevator_out);
-    Serial.print("Aileron: ");
+    Serial.print("Aileron Servo: ");
     Serial.println(aileron_out);
+    Serial.print("Rudder Servo: ");
+    Serial.println(rudder_out);
     Serial.println();
 }
 #endif

@@ -86,7 +86,8 @@ private:
      * Aileron control variables
      */
     Servo aileronServo;             // Aileron servo channel
-    uint8_t aileronPinInt;          // Interrupt pin for aileron
+    uint8_t aileronInputPin;        // Input pin for aileron
+    uint8_t aileronOutputPin;       // Output pin for aileron
     int16_t aileron_out = 0;        // Aileron servo output variable
     uint16_t aileronPulseWidth = 0; // Aileron values obtained from transmitter through interrupts
 
@@ -94,9 +95,25 @@ private:
      *   Elevator control variables
      */
     Servo elevatorServo;             // Elevator servo channel
-    uint8_t elevatorPinInt;          // Interrupt pin for elevator
+    uint8_t elevatorInputPin;        // Intput pin for elevator
+    uint8_t elevatorOutputPin;       // Output pin for elevator
     int16_t elevator_out = 0;        // Elevator servo output variable
     uint16_t elevatorPulseWidth = 0; // Elevator values obtained from transmitter through interrupts
+
+    /*
+     *   Rudder control variables
+     */
+    Servo rudderServo;             // Rudder servo channel
+    uint8_t rudderInputPin;        // Input pin for rudder
+    uint8_t rudderOutputPin;       // Output pin for rudder
+    int16_t rudder_out = 0;        // Rudder servo output variable
+    uint16_t rudderPulseWidth = 0; // ElevatRudderor values obtained from transmitter through interrupts
+
+    /*
+     * Mode control variables
+     */
+    uint8_t modeInputPin;        // Input pin for mode
+    uint16_t modePulseWidth = 0; // Mode values obtained from transmitter through interrupts
 
     FLIGHT_MODE currentMode = FLIGHT_MODE::PASSTHROUGH; // PASSTHROUGH is default mode
 
@@ -128,7 +145,7 @@ private:
     double q[4] = {1.0, 0.0, 0.0, 0.0};
 
     // double ahrs_yaw;
-    double ahrs_pitch, ahrs_roll = 0; // Euler angle output
+    double ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Euler angle output
 };
 
 extern Xpilot xpilot;
