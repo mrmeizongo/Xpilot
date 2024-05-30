@@ -31,14 +31,20 @@ Flight stabilization software
 */
 #pragma once
 
+#include <Xpilot.h>
+#include <PID.h>
+
 class Mode
 {
 public:
     Mode();
-    void update(long pulseIn);
+    void update(long);
     void process();
 
 private:
+    PID rollPID;
+    PID pitchPID;
+    PID yawPID;
     void passthroughMode();
     void FBWMode();
     void stabilizeMode();

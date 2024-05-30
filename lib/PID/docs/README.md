@@ -1,11 +1,7 @@
-// 03/13/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
-// This and other library code in this repository
-// are partial releases and work is still in progress.
-// Please keep this in mind as you use this piece of software.
+## Simple PID Controller
 
-/* ============================================
-Flight stabilization software
-    Copyright (C) 2024 Jamal Meizongo (mrmeizongo@outlook.com)
+Simple PID controller for use in Xpilot flight stabilization software
+Copyright (C) 2024 Jamal Meizongo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,18 +23,3 @@ Flight stabilization software
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-===============================================
-*/
-
-#include <Arduino.h>
-
-#define gScale (250. / 32768.0) * (PI / 180.0) // gyro default 250 LSB per d/s -> rad/s
-#define vectorDot(a, b) (((a[0]) * (b[0])) + ((a[1]) * (b[1])) + ((a[2]) * (b[2])))
-
-void vectorNormalize(double a[3])
-{
-    float mag = sqrt(vectorDot(a, a));
-    a[0] /= mag;
-    a[1] /= mag;
-    a[2] /= mag;
-}

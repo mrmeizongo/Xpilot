@@ -31,15 +31,8 @@ Flight stabilization software
 */
 
 #include "Xpilot.h"
-#include "Mode.h"
 #include <PinChangeInterrupt.h>
-#include <Utils.cpp>
-
-// These are the free parameters in the Mahony filter and fusion scheme,
-// Kp for proportional feedback, Ki for integral.
-// With the MPU-9250, angles start oscillating at Kp=40. Ki does not seem to help and is not required.
-#define imuKp 25.0
-#define imuKi 0.0
+#include "Mode.h"
 
 // Globals for AHRS loop timing
 unsigned long nowUs = 0, lastUs = 0; // micros() timers
@@ -111,26 +104,18 @@ void Xpilot::setup(void)
         }
     }
 
-#if IO_DEBUG
+#if DEBUG
     Serial.println("Accel Gyro calibration will start in 5sec.");
     Serial.println("Please leave the device still on the flat plane.");
     imu.verbose(true);
     delay(3000);
     // Calibrate IMU accelerometer and gyro
     imu.calibrateAccelGyro();
+    Serial.println("Calibration complete.");
+    print_calibration();
 #else
     imu.verbose(false);
     imu.calibrateAccelGyro();
-
-    // Flash onboard LED 3 times to signify calibration completed
-    pinMode(LED_BUILTIN, OUTPUT);
-    for (uint8_t i = 0; i < 3; i++)
-    {
-        digitalWrite(LED_BUILTIN, HIGH);
-        delay(500);
-        digitalWrite(LED_BUILTIN, LOW);
-        delay(500);
-    }
 #endif
 
     // All input pins use pin change interrupts
@@ -200,17 +185,18 @@ void Xpilot::loop(void)
 void Xpilot::processInput(void)
 {
     uint8_t oldSREG = SREG;
+
     cli();
-    if (modePulses >= RECEIVER_LOW && modePulses <= RECEIVER_HIGH)
+    if (modePulses >= SERVO_MIN_PWM && modePulses <= SERVO_MAX_PWM)
         mode.update(modePulses);
 
-    if (aileronPulses >= RECEIVER_LOW && aileronPulses <= RECEIVER_HIGH)
+    if (aileronPulses >= SERVO_MIN_PWM && aileronPulses <= SERVO_MAX_PWM)
         aileronPulseWidth = aileronPulses;
 
-    if (elevatorPulses >= RECEIVER_LOW && elevatorPulses <= RECEIVER_HIGH)
+    if (elevatorPulses >= SERVO_MIN_PWM && elevatorPulses <= SERVO_MAX_PWM)
         elevatorPulseWidth = elevatorPulses;
 
-    if (rudderPulses >= RECEIVER_LOW && rudderPulses <= RECEIVER_HIGH)
+    if (rudderPulses >= SERVO_MIN_PWM && rudderPulses <= SERVO_MAX_PWM)
         rudderPulseWidth = rudderPulses;
 
     SREG = oldSREG;
@@ -321,6 +307,39 @@ void Xpilot::print_output(void)
     Serial.println(aileron_out);
     Serial.print("Rudder Servo: ");
     Serial.println(rudder_out);
+    Serial.println();
+}
+
+void Xpilot::print_calibration(void)
+{
+    Serial.println("< calibration parameters >");
+    Serial.println("accel bias [g]: ");
+    Serial.print(imu.getAccBiasX() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
+    Serial.print(", ");
+    Serial.print(imu.getAccBiasY() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
+    Serial.print(", ");
+    Serial.print(imu.getAccBiasZ() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
+    Serial.println();
+    Serial.println("gyro bias [deg/s]: ");
+    Serial.print(imu.getGyroBiasX() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
+    Serial.print(", ");
+    Serial.print(imu.getGyroBiasY() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
+    Serial.print(", ");
+    Serial.print(imu.getGyroBiasZ() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
+    Serial.println();
+    Serial.println("mag bias [mG]: ");
+    Serial.print(imu.getMagBiasX());
+    Serial.print(", ");
+    Serial.print(imu.getMagBiasY());
+    Serial.print(", ");
+    Serial.print(imu.getMagBiasZ());
+    Serial.println();
+    Serial.println("mag scale []: ");
+    Serial.print(imu.getMagScaleX());
+    Serial.print(", ");
+    Serial.print(imu.getMagScaleY());
+    Serial.print(", ");
+    Serial.print(imu.getMagScaleZ());
     Serial.println();
 }
 #endif

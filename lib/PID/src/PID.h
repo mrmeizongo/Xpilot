@@ -1,12 +1,5 @@
-// 03/13/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
-// This and other library code in this repository
-// are partial releases and work is still in progress.
-// Please keep this in mind as you use this piece of software.
-
 /* ============================================
-Flight stabilization software
-    Copyright (C) 2024 Jamal Meizongo (mrmeizongo@outlook.com)
-
+Copyright (C) 2024 Jamal Meizongo
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -30,15 +23,21 @@ Flight stabilization software
 ===============================================
 */
 
-#include <Arduino.h>
-#include <Xpilot.h>
+#pragma once
 
-void setup()
+class PID
 {
-    xpilot.setup();
-}
+public:
+    PID();                                // Constructor
+    void Initialize(float, float, float); // Initialize the PID controller
+    void ResetPID(void);                  // Reset PID controller
+    float Compute(float, double);         // Generate the PID output to be added to the servo
 
-void loop()
-{
-    xpilot.loop();
-}
+private:
+    float Kp;
+    float Kd;
+    float Ki;
+
+    float integral;
+    float previousError;
+};

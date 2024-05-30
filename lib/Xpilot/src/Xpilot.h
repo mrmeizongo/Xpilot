@@ -42,9 +42,6 @@ class Xpilot
 public:
     Xpilot(void);
 
-    // Prevent this class from being copied
-    CLASS_NO_COPY(Xpilot);
-
     enum class FLIGHT_MODE : uint8_t
     {
         PASSTHROUGH = 1,
@@ -54,6 +51,7 @@ public:
 
     friend class Mode; // Flight mode controller
 
+    // Only functions called from the Arduino setup and loop functions
     void setup(void);
     void loop(void);
 
@@ -75,6 +73,7 @@ public:
     void print_imu(void);
     void print_input(void);
     void print_output(void);
+    void print_calibration(void);
 #endif
 
 private:

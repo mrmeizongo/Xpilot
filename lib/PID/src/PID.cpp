@@ -1,11 +1,4 @@
-// 03/13/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
-// This and other library code in this repository
-// are partial releases and work is still in progress.
-// Please keep this in mind as you use this piece of software.
-
 /* ============================================
-Flight stabilization software
-    Copyright (C) 2024 Jamal Meizongo (mrmeizongo@outlook.com)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,15 +23,28 @@ Flight stabilization software
 ===============================================
 */
 
-#include <Arduino.h>
-#include <Xpilot.h>
+#include "PID.h"
 
-void setup()
+PID::PID() {}
+
+void PID::Initialize(float _Kp, float _Ki, float _Kd)
 {
-    xpilot.setup();
+    Kp = _Kp;
+    Ki = _Ki;
+    Kd = _Kd;
+    ResetPID();
 }
 
-void loop()
+void PID::ResetPID(void)
 {
-    xpilot.loop();
+    previousError = 0;
+    integral = 0;
+}
+
+float PID::Compute(float errorInput, double dt)
+{
+    integral += errorInput * dt;
+    double derivative = (errorInput - previousError) / dt;
+    previousError = errorInput;
+    return (float)((Kp * errorInput) + (Ki * integral) + (Kd * derivative));
 }

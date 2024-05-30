@@ -53,12 +53,6 @@ Flight stabilization software
 #define RUDDPIN_INT 20
 #define MODEPIN_INT 21
 
-// Transmitter/Receiver values
-#define INPUT_THRESHOLD 200
-#define RECEIVER_LOW 1000
-#define RECEIVER_MID 1500
-#define RECEIVER_HIGH 2000
-
 // In degree radians
 #define ROLL_LIMIT 45
 #define PITCH_LIMIT 45
@@ -71,13 +65,12 @@ Flight stabilization software
 #define SERVO_MAX_PWM 2000
 #define SERVO_MID_PWM 1500
 
-// Forbid copying of object
-#define CLASS_NO_COPY(c)        \
-    c(const c &other) = delete; \
-    c &operator=(const c &) = delete;
+// Transmitter/Receiver values
+#define INPUT_THRESHOLD 200 // Used in to separate the 3 flight modes input threshold
 
 // Set to 1 to enable the respective debugging, zero otherwise
 // To enable any of the XX_DEBUG, set DEBUG to 1 first
-#define DEBUG 1
+// It is wise to enable only one debug at a time (i.e. LOOP_DEBUG or IO_DEBUG) due to the atmega328p memory constraints
+#define DEBUG 0
 #define LOOP_DEBUG 0
-#define IO_DEBUG 1
+#define IO_DEBUG 0
