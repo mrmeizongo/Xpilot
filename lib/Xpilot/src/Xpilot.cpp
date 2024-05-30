@@ -99,16 +99,39 @@ void Xpilot::setup(void)
     }
 #endif
 
-    // initialize device
-    imu.initialize();
-    // test mpu for connection after initialization
-    while (!imu.testConnection())
-    {
+    // Initialize MPU
+    if (!imu.setup(0x68))
+    { // change to your own address
+        while (1)
+        {
 #if IO_DEBUG
-        Serial.println("No MPU found! Check connection");
+            Serial.println("No MPU found! Check connection");
 #endif
-        delay(1000);
+            delay(1000);
+        }
     }
+
+#if IO_DEBUG
+    Serial.println("Accel Gyro calibration will start in 5sec.");
+    Serial.println("Please leave the device still on the flat plane.");
+    imu.verbose(true);
+    delay(3000);
+    // Calibrate IMU accelerometer and gyro
+    imu.calibrateAccelGyro();
+#else
+    imu.verbose(false);
+    imu.calibrateAccelGyro();
+
+    // Flash onboard LED 3 times to signify calibration completed
+    pinMode(LED_BUILTIN, OUTPUT);
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(500);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(500);
+    }
+#endif
 
     // All input pins use pin change interrupts
     // Aileron setup
@@ -195,39 +218,12 @@ void Xpilot::processInput(void)
 
 void Xpilot::processIMU(void)
 {
-    nowUs = micros();
-    get_imu_scaled();
-    dt = (nowUs - lastUs) * 1e-6; // seconds since last update
-    lastUs = nowUs;
-
-    //  Standard orientation: X North, Y West, Z Up
-    //  Tait-Bryan angles as well as Euler angles are
-    // non-commutative; that is, the get the correct orientation the rotations
-    // must be applied in the correct order which for this configuration is yaw,
-    // pitch, and then roll.
-    // http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-    // which has additional links.
-    mahoganyQuaternionUpdate(Axyz[0], Axyz[1], Axyz[2], Gxyz[0], Gxyz[1], Gxyz[2], Mxyz[1], Mxyz[0], -Mxyz[2], dt);
-
-    // Strictly valid only for approximately level movement
-    // WARNING: This angular conversion is for DEMONSTRATION PURPOSES ONLY. It WILL
-    // MALFUNCTION for certain combinations of angles! See https://en.wikipedia.org/wiki/Gimbal_lock
-    ahrs_roll = atan2((q[0] * q[1] + q[2] * q[3]), 0.5 - (q[1] * q[1] + q[2] * q[2]));
-    ahrs_pitch = asin(2.0 * (q[0] * q[2] - q[1] * q[3]));
-    ahrs_yaw = atan2((q[1] * q[2] + q[0] * q[3]), 0.5 - (q[2] * q[2] + q[3] * q[3]));
-    //  to degrees
-    ahrs_yaw *= 180.0 / PI;
-    ahrs_pitch *= 180.0 / PI;
-    ahrs_roll *= 180.0 / PI;
-
-    // http://www.ngdc.noaa.gov/geomag-web/#declination
-    // conventional nav, yaw increases CW from North, corrected for local magnetic declination
-    ahrs_yaw = -ahrs_yaw + 11.5;
-
-    if (ahrs_yaw < 0)
-        ahrs_yaw += 360.0;
-    if (ahrs_yaw > 360.0)
-        ahrs_yaw -= 360.0;
+    if (imu.update())
+    {
+        ahrs_roll = imu.getRoll();
+        ahrs_pitch = imu.getPitch();
+        ahrs_yaw = imu.getYaw();
+    }
 }
 
 void Xpilot::processOutput(void)
@@ -247,125 +243,7 @@ void Xpilot::processOutput(void)
     rudderServo.writeMicroseconds(rudder_out);
 }
 
-void Xpilot::get_imu_scaled(void)
-{
-    double temp[3];
-    int i;
-    imu.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
-
-    // 250 LSB(d/s) default to radians/s
-    Gxyz[0] = ((double)gx - G_off[0]) * gScale;
-    Gxyz[1] = ((double)gy - G_off[1]) * gScale;
-    Gxyz[2] = ((double)gz - G_off[2]) * gScale;
-
-    Axyz[0] = (double)ax;
-    Axyz[1] = (double)ay;
-    Axyz[2] = (double)az;
-
-    // apply offsets (bias) and scale factors from Magneto
-    for (i = 0; i < 3; i++)
-        temp[i] = (Axyz[i] - A_B[i]);
-
-    Axyz[0] = A_Ainv[0][0] * temp[0] + A_Ainv[0][1] * temp[1] + A_Ainv[0][2] * temp[2];
-    Axyz[1] = A_Ainv[1][0] * temp[0] + A_Ainv[1][1] * temp[1] + A_Ainv[1][2] * temp[2];
-    Axyz[2] = A_Ainv[2][0] * temp[0] + A_Ainv[2][1] * temp[1] + A_Ainv[2][2] * temp[2];
-    vectorNormalize(Axyz);
-
-    Mxyz[0] = (double)mx;
-    Mxyz[1] = (double)my;
-    Mxyz[2] = (double)mz;
-
-    for (i = 0; i < 3; i++)
-        temp[i] = (Mxyz[i] - M_B[i]);
-    Mxyz[0] = M_Ainv[0][0] * temp[0] + M_Ainv[0][1] * temp[1] + M_Ainv[0][2] * temp[2];
-    Mxyz[1] = M_Ainv[1][0] * temp[0] + M_Ainv[1][1] * temp[1] + M_Ainv[1][2] * temp[2];
-    Mxyz[2] = M_Ainv[2][0] * temp[0] + M_Ainv[2][1] * temp[1] + M_Ainv[2][2] * temp[2];
-    vectorNormalize(Mxyz);
-}
-
-// Mahogany scheme uses proportional and integral filtering on
-// the error between estimated reference vectors and measured ones.
-void Xpilot::mahoganyQuaternionUpdate(double ax, double ay, double az, double gx, double gy, double gz, double mx, double my, double mz, double deltat)
-{
-    // Vector to hold integral error for Mahogany method
-    static double eInt[3] = {0.0, 0.0, 0.0};
-    // short name local variable for readability
-    double q1 = q[0], q2 = q[1], q3 = q[2], q4 = q[3];
-    double norm;
-    double hx, hy, bx, bz;
-    double vx, vy, vz, wx, wy, wz;
-    double ex, ey, ez;
-
-    // Auxiliary variables to avoid repeated arithmetic
-    double q1q1 = q1 * q1;
-    double q1q2 = q1 * q2;
-    double q1q3 = q1 * q3;
-    double q1q4 = q1 * q4;
-    double q2q2 = q2 * q2;
-    double q2q3 = q2 * q3;
-    double q2q4 = q2 * q4;
-    double q3q3 = q3 * q3;
-    double q3q4 = q3 * q4;
-    double q4q4 = q4 * q4;
-
-    // Reference direction of Earth's magnetic field
-    hx = 2.0f * mx * (0.5f - q3q3 - q4q4) + 2.0f * my * (q2q3 - q1q4) + 2.0f * mz * (q2q4 + q1q3);
-    hy = 2.0f * mx * (q2q3 + q1q4) + 2.0f * my * (0.5f - q2q2 - q4q4) + 2.0f * mz * (q3q4 - q1q2);
-    bx = sqrt((hx * hx) + (hy * hy));
-    bz = 2.0f * mx * (q2q4 - q1q3) + 2.0f * my * (q3q4 + q1q2) + 2.0f * mz * (0.5f - q2q2 - q3q3);
-
-    // Estimated direction of gravity and magnetic field
-    vx = 2.0f * (q2q4 - q1q3);
-    vy = 2.0f * (q1q2 + q3q4);
-    vz = q1q1 - q2q2 - q3q3 + q4q4;
-    wx = 2.0f * bx * (0.5f - q3q3 - q4q4) + 2.0f * bz * (q2q4 - q1q3);
-    wy = 2.0f * bx * (q2q3 - q1q4) + 2.0f * bz * (q1q2 + q3q4);
-    wz = 2.0f * bx * (q1q3 + q2q4) + 2.0f * bz * (0.5f - q2q2 - q3q3);
-
-    // Error is cross product between estimated direction and measured direction of the reference vectors
-    ex = (ay * vz - az * vy) + (my * wz - mz * wy);
-    ey = (az * vx - ax * vz) + (mz * wx - mx * wz);
-    ez = (ax * vy - ay * vx) + (mx * wy - my * wx);
-    if (imuKi > 0.0f)
-    {
-        eInt[0] += ex; // accumulate integral error
-        eInt[1] += ey;
-        eInt[2] += ez;
-        // Apply I feedback
-        gx += imuKi * eInt[0];
-        gy += imuKi * eInt[1];
-        gz += imuKi * eInt[2];
-    }
-
-    // Apply P feedback
-    gx = gx + imuKp * ex;
-    gy = gy + imuKp * ey;
-    gz = gz + imuKp * ez;
-
-    // Integrate rate of change of quaternion
-    // small correction 1/11/2022, see https://github.com/kriswiner/MPU9250/issues/447
-    gx = gx * (0.5 * deltat); // pre-multiply common factors
-    gy = gy * (0.5 * deltat);
-    gz = gz * (0.5 * deltat);
-    double qa = q1;
-    double qb = q2;
-    double qc = q3;
-    q1 += (-qb * gx - qc * gy - q4 * gz);
-    q2 += (qa * gx + qc * gz - q4 * gy);
-    q3 += (qa * gy - qb * gz + q4 * gx);
-    q4 += (qa * gz + qb * gy - qc * gx);
-
-    // Normalise quaternion
-    norm = sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4);
-    norm = 1.0f / norm;
-    q[0] = q1 * norm;
-    q[1] = q2 * norm;
-    q[2] = q3 * norm;
-    q[3] = q4 * norm;
-}
-
 // ISR
-
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
     aileronCurrentTime = micros();

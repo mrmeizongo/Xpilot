@@ -7,11 +7,6 @@
 Flight stabilization system intended to run on the atmega328 chip in the Arduino Nano and UNO microcontrollers.
 Designed with a 3-channel system(AIL, ELEV, \*RUDD) in mind; some modifications are necessary to convert it for a 2-channel system.
 
-During testing I used a GY-91 10DOF sensor for testing but an MPU9250 will work as it is the same 9DOF sensor on the GY-91.
-I did not utilize the barometer/altitude sensor output for this program(pull requests are welcome).
-
-I utilized the MPU9250 and Mahogany AHRS library by Jeff Rowberg so a big thank you to Jeff. [MPU9250-AHRS](https://github.com/jremington/MPU-9250-AHRS)
-
 ## Setup
 
 Connect GY-91/MPU9250 to Arduino Nano as shown below
@@ -58,3 +53,7 @@ Fly-by-wire mode is the most popular among inexperienced flyers. Manual/Passthro
 Note that there is currently no aileron and rudder mixing available to coordinate turns. This will be fixed in an upcoming update.
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
+
+## Credits
+
+hideakitai

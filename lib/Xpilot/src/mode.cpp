@@ -146,7 +146,7 @@ void Mode::stabilizeMode()
 // Helper functions
 bool isCentered(int16_t stickInput)
 {
-    return abs(stickInput - SERVO_MID_PWM) <= 20;
+    return abs(stickInput - SERVO_MID_PWM) <= 25;
 }
 
 // Allow input based on angle
