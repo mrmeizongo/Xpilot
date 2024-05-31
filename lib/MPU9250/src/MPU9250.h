@@ -99,7 +99,7 @@ class MPU9250_
     float acc_bias[3]{0., 0., 0.};  // acc calibration value in ACCEL_FS_SEL: 2g
     float gyro_bias[3]{0., 0., 0.}; // gyro calibration value in GYRO_FS_SEL: 250dps
     float mag_bias_factory[3]{0., 0., 0.};
-    float mag_bias[3]{-61.33, -223.69, 123.51}; // mag calibration value in MAG_OUTPUT_BITS: 16BITS
+    float mag_bias[3]{-61.33, -223.69, 123.51}; // mag calibration value in MAG_OUTPUT_BITS: 16BITS from previous calibration
     float mag_scale[3]{1.28, 0.70, 1.27};
     float magnetic_declination = -12.10; // Camden, DE, US May 30th 2024
 
