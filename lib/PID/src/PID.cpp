@@ -27,6 +27,11 @@
 
 PID::PID() {}
 
+PID::PID(float _Kp, float _Ki, float _Kd)
+{
+    Initialize(_Kp, _Ki, _Kd);
+}
+
 void PID::Initialize(float _Kp, float _Ki, float _Kd)
 {
     Kp = _Kp;
@@ -43,8 +48,9 @@ void PID::ResetPID(void)
 
 float PID::Compute(float errorInput, double dt)
 {
-    integral += errorInput * dt;
+    float proportional = errorInput;
+    integral += (errorInput * dt);
     double derivative = (errorInput - previousError) / dt;
     previousError = errorInput;
-    return (float)((Kp * errorInput) + (Ki * integral) + (Kd * derivative));
+    return (float)((Kp * proportional) + (Ki * integral) + (Kd * derivative));
 }

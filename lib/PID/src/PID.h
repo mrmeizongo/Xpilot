@@ -28,9 +28,10 @@ Copyright (C) 2024 Jamal Meizongo
 class PID
 {
 public:
-    PID();                                // Constructor
+    PID();                                // Empty Constructor
+    PID(float, float, float);             // Constructor with initialization parameters
     void Initialize(float, float, float); // Initialize the PID controller
-    void ResetPID(void);                  // Reset PID controller
+    void ResetPID(void);                  // Reset PID controller parameters
     float Compute(float, double);         // Generate the PID output to be added to the servo
 
 private:

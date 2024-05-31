@@ -40,7 +40,7 @@ double dt = 0;                       // loop time in seconds
 // -------------------------
 
 // Timer variables
-unsigned long nowMs, inputLastMs = 0;
+unsigned long nowMs, outputLastMs = 0;
 
 #if IO_DEBUG
 unsigned long debugLastMs = 0;
@@ -143,20 +143,20 @@ void Xpilot::setup(void)
 void Xpilot::loop(void)
 {
     // Read input, read imu data, process output to servos
-    // Process input at 50Hz, everything else runs at loop speed
     nowMs = millis();
-    if (nowMs - inputLastMs >= 20)
-    {
-        processInput();
-        inputLastMs = nowMs;
-    }
+    processInput();
 
     // Only run IMU processing in auto modes i.e FBW, STABILIZE
     if (currentMode != FLIGHT_MODE::PASSTHROUGH)
         processIMU();
 
     // Output to servos
-    processOutput();
+    // Process output to servos at 50Hz
+    if (nowMs - outputLastMs >= 20)
+    {
+        processOutput();
+        outputLastMs = nowMs;
+    }
 
 #if IO_DEBUG
     if (nowMs - debugLastMs >= 1000)
@@ -309,7 +309,9 @@ void Xpilot::print_output(void)
     Serial.println(rudder_out);
     Serial.println();
 }
+#endif
 
+#if DEBUG
 void Xpilot::print_calibration(void)
 {
     Serial.println("< calibration parameters >");

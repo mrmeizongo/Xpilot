@@ -32,11 +32,11 @@ Flight stabilization software
 
 #include "Mode.h"
 
-// Proportional gain. Keep number low; increase as needed
-// TODO: Use PID controller if proportional controller is not enough to achieve desired flight characteristics
-float stabilizeKp = 8;
-float stabilizeKi = 0;
-float stabilizeKd = 0;
+// PID controller variables
+float stabilizeKp = ((SERVO_MAX_PWM + SERVO_MIN_PWM) / (SERVO_MAX_PWM - SERVO_MID_PWM));
+float stabilizeKi = 0.1;
+float stabilizeKd = 0.0001;
+unsigned long now, previousNow = 0;
 
 // Helper functions
 bool isCentered(int16_t stickInput);
@@ -125,8 +125,7 @@ void Mode::FBWMode()
     rollError = xpilot.ahrs_roll >= 0 ? rollError : -(rollError);
     pitchError = xpilot.ahrs_pitch >= 0 ? pitchError : -(pitchError);
 
-    unsigned long now = millis();
-    static unsigned long previousNow = 0;
+    now = millis();
     double dt = (now - previousNow) / 1000.0;
     previousNow = now;
 
@@ -142,14 +141,12 @@ void Mode::FBWMode()
 // Uses a simple P controller; add to roll and subtract from pitch
 void Mode::stabilizeMode()
 {
-    passthroughMode();
     float rollError = 0 - xpilot.ahrs_roll;
     float pitchError = 0 - xpilot.ahrs_pitch;
     bool allowRoll = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true);
     bool allowPitch = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT);
 
-    unsigned long now = millis();
-    static unsigned long previousNow = 0;
+    now = millis();
     double dt = (now - previousNow) / 1000.0;
     previousNow = now;
 

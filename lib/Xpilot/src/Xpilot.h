@@ -73,9 +73,11 @@ public:
     void print_imu(void);
     void print_input(void);
     void print_output(void);
-    void print_calibration(void);
 #endif
 
+#if DEBUG
+    void print_calibration(void);
+#endif
 private:
     MPU9250 imu;
 

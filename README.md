@@ -29,6 +29,13 @@ Copyright (C) 2024 Jamal Meizongo
 ### Servos need to be installed correctly for this to work.
 
 Designed with a 3-channel system(AIL, ELEV, \*RUDD) in mind; some modifications are necessary to convert it for a 2-channel system.
+The atmega328p chip in the arduino nano is not an extremely fast microcontroller but it is fast enough to run the stabilization loop in 4ms.
+This gives us a frequency of up to 250Hz. Output to the control servos are updated at 50Hz for standard servos and the IMU is queried at a 200Hz FIFO sample rate.
+
+The frequency refers to the rate at which the software is updating or making corrections.
+
+In the context of RC planes, an execution loop of 250Hz provides a smooth and responsive control, which is particularly beneficial for maintaining stability in changing flight conditions.
+In passthrough mode, the main execution loop runs at 1KHz and servos are still updated at 50Hz.
 
 ## Setup
 
