@@ -179,7 +179,7 @@ bool allowInput(double angle, int16_t input, uint8_t angleLimit, bool reverse)
     // Roll angle is positive when rolling left and negative when rolling right, pitch angle is negative pitching down and positive when pitching up
     // Aileron stick input is positive when pushed left and negative when pushed right
     // Elevator stick input is positive when pushed up and negative when pushed down
-    // Stick and servo positions are 90 when centered, increases up to limit 180 when rolling left or pitching up and decreases up to limit 0 otherwise
+    // Stick and servo positions are 1500 when centered, increases up to limit 2000 when rolling left or pitching up and decreases up to limit 1000 otherwise
     if (reverse)
         return (angle > 0 && input < SERVO_MID_PWM) || (angle < 0 && input > SERVO_MID_PWM);
     else
