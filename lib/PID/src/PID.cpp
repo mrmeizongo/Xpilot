@@ -32,6 +32,7 @@ PID::PID(float _Kp, float _Ki, float _Kd)
     Initialize(_Kp, _Ki, _Kd);
 }
 
+// A call to an empty constructor must be followed by a call to the Initiailize() function to set the gain values
 void PID::Initialize(float _Kp, float _Ki, float _Kd)
 {
     Kp = _Kp;
@@ -40,17 +41,19 @@ void PID::Initialize(float _Kp, float _Ki, float _Kd)
     ResetPID();
 }
 
+// Resets PID
 void PID::ResetPID(void)
 {
     previousError = 0;
     integral = 0;
 }
 
-float PID::Compute(float errorInput, double dt)
+// Main function to be called to get PID control value
+float PID::Compute(float currentError, double interval)
 {
-    float proportional = errorInput;
-    integral += (errorInput * dt);
-    double derivative = (errorInput - previousError) / dt;
-    previousError = errorInput;
+    float proportional = currentError;
+    integral = integral + (currentError * interval);
+    double derivative = (currentError - previousError) / interval;
+    previousError = currentError;
     return (float)((Kp * proportional) + (Ki * integral) + (Kd * derivative));
 }
