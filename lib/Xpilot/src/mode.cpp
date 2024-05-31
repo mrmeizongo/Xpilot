@@ -143,8 +143,6 @@ void Mode::stabilizeMode()
 {
     float rollError = 0 - xpilot.ahrs_roll;
     float pitchError = 0 - xpilot.ahrs_pitch;
-    bool allowRoll = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true);
-    bool allowPitch = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT);
 
     now = millis();
     double dt = (now - previousNow) / 1000.0;
@@ -152,6 +150,9 @@ void Mode::stabilizeMode()
 
     rollError = rollPID.Compute(rollError, dt);
     pitchError = pitchPID.Compute(pitchError, dt);
+
+    bool allowRoll = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true);
+    bool allowPitch = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT);
 
     rollError = isCentered(xpilot.aileron_out) || !allowRoll ? rollError : 0;
     pitchError = isCentered(xpilot.elevator_out) || !allowPitch ? pitchError : 0;
@@ -169,7 +170,7 @@ bool isCentered(int16_t stickInput)
 // Allow input based on angle
 bool allowInput(double angle, int16_t input, uint8_t angleLimit, bool reverse)
 {
-    // If we haven't reached the angle limit or we're not touching the input sticks, allow input
+    // If we haven't reached the angle limit allow input
     if (abs(angle) < angleLimit)
         return true;
 
