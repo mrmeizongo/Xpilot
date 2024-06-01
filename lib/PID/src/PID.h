@@ -32,13 +32,14 @@ public:
     PID(float, float, float);             // Constructor with initialization parameters
     void Initialize(float, float, float); // Initialize the PID controller
     void ResetPID(void);                  // Reset PID controller parameters
-    float Compute(float, double);         // Generate the PID output to be added to the servo
+    int Compute(float);                   // Generate the PID output to be added to the servo
 
 private:
     float Kp;
     float Kd;
     float Ki;
 
-    float integral;
+    double integral;
     float previousError;
+    unsigned long lastTime;
 };

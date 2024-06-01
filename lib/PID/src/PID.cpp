@@ -22,7 +22,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
-
+#include <Arduino.h>
 #include "PID.h"
 
 PID::PID() {}
@@ -32,7 +32,7 @@ PID::PID(float _Kp, float _Ki, float _Kd)
     Initialize(_Kp, _Ki, _Kd);
 }
 
-// A call to an empty constructor must be followed by a call to the Initiailize() function to set the gain values
+// A call to an empty constructor should be followed by a call to the Initiailize() function to set the gain values
 void PID::Initialize(float _Kp, float _Ki, float _Kd)
 {
     Kp = _Kp;
@@ -46,14 +46,19 @@ void PID::ResetPID(void)
 {
     previousError = 0;
     integral = 0;
+    lastTime = millis();
 }
 
 // Main function to be called to get PID control value
-float PID::Compute(float currentError, double interval)
+int PID::Compute(float currentError)
 {
+    unsigned long currentTime = millis();
+    double interval = (currentTime - lastTime) / 1000.0;
     float proportional = currentError;
     integral = integral + (currentError * interval);
     double derivative = (currentError - previousError) / interval;
     previousError = currentError;
-    return (float)((Kp * proportional) + (Ki * integral) + (Kd * derivative));
+    lastTime = currentTime;
+    int result = static_cast<int>((Kp * proportional) + (Ki * integral) + (Kd * derivative));
+    return result;
 }

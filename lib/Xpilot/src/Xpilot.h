@@ -106,7 +106,8 @@ private:
     uint8_t rudderInputPin;        // Input pin for rudder
     uint8_t rudderOutputPin;       // Output pin for rudder
     int16_t rudder_out = 0;        // Rudder servo output variable
-    uint16_t rudderPulseWidth = 0; // ElevatRudderor values obtained from transmitter through interrupts
+    uint16_t rudderPulseWidth = 0; // Rudder values obtained from transmitter through interrupts
+    float currentHeading = 0;      // Current heading obtained from ahrs and rudder position
 
     /*
      * Mode control variables

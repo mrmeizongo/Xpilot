@@ -59,6 +59,7 @@ volatile long elevatorCurrentTIme, elevatorStartTime, elevatorPulses = 0;
 
 // Rudder variables
 volatile long rudderCurrentTIme, rudderStartTime, rudderPulses = 0;
+unsigned long yawLastMs = 0;
 
 // Mode variables
 volatile long modeCurrentTime, modeStartTime, modePulses = 0;
@@ -105,7 +106,7 @@ void Xpilot::setup(void)
     }
 
 #if DEBUG
-    Serial.println("Accel Gyro calibration will start in 5sec.");
+    Serial.println("Accel Gyro calibration will start in 3sec.");
     Serial.println("Please leave the device still on the flat plane.");
     imu.verbose(true);
     delay(3000);
@@ -210,6 +211,12 @@ void Xpilot::processIMU(void)
         ahrs_pitch = imu.getPitch();
         ahrs_yaw = imu.getYaw();
     }
+
+    if (nowMs - yawLastMs >= 300)
+    {
+        currentHeading = ahrs_yaw;
+        yawLastMs = nowMs;
+    }
 }
 
 void Xpilot::processOutput(void)
@@ -222,7 +229,7 @@ void Xpilot::processOutput(void)
 
     aileron_out = constrain(aileron_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
     elevator_out = constrain(elevator_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    rudder_out = constrain(rudderPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    rudder_out = constrain(rudder_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
 
     aileronServo.writeMicroseconds(aileron_out);
     elevatorServo.writeMicroseconds(elevator_out);
