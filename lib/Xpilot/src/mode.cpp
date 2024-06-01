@@ -32,13 +32,16 @@ Flight stabilization software
 
 #include "Mode.h"
 
+// Helper function to reset all PID controllers
+#define ResetPIDControllers() \
+    rollPID.ResetPID();       \
+    pitchPID.ResetPID();      \
+    yawPID.ResetPID();
+
 // PID controller variables
 float stabilizeKp = 8;
-float stabilizeKi = 0.2;
-float stabilizeKd = 0.06;
-float yawModifier = 0.7;
-
-uint8_t centerTrim = 20;
+float stabilizeKi = 0.1;
+float stabilizeKd = 0.02;
 
 // Helper functions
 bool isCentered(int16_t stickInput);
@@ -48,7 +51,7 @@ Mode::Mode()
 {
     rollPID.Initialize(stabilizeKp, stabilizeKi, stabilizeKd);
     pitchPID.Initialize(stabilizeKp, stabilizeKi, stabilizeKd);
-    yawPID.Initialize(stabilizeKp * yawModifier, stabilizeKi * yawModifier, stabilizeKd * yawModifier);
+    yawPID.Initialize(stabilizeKp, stabilizeKi, stabilizeKd);
 }
 
 // Update flight mode from mode switch position
@@ -61,9 +64,7 @@ void Mode::update(long pulseIn)
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
             return;
 
-        rollPID.ResetPID();
-        pitchPID.ResetPID();
-        yawPID.ResetPID();
+        ResetPIDControllers();
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
     }
     else if ((pulseIn >= SERVO_MID_PWM - INPUT_THRESHOLD) && (pulseIn <= SERVO_MID_PWM + INPUT_THRESHOLD))
@@ -71,9 +72,7 @@ void Mode::update(long pulseIn)
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
             return;
 
-        rollPID.ResetPID();
-        pitchPID.ResetPID();
-        yawPID.ResetPID();
+        ResetPIDControllers();
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
     }
     else if (abs(pulseIn - SERVO_MAX_PWM) < INPUT_THRESHOLD)
@@ -81,9 +80,7 @@ void Mode::update(long pulseIn)
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::PASSTHROUGH)
             return;
 
-        rollPID.ResetPID();
-        pitchPID.ResetPID();
-        yawPID.ResetPID();
+        ResetPIDControllers();
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::PASSTHROUGH);
     }
 }
@@ -174,7 +171,7 @@ void Mode::stabilizeMode()
 // Helper functions
 bool isCentered(int16_t stickInput)
 {
-    return abs(stickInput - SERVO_MID_PWM) <= centerTrim;
+    return abs(stickInput - SERVO_MID_PWM) <= 20;
 }
 
 // Allow input based on angle

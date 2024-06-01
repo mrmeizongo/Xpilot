@@ -212,6 +212,7 @@ void Xpilot::processIMU(void)
         ahrs_yaw = imu.getYaw();
     }
 
+    // Update current heading every 300ms
     if (nowMs - yawLastMs >= 300)
     {
         currentHeading = ahrs_yaw;
