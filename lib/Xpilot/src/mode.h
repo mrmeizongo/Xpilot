@@ -42,9 +42,9 @@ public:
     void process();
 
 private:
-    PID rollPID;
-    PID pitchPID;
-    PID yawPID;
+    PID *rollPID;
+    PID *pitchPID;
+    PID *yawPID;
     void passthroughMode();
     void FBWMode();
     void stabilizeMode();

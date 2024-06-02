@@ -213,7 +213,7 @@ void Xpilot::processIMU(void)
     }
 
     // Update current heading every 300ms
-    if (nowMs - yawLastMs >= 300)
+    if (nowMs - yawLastMs >= 200)
     {
         currentHeading = ahrs_yaw;
         yawLastMs = nowMs;

@@ -34,14 +34,14 @@ Flight stabilization software
 
 // Helper function to reset all PID controllers
 #define ResetPIDControllers() \
-    rollPID.ResetPID();       \
-    pitchPID.ResetPID();      \
-    yawPID.ResetPID();
+    rollPID->ResetPID();      \
+    pitchPID->ResetPID();     \
+    yawPID->ResetPID();
 
 // PID controller variables
-float stabilizeKp = 8;
-float stabilizeKi = 0.1;
-float stabilizeKd = 0.02;
+float stabilizeKp = 7;
+float stabilizeKi = 0;
+float stabilizeKd = 0;
 
 // Helper functions
 bool isCentered(int16_t stickInput);
@@ -49,9 +49,9 @@ bool allowInput(double angle, int16_t stickInput, uint8_t angleLimit, bool rever
 
 Mode::Mode()
 {
-    rollPID.Initialize(stabilizeKp, stabilizeKi, stabilizeKd);
-    pitchPID.Initialize(stabilizeKp, stabilizeKi, stabilizeKd);
-    yawPID.Initialize(stabilizeKp, stabilizeKi, stabilizeKd);
+    rollPID = new PID(stabilizeKp, stabilizeKi, stabilizeKd);
+    pitchPID = new PID(stabilizeKp, stabilizeKi, stabilizeKd);
+    yawPID = new PID(stabilizeKp, stabilizeKi, stabilizeKd);
 }
 
 // Update flight mode from mode switch position
@@ -134,9 +134,9 @@ void Mode::FBWMode()
     pitchError = xpilot.ahrs_pitch >= 0 ? pitchError : -(pitchError);
 
     // Pass to PID controller
-    int rollAdjust = rollPID.Compute(rollError);
-    int pitchAdjust = pitchPID.Compute(pitchError);
-    int yawAdjust = yawPID.Compute(yawError);
+    int rollAdjust = rollPID->Compute(rollError);
+    int pitchAdjust = pitchPID->Compute(pitchError);
+    int yawAdjust = yawPID->Compute(yawError);
 
     xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out : SERVO_MID_PWM + rollAdjust;
     xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : SERVO_MID_PWM - pitchAdjust;
@@ -153,9 +153,9 @@ void Mode::stabilizeMode()
     float desiredHeading = isCentered(xpilot.rudder_out) ? xpilot.currentHeading : xpilot.ahrs_yaw;
     float yawError = desiredHeading - xpilot.ahrs_yaw;
 
-    int rollAdjust = rollPID.Compute(rollError);
-    int pitchAdjust = pitchPID.Compute(pitchError);
-    int yawAdjust = yawPID.Compute(yawError);
+    int rollAdjust = rollPID->Compute(rollError);
+    int pitchAdjust = pitchPID->Compute(pitchError);
+    int yawAdjust = yawPID->Compute(yawError);
 
     bool allowRoll = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true);
     bool allowPitch = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT);

@@ -28,8 +28,8 @@ Copyright (C) 2024 Jamal Meizongo
 
 ### Servos need to be installed correctly for this to work.
 
-Designed with a 3-channel system(AIL, ELEV, \*RUDD) in mind; some modifications are necessary to convert it for a 2-channel system.
-The atmega328p chip in the arduino nano is not an extremely fast microcontroller but it is fast enough to run the stabilization loop in 4ms.
+Designed with a 3-channel system(AIL, ELEV, RUDD) in mind; some modifications are necessary to convert it for a 2-channel system.
+The atmega328p chip in the arduino nano is fast enough to run the stabilization loop in 4ms.
 This gives us a frequency of up to 250Hz. Output to the control servos are updated at 50Hz for standard servos and the IMU is queried at a 200Hz FIFO sample rate.
 
 The frequency refers to the rate at which the software is updating or making corrections.
@@ -57,8 +57,8 @@ Connect receiver to Arduino Nano as shown below
 |  Rudder  |  4  |
 |   Mode   |  5  |
 
-Connect aileron and elevator servos to Arduino Nano as shown below. DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
-However, the Nano, GY-91 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for stability.
+Connect aileron, elevator and rudder servos to Arduino Nano as shown below. DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
+However, the Nano, GY-91/MPU9250 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
 
 | CHANNEL  | PIN |
 | :------: | :-: |
