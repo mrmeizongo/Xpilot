@@ -34,10 +34,8 @@ Flight stabilization software
 #include <PinChangeInterrupt.h>
 #include "Mode.h"
 
-// Globals for AHRS loop timing
-unsigned long nowUs = 0, lastUs = 0; // micros() timers
-double dt = 0;                       // loop time in seconds
-// -------------------------
+#define IMU_WARMUP_LOOP 1000U
+#define I2C_CLOCK_1MHZ 1000000U
 
 // Timer variables
 unsigned long nowMs, outputLastMs = 0;
@@ -84,6 +82,8 @@ void Xpilot::setup(void)
 #endif
 
     Wire.begin();
+    Wire.setClock(I2C_CLOCK_1MHZ); // Overclocking I2C to 1Mhz
+
 #if DEBUG
     Serial.begin(9600);
     while (!Serial)
@@ -96,9 +96,9 @@ void Xpilot::setup(void)
     // Initialize MPU
     if (!imu.setup(0x68))
     { // change to your own address
-        while (1)
+        for (;;)
         {
-#if IO_DEBUG
+#if DEBUG
             Serial.println("No MPU found! Check connection");
 #endif
             delay(1000);
@@ -118,6 +118,12 @@ void Xpilot::setup(void)
     imu.verbose(false);
     imu.calibrateAccelGyro();
 #endif
+
+    // Warm up the IMU
+    for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
+    {
+        processIMU();
+    }
 
     // All input pins use pin change interrupts
     // Aileron setup
@@ -213,7 +219,7 @@ void Xpilot::processIMU(void)
     }
 
     // Update current heading every 300ms
-    if (nowMs - yawLastMs >= 200)
+    if (nowMs - yawLastMs >= 700)
     {
         currentHeading = ahrs_yaw;
         yawLastMs = nowMs;
