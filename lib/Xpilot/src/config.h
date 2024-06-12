@@ -70,15 +70,15 @@ Flight stabilization software
 // Roll
 #define ROLL_KP 7f
 #define ROLL_KI 0.01f
-#define ROLL_KD 0.002f
+#define ROLL_KD 0.001f
 // Pitch
 #define PITCH_KP 8f
 #define PITCH_KI 0.03f
-#define PITCH_KD 0.002f
+#define PITCH_KD 0.001f
 // Yaw
 #define YAW_KP 6f
 #define YAW_KI 0.01f
-#define YAW_KD 0.002f
+#define YAW_KD 0.001f
 // ------------------------------------------------------------------------------------------------------
 
 // Servo PWM range
