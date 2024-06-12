@@ -38,20 +38,15 @@ Flight stabilization software
     pitchPID->ResetPID();     \
     yawPID->ResetPID();
 
-// PID controller variables
-float stabilizeKp = 7;
-float stabilizeKi = 0;
-float stabilizeKd = 0;
-
 // Helper functions
 bool isCentered(int16_t stickInput);
 bool allowInput(double angle, int16_t stickInput, uint8_t angleLimit, bool reverse = false);
 
 Mode::Mode()
 {
-    rollPID = new PID(stabilizeKp, stabilizeKi, stabilizeKd);
-    pitchPID = new PID(stabilizeKp, stabilizeKi, stabilizeKd);
-    yawPID = new PID(stabilizeKp, stabilizeKi, stabilizeKd);
+    rollPID = new PID(ROLL_KP, ROLL_KI, ROLL_KD);
+    pitchPID = new PID(PITCH_KP, PITCH_KI, PITCH_KD);
+    yawPID = new PID(YAW_KP, YAW_KI, YAW_KD);
 }
 
 // Update flight mode from mode switch position

@@ -33,44 +33,74 @@ Flight stabilization software
 #pragma once
 
 // Input pins
+// ------------------------------------------------------------------------------------------------------
 #define AILPIN_INPUT 2
 #define ELEVPIN_INPUT 3
 #define RUDDPIN_INPUT 4
 #define MODEPIN_INPUT 5
+// ------------------------------------------------------------------------------------------------------
 
 // Output pins
+// ------------------------------------------------------------------------------------------------------
 #define AILPIN_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
+// ------------------------------------------------------------------------------------------------------
 
 // ISR vectors
 // All input pins use pin change interrupts
 // Change these values to match your selected input pins
 // if you modify these values you will also have to modify the settings in the PinChangeInterrupt library
 // A cleaner config will probaby be useful here
+// ------------------------------------------------------------------------------------------------------
 #define AILPIN_INT 18
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
 #define MODEPIN_INT 21
+// ------------------------------------------------------------------------------------------------------
 
 // In degree radians
+// ------------------------------------------------------------------------------------------------------
 #define ROLL_LIMIT 45
 #define PITCH_LIMIT 45
+// ------------------------------------------------------------------------------------------------------
+
+// PID GAINs
+// ------------------------------------------------------------------------------------------------------
+// Roll
+#define ROLL_KP 7f
+#define ROLL_KI 0.01f
+#define ROLL_KD 0.002f
+// Pitch
+#define PITCH_KP 8f
+#define PITCH_KI 0.03f
+#define PITCH_KD 0.002f
+// Yaw
+#define YAW_KP 6f
+#define YAW_KI 0.01f
+#define YAW_KD 0.002f
+// ------------------------------------------------------------------------------------------------------
 
 // Servo PWM range
 // Edit this to suit your servo PWN values
 // You can find these values in the datasheet that comes with your servo
 // These values are conservative and should work for most servos
+// ------------------------------------------------------------------------------------------------------
 #define SERVO_MIN_PWM 1000
 #define SERVO_MAX_PWM 2000
 #define SERVO_MID_PWM 1500
+// ------------------------------------------------------------------------------------------------------
 
 // Transmitter/Receiver values
+// ------------------------------------------------------------------------------------------------------
 #define INPUT_THRESHOLD 200 // Used in to separate the 3 flight modes input threshold
+// ------------------------------------------------------------------------------------------------------
 
 // Set to 1 to enable the respective debugging, zero otherwise
 // To enable any of the XX_DEBUG, set DEBUG to 1 first
 // It is wise to enable only one debug at a time (i.e. LOOP_DEBUG or IO_DEBUG) due to the atmega328p memory constraints
+// ------------------------------------------------------------------------------------------------------
 #define DEBUG 0
 #define LOOP_DEBUG 0
 #define IO_DEBUG 0
+// ------------------------------------------------------------------------------------------------------
