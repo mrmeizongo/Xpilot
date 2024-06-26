@@ -65,14 +65,6 @@ volatile long modeCurrentTime, modeStartTime, modePulses = 0;
 
 Xpilot::Xpilot(void)
 {
-    aileronInputPin = AILPIN_INPUT;
-    elevatorInputPin = ELEVPIN_INPUT;
-    rudderInputPin = RUDDPIN_INPUT;
-    modeInputPin = MODEPIN_INPUT;
-
-    aileronOutputPin = AILPIN_OUTPUT;
-    elevatorOutputPin = ELEVPIN_OUTPUT;
-    rudderOutputPin = RUDDPIN_OUTPUT;
 }
 
 void Xpilot::setup(void)
@@ -127,22 +119,22 @@ void Xpilot::setup(void)
 
     // All input pins use pin change interrupts
     // Aileron setup
-    aileronServo.attach(aileronOutputPin);
-    pinMode(aileronInputPin, INPUT_PULLUP);
+    aileronServo.attach(AILPIN_OUTPUT);
+    pinMode(AILPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AILPIN_INT, CHANGE);
 
     // Elevator setup
-    elevatorServo.attach(elevatorOutputPin);
-    pinMode(elevatorInputPin, INPUT_PULLUP);
+    elevatorServo.attach(ELEVPIN_OUTPUT);
+    pinMode(ELEVPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
 
     // Rudder setup
-    rudderServo.attach(rudderOutputPin);
-    pinMode(rudderInputPin, INPUT_PULLUP);
+    rudderServo.attach(RUDDPIN_OUTPUT);
+    pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
 
     // Mode setup
-    pinMode(modeInputPin, INPUT_PULLUP);
+    pinMode(MODEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
 }
 
