@@ -87,3 +87,4 @@ Pull requests are welcome. Please try to adhere to the coding style in the proje
 ## Credits
 
 hideakitai
+NicoHood
