@@ -78,6 +78,9 @@ public:
 #if DEBUG
     void print_calibration(void);
 #endif
+
+    void warmupIMU(void);
+
 private:
     /*
      * Inertial measurement unit variable

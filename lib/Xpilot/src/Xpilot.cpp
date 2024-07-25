@@ -111,12 +111,6 @@ void Xpilot::setup(void)
     imu.calibrateAccelGyro();
 #endif
 
-    // Warm up the IMU
-    for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
-    {
-        processIMU();
-    }
-
     // All input pins use pin change interrupts
     // Aileron setup
     aileronServo.attach(AILPIN_OUTPUT);
@@ -136,12 +130,16 @@ void Xpilot::setup(void)
     // Mode setup
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
+
+    warmupIMU();
 }
 
-// Main execution xpilot execution loop
+/*
+    Main xpilot execution loop
+    Read input, read imu data, process output to servos
+*/
 void Xpilot::loop(void)
 {
-    // Read input, read imu data, process output to servos
     nowMs = millis();
     processInput();
 
@@ -149,8 +147,7 @@ void Xpilot::loop(void)
     if (currentMode != FLIGHT_MODE::PASSTHROUGH)
         processIMU();
 
-    // Output to servos
-    // Process output to servos at 50Hz
+    // Process output to servos at 50Hz intervals
     if (nowMs - outputLastMs >= 20)
     {
         processOutput();
@@ -181,10 +178,20 @@ void Xpilot::loop(void)
 #endif
 }
 
+void Xpilot::warmupIMU(void)
+{
+    // Warm up the IMU
+    for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
+    {
+        processIMU();
+    }
+}
+
 void Xpilot::processInput(void)
 {
     uint8_t oldSREG = SREG;
 
+    // Disable interrupts as pulses are being read to avoid race conditionS
     cli();
     if (modePulses >= SERVO_MIN_PWM && modePulses <= SERVO_MAX_PWM)
         mode.update(modePulses);

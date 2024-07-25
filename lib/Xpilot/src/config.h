@@ -61,23 +61,23 @@ Flight stabilization software
 
 // In degree radians
 // ------------------------------------------------------------------------------------------------------
-#define ROLL_LIMIT 45
-#define PITCH_LIMIT 45
+#define ROLL_LIMIT 30
+#define PITCH_LIMIT 30
 // ------------------------------------------------------------------------------------------------------
 
 // PID GAINs
 // ------------------------------------------------------------------------------------------------------
 // Roll
-#define ROLL_KP 7.0f
-#define ROLL_KI 0.01f
+#define ROLL_KP 8.0f
+#define ROLL_KI 0.02f
 #define ROLL_KD 0.001f
 // Pitch
-#define PITCH_KP 8.0f
-#define PITCH_KI 0.03f
+#define PITCH_KP 9.0f
+#define PITCH_KI 0.02f
 #define PITCH_KD 0.001f
 // Yaw
 #define YAW_KP 6.0f
-#define YAW_KI 0.01f
+#define YAW_KI 0.02f
 #define YAW_KD 0.001f
 // ------------------------------------------------------------------------------------------------------
 

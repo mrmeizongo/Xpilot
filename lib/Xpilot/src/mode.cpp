@@ -59,16 +59,18 @@ void Mode::update(long pulseIn)
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
             return;
 
-        ResetPIDControllers();
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
+        ResetPIDControllers();
+        xpilot.warmupIMU();
     }
     else if ((pulseIn >= SERVO_MID_PWM - INPUT_THRESHOLD) && (pulseIn <= SERVO_MID_PWM + INPUT_THRESHOLD))
     {
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
             return;
 
-        ResetPIDControllers();
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
+        ResetPIDControllers();
+        xpilot.warmupIMU();
     }
     else if (abs(pulseIn - SERVO_MAX_PWM) < INPUT_THRESHOLD)
     {
@@ -122,20 +124,22 @@ void Mode::FBWMode()
     // Compute error
     float rollError = ROLL_LIMIT - abs(xpilot.ahrs_roll);
     float pitchError = PITCH_LIMIT - abs(xpilot.ahrs_pitch);
-    float desiredHeading = isCentered(xpilot.rudder_out) ? xpilot.currentHeading : xpilot.ahrs_yaw;
-    float yawError = desiredHeading - xpilot.ahrs_yaw;
+    // float desiredHeading = isCentered(xpilot.rudder_out) && isCentered(xpilot.aileron_out) ? xpilot.currentHeading : xpilot.ahrs_yaw;
+    // float yawError = desiredHeading - abs(xpilot.ahrs_yaw);
 
     rollError = xpilot.ahrs_roll >= 0 ? rollError : -(rollError);
     pitchError = xpilot.ahrs_pitch >= 0 ? pitchError : -(pitchError);
+    // yawError = xpilot.ahrs_yaw >= 0 ? yawError : -(yawError);
 
     // Pass to PID controller
     int rollAdjust = rollPID->Compute(rollError);
     int pitchAdjust = pitchPID->Compute(pitchError);
-    int yawAdjust = yawPID->Compute(yawError);
+    // int yawAdjust = yawPID->Compute(yawError);
 
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out : SERVO_MID_PWM + rollAdjust;
+    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out : SERVO_MID_PWM - rollAdjust;
     xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out : SERVO_MID_PWM - pitchAdjust;
-    xpilot.rudder_out = xpilot.rudder_out + yawAdjust;
+    // xpilot.rudder_out = xpilot.rudder_out + yawAdjust;
+    xpilot.rudder_out = isCentered(xpilot.rudder_out) ? SERVO_MID_PWM : xpilot.rudder_out;
 }
 
 // Roll and pitch follow stick input up to set limits
@@ -145,22 +149,21 @@ void Mode::stabilizeMode()
 {
     float rollError = 0 - xpilot.ahrs_roll;
     float pitchError = 0 - xpilot.ahrs_pitch;
-    float desiredHeading = isCentered(xpilot.rudder_out) ? xpilot.currentHeading : xpilot.ahrs_yaw;
-    float yawError = desiredHeading - xpilot.ahrs_yaw;
+    // float desiredHeading = isCentered(xpilot.rudder_out) && isCentered(xpilot.aileron_out) ? xpilot.currentHeading : xpilot.ahrs_yaw;
+    // float yawError = desiredHeading - abs(xpilot.ahrs_yaw);
+    // yawError = xpilot.ahrs_yaw >= 0 ? yawError : -(yawError);
 
     int rollAdjust = rollPID->Compute(rollError);
     int pitchAdjust = pitchPID->Compute(pitchError);
-    int yawAdjust = yawPID->Compute(yawError);
+    // int yawAdjust = yawPID->Compute(yawError);
 
-    bool allowRoll = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true);
-    bool allowPitch = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT);
+    rollAdjust = isCentered(xpilot.aileron_out) ? rollAdjust : 0;
+    pitchAdjust = isCentered(xpilot.elevator_out) ? pitchAdjust : 0;
 
-    rollAdjust = isCentered(xpilot.aileron_out) || !allowRoll ? rollAdjust : 0;
-    pitchAdjust = isCentered(xpilot.elevator_out) || !allowPitch ? pitchAdjust : 0;
-
-    xpilot.aileron_out = allowRoll ? xpilot.aileron_out + rollAdjust : SERVO_MID_PWM + rollAdjust;
-    xpilot.elevator_out = allowPitch ? xpilot.elevator_out - pitchAdjust : SERVO_MID_PWM - pitchAdjust;
-    xpilot.rudder_out = xpilot.rudder_out + yawAdjust;
+    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out - rollAdjust : SERVO_MID_PWM - rollAdjust;
+    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevator_out, PITCH_LIMIT) ? xpilot.elevator_out - pitchAdjust : SERVO_MID_PWM - pitchAdjust;
+    // xpilot.rudder_out = xpilot.rudder_out + yawAdjust;
+    xpilot.rudder_out = isCentered(xpilot.rudder_out) ? SERVO_MID_PWM : xpilot.rudder_out;
 }
 
 // Helper functions
