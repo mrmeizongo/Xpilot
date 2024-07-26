@@ -131,7 +131,7 @@ void Xpilot::setup(void)
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
 
-    warmupIMU();
+    warmupIMU(IMU_WARMUP_LOOP);
 }
 
 /*
@@ -144,8 +144,9 @@ void Xpilot::loop(void)
     processInput();
 
     // Only run IMU processing in auto modes i.e FBW, STABILIZE
-    if (currentMode != FLIGHT_MODE::PASSTHROUGH)
-        processIMU();
+    // if (currentMode != FLIGHT_MODE::PASSTHROUGH)
+    //     processIMU();
+    processIMU();
 
     // Process output to servos at 50Hz intervals
     if (nowMs - outputLastMs >= 20)
@@ -178,15 +179,6 @@ void Xpilot::loop(void)
 #endif
 }
 
-void Xpilot::warmupIMU(void)
-{
-    // Warm up the IMU
-    for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
-    {
-        processIMU();
-    }
-}
-
 void Xpilot::processInput(void)
 {
     uint8_t oldSREG = SREG;
@@ -216,13 +208,6 @@ void Xpilot::processIMU(void)
         ahrs_pitch = imu.getPitch();
         ahrs_yaw = imu.getYaw();
     }
-
-    // Update current heading every 700ms
-    if (nowMs - yawLastMs >= 700)
-    {
-        currentHeading = ahrs_yaw;
-        yawLastMs = nowMs;
-    }
 }
 
 void Xpilot::processOutput(void)
@@ -240,6 +225,15 @@ void Xpilot::processOutput(void)
     aileronServo.writeMicroseconds(aileron_out);
     elevatorServo.writeMicroseconds(elevator_out);
     rudderServo.writeMicroseconds(rudder_out);
+}
+
+void Xpilot::warmupIMU(uint16_t warmUpTimer)
+{
+    // Warm up the IMU
+    for (uint16_t i = 0; i < warmUpTimer; i++)
+    {
+        processIMU();
+    }
 }
 
 // ISR

@@ -29,7 +29,8 @@ Flight stabilization software
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
-#pragma once
+#ifndef _MODE_H
+#define _MODE_H
 
 #include <Xpilot.h>
 #include <PID.h>
@@ -51,3 +52,4 @@ private:
 };
 
 extern Mode mode;
+#endif //_MODE_H

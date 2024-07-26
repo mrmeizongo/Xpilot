@@ -30,7 +30,8 @@ Flight stabilization software
 ===============================================
 */
 
-#pragma once
+#ifndef _XPILOT_H
+#define _XPILOT_H
 
 #include <Arduino.h>
 #include <MPU9250.h>
@@ -79,7 +80,7 @@ public:
     void print_calibration(void);
 #endif
 
-    void warmupIMU(void);
+    void warmupIMU(uint16_t);
 
 private:
     /*
@@ -95,14 +96,14 @@ private:
     uint16_t aileronPulseWidth = 0; // Aileron values obtained from transmitter through interrupts
 
     /*
-     *   Elevator control variables
+     * Elevator control variables
      */
     Servo elevatorServo;             // Elevator servo channel
     int16_t elevator_out = 0;        // Elevator servo output variable
     uint16_t elevatorPulseWidth = 0; // Elevator values obtained from transmitter through interrupts
 
     /*
-     *   Rudder control variables
+     * Rudder control variables
      */
     Servo rudderServo;             // Rudder servo channel
     int16_t rudder_out = 0;        // Rudder servo output variable
@@ -120,3 +121,4 @@ private:
 };
 
 extern Xpilot xpilot;
+#endif // _XPILOT_H

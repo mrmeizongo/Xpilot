@@ -30,7 +30,8 @@ Flight stabilization software
 ===============================================
 */
 
-#pragma once
+#ifndef _CONFIG_H
+#define _CONFIG_H
 
 // Input pins
 // ------------------------------------------------------------------------------------------------------
@@ -68,17 +69,17 @@ Flight stabilization software
 // PID GAINs
 // ------------------------------------------------------------------------------------------------------
 // Roll
-#define ROLL_KP 8.0f
-#define ROLL_KI 0.02f
-#define ROLL_KD 0.001f
+#define ROLL_KP 15f
+#define ROLL_KI 0f
+#define ROLL_KD 0f
 // Pitch
-#define PITCH_KP 9.0f
-#define PITCH_KI 0.02f
-#define PITCH_KD 0.001f
+#define PITCH_KP 8f
+#define PITCH_KI 0f
+#define PITCH_KD 0f
 // Yaw
-#define YAW_KP 6.0f
-#define YAW_KI 0.02f
-#define YAW_KD 0.001f
+#define YAW_KP 10f
+#define YAW_KI 0f
+#define YAW_KD 0f
 // ------------------------------------------------------------------------------------------------------
 
 // Servo PWM range
@@ -94,6 +95,9 @@ Flight stabilization software
 // Transmitter/Receiver values
 // ------------------------------------------------------------------------------------------------------
 #define INPUT_THRESHOLD 200 // Used in to separate the 3 flight modes input threshold
+#define REVERSE_ROLL_STABILIZE 1
+#define REVERSE_PITCH_STABILIZE 1
+#define REVERSE_YAW_STABILIZE 1
 // ------------------------------------------------------------------------------------------------------
 
 // Set to 1 to enable the respective debugging, zero otherwise
@@ -104,3 +108,4 @@ Flight stabilization software
 #define LOOP_DEBUG 0
 #define IO_DEBUG 0
 // ------------------------------------------------------------------------------------------------------
+#endif

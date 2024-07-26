@@ -23,16 +23,16 @@ Copyright (C) 2024 Jamal Meizongo
 ===============================================
 */
 
-#pragma once
+#ifndef _PID_H
+#define _PID_H
 
 class PID
 {
 public:
-    PID();                                // Empty Constructor
-    PID(float, float, float);             // Constructor with initialization parameters
-    void Initialize(float, float, float); // Initialize the PID controller
-    void ResetPID(void);                  // Reset PID controller parameters
-    int Compute(float);                   // Generate the PID output to be added to the servo
+    PID();                    // Empty Constructor
+    PID(float, float, float); // Constructor with initialization parameters
+    void ResetPID(void);      // Reset PID controller parameters
+    int Compute(float);       // Generate the PID output to be added to the servo
 
 private:
     float Kp;
@@ -43,3 +43,4 @@ private:
     float previousError;
     unsigned long lastTime;
 };
+#endif //_PID_H

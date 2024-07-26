@@ -29,12 +29,6 @@ PID::PID() {}
 
 PID::PID(float _Kp, float _Ki, float _Kd)
 {
-    Initialize(_Kp, _Ki, _Kd);
-}
-
-// A call to an empty constructor should be followed by a call to the Initiailize() function to set the gain values
-void PID::Initialize(float _Kp, float _Ki, float _Kd)
-{
     Kp = _Kp;
     Ki = _Ki;
     Kd = _Kd;
@@ -53,12 +47,11 @@ void PID::ResetPID(void)
 int PID::Compute(float currentError)
 {
     unsigned long currentTime = millis();
-    double interval = (currentTime - lastTime) / 1000.0;
-    float proportional = currentError;
-    integral = integral + (currentError * interval);
-    double derivative = (currentError - previousError) / interval;
+    float elapsedTime = currentTime - lastTime;
+    integral += (currentError * elapsedTime);
+    double derivative = (currentError - previousError) / elapsedTime;
     previousError = currentError;
     lastTime = currentTime;
-    int result = static_cast<int>((Kp * proportional) + (Ki * integral) + (Kd * derivative));
+    int result = static_cast<int>((Kp * currentError) + (Ki * integral) + (Kd * derivative));
     return result;
 }
