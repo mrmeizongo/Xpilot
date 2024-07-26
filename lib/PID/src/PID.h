@@ -39,7 +39,7 @@ private:
     float Kd;
     float Ki;
 
-    double integral;
+    float integral;
     float previousError;
     unsigned long lastTime;
 };
