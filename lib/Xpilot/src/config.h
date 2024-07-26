@@ -69,15 +69,15 @@ Flight stabilization software
 // PID GAINs
 // ------------------------------------------------------------------------------------------------------
 // Roll
-#define ROLL_KP 15.0f
+#define ROLL_KP 10.0f
 #define ROLL_KI 0.0f
 #define ROLL_KD 0.0f
 // Pitch
-#define PITCH_KP 8.0f
+#define PITCH_KP 9.0f
 #define PITCH_KI 0.0f
 #define PITCH_KD 0.0f
 // Yaw
-#define YAW_KP 10.0f
+#define YAW_KP 7.0f
 #define YAW_KI 0.0f
 #define YAW_KD 0.0f
 // ------------------------------------------------------------------------------------------------------
