@@ -130,8 +130,8 @@ void Mode::FBWMode()
     pitchError = xpilot.ahrs_pitch >= 0 ? pitchError : -(pitchError);
 
     // Pass to PID controller
-    int rollAdjust = rollPID->Compute(rollError);
-    int pitchAdjust = pitchPID->Compute(pitchError);
+    int rollAdjust = rollPID->Compute(rollError, xpilot.lastAHRS);
+    int pitchAdjust = pitchPID->Compute(pitchError, xpilot.lastAHRS);
 #if REVERSE_ROLL_STABILIZE
     xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileron_out, ROLL_LIMIT, true) ? xpilot.aileron_out : SERVO_MID_PWM - rollAdjust;
 #else
@@ -150,11 +150,11 @@ void Mode::FBWMode()
 void Mode::stabilizeMode()
 {
     float rollError = 0 - xpilot.ahrs_roll;
-    int rollAdjust = rollPID->Compute(rollError);
+    int rollAdjust = rollPID->Compute(rollError, xpilot.lastAHRS);
     rollAdjust = isCentered(xpilot.aileron_out) ? rollAdjust : 0;
 
     float pitchError = 0 - xpilot.ahrs_pitch;
-    int pitchAdjust = pitchPID->Compute(pitchError);
+    int pitchAdjust = pitchPID->Compute(pitchError, xpilot.lastAHRS);
     pitchAdjust = isCentered(xpilot.elevator_out) ? pitchAdjust : 0;
 
     // Heading hold logic

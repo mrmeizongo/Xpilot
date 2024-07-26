@@ -118,6 +118,7 @@ private:
     FLIGHT_MODE currentMode = FLIGHT_MODE::PASSTHROUGH; // PASSTHROUGH is default mode
 
     float ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Euler angle output
+    unsigned long lastAHRS;
 };
 
 extern Xpilot xpilot;

@@ -40,18 +40,16 @@ void PID::ResetPID(void)
 {
     previousError = 0;
     integral = 0;
-    lastTime = millis();
 }
 
 // Main function to be called to get PID control value
-int PID::Compute(float currentError)
+int PID::Compute(float currentError, unsigned long lastT)
 {
     unsigned long currentTime = millis();
-    float elapsedTime = currentTime - lastTime;
+    float elapsedTime = currentTime - lastT;
     integral += (currentError * elapsedTime);
     double derivative = (currentError - previousError) / elapsedTime;
     previousError = currentError;
-    lastTime = currentTime;
     int result = static_cast<int>((Kp * currentError) + (Ki * integral) + (Kd * derivative));
     return result;
 }

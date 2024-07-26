@@ -207,6 +207,7 @@ void Xpilot::processIMU(void)
         ahrs_roll = imu.getRoll();
         ahrs_pitch = imu.getPitch();
         ahrs_yaw = imu.getYaw();
+        xpilot.lastAHRS = millis();
     }
 }
 
