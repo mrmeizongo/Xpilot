@@ -142,10 +142,6 @@ void Xpilot::loop(void)
 {
     nowMs = millis();
     processInput();
-
-    // Only run IMU processing in auto modes i.e FBW, STABILIZE
-    // if (currentMode != FLIGHT_MODE::PASSTHROUGH)
-    //     processIMU();
     processIMU();
 
     // Process output to servos at 50Hz intervals
@@ -207,16 +203,11 @@ void Xpilot::processIMU(void)
         ahrs_roll = imu.getRoll();
         ahrs_pitch = imu.getPitch();
         ahrs_yaw = imu.getYaw();
-        xpilot.lastAHRS = millis();
     }
 }
 
 void Xpilot::processOutput(void)
 {
-    aileron_out = constrain(aileronPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    elevator_out = constrain(elevatorPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    rudder_out = constrain(rudderPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM);
-
     mode.process();
 
     aileron_out = constrain(aileron_out, SERVO_MIN_PWM, SERVO_MAX_PWM);

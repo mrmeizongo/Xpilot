@@ -29,10 +29,10 @@ Copyright (C) 2024 Jamal Meizongo
 class PID
 {
 public:
-    PID();                             // Empty Constructor
-    PID(float, float, float);          // Constructor with initialization parameters
-    void ResetPID(void);               // Reset PID controller parameters
-    int Compute(float, unsigned long); // Generate the PID output to be added to the servo
+    PID();                    // Empty Constructor
+    PID(float, float, float); // Constructor with initialization parameters
+    void ResetPID(void);      // Reset PID controller parameters
+    int Compute(float);       // Generate the PID output to be added to the servo
 
 private:
     float Kp;
@@ -41,5 +41,6 @@ private:
 
     float integral;
     float previousError;
+    unsigned long previousTime;
 };
 #endif //_PID_H
