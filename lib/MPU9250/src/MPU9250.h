@@ -68,14 +68,14 @@ static constexpr uint8_t MPU6500_WHOAMI_DEFAULT_VALUE{0x70};
 
 struct MPU9250Setting
 {
-    ACCEL_FS_SEL accel_fs_sel{ACCEL_FS_SEL::A16G};
+    ACCEL_FS_SEL accel_fs_sel{ACCEL_FS_SEL::A8G};
     GYRO_FS_SEL gyro_fs_sel{GYRO_FS_SEL::G250DPS};
     MAG_OUTPUT_BITS mag_output_bits{MAG_OUTPUT_BITS::M16BITS};
-    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_200HZ};
+    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_250HZ};
     uint8_t gyro_fchoice{0x03};
-    GYRO_DLPF_CFG gyro_dlpf_cfg{GYRO_DLPF_CFG::DLPF_41HZ};
+    GYRO_DLPF_CFG gyro_dlpf_cfg{GYRO_DLPF_CFG::DLPF_92HZ};
     uint8_t accel_fchoice{0x01};
-    ACCEL_DLPF_CFG accel_dlpf_cfg{ACCEL_DLPF_CFG::DLPF_45HZ};
+    ACCEL_DLPF_CFG accel_dlpf_cfg{ACCEL_DLPF_CFG::DLPF_99HZ};
 };
 
 template <typename WireType>

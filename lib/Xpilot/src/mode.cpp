@@ -132,15 +132,13 @@ void Mode::FBWMode()
     int rollAdjust = rollPID->Compute(rollError);
     int pitchAdjust = pitchPID->Compute(pitchError);
 #if REVERSE_ROLL_STABILIZE
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileronPulseWidth, ROLL_LIMIT, true) ? xpilot.aileronPulseWidth : SERVO_MID_PWM - rollAdjust;
-#else
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileronPulseWidth, ROLL_LIMIT, true) ? xpilot.aileronPulseWidth : SERVO_MID_PWM + rollAdjust;
+    rollAdjust = -(rollAdjust);
 #endif
 #if REVERSE_PITCH_STABILIZE
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevatorPulseWidth, PITCH_LIMIT) ? xpilot.elevatorPulseWidth : SERVO_MID_PWM - pitchAdjust;
-#else
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevatorPulseWidth, PITCH_LIMIT) ? xpilot.elevatorPulseWidth : SERVO_MID_PWM + pitchAdjust;
+    pitchAdjust = -(pitchAdjust);
 #endif
+    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileronPulseWidth, ROLL_LIMIT, true) ? xpilot.aileronPulseWidth : SERVO_MID_PWM + rollAdjust;
+    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevatorPulseWidth, PITCH_LIMIT) ? xpilot.elevatorPulseWidth : SERVO_MID_PWM + pitchAdjust;
 }
 
 // Roll and pitch follow stick input up to set limits
