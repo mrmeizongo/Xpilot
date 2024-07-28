@@ -65,7 +65,7 @@ However, the Nano, GY-91/MPU9250 and servos can be powered from one 5VDC power s
 | Elevator | 10  |
 |  Rudder  | 11  |
 
-These pin numbers with the exception of GY-91/MPU9250 can be reconfigured in [xpilot_config.h](lib/Xpilot/src/xpilot_config.h).
+These pin numbers with the exception of GY-91/MPU9250 can be reconfigured in [config.h](lib/Xpilot/src/config.h).
 Ensure all components share a common ground. The Nano and GY-91/MPU9250 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
 
 ## Flight modes
@@ -85,7 +85,7 @@ Pull requests are welcome. Please try to adhere to the coding style in the proje
 
 ## Setup
 
-Be sure to go through [xpilot_config.h](lib/Xpilot/src/xpilot_config.h) and perform preflight checks and modifications before flight.
+Be sure to go through [config.h](lib/Xpilot/src/config.h) and perform preflight checks and modifications before flight.
 
 ## Credits
 
