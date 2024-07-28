@@ -30,7 +30,7 @@ Copyright (C) 2024 Jamal Meizongo
 
 Designed with a 3-channel system(AIL, ELEV, RUDD) in mind; some modifications are necessary to convert it for a 2-channel system.
 The atmega328p chip in the arduino nano is fast enough to run the stabilization loop in 4ms.
-This gives us a frequency of up to 250Hz. Output to the control servos are updated at 50Hz for standard servos and the IMU is queried at a 200Hz FIFO sample rate.
+This gives us a frequency of ~250Hz. Output to the control servos are updated at 50Hz for standard servos and the IMU is queried at a 200Hz FIFO sample rate.
 
 The frequency refers to the rate at which the software is updating or making corrections.
 
@@ -76,10 +76,10 @@ There are 3 flight modes; modes 1 = manual/passthrough, 2 = fly-by-wire, and 3 -
 |      Flight mode       |                     Description                      |
 | :--------------------: | :--------------------------------------------------: |
 | Manual/Passthrough - 1 | Manual flight control surface movement, passthrough  |
-|    Fly-by-wire - 2     |  Roll and pitch follow stick input up to set limits  |
+|        Rate - 2        |          Gyro based rate of change control           |
 |     Stabilize - 3      | Like fly-by-wire with wing-leveling on stick release |
 
-Fly-by-wire mode is the most popular among inexperienced flyers. Manual/Passthrough is the default mode of operation if mode switch has not been configured.
+Rate mode is the most popular among inexperienced flyers. Manual/Passthrough is the default mode of operation if mode switch has not been configured.
 Note that there is currently no aileron and rudder mixing available to coordinate turns. This will be fixed in an upcoming update.
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.

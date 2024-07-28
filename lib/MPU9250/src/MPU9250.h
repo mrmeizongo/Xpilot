@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MPU9250_H
 #define MPU9250_H
 
@@ -68,14 +69,14 @@ static constexpr uint8_t MPU6500_WHOAMI_DEFAULT_VALUE{0x70};
 
 struct MPU9250Setting
 {
-    ACCEL_FS_SEL accel_fs_sel{ACCEL_FS_SEL::A8G};
+    ACCEL_FS_SEL accel_fs_sel{ACCEL_FS_SEL::A2G};
     GYRO_FS_SEL gyro_fs_sel{GYRO_FS_SEL::G250DPS};
     MAG_OUTPUT_BITS mag_output_bits{MAG_OUTPUT_BITS::M16BITS};
-    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_250HZ};
+    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_200HZ};
     uint8_t gyro_fchoice{0x03};
-    GYRO_DLPF_CFG gyro_dlpf_cfg{GYRO_DLPF_CFG::DLPF_92HZ};
+    GYRO_DLPF_CFG gyro_dlpf_cfg{GYRO_DLPF_CFG::DLPF_250HZ};
     uint8_t accel_fchoice{0x01};
-    ACCEL_DLPF_CFG accel_dlpf_cfg{ACCEL_DLPF_CFG::DLPF_99HZ};
+    ACCEL_DLPF_CFG accel_dlpf_cfg{ACCEL_DLPF_CFG::DLPF_218HZ_0};
 };
 
 template <typename WireType>
@@ -98,9 +99,9 @@ class MPU9250_
     float acc_bias[3]{0., 0., 0.};  // acc calibration value in ACCEL_FS_SEL: 2g
     float gyro_bias[3]{0., 0., 0.}; // gyro calibration value in GYRO_FS_SEL: 250dps
     float mag_bias_factory[3]{0., 0., 0.};
-    float mag_bias[3]{-61.33, -223.69, 123.51}; // mag calibration value in MAG_OUTPUT_BITS: 16BITS from previous calibration
-    float mag_scale[3]{1.28, 0.70, 1.27};
-    float magnetic_declination = -12.10; // Camden, DE, US May 30th 2024
+    float mag_bias[3]{0., 0., 0.}; // mag calibration value in MAG_OUTPUT_BITS: 16BITS
+    float mag_scale[3]{1., 1., 1.};
+    float magnetic_declination = -8.01; // Camden, DE, 27th July 2024
 
     // Temperature
     int16_t temperature_count{0}; // temperature raw count output
@@ -1008,13 +1009,13 @@ private:
         // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11).
         // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
         case ACCEL_FS_SEL::A2G:
-            return 2.0 / 32767.0;
+            return 2.0 / 32768.0;
         case ACCEL_FS_SEL::A4G:
-            return 4.0 / 32767.0;
+            return 4.0 / 32768.0;
         case ACCEL_FS_SEL::A8G:
-            return 8.0 / 32767.0;
+            return 8.0 / 32768.0;
         case ACCEL_FS_SEL::A16G:
-            return 16.0 / 32767.0;
+            return 16.0 / 32768.0;
         default:
             return 0.;
         }
@@ -1028,13 +1029,13 @@ private:
         // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11).
         // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
         case GYRO_FS_SEL::G250DPS:
-            return 250.0 / 32767.0;
+            return 250.0 / 32768.0;
         case GYRO_FS_SEL::G500DPS:
-            return 500.0 / 32767.0;
+            return 500.0 / 32768.0;
         case GYRO_FS_SEL::G1000DPS:
-            return 1000.0 / 32767.0;
+            return 1000.0 / 32768.0;
         case GYRO_FS_SEL::G2000DPS:
-            return 2000.0 / 32767.0;
+            return 2000.0 / 32768.0;
         default:
             return 0.;
         }
@@ -1048,9 +1049,9 @@ private:
         // 14 bit resolution (0) and 16 bit resolution (1)
         // Proper scale to return milliGauss
         case MAG_OUTPUT_BITS::M14BITS:
-            return 10. * 4912. / 8191.0;
+            return 10. * 4912. / 8190.0;
         case MAG_OUTPUT_BITS::M16BITS:
-            return 10. * 4912. / 32767.0;
+            return 10. * 4912. / 32760.0;
         default:
             return 0.;
         }

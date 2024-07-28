@@ -33,17 +33,11 @@ Flight stabilization software
 #include "Mode.h"
 #include "config.h"
 
-bool headingSet = false;
-
 // Helper function to reset all PID controllers
 #define ResetPIDControllers() \
     rollPID->ResetPID();      \
     pitchPID->ResetPID();     \
     yawPID->ResetPID();
-
-// Helper functions
-bool isCentered(int16_t stickInput);
-bool allowInput(double angle, int16_t stickInput, uint8_t angleLimit, bool reverse = false);
 
 Mode::Mode()
 {
@@ -67,11 +61,11 @@ void Mode::update(long pulseIn)
     }
     else if ((pulseIn >= SERVO_MID_PWM - INPUT_THRESHOLD) && (pulseIn <= SERVO_MID_PWM + INPUT_THRESHOLD))
     {
-        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::FBW)
+        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::RATE)
             return;
 
         ResetPIDControllers();
-        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::FBW);
+        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::RATE);
     }
     else if (abs(pulseIn - SERVO_MAX_PWM) < INPUT_THRESHOLD)
     {
@@ -89,11 +83,17 @@ void Mode::process()
     case Xpilot::FLIGHT_MODE::PASSTHROUGH:
         passthroughMode();
         break;
-    case Xpilot::FLIGHT_MODE::FBW:
-        FBWMode();
+    case Xpilot::FLIGHT_MODE::RATE:
+        rateMode();
+        xpilot.aileron_out = map(xpilot.aileron_out, -MAX_ROLL_RATE_DEGS * ROLL_KP, MAX_ROLL_RATE_DEGS * ROLL_KP, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PITCH_RATE_DEGS * PITCH_KP, MAX_PITCH_RATE_DEGS * PITCH_KP, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.rudder_out = map(xpilot.rudder_out, -MAX_YAW_RATE_DEGS * YAW_KP, MAX_YAW_RATE_DEGS * YAW_KP, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     case Xpilot::FLIGHT_MODE::STABILIZE:
         stabilizeMode();
+        xpilot.aileron_out = map(xpilot.aileron_out, -MAX_ROLL_ANGLE_DEGS * ROLL_KP, MAX_ROLL_ANGLE_DEGS * ROLL_KP, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PITCH_ANGLE_DEGS * PITCH_KP, MAX_PITCH_ANGLE_DEGS * PITCH_KP, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.rudder_out = map(xpilot.rudder_out, -MAX_YAW_RATE_DEGS * YAW_KP, MAX_YAW_RATE_DEGS * YAW_KP, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     default:
         // Should not get here, but if we do, default to passthrough mode i.e flight mode 1
@@ -106,92 +106,47 @@ void Mode::process()
 }
 
 // Manual mode gives full control of the rc plane flight surfaces
-// No stabilization and no deflection limits on flight surfaces
+// No stabilization and rate control
 void Mode::passthroughMode()
 {
     // This is to stop the fluctuation experienced in center position due to stick drift
-    xpilot.aileron_out = isCentered(xpilot.aileronPulseWidth) ? SERVO_MID_PWM : xpilot.aileronPulseWidth;
-    xpilot.elevator_out = isCentered(xpilot.elevatorPulseWidth) ? SERVO_MID_PWM : xpilot.elevatorPulseWidth;
-    xpilot.rudder_out = isCentered(xpilot.rudderPulseWidth) ? SERVO_MID_PWM : xpilot.rudderPulseWidth;
+    xpilot.aileron_out = (abs(xpilot.aileronPulseWidth - SERVO_MID_PWM) <= 20) ? SERVO_MID_PWM : xpilot.aileronPulseWidth;
+    xpilot.elevator_out = (abs(xpilot.elevatorPulseWidth - SERVO_MID_PWM) <= 20) ? SERVO_MID_PWM : xpilot.elevatorPulseWidth;
+    xpilot.rudder_out = (abs(xpilot.rudderPulseWidth - SERVO_MID_PWM) <= 20) ? SERVO_MID_PWM : xpilot.rudderPulseWidth;
 }
 
-// FBW mode is like manual mode
-// Roll and pitch follow stick input up to set limits
-void Mode::FBWMode()
+// Rate mode uses gyroscope values to maintain a desire rate of motion control
+// Flight surfaces move to prevent sudden changes in direction
+void Mode::rateMode()
 {
-    passthroughMode();
+    xpilot.aileron_out = (abs(xpilot.aileronPulseWidth - SERVO_MID_PWM) <= 20) ? 0 : map(xpilot.aileronPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+    xpilot.elevator_out = (abs(xpilot.elevatorPulseWidth - SERVO_MID_PWM) <= 20) ? 0 : map(xpilot.elevatorPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
+    xpilot.rudder_out = (abs(xpilot.rudderPulseWidth - SERVO_MID_PWM) <= 20) ? 0 : map(xpilot.rudderPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
 
-    // Compute error
-    float rollError = ROLL_LIMIT - abs(xpilot.ahrs_roll);
-    float pitchError = PITCH_LIMIT - abs(xpilot.ahrs_pitch);
+    int16_t rollDemand = xpilot.aileron_out - xpilot.gyroX;
+    int16_t pitchDemand = xpilot.elevator_out - xpilot.gyroY;
+    int16_t yawDemand = xpilot.rudder_out - xpilot.gyroZ;
 
-    rollError = xpilot.ahrs_roll >= 0 ? rollError : -(rollError);
-    pitchError = xpilot.ahrs_pitch >= 0 ? pitchError : -(pitchError);
-
-    // Pass to PID controller
-    int rollAdjust = rollPID->Compute(rollError);
-    int pitchAdjust = pitchPID->Compute(pitchError);
-#if REVERSE_ROLL_STABILIZE
-    rollAdjust = -(rollAdjust);
-#endif
-#if REVERSE_PITCH_STABILIZE
-    pitchAdjust = -(pitchAdjust);
-#endif
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileronPulseWidth, ROLL_LIMIT, true) ? xpilot.aileronPulseWidth : SERVO_MID_PWM + rollAdjust;
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevatorPulseWidth, PITCH_LIMIT) ? xpilot.elevatorPulseWidth : SERVO_MID_PWM + pitchAdjust;
+    xpilot.aileron_out = rollPID->Compute(rollDemand);
+    xpilot.elevator_out = pitchPID->Compute(pitchDemand);
+    xpilot.rudder_out = yawPID->Compute(yawDemand);
 }
 
 // Roll and pitch follow stick input up to set limits
 // Roll and pitch leveling on stick release
 void Mode::stabilizeMode()
 {
-    float rollError = 0 - xpilot.ahrs_roll;
-    int rollAdjust = rollPID->Compute(rollError);
-    rollAdjust = isCentered(xpilot.aileronPulseWidth) ? rollAdjust : 0;
+    xpilot.aileron_out = (abs(xpilot.aileronPulseWidth - SERVO_MID_PWM) <= 20) ? 0 : map(xpilot.aileronPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
+    xpilot.elevator_out = (abs(xpilot.elevatorPulseWidth - SERVO_MID_PWM) <= 20) ? 0 : map(xpilot.elevatorPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
+    xpilot.rudder_out = (abs(xpilot.rudderPulseWidth - SERVO_MID_PWM) <= 20) ? 0 : map(xpilot.rudderPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
 
-    float pitchError = 0 - xpilot.ahrs_pitch;
-    int pitchAdjust = pitchPID->Compute(pitchError);
-    pitchAdjust = isCentered(xpilot.elevatorPulseWidth) ? pitchAdjust : 0;
+    int16_t rollDemand = xpilot.aileron_out - xpilot.ahrs_roll;
+    int16_t pitchDemand = xpilot.elevator_out - xpilot.ahrs_pitch;
+    int16_t yawDemand = xpilot.rudder_out - xpilot.gyroZ;
 
-#if REVERSE_ROLL_STABILIZE
-    rollAdjust = -(rollAdjust);
-#endif
-#if REVERSE_PITCH_STABILIZE
-    pitchAdjust = -(pitchAdjust);
-#endif
-    // #if REVERSE_YAW_STABILIZE
-    //     yawAdjust = -(yawAdjust);
-    // #endif
-
-    xpilot.aileron_out = allowInput(xpilot.ahrs_roll, xpilot.aileronPulseWidth, ROLL_LIMIT, true) ? xpilot.aileronPulseWidth + rollAdjust : SERVO_MID_PWM + rollAdjust;
-    xpilot.elevator_out = allowInput(xpilot.ahrs_pitch, xpilot.elevatorPulseWidth, PITCH_LIMIT) ? xpilot.elevatorPulseWidth + pitchAdjust : SERVO_MID_PWM + pitchAdjust;
-    xpilot.rudder_out = xpilot.rudder_out;
+    xpilot.aileron_out = rollPID->Compute(rollDemand);
+    xpilot.elevator_out = pitchPID->Compute(pitchDemand);
+    xpilot.rudder_out = yawPID->Compute(yawDemand);
 }
-
-// Helper functions
-bool isCentered(int16_t stickInput)
-{
-    return abs(stickInput - SERVO_MID_PWM) <= 20;
-}
-
-// Allow input based on angle
-bool allowInput(double angle, int16_t input, uint8_t angleLimit, bool reverse)
-{
-    // If we haven't reached the angle limit allow input
-    if (abs(angle) < angleLimit)
-        return true;
-
-    // If limit is reached, prevent increasing it but allow decreasing
-    // Typically, both roll and pitch angle readings from the IMU are 0 when level
-    // Roll angle is positive when rolling left and negative when rolling right, pitch angle is negative pitching down and positive when pitching up
-    // Aileron stick input is positive when pushed left and negative when pushed right
-    // Elevator stick input is positive when pushed up and negative when pushed down
-    // Stick and servo positions are 1500 when centered, increases up to limit 2000 when rolling left or pitching up and decreases up to limit 1000 otherwise
-    if (reverse)
-        return (angle > 0 && input < SERVO_MID_PWM) || (angle < 0 && input > SERVO_MID_PWM);
-    else
-        return (angle > 0 && input > SERVO_MID_PWM) || (angle < 0 && input < SERVO_MID_PWM);
-}
-// --------------------------------------
 
 Mode mode;

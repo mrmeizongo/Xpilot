@@ -60,26 +60,24 @@ Flight stabilization software
 #define MODEPIN_INT 21
 // ------------------------------------------------------------------------------------------------------
 
-// In degree radians
-// ------------------------------------------------------------------------------------------------------
-#define ROLL_LIMIT 30
-#define PITCH_LIMIT 30
-// ------------------------------------------------------------------------------------------------------
-
 // PID GAINs
 // ------------------------------------------------------------------------------------------------------
 // Roll
-#define ROLL_KP 9.0f
-#define ROLL_KI 0.3f
-#define ROLL_KD 0.05f
+#define ROLL_KP 35.5f
+#define ROLL_KI 1.0f
+#define ROLL_KD 1.0f
 // Pitch
-#define PITCH_KP 6.0f
-#define PITCH_KI 0.1f
-#define PITCH_KD 0.07f
+#define PITCH_KP 23.0f
+#define PITCH_KI 1.0f
+#define PITCH_KD 1.0f
 // Yaw
-#define YAW_KP 6.0f
-#define YAW_KI 0.01f
-#define YAW_KD 0.07f
+#define YAW_KP 18.0f
+#define YAW_KI 1.0f
+#define YAW_KD 1.0f
+
+#define IMU_ROLL_TRIM -1.51f
+#define IMU_PITCH_TRIM 2.12f
+#define IMU_YAW_TRIM 0.0f
 // ------------------------------------------------------------------------------------------------------
 
 // Servo PWM range
@@ -92,12 +90,26 @@ Flight stabilization software
 #define SERVO_MID_PWM 1500
 // ------------------------------------------------------------------------------------------------------
 
+// Radio resolution values
+// ------------------------------------------------------------------------------------------------------
+// Stick resolution
+#define MAX_ROLL_RATE_DEGS 70
+#define MAX_PITCH_RATE_DEGS 70
+#define MAX_YAW_RATE_DEGS 70
+// Max angles allowed in stabilize mode (angle)
+#define MAX_ROLL_ANGLE_DEGS 60
+#define MAX_PITCH_ANGLE_DEGS 60
+
 // Transmitter/Receiver values
 // ------------------------------------------------------------------------------------------------------
-#define INPUT_THRESHOLD 200 // Used in to separate the 3 flight modes input threshold
+#define INPUT_THRESHOLD 200 // Used to separate the 3 flight modes input threshold
+// ------------------------------------------------------------------------------------------------------
+
+// Set any of these to either 1 or 0 if stabilization correction is not applied in correct direction
+// ------------------------------------------------------------------------------------------------------
 #define REVERSE_ROLL_STABILIZE 1
 #define REVERSE_PITCH_STABILIZE 1
-#define REVERSE_YAW_STABILIZE 1
+#define REVERSE_YAW_STABILIZE 0
 // ------------------------------------------------------------------------------------------------------
 
 // Set to 1 to enable the respective debugging, zero otherwise

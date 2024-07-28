@@ -46,7 +46,7 @@ public:
     enum class FLIGHT_MODE : uint8_t
     {
         PASSTHROUGH = 1,
-        FBW,
+        RATE,
         STABILIZE
     };
 
@@ -115,9 +115,10 @@ private:
      */
     uint16_t modePulseWidth = 0; // Mode values obtained from transmitter through interrupts
 
-    FLIGHT_MODE currentMode = FLIGHT_MODE::PASSTHROUGH; // PASSTHROUGH is default mode
+    FLIGHT_MODE currentMode{FLIGHT_MODE::PASSTHROUGH}; // PASSTHROUGH is default mode
 
-    float ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Euler angle output
+    int16_t ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Airplane coordinate system values
+    int16_t gyroX, gyroY, gyroZ = 0;
 };
 
 extern Xpilot xpilot;

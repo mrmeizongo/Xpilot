@@ -47,7 +47,7 @@ private:
     PID *pitchPID;
     PID *yawPID;
     void passthroughMode();
-    void FBWMode();
+    void rateMode();
     void stabilizeMode();
 };
 

@@ -200,19 +200,33 @@ void Xpilot::processIMU(void)
 {
     if (imu.update())
     {
-        ahrs_roll = imu.getRoll();
-        ahrs_pitch = imu.getPitch();
-        ahrs_yaw = imu.getYaw();
+#if REVERSE_ROLL_STABILIZE
+        ahrs_roll = -((int16_t)(imu.getRoll() + IMU_ROLL_TRIM));
+        gyroX = -((int16_t)imu.getGyroX());
+#else
+        ahrs_roll = (int16_t)(imu.getRoll() + IMU_ROLL_TRIM);
+        gyroX = (int16_t)imu.getGyroX();
+#endif
+#if REVERSE_PITCH_STABILIZE
+        ahrs_pitch = -((int16_t)(imu.getPitch() + IMU_PITCH_TRIM));
+        gyroY = -((int16_t)imu.getGyroY());
+#else
+        ahrs_pitch = (int16_t)(imu.getPitch() + IMU_PITCH_TRIM);
+        gyroY = (int16_t)imu.getGyroY();
+#endif
+#if REVERSE_YAW_STABILIZE
+        ahrs_yaw = -((int16_t)(imu.getYaw() + IMU_YAW_TRIM));
+        gyroZ = -((int16_t)imu.getGyroZ());
+#else
+        ahrs_yaw = (int16_t)(imu.getYaw() + IMU_YAW_TRIM);
+        gyroZ = (int16_t)imu.getGyroZ();
+#endif
     }
 }
 
 void Xpilot::processOutput(void)
 {
     mode.process();
-
-    aileron_out = constrain(aileron_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    elevator_out = constrain(elevator_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    rudder_out = constrain(rudder_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
 
     aileronServo.writeMicroseconds(aileron_out);
     elevatorServo.writeMicroseconds(elevator_out);
