@@ -1,3 +1,5 @@
+![XPilot Logo](assets/img/logo.jpg)
+
 # Xpilot
 
 Flight stabilization system intended to run on the atmega328 chip in the Arduino Nano and UNO microcontrollers.
