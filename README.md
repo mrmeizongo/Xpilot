@@ -83,6 +83,10 @@ Note that there is currently no aileron and rudder mixing available to coordinat
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
 
+## Setup
+
+Be sure to go through [xpilot_config.h](lib/Xpilot/src/xpilot_config.h) and perform preflight checks and modifications before flight.
+
 ## Credits
 
 hideakitai - [MPU9250 library](https://github.com/hideakitai/MPU9250)

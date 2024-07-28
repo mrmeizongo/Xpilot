@@ -95,8 +95,8 @@ Flight stabilization software
  */
 // ------------------------------------------------------------------------------------------------------
 #define SERVO_MIN_PWM 1000
-#define SERVO_MAX_PWM 2000
 #define SERVO_MID_PWM 1500
+#define SERVO_MAX_PWM 2000
 
 // If your transmitter has
 #define ROLL_INPUT_DEADBAND 20
@@ -106,12 +106,12 @@ Flight stabilization software
 
 // Radio resolution values
 // ------------------------------------------------------------------------------------------------------
-// Stick resolution
+// Stick resolution (degrees)
 #define MAX_ROLL_RATE_DEGS 70
 #define MAX_PITCH_RATE_DEGS 70
 #define MAX_YAW_RATE_DEGS 70
 
-// Max angles allowed in stabilize mode (angle)
+// Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
 #define MAX_PITCH_ANGLE_DEGS 60
 // ------------------------------------------------------------------------------------------------------
