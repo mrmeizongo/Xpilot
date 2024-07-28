@@ -97,6 +97,11 @@ Flight stabilization software
 #define SERVO_MIN_PWM 1000
 #define SERVO_MAX_PWM 2000
 #define SERVO_MID_PWM 1500
+
+// If your transmitter has
+#define ROLL_INPUT_DEADBAND 20
+#define PITCH_INPUT_DEADBAND 20
+#define YAW_INPUT_DEADBAND 20
 // ------------------------------------------------------------------------------------------------------
 
 // Radio resolution values
