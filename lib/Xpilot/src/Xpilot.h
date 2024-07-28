@@ -108,7 +108,6 @@ private:
     Servo rudderServo;             // Rudder servo channel
     int16_t rudder_out = 0;        // Rudder servo output variable
     uint16_t rudderPulseWidth = 0; // Rudder values obtained from transmitter through interrupts
-    float currentHeading = 0;      // Current heading obtained from ahrs and rudder position
 
     /*
      * Mode control variables
