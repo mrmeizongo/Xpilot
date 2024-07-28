@@ -115,7 +115,7 @@ void Mode::passthroughMode()
     xpilot.rudder_out = (abs(xpilot.rudderPulseWidth - SERVO_MID_PWM) <= 20) ? SERVO_MID_PWM : xpilot.rudderPulseWidth;
 }
 
-// Rate mode uses gyroscope values to maintain a desire rate of motion control
+// Rate mode uses gyroscope values to maintain a desired rate of change
 // Flight surfaces move to prevent sudden changes in direction
 void Mode::rateMode()
 {

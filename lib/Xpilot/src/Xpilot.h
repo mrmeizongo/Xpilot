@@ -118,7 +118,7 @@ private:
     FLIGHT_MODE currentMode{FLIGHT_MODE::PASSTHROUGH}; // PASSTHROUGH is default mode
 
     int16_t ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Airplane coordinate system values
-    int16_t gyroX, gyroY, gyroZ = 0;
+    int16_t gyroX, gyroY, gyroZ = 0;             // Angular velocity around the respective axis
 };
 
 extern Xpilot xpilot;

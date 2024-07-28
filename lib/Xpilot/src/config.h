@@ -29,7 +29,6 @@ Flight stabilization software
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
-
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
@@ -48,11 +47,13 @@ Flight stabilization software
 #define RUDDPIN_OUTPUT 11
 // ------------------------------------------------------------------------------------------------------
 
-// ISR vectors
-// All input pins use pin change interrupts
-// Change these values to match your selected input pins
-// if you modify these values you will also have to modify the settings in the PinChangeInterrupt library
-// A cleaner config will probaby be useful here
+/*
+ * ISR vectors
+ * All input pins use pin change interrupts
+ * Change these values to match your selected input pins
+ * If you modify these values you will also have to modify the settings in the PinChangeInterrupt library
+ * A cleaner config method will probaby be useful here
+ */
 // ------------------------------------------------------------------------------------------------------
 #define AILPIN_INT 18
 #define ELEVPIN_INT 19
@@ -60,10 +61,10 @@ Flight stabilization software
 #define MODEPIN_INT 21
 // ------------------------------------------------------------------------------------------------------
 
-// PID GAINs
+// PID gain values
 // ------------------------------------------------------------------------------------------------------
 // Roll
-#define ROLL_KP 35.5f
+#define ROLL_KP 35.0f
 #define ROLL_KI 1.0f
 #define ROLL_KD 1.0f
 // Pitch
@@ -74,16 +75,24 @@ Flight stabilization software
 #define YAW_KP 18.0f
 #define YAW_KI 1.0f
 #define YAW_KD 1.0f
+// ------------------------------------------------------------------------------------------------------
 
+/*
+ * Trim values to be used to correct gyro misalignment
+ * You might want to change this to suit your aircraft
+ */
+// ------------------------------------------------------------------------------------------------------
 #define IMU_ROLL_TRIM -1.51f
 #define IMU_PITCH_TRIM 2.12f
 #define IMU_YAW_TRIM 0.0f
 // ------------------------------------------------------------------------------------------------------
 
-// Servo PWM range
-// Edit this to suit your servo PWN values
-// You can find these values in the datasheet that comes with your servo
-// These values are conservative and should work for most servos
+/*
+ * Servo PWM range
+ * Edit this to suit your servo PWN values
+ * You can find these values in the datasheet that comes with your servo
+ * These values are conservative and should work for most servos
+ */
 // ------------------------------------------------------------------------------------------------------
 #define SERVO_MIN_PWM 1000
 #define SERVO_MAX_PWM 2000
@@ -96,25 +105,29 @@ Flight stabilization software
 #define MAX_ROLL_RATE_DEGS 70
 #define MAX_PITCH_RATE_DEGS 70
 #define MAX_YAW_RATE_DEGS 70
+
 // Max angles allowed in stabilize mode (angle)
 #define MAX_ROLL_ANGLE_DEGS 60
 #define MAX_PITCH_ANGLE_DEGS 60
+// ------------------------------------------------------------------------------------------------------
 
 // Transmitter/Receiver values
 // ------------------------------------------------------------------------------------------------------
 #define INPUT_THRESHOLD 200 // Used to separate the 3 flight modes input threshold
 // ------------------------------------------------------------------------------------------------------
 
-// Set any of these to either 1 or 0 if stabilization correction is not applied in correct direction
+// Set any of these to either 1 or 0 to reverse stabilization output direction
 // ------------------------------------------------------------------------------------------------------
 #define REVERSE_ROLL_STABILIZE 1
 #define REVERSE_PITCH_STABILIZE 1
 #define REVERSE_YAW_STABILIZE 0
 // ------------------------------------------------------------------------------------------------------
 
-// Set to 1 to enable the respective debugging, zero otherwise
-// To enable any of the XX_DEBUG, set DEBUG to 1 first
-// It is wise to enable only one debug at a time (i.e. LOOP_DEBUG or IO_DEBUG) due to the atmega328p memory constraints
+/*
+ * Set to 1 to enable the respective debugging, zero otherwise
+ * To enable any of the XX_DEBUG, set DEBUG to 1 first
+ * It is wise to enable only one debug at a time (i.e. LOOP_DEBUG or IO_DEBUG) due to the atmega328p memory constraints
+ */
 // ------------------------------------------------------------------------------------------------------
 #define DEBUG 0
 #define LOOP_DEBUG 0
