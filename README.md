@@ -29,13 +29,12 @@ Copyright (C) 2024 Jamal Meizongo
 ### Servos need to be installed correctly for this to work.
 
 Designed with a 3-channel system(AIL, ELEV, RUDD) in mind; some modifications are necessary to convert it for a 2-channel system.
-The atmega328p chip in the arduino nano is fast enough to run the stabilization loop in 4ms.
-This gives us a frequency of ~250Hz. Output to the control servos are updated at 50Hz for standard servos and the IMU is queried at a 200Hz FIFO sample rate.
+The atmega328p chip in the arduino nano is fast enough to run the entire stabilization loop in 4ms.
+This gives us a frequency of ~250Hz. Output to the control servos are updated at 50Hz for standard servos.
 
 The frequency refers to the rate at which the software is updating or making corrections.
 
 In the context of RC planes, an execution loop of 250Hz provides a smooth and responsive control, which is particularly beneficial for maintaining stability in changing flight conditions.
-In passthrough mode, the main execution loop runs at 1KHz and servos are still updated at 50Hz.
 
 ## Setup
 
@@ -73,11 +72,11 @@ Ensure all components share a common ground. The Nano and GY-91/MPU9250 do not r
 
 There are 3 flight modes; modes 1 = manual/passthrough, 2 = fly-by-wire, and 3 - stabilize.
 
-|      Flight mode       |                     Description                      |
-| :--------------------: | :--------------------------------------------------: |
-| Manual/Passthrough - 1 | Manual flight control surface movement, passthrough  |
-|        Rate - 2        |          Gyro based rate of change control           |
-|     Stabilize - 3      | Like fly-by-wire with wing-leveling on stick release |
+|      Flight mode       |                                     Description                                     |
+| :--------------------: | :---------------------------------------------------------------------------------: |
+| Manual/Passthrough - 1 |                 Manual flight control surface movement, passthrough                 |
+|        Rate - 2        |                          Gyro based rate of change control                          |
+|     Stabilize - 3      | Surfaces follow stick movement up-to set limits with wing-leveling on stick release |
 
 Rate mode is the most popular among inexperienced flyers. Manual/Passthrough is the default mode of operation if mode switch has not been configured.
 Note that there is currently no aileron and rudder mixing available to coordinate turns. This will be fixed in an upcoming update.
@@ -86,5 +85,5 @@ Pull requests are welcome. Please try to adhere to the coding style in the proje
 
 ## Credits
 
-hideakitai
-NicoHood
+hideakitai - [MPU9250 library](https://github.com/hideakitai/MPU9250)
+NicoHood - [PinChangeInterrupt library](https://github.com/NicoHood/PinChangeInterrupt)
