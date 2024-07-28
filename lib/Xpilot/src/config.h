@@ -33,7 +33,6 @@ Flight stabilization software
 #define _CONFIG_H
 
 // Input pins
-// ------------------------------------------------------------------------------------------------------
 #define AILPIN_INPUT 2
 #define ELEVPIN_INPUT 3
 #define RUDDPIN_INPUT 4
@@ -41,7 +40,6 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // Output pins
-// ------------------------------------------------------------------------------------------------------
 #define AILPIN_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
@@ -54,7 +52,6 @@ Flight stabilization software
  * If you modify these values you will also have to modify the settings in the PinChangeInterrupt library
  * A cleaner config method will probaby be useful here
  */
-// ------------------------------------------------------------------------------------------------------
 #define AILPIN_INT 18
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
@@ -62,7 +59,6 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // PID gain values
-// ------------------------------------------------------------------------------------------------------
 // Roll
 #define ROLL_KP 35.0f
 #define ROLL_KI 1.0f
@@ -81,7 +77,6 @@ Flight stabilization software
  * Trim values to be used to correct gyro misalignment
  * You might want to change this to suit your aircraft
  */
-// ------------------------------------------------------------------------------------------------------
 #define IMU_ROLL_TRIM -1.51f
 #define IMU_PITCH_TRIM 2.12f
 #define IMU_YAW_TRIM 0.0f
@@ -93,19 +88,18 @@ Flight stabilization software
  * You can find these values in the datasheet that comes with your servo
  * These values are conservative and should work for most servos
  */
-// ------------------------------------------------------------------------------------------------------
 #define SERVO_MIN_PWM 1000
 #define SERVO_MID_PWM 1500
 #define SERVO_MAX_PWM 2000
+// ------------------------------------------------------------------------------------------------------
 
-// If your transmitter has
+// If your transmitter has drift, be sure to modify these values
 #define ROLL_INPUT_DEADBAND 20
 #define PITCH_INPUT_DEADBAND 20
 #define YAW_INPUT_DEADBAND 20
 // ------------------------------------------------------------------------------------------------------
 
 // Radio resolution values
-// ------------------------------------------------------------------------------------------------------
 // Stick resolution (degrees)
 #define MAX_ROLL_RATE_DEGS 70
 #define MAX_PITCH_RATE_DEGS 70
@@ -116,13 +110,14 @@ Flight stabilization software
 #define MAX_PITCH_ANGLE_DEGS 60
 // ------------------------------------------------------------------------------------------------------
 
-// Transmitter/Receiver values
-// ------------------------------------------------------------------------------------------------------
-#define INPUT_THRESHOLD 200 // Used to separate the 3 flight modes input threshold
+/*
+ * Transmitter / Receiver values
+ * Used to separate the 3 flight modes input threshold
+ */
+#define INPUT_THRESHOLD 200
 // ------------------------------------------------------------------------------------------------------
 
 // Set any of these to either 1 or 0 to reverse stabilization output direction
-// ------------------------------------------------------------------------------------------------------
 #define REVERSE_ROLL_STABILIZE 1
 #define REVERSE_PITCH_STABILIZE 1
 #define REVERSE_YAW_STABILIZE 0
@@ -133,7 +128,6 @@ Flight stabilization software
  * To enable any of the XX_DEBUG, set DEBUG to 1 first
  * It is wise to enable only one debug at a time (i.e. LOOP_DEBUG or IO_DEBUG) due to the atmega328p memory constraints
  */
-// ------------------------------------------------------------------------------------------------------
 #define DEBUG 0
 #define LOOP_DEBUG 0
 #define IO_DEBUG 0
