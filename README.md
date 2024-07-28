@@ -61,7 +61,7 @@ Connect receiver to Arduino Nano as shown below
 Connect aileron, elevator and rudder servos to Arduino Nano as shown below. DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
 However, the Nano, GY-91/MPU9250 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
 
-![Schematics](assets/pdf/Xpilot_Schematic.pdf)
+![Schematics](assets/img/Schematics.png)
 
 | CHANNEL  | PIN |
 | :------: | :-: |
