@@ -51,17 +51,14 @@ Connect GY-91/MPU9250 to Arduino Nano as shown below
 
 Connect receiver to Arduino Nano as shown below
 
-| CHANNEL  | PIN |
-| :------: | :-: |
-| Aileron  |  2  |
-| Elevator |  3  |
-|  Rudder  |  4  |
-|   Mode   |  5  |
+|    CHANNEL    | PIN |
+| :-----------: | :-: |
+|    Aileron    |  2  |
+|   Elevator    |  3  |
+|    Rudder     |  4  |
+| AUX1/2 - Mode |  5  |
 
-Connect aileron, elevator and rudder servos to Arduino Nano as shown below. DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
-However, the Nano, GY-91/MPU9250 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
-
-![Schematics](assets/img/Schematics.png)
+Connect aileron, elevator and rudder servos to Arduino Nano as shown below.
 
 | CHANNEL  | PIN |
 | :------: | :-: |
@@ -69,8 +66,22 @@ However, the Nano, GY-91/MPU9250 and servos can be powered from one 5VDC power s
 | Elevator | 10  |
 |  Rudder  | 11  |
 
+Setup one 3-position switch on the transmitter to act as the Mode switch.
+When properly setup, mode switch states is shown below.
+
+| AUX Switch Position |    Mode     |
+| :-----------------: | :---------: |
+|          0          | Passthrough |
+|          1          |    Rate     |
+|          2          |  Stabilize  |
+
+DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
+However, the Nano, GY-91/MPU9250 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
+
 These pin numbers with the exception of GY-91/MPU9250 can be reconfigured in [config.h](lib/Xpilot/src/config.h).
 Ensure all components share a common ground. The Nano and GY-91/MPU9250 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
+
+![Schematics](assets/img/Schematics.png)
 
 ## Flight modes
 
@@ -79,17 +90,18 @@ There are 3 flight modes; modes 1 = manual/passthrough, 2 = fly-by-wire, and 3 -
 |      Flight mode       |                                     Description                                     |
 | :--------------------: | :---------------------------------------------------------------------------------: |
 | Manual/Passthrough - 1 |                 Manual flight control surface movement, passthrough                 |
-|        Rate - 2        |                          Gyro based rate of change control                          |
+|        Rate - 2        |                               Gyro based rate control                               |
 |     Stabilize - 3      | Surfaces follow stick movement up-to set limits with wing-leveling on stick release |
 
-Rate mode is the most popular among inexperienced flyers. Manual/Passthrough is the default mode of operation if mode switch has not been configured.
+Rate mode is the most popular among inexperienced flyers. Passthrough is for advanced flyers and is also the default mode of operation if mode switch has not been configured.
 Note that there is currently no aileron and rudder mixing available to coordinate turns. This will be fixed in an upcoming update.
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
 
 ## Setup
 
-Be sure to go through [config.h](lib/Xpilot/src/config.h) and perform preflight checks and modifications before flight.
+Be sure to go through [config.h](lib/Xpilot/src/config.h) and perform modifications and preflight checks before flight.
+May your landings be beautiful! ❤️
 
 ## Credits
 
