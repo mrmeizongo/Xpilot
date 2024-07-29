@@ -40,13 +40,6 @@ Flight stabilization software
 // Timer variables
 unsigned long nowMs, outputLastMs = 0;
 
-#if IO_DEBUG
-unsigned long debugLastMs = 0;
-#endif
-
-#if LOOP_DEBUG
-unsigned long loopLastMs = 0;
-#endif
 // -------------------------
 
 // Aileron variables
@@ -96,7 +89,7 @@ void Xpilot::setup(void)
             delay(1000);
         }
     }
-
+#if CALIBRATE
 #if DEBUG
     Serial.println("Accel Gyro calibration will start in 3sec.");
     Serial.println("Please leave the device still on the flat plane.");
@@ -109,6 +102,7 @@ void Xpilot::setup(void)
 #else
     imu.verbose(false);
     imu.calibrateAccelGyro();
+#endif
 #endif
 
     // All input pins use pin change interrupts
@@ -131,7 +125,11 @@ void Xpilot::setup(void)
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
 
-    warmupIMU(IMU_WARMUP_LOOP);
+    // Warm up the IMU
+    for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
+    {
+        processIMU();
+    }
 }
 
 /*
@@ -152,6 +150,7 @@ void Xpilot::loop(void)
     }
 
 #if IO_DEBUG
+    static unsigned long debugLastMs = 0;
     if (nowMs - debugLastMs >= 1000)
     {
         print_imu();
@@ -162,16 +161,14 @@ void Xpilot::loop(void)
 #endif
 
 #if LOOP_DEBUG
-    loopLastMs = millis();
+    unsigned long loopMillis = millis() - nowMs;
     Serial.print("Loop time: ");
-    long loopMillis = loopLastMs - nowMs;
     Serial.print(loopMillis);
     Serial.println("ms");
     Serial.print("Loop rate: ");
     loopMillis = loopMillis <= 0 ? 1 : loopMillis; // To prevent division by 0
     Serial.print(1000 / loopMillis);
     Serial.println("Hz");
-    Serial.println();
 #endif
 }
 
@@ -202,26 +199,38 @@ void Xpilot::processIMU(void)
     {
 #if REVERSE_ROLL_STABILIZE
         ahrs_roll = -((int16_t)(imu.getRoll() + IMU_ROLL_TRIM));
-        gyroX = -((int16_t)imu.getGyroX());
 #else
         ahrs_roll = (int16_t)(imu.getRoll() + IMU_ROLL_TRIM);
-        gyroX = (int16_t)imu.getGyroX();
 #endif
+
 #if REVERSE_PITCH_STABILIZE
         ahrs_pitch = -((int16_t)(imu.getPitch() + IMU_PITCH_TRIM));
-        gyroY = -((int16_t)imu.getGyroY());
 #else
         ahrs_pitch = (int16_t)(imu.getPitch() + IMU_PITCH_TRIM);
-        gyroY = (int16_t)imu.getGyroY();
 #endif
+
 #if REVERSE_YAW_STABILIZE
         ahrs_yaw = -((int16_t)(imu.getYaw() + IMU_YAW_TRIM));
-        gyroZ = -((int16_t)imu.getGyroZ());
 #else
         ahrs_yaw = (int16_t)(imu.getYaw() + IMU_YAW_TRIM);
-        gyroZ = (int16_t)imu.getGyroZ();
 #endif
     }
+
+#if REVERSE_ROLL_GYRO
+    gyroX = -((int16_t)imu.getGyroX());
+#else
+    gyroX = (int16_t)imu.getGyroX();
+#endif
+#if REVERSE_PITCH_GYRO
+    gyroY = -((int16_t)imu.getGyroY());
+#else
+    gyroY = (int16_t)imu.getGyroY();
+#endif
+#if REVERSE_YAW_GYRO
+    gyroZ = -((int16_t)imu.getGyroZ());
+#else
+    gyroZ = (int16_t)imu.getGyroZ();
+#endif
 }
 
 void Xpilot::processOutput(void)
@@ -231,15 +240,6 @@ void Xpilot::processOutput(void)
     aileronServo.writeMicroseconds(aileron_out);
     elevatorServo.writeMicroseconds(elevator_out);
     rudderServo.writeMicroseconds(rudder_out);
-}
-
-void Xpilot::warmupIMU(uint16_t warmUpTimer)
-{
-    // Warm up the IMU
-    for (uint16_t i = 0; i < warmUpTimer; i++)
-    {
-        processIMU();
-    }
 }
 
 // ISR

@@ -58,30 +58,6 @@ Flight stabilization software
 #define MODEPIN_INT 21
 // ------------------------------------------------------------------------------------------------------
 
-// PID gain values
-// Roll
-#define ROLL_KP 35.0f
-#define ROLL_KI 1.0f
-#define ROLL_KD 1.0f
-// Pitch
-#define PITCH_KP 23.0f
-#define PITCH_KI 1.0f
-#define PITCH_KD 1.0f
-// Yaw
-#define YAW_KP 18.0f
-#define YAW_KI 1.0f
-#define YAW_KD 1.0f
-// ------------------------------------------------------------------------------------------------------
-
-/*
- * Trim values to be used to correct gyro misalignment
- * You might want to change this to suit your aircraft
- */
-#define IMU_ROLL_TRIM -1.51f
-#define IMU_PITCH_TRIM 2.12f
-#define IMU_YAW_TRIM 0.0f
-// ------------------------------------------------------------------------------------------------------
-
 /*
  * Servo PWM range
  * Edit this to suit your servo PWN values
@@ -93,6 +69,30 @@ Flight stabilization software
 #define SERVO_MAX_PWM 2000
 // ------------------------------------------------------------------------------------------------------
 
+// PID gain values
+// Roll
+#define ROLL_KP 10.0f
+#define ROLL_KI 0.0f
+#define ROLL_KD 0.0f
+// Pitch
+#define PITCH_KP 10.0f
+#define PITCH_KI 0.0f
+#define PITCH_KD 0.0f
+// Yaw
+#define YAW_KP 10.0f
+#define YAW_KI 0.0f
+#define YAW_KD 0.0f
+// ------------------------------------------------------------------------------------------------------
+
+/*
+ * Trim values to be used to correct gyro misalignment
+ * You might want to modify these to suit your airplane
+ */
+#define IMU_ROLL_TRIM -1.51f
+#define IMU_PITCH_TRIM 2.12f
+#define IMU_YAW_TRIM 0.0f
+// ------------------------------------------------------------------------------------------------------
+
 // If your transmitter has drift, be sure to modify these values
 #define ROLL_INPUT_DEADBAND 20
 #define PITCH_INPUT_DEADBAND 20
@@ -101,13 +101,20 @@ Flight stabilization software
 
 // Radio resolution values
 // Stick resolution (degrees)
-#define MAX_ROLL_RATE_DEGS 70
-#define MAX_PITCH_RATE_DEGS 70
-#define MAX_YAW_RATE_DEGS 70
+#define MAX_ROLL_RATE_DEGS 65
+#define MAX_PITCH_RATE_DEGS 65
+#define MAX_YAW_RATE_DEGS 65
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
 #define MAX_PITCH_ANGLE_DEGS 60
+
+// PID output limits
+#define MAX_ROLL_RATE_PID ((MAX_ROLL_RATE_DEGS * ROLL_KP) + (3 * (ROLL_KI + ROLL_KD)))
+#define MAX_PITCH_RATE_PID ((MAX_PITCH_RATE_DEGS * PITCH_KP) + (3 * (PITCH_KI + PITCH_KD)))
+#define MAX_YAW_RATE_PID ((MAX_YAW_RATE_DEGS * YAW_KP) + (3 * (YAW_KI + YAW_KD)))
+#define MAX_ROLL_ANGLE_PID ((MAX_ROLL_ANGLE_DEGS * ROLL_KP) + (3 * (ROLL_KI + ROLL_KD)))
+#define MAX_PITCH_ANGLE_PID ((MAX_PITCH_ANGLE_DEGS * PITCH_KP) + (3 * (PITCH_KI + PITCH_KD)))
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -118,9 +125,19 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // Set any of these to either 1 or 0 to reverse stabilization output direction
+// Reverses stabilization output in stabilize mode
 #define REVERSE_ROLL_STABILIZE 1
 #define REVERSE_PITCH_STABILIZE 1
 #define REVERSE_YAW_STABILIZE 0
+
+// Reverses gyro output in rate mode
+#define REVERSE_ROLL_GYRO 0
+#define REVERSE_PITCH_GYRO 0
+#define REVERSE_YAW_GYRO 1
+// ------------------------------------------------------------------------------------------------------
+
+// Utility
+#define CALIBRATE 0
 // ------------------------------------------------------------------------------------------------------
 
 /*

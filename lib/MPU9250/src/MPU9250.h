@@ -74,9 +74,9 @@ struct MPU9250Setting
     MAG_OUTPUT_BITS mag_output_bits{MAG_OUTPUT_BITS::M16BITS};
     FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_200HZ};
     uint8_t gyro_fchoice{0x03};
-    GYRO_DLPF_CFG gyro_dlpf_cfg{GYRO_DLPF_CFG::DLPF_250HZ};
+    GYRO_DLPF_CFG gyro_dlpf_cfg{GYRO_DLPF_CFG::DLPF_41HZ};
     uint8_t accel_fchoice{0x01};
-    ACCEL_DLPF_CFG accel_dlpf_cfg{ACCEL_DLPF_CFG::DLPF_218HZ_0};
+    ACCEL_DLPF_CFG accel_dlpf_cfg{ACCEL_DLPF_CFG::DLPF_45HZ};
 };
 
 template <typename WireType>
@@ -96,8 +96,8 @@ class MPU9250_
     float mag_resolution{0.f};               // scale resolutions per LSB for the sensors
 
     // Calibration Parameters
-    float acc_bias[3]{0., 0., 0.};  // acc calibration value in ACCEL_FS_SEL: 2g
-    float gyro_bias[3]{0., 0., 0.}; // gyro calibration value in GYRO_FS_SEL: 250dps
+    float acc_bias[3]{58.61, 1.66, -4.38}; // acc calibration value in ACCEL_FS_SEL: 2g
+    float gyro_bias[3]{0.06, 1.18, 0.06};  // gyro calibration value in GYRO_FS_SEL: 250dps
     float mag_bias_factory[3]{0., 0., 0.};
     float mag_bias[3]{0., 0., 0.}; // mag calibration value in MAG_OUTPUT_BITS: 16BITS
     float mag_scale[3]{1., 1., 1.};

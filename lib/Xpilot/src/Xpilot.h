@@ -80,8 +80,6 @@ public:
     void print_calibration(void);
 #endif
 
-    void warmupIMU(uint16_t);
-
 private:
     /*
      * Inertial measurement unit variable
