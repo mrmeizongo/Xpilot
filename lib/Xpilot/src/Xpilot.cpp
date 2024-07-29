@@ -50,7 +50,6 @@ volatile long elevatorCurrentTIme, elevatorStartTime, elevatorPulses = 0;
 
 // Rudder variables
 volatile long rudderCurrentTIme, rudderStartTime, rudderPulses = 0;
-unsigned long yawLastMs = 0;
 
 // Mode variables
 volatile long modeCurrentTime, modeStartTime, modePulses = 0;
