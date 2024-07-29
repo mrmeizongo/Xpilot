@@ -98,7 +98,7 @@ Note that there is currently no aileron and rudder mixing available to coordinat
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
 
-## Setup
+## Preflight
 
 Be sure to go through [config.h](lib/Xpilot/src/config.h) and perform modifications and preflight checks before flight.
 May your landings be beautiful! ❤️
