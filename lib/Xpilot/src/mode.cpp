@@ -85,15 +85,24 @@ void Mode::process()
         break;
     case Xpilot::FLIGHT_MODE::RATE:
         rateMode();
-        xpilot.aileron_out = map(xpilot.aileron_out, -MAX_ROLL_RATE_PID, MAX_ROLL_RATE_PID, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PITCH_RATE_PID, MAX_PITCH_RATE_PID, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        xpilot.rudder_out = map(xpilot.rudder_out, -MAX_YAW_RATE_PID, MAX_YAW_RATE_PID, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.aileron_out = map(xpilot.aileron_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.rudder_out = map(xpilot.rudder_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     case Xpilot::FLIGHT_MODE::STABILIZE:
+        xpilot.aileron_out = (abs(xpilot.aileronPulseWidth - SERVO_MID_PWM) <= ROLL_INPUT_DEADBAND)
+                                 ? 0
+                                 : map(xpilot.aileronPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
+        xpilot.elevator_out = (abs(xpilot.elevatorPulseWidth - SERVO_MID_PWM) <= PITCH_INPUT_DEADBAND)
+                                  ? 0
+                                  : map(xpilot.elevatorPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
+        xpilot.rudder_out = (abs(xpilot.rudderPulseWidth - SERVO_MID_PWM) <= YAW_INPUT_DEADBAND)
+                                ? 0
+                                : map(xpilot.rudderPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         stabilizeMode();
-        xpilot.aileron_out = map(xpilot.aileron_out, -MAX_ROLL_ANGLE_PID, MAX_ROLL_ANGLE_PID, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PITCH_ANGLE_PID, MAX_PITCH_ANGLE_PID, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        xpilot.rudder_out = map(xpilot.rudder_out, -MAX_YAW_RATE_PID, MAX_YAW_RATE_PID, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.aileron_out = map(xpilot.aileron_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.rudder_out = map(xpilot.rudder_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     default:
         // Should not get here, but if we do, default to passthrough mode i.e flight mode 1
@@ -142,22 +151,15 @@ void Mode::rateMode()
 // Roll and pitch leveling on stick release
 void Mode::stabilizeMode()
 {
-    xpilot.aileron_out = (abs(xpilot.aileronPulseWidth - SERVO_MID_PWM) <= ROLL_INPUT_DEADBAND)
-                             ? 0
-                             : map(xpilot.aileronPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
-    xpilot.elevator_out = (abs(xpilot.elevatorPulseWidth - SERVO_MID_PWM) <= PITCH_INPUT_DEADBAND)
-                              ? 0
-                              : map(xpilot.elevatorPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
-    xpilot.rudder_out = (abs(xpilot.rudderPulseWidth - SERVO_MID_PWM) <= YAW_INPUT_DEADBAND)
-                            ? 0
-                            : map(xpilot.rudderPulseWidth, SERVO_MIN_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
-
     int16_t rollDemand = xpilot.aileron_out - xpilot.ahrs_roll;
     int16_t pitchDemand = xpilot.elevator_out - xpilot.ahrs_pitch;
     int16_t yawDemand = xpilot.rudder_out - xpilot.gyroZ;
 
-    xpilot.aileron_out = rollPID->Compute(rollDemand);
-    xpilot.elevator_out = pitchPID->Compute(pitchDemand);
+    xpilot.aileron_out = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+    xpilot.elevator_out = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
+
+    xpilot.aileron_out = rollPID->Compute(rollDemand - xpilot.gyroX);
+    xpilot.elevator_out = pitchPID->Compute(pitchDemand - xpilot.gyroY);
     xpilot.rudder_out = yawPID->Compute(yawDemand);
 }
 

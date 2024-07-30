@@ -71,17 +71,17 @@ Flight stabilization software
 
 // PID gain values
 // Roll
-#define ROLL_KP 10.0f
-#define ROLL_KI 0.0f
-#define ROLL_KD 0.0f
+#define ROLL_KP 12.0f
+#define ROLL_KI 2.0f
+#define ROLL_KD 0.2f
 // Pitch
-#define PITCH_KP 10.0f
-#define PITCH_KI 0.0f
-#define PITCH_KD 0.0f
+#define PITCH_KP 12.0f
+#define PITCH_KI 2.0f
+#define PITCH_KD 0.2f
 // Yaw
-#define YAW_KP 10.0f
-#define YAW_KI 0.0f
-#define YAW_KD 0.0f
+#define YAW_KP 12.0f
+#define YAW_KI 2.0f
+#define YAW_KD 0.2f
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -101,20 +101,16 @@ Flight stabilization software
 
 // Radio resolution values
 // Stick resolution (degrees)
-#define MAX_ROLL_RATE_DEGS 65
-#define MAX_PITCH_RATE_DEGS 65
-#define MAX_YAW_RATE_DEGS 65
+#define MAX_ROLL_RATE_DEGS 70
+#define MAX_PITCH_RATE_DEGS 70
+#define MAX_YAW_RATE_DEGS 70
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
 #define MAX_PITCH_ANGLE_DEGS 60
 
 // PID output limits
-#define MAX_ROLL_RATE_PID ((MAX_ROLL_RATE_DEGS * ROLL_KP) + (3 * (ROLL_KI + ROLL_KD)))
-#define MAX_PITCH_RATE_PID ((MAX_PITCH_RATE_DEGS * PITCH_KP) + (3 * (PITCH_KI + PITCH_KD)))
-#define MAX_YAW_RATE_PID ((MAX_YAW_RATE_DEGS * YAW_KP) + (3 * (YAW_KI + YAW_KD)))
-#define MAX_ROLL_ANGLE_PID ((MAX_ROLL_ANGLE_DEGS * ROLL_KP) + (3 * (ROLL_KI + ROLL_KD)))
-#define MAX_PITCH_ANGLE_PID ((MAX_PITCH_ANGLE_DEGS * PITCH_KP) + (3 * (PITCH_KI + PITCH_KD)))
+#define MAX_PID_OUTPUT 1000
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -131,7 +127,7 @@ Flight stabilization software
 #define REVERSE_YAW_STABILIZE 0
 
 // Reverses gyro output in rate mode
-#define REVERSE_ROLL_GYRO 0
+#define REVERSE_ROLL_GYRO 1
 #define REVERSE_PITCH_GYRO 0
 #define REVERSE_YAW_GYRO 1
 // ------------------------------------------------------------------------------------------------------

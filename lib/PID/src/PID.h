@@ -29,10 +29,11 @@ Copyright (C) 2024 Jamal Meizongo
 class PID
 {
 public:
-    PID();                    // Empty Constructor
-    PID(float, float, float); // Constructor with initialization parameters
-    void ResetPID(void);      // Reset PID controller parameters
-    int16_t Compute(int16_t); // Generate the PID output to be added to the servo
+    PID();                              // Empty Constructor
+    PID(float, float, float);           // Constructor with initialization parameters
+    void ResetPID(void);                // Reset PID controller parameters
+    int16_t Compute(int16_t);           // Generate the PID output to be added to the servo
+    void setGains(float, float, float); // Change gain values dynamically
 
 private:
     float Kp;

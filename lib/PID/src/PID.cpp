@@ -43,6 +43,14 @@ void PID::ResetPID(void)
     previousTime = millis();
 }
 
+void PID::setGains(float _Kp, float _Ki, float _Kd)
+{
+    Kp = _Kp;
+    Ki = _Ki;
+    Kd = _Kd;
+    ResetPID();
+}
+
 // Main function to be called to get PID control value
 int16_t PID::Compute(int16_t currentError)
 {
