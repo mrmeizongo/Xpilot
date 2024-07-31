@@ -25,15 +25,15 @@ Copyright (C) 2024 Jamal Meizongo
 
 #ifndef _PID_H
 #define _PID_H
+#include <Arduino.h>
 
 class PID
 {
 public:
-    PID();                              // Empty Constructor
-    PID(float, float, float);           // Constructor with initialization parameters
-    void ResetPID(void);                // Reset PID controller parameters
-    int16_t Compute(int16_t);           // Generate the PID output to be added to the servo
-    void setGains(float, float, float); // Change gain values dynamically
+    PID();                    // Empty Constructor
+    PID(float, float, float); // Constructor with initialization parameters
+    void ResetPID(void);      // Reset PID controller parameters
+    int16_t Compute(int16_t); // Generate the PID output to be added to the servo
 
 private:
     float Kp;

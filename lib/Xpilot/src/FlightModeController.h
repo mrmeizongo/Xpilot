@@ -32,13 +32,12 @@ Flight stabilization software
 #ifndef _MODE_H
 #define _MODE_H
 
-#include <Xpilot.h>
 #include <PID.h>
 
-class Mode
+class FlightModeController
 {
 public:
-    Mode();
+    FlightModeController();
     void update(long);
     void process();
 
@@ -51,5 +50,5 @@ private:
     void stabilizeMode();
 };
 
-extern Mode mode;
+extern FlightModeController modeController;
 #endif //_MODE_H

@@ -32,7 +32,7 @@ Flight stabilization software
 
 #include "Xpilot.h"
 #include <PinChangeInterrupt.h>
-#include "Mode.h"
+#include "FlightModeController.h"
 
 #define IMU_WARMUP_LOOP 1000U
 #define I2C_CLOCK_1MHZ 1000000U
@@ -178,7 +178,7 @@ void Xpilot::processInput(void)
     // Disable interrupts as pulses are being read to avoid race conditionS
     cli();
     if (modePulses >= SERVO_MIN_PWM && modePulses <= SERVO_MAX_PWM)
-        mode.update(modePulses);
+        modeController.update(modePulses);
 
     if (aileronPulses >= SERVO_MIN_PWM && aileronPulses <= SERVO_MAX_PWM)
         aileronPulseWidth = aileronPulses;
@@ -234,7 +234,7 @@ void Xpilot::processIMU(void)
 
 void Xpilot::processOutput(void)
 {
-    mode.process();
+    modeController.process();
 
     aileronServo.writeMicroseconds(aileron_out);
     elevatorServo.writeMicroseconds(elevator_out);

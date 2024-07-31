@@ -50,7 +50,7 @@ public:
         STABILIZE
     };
 
-    friend class Mode; // Flight mode controller
+    friend class FlightModeController; // Flight mode controller
 
     // Only functions called from the Arduino setup and loop functions
     void setup(void);
