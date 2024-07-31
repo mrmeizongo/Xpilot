@@ -39,15 +39,15 @@ class FlightModeController
 public:
     FlightModeController();
     void update(long);
-    void process();
+    void process(void);
 
 private:
     PID *rollPID;
     PID *pitchPID;
     PID *yawPID;
-    void passthroughMode();
-    void rateMode();
-    void stabilizeMode();
+    void passthroughMode(void);
+    void rateMode(void);
+    void stabilizeMode(void);
 };
 
 extern FlightModeController modeController;

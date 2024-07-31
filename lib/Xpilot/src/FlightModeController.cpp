@@ -35,15 +35,15 @@ Flight stabilization software
 #include "config.h"
 
 // Helper functions
-#define ResetPIDControllers() \
+#define RESETPIDCONTROLLERS() \
     rollPID->ResetPID();      \
     pitchPID->ResetPID();     \
     yawPID->ResetPID();
 
-#define SetInput(rawValue, deadBand, inLowRange, inMidRange, inHighRange, outLowRange, outHighRange) \
+#define SETINPUT(rawValue, deadBand, inLowRange, inMidRange, inHighRange, outLowRange, outHighRange) \
     (abs((rawValue) - (inMidRange)) <= (deadBand) ? 0 : map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange)))
 
-#define CROP_PID(x) ((x) < -MAX_PID_OUTPUT) ? -MAX_PID_OUTPUT : (((x) > MAX_PID_OUTPUT) ? MAX_PID_OUTPUT : (x))
+#define CROPPID(x) ((x) < -(MAX_PID_OUTPUT)) ? -(MAX_PID_OUTPUT) : (((x) > MAX_PID_OUTPUT) ? (MAX_PID_OUTPUT) : (x))
 
 FlightModeController::FlightModeController()
 {
@@ -69,7 +69,7 @@ void FlightModeController::update(long pulse)
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::RATE)
             return;
 
-        ResetPIDControllers();
+        RESETPIDCONTROLLERS();
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::RATE);
     }
     else if (pulse <= SERVO_MIN_PWM + INPUT_THRESHOLD)
@@ -77,15 +77,16 @@ void FlightModeController::update(long pulse)
         if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
             return;
 
-        ResetPIDControllers();
+        RESETPIDCONTROLLERS();
         xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
     }
 }
 
-void FlightModeController::process()
+void FlightModeController::process(void)
 {
     switch (xpilot.getCurrentMode())
     {
+    default: // Should not get here, but if we do, default to passthrough mode i.e flight mode 1
     case Xpilot::FLIGHT_MODE::PASSTHROUGH:
         passthroughMode();
         xpilot.aileron_out = map(xpilot.aileron_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
@@ -99,44 +100,31 @@ void FlightModeController::process()
         xpilot.rudder_out = map(xpilot.rudder_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     case Xpilot::FLIGHT_MODE::STABILIZE:
-        xpilot.aileron_out = SetInput(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
-        xpilot.elevator_out = SetInput(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
-        xpilot.rudder_out = SetInput(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         stabilizeMode();
         xpilot.aileron_out = map(xpilot.aileron_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.rudder_out = map(xpilot.rudder_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        break;
-    default:
-        // Should not get here, but if we do, default to passthrough mode i.e flight mode 1
-#if DEBUG
-        Serial.println("Invalid mode. Defaulting to passthrough.");
-#endif
-        passthroughMode();
-        xpilot.aileron_out = map(xpilot.aileron_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        xpilot.elevator_out = map(xpilot.elevator_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        xpilot.rudder_out = map(xpilot.rudder_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     }
 }
 
 // Manual mode gives full control of the rc plane flight surfaces
 // No stabilization and rate control
-void FlightModeController::passthroughMode()
+void FlightModeController::passthroughMode(void)
 {
     // This is to stop the fluctuation experienced in center position due to stick drift
-    xpilot.aileron_out = SetInput(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
-    xpilot.elevator_out = SetInput(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
-    xpilot.rudder_out = SetInput(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    xpilot.aileron_out = SETINPUT(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    xpilot.elevator_out = SETINPUT(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    xpilot.rudder_out = SETINPUT(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
 }
 
 // Rate mode uses gyroscope values to maintain a desired rate of change
 // Flight surfaces move to prevent sudden changes in direction
-void FlightModeController::rateMode()
+void FlightModeController::rateMode(void)
 {
-    xpilot.aileron_out = SetInput(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-    xpilot.elevator_out = SetInput(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-    xpilot.rudder_out = SetInput(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
+    xpilot.aileron_out = SETINPUT(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+    xpilot.elevator_out = SETINPUT(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
+    xpilot.rudder_out = SETINPUT(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
 
     int16_t rollDemand = xpilot.aileron_out - xpilot.gyroX;
     int16_t pitchDemand = xpilot.elevator_out - xpilot.gyroY;
@@ -146,15 +134,19 @@ void FlightModeController::rateMode()
     xpilot.elevator_out = pitchPID->Compute(pitchDemand);
     xpilot.rudder_out = yawPID->Compute(yawDemand);
 
-    xpilot.aileron_out = CROP_PID(xpilot.aileron_out);
-    xpilot.elevator_out = CROP_PID(xpilot.elevator_out);
-    xpilot.rudder_out = CROP_PID(xpilot.rudder_out);
+    xpilot.aileron_out = CROPPID(xpilot.aileron_out);
+    xpilot.elevator_out = CROPPID(xpilot.elevator_out);
+    xpilot.rudder_out = CROPPID(xpilot.rudder_out);
 }
 
 // Roll and pitch follow stick input up to set limits
 // Roll and pitch leveling on stick release
-void FlightModeController::stabilizeMode()
+void FlightModeController::stabilizeMode(void)
 {
+    xpilot.aileron_out = SETINPUT(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
+    xpilot.elevator_out = SETINPUT(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
+    xpilot.rudder_out = SETINPUT(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
+
     int16_t rollDemand = xpilot.aileron_out - xpilot.ahrs_roll;
     int16_t pitchDemand = xpilot.elevator_out - xpilot.ahrs_pitch;
     int16_t yawDemand = xpilot.rudder_out - xpilot.gyroZ;
@@ -166,9 +158,9 @@ void FlightModeController::stabilizeMode()
     xpilot.elevator_out = pitchPID->Compute(pitchDemand - xpilot.gyroY);
     xpilot.rudder_out = yawPID->Compute(yawDemand);
 
-    xpilot.aileron_out = CROP_PID(xpilot.aileron_out);
-    xpilot.elevator_out = CROP_PID(xpilot.elevator_out);
-    xpilot.rudder_out = CROP_PID(xpilot.rudder_out);
+    xpilot.aileron_out = CROPPID(xpilot.aileron_out);
+    xpilot.elevator_out = CROPPID(xpilot.elevator_out);
+    xpilot.rudder_out = CROPPID(xpilot.rudder_out);
 }
 
 FlightModeController modeController;
