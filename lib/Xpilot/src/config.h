@@ -62,7 +62,7 @@ Flight stabilization software
  * |     4 | 12 MOSI  (PB4)  |
  * |     5 | 13 SCK   (PB5)  |
  * |     6 |    XTAL1 (PB6)* |
- * |     7 |    XTAL2 (PB7)* |
+ * |     7 |    XTAL2 (PB7)* |h
  * | ----- | --------------- |
  * |     8 | A0       (PC0)  |
  * |     9 | A1       (PC1)  |
