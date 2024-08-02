@@ -118,11 +118,11 @@ void Xpilot::loop(void)
 {
     nowMs = millis();
     processIMU();
-    rx.processInput();
 
     // Process output to servos at 50Hz intervals
     if (nowMs - outputLastMs >= 20)
     {
+        rx.processInput();
         processOutput();
         outputLastMs = nowMs;
     }
