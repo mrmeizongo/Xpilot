@@ -50,7 +50,7 @@ void Xpilot::setup(void)
     Wire.begin();
     Wire.setClock(I2C_CLOCK_1MHZ); // Overclocking I2C to 1Mhz
 
-#if defined(MIXING_DEBUG) || defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(CALIBRATE_DEBUG)
+#if defined(MIXING_DEBUG) || defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(CALIBRATE_DEBUG) || defined(IMU_DEBUG)
     Serial.begin(9600);
     while (!Serial)
     {
@@ -64,7 +64,7 @@ void Xpilot::setup(void)
     { // change to your own address
         for (;;)
         {
-#if defined(IO_DEBUG)
+#if defined(IMU_DEBUG)
             Serial.println("No MPU found! Check connection");
 #endif
             delay(1000);
@@ -205,7 +205,7 @@ void Xpilot::processOutput(void)
 }
 
 // IO Debug functions
-#if defined(IO_DEBUG)
+#if defined(IMU_DEBUG)
 void Xpilot::print_imu(void)
 {
     // Serial.print("Yaw: ");
@@ -218,7 +218,9 @@ void Xpilot::print_imu(void)
     Serial.println(ahrs_yaw);
     Serial.println();
 }
+#endif
 
+#if defined(IO_DEBUG)
 void Xpilot::print_output(void)
 {
     Serial.print("Elevator Servo: ");

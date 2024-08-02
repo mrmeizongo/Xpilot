@@ -112,7 +112,7 @@ Flight stabilization software
 #define PITCH_KD 0.0f
 // Yaw
 #define YAW_KP 10.4f
-#define YAW_KI 0.1f
+#define YAW_KI 0.0f
 #define YAW_KD 0.0f
 // ------------------------------------------------------------------------------------------------------
 
@@ -214,6 +214,7 @@ Flight stabilization software
  * It is wise to enable only one debug at a time to avoid chaos on serial bus
  */
 // #define LOOP_DEBUG
+// #define IMU_DEBUG
 // #define IO_DEBUG
 // #define MIXING_DEBUG
 // #define CALIBRATE_DEBUG

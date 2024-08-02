@@ -72,9 +72,12 @@ public:
     }
 
 #if defined(IO_DEBUG)
-    void print_imu(void);
     void print_input(void);
     void print_output(void);
+#endif
+
+#if defined(IMU_DEBUG)
+    void print_imu(void);
 #endif
 
 #if defined(CALIBRATE_DEBUG)
