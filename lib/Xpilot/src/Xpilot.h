@@ -51,6 +51,7 @@ public:
     };
 
     friend class FlightModeController; // Flight mode controller
+    friend class Radio;                // Input controller
 
     // Only functions called from the Arduino setup and loop functions
     void setup(void);
@@ -63,20 +64,20 @@ public:
     FLIGHT_MODE getCurrentMode() { return currentMode; }
     void setCurrentMode(FLIGHT_MODE _currentMode)
     {
-#if IO_DEBUG
+#if defined(IO_DEBUG)
         Serial.print("Flight mode: ");
         Serial.println((uint8_t)_currentMode);
 #endif
         currentMode = _currentMode;
     }
 
-#if IO_DEBUG
+#if defined(IO_DEBUG)
     void print_imu(void);
     void print_input(void);
     void print_output(void);
 #endif
 
-#if DEBUG
+#if defined(CALIBRATE_DEBUG)
     void print_calibration(void);
 #endif
 
@@ -89,30 +90,24 @@ private:
     /*
      * Aileron control variables
      */
-    Servo aileronServo;             // Aileron servo channel
-    int16_t aileron_out = 0;        // Aileron servo output variable
-    uint16_t aileronPulseWidth = 0; // Aileron values obtained from transmitter through interrupts
+    Servo aileron1Servo;      // Aileron servo channel
+    Servo aileron2Servo;      // Aileron servo channel
+    int16_t aileron1_out = 0; // Aileron servo output variable
+    int16_t aileron2_out = 0; // Aileron servo output variable
 
     /*
      * Elevator control variables
      */
-    Servo elevatorServo;             // Elevator servo channel
-    int16_t elevator_out = 0;        // Elevator servo output variable
-    uint16_t elevatorPulseWidth = 0; // Elevator values obtained from transmitter through interrupts
+    Servo elevatorServo;      // Elevator servo channel
+    int16_t elevator_out = 0; // Elevator servo output variable
 
     /*
      * Rudder control variables
      */
-    Servo rudderServo;             // Rudder servo channel
-    int16_t rudder_out = 0;        // Rudder servo output variable
-    uint16_t rudderPulseWidth = 0; // Rudder values obtained from transmitter through interrupts
+    Servo rudderServo;      // Rudder servo channel
+    int16_t rudder_out = 0; // Rudder servo output variable
 
-    /*
-     * Mode control variables
-     */
-    uint16_t modePulseWidth = 0; // Mode values obtained from transmitter through interrupts
-
-    FLIGHT_MODE currentMode{FLIGHT_MODE::PASSTHROUGH}; // PASSTHROUGH is default mode
+    FLIGHT_MODE currentMode{FLIGHT_MODE::RATE}; // RATE is default mode
 
     int16_t ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Airplane coordinate system values
     int16_t gyroX, gyroY, gyroZ = 0;             // Angular velocity around the respective axis

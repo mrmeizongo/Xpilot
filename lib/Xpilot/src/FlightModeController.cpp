@@ -31,7 +31,8 @@ Flight stabilization software
 */
 
 #include "FlightModeController.h"
-#include <Xpilot.h>
+#include "Xpilot.h"
+#include "Radio.h"
 #include "config.h"
 
 // Helper functions
@@ -40,12 +41,10 @@ Flight stabilization software
     pitchPID->ResetPID();     \
     yawPID->ResetPID();
 
-#define SETINPUT(rawValue, deadBand, inLowRange, inMidRange, inHighRange, outLowRange, outHighRange) \
-    (abs((rawValue) - (inMidRange)) <= (deadBand) ? 0 : map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange)))
-
 #define CROPPID(x) ((x) < -(MAX_PID_OUTPUT)) ? -(MAX_PID_OUTPUT) : (((x) > MAX_PID_OUTPUT) ? (MAX_PID_OUTPUT) : (x))
+// -----------------------------------------------------------------------------------------------------------------
 
-FlightModeController::FlightModeController()
+FlightModeController::FlightModeController(void)
 {
     rollPID = new PID(ROLL_KP, ROLL_KI, ROLL_KD);
     pitchPID = new PID(PITCH_KP, PITCH_KI, PITCH_KD);
@@ -86,22 +85,30 @@ void FlightModeController::process(void)
 {
     switch (xpilot.getCurrentMode())
     {
-    default: // Should not get here, but if we do, default to passthrough mode i.e flight mode 1
+    default:
     case Xpilot::FLIGHT_MODE::PASSTHROUGH:
         passthroughMode();
-        xpilot.aileron_out = map(xpilot.aileron_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        planeMixer();
+        xpilot.aileron1_out = map(xpilot.aileron1_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.aileron2_out = map(xpilot.aileron2_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.elevator_out = map(xpilot.elevator_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.rudder_out = map(xpilot.rudder_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     case Xpilot::FLIGHT_MODE::RATE:
+        rudderMixer();
         rateMode();
-        xpilot.aileron_out = map(xpilot.aileron_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        planeMixer();
+        xpilot.aileron1_out = map(xpilot.aileron1_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.aileron2_out = map(xpilot.aileron2_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.rudder_out = map(xpilot.rudder_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     case Xpilot::FLIGHT_MODE::STABILIZE:
+        rudderMixer();
         stabilizeMode();
-        xpilot.aileron_out = map(xpilot.aileron_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        planeMixer();
+        xpilot.aileron1_out = map(xpilot.aileron1_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        xpilot.aileron2_out = map(xpilot.aileron2_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.rudder_out = map(xpilot.rudder_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
@@ -112,29 +119,26 @@ void FlightModeController::process(void)
 // No stabilization and rate control
 void FlightModeController::passthroughMode(void)
 {
-    // This is to stop the fluctuation experienced in center position due to stick drift
-    xpilot.aileron_out = SETINPUT(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
-    xpilot.elevator_out = SETINPUT(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
-    xpilot.rudder_out = SETINPUT(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    xpilot.aileron1_out = constrain(xpilot.aileron1_out, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    xpilot.aileron2_out = xpilot.aileron1_out;
+    xpilot.elevator_out = constrain(xpilot.elevator_out, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    xpilot.rudder_out = constrain(xpilot.rudder_out, -PASSTHROUGH_RES, PASSTHROUGH_RES);
 }
 
 // Rate mode uses gyroscope values to maintain a desired rate of change
 // Flight surfaces move to prevent sudden changes in direction
 void FlightModeController::rateMode(void)
 {
-    xpilot.aileron_out = SETINPUT(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-    xpilot.elevator_out = SETINPUT(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-    xpilot.rudder_out = SETINPUT(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
-
-    int16_t rollDemand = xpilot.aileron_out - xpilot.gyroX;
+    int16_t rollDemand = xpilot.aileron1_out - xpilot.gyroX;
     int16_t pitchDemand = xpilot.elevator_out - xpilot.gyroY;
     int16_t yawDemand = xpilot.rudder_out - xpilot.gyroZ;
 
-    xpilot.aileron_out = rollPID->Compute(rollDemand);
+    xpilot.aileron1_out = rollPID->Compute(rollDemand);
     xpilot.elevator_out = pitchPID->Compute(pitchDemand);
     xpilot.rudder_out = yawPID->Compute(yawDemand);
 
-    xpilot.aileron_out = CROPPID(xpilot.aileron_out);
+    xpilot.aileron1_out = CROPPID(xpilot.aileron1_out);
+    xpilot.aileron2_out = xpilot.aileron1_out;
     xpilot.elevator_out = CROPPID(xpilot.elevator_out);
     xpilot.rudder_out = CROPPID(xpilot.rudder_out);
 }
@@ -143,24 +147,87 @@ void FlightModeController::rateMode(void)
 // Roll and pitch leveling on stick release
 void FlightModeController::stabilizeMode(void)
 {
-    xpilot.aileron_out = SETINPUT(xpilot.aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
-    xpilot.elevator_out = SETINPUT(xpilot.elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
-    xpilot.rudder_out = SETINPUT(xpilot.rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
-
-    int16_t rollDemand = xpilot.aileron_out - xpilot.ahrs_roll;
+    int16_t rollDemand = xpilot.aileron1_out - xpilot.ahrs_roll;
     int16_t pitchDemand = xpilot.elevator_out - xpilot.ahrs_pitch;
     int16_t yawDemand = xpilot.rudder_out - xpilot.gyroZ;
 
-    xpilot.aileron_out = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+    xpilot.aileron1_out = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     xpilot.elevator_out = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
-    xpilot.aileron_out = rollPID->Compute(rollDemand - xpilot.gyroX);
+    xpilot.aileron1_out = rollPID->Compute(rollDemand - xpilot.gyroX);
     xpilot.elevator_out = pitchPID->Compute(pitchDemand - xpilot.gyroY);
     xpilot.rudder_out = yawPID->Compute(yawDemand);
 
-    xpilot.aileron_out = CROPPID(xpilot.aileron_out);
+    xpilot.aileron1_out = CROPPID(xpilot.aileron1_out);
+    xpilot.aileron2_out = xpilot.aileron1_out;
     xpilot.elevator_out = CROPPID(xpilot.elevator_out);
     xpilot.rudder_out = CROPPID(xpilot.rudder_out);
+}
+
+/*
+ * Mixer for airplane type
+ * Only tested with a full plane i.e. ailerons, elevator and rudder
+ * Proceed with caution. Depends heavily on the direction of servo travel.
+ * Perform thorough pre flight checks and reverse as needed.
+ *
+ * Default
+ * For V-Tail - If servos are mounted on top, with face of servo facing the same direction
+ *                 Rudder Left
+ *
+ *                                ^
+ *                 _       _      |
+ *         <======|O|     |O|=====>
+ *         |  Face| | Face| |
+ *         v      |_|     |_|
+ *
+ *   Push surface out   Pull surface in
+ *
+ * For Flying Wings, reverse install elevon servos same as you would ailerons for planes
+ */
+void FlightModeController::planeMixer(void)
+{
+#if defined(FULL_PLANE)
+    xpilot.aileron1_out = xpilot.aileron1_out;
+    xpilot.aileron2_out = xpilot.aileron2_out;
+    xpilot.elevator_out = xpilot.elevator_out;
+    xpilot.rudder_out = xpilot.rudder_out;
+#elif defined(FULL_PLANE_V_TAIL)
+    xpilot.aileron1_out = xpilot.aileron1_out;
+    xpilot.aileron2_out = xpilot.aileron2_out;
+    xpilot.elevator_out = xpilot.rudder_out + xpilot.elevator_out;
+    xpilot.rudder_out = xpilot.rudder_out - xpilot.elevator_out;
+#elif defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
+    xpilot.aileron1_out = 0;
+    xpilot.aileron2_out = 0;
+    xpilot.elevator_out = xpilot.rudder_out + xpilot.elevator_out;
+    xpilot.rudder_out = xpilot.rudder_out - xpilot.elevator_out;
+#elif defined(FLYING_WING_RUDDER)
+    xpilot.aileron1_out = xpilot.aileron1_out - xpilot.elevator_out;
+    xpilot.aileron2_out = xpilot.aileron2_out + xpilot.elevator_out;
+    xpilot.elevator_out = 0;
+    xpilot.rudder_out = xpilot.rudder_out;
+#elif defined(FLYING_WING_NO_RUDDER)
+    xpilot.aileron1_out = xpilot.aileron1_out - xpilot.elevator_out;
+    xpilot.aileron2_out = xpilot.aileron2_out + xpilot.elevator_out;
+    xpilot.elevator_out = 0;
+    xpilot.rudder_out = 0;
+#elif defined(RUDDER_ELEVATOR_ONLY)
+    xpilot.aileron1_out = 0;
+    xpilot.aileron2_out = 0;
+    xpilot.elevator_out = xpilot.elevator_out;
+    xpilot.rudder_out = xpilot.rudder_out;
+#else
+#error No airplane type selected!
+#endif
+}
+
+void FlightModeController::rudderMixer(void)
+{
+#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
+    xpilot.rudder_out = xpilot.rudder_out + (xpilot.aileron1_out * RUDDER_MIXING);
+#else
+    xpilot.rudder_out = xpilot.rudder_out;
+#endif
 }
 
 FlightModeController modeController;

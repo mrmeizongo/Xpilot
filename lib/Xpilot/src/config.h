@@ -40,7 +40,8 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // Output pins
-#define AILPIN_OUTPUT 9
+#define AILPIN1_OUTPUT 8
+#define AILPIN2_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
 // ------------------------------------------------------------------------------------------------------
@@ -51,6 +52,37 @@ Flight stabilization software
  * Change these values to match your selected input pins
  * If you modify these values you will also have to modify the settings in the PinChangeInterrupt library
  * A cleaner config method will probaby be useful here
+ *
+ * | PCINT |  Uno/Nano/Mini  |
+ * | ----- | --------------- |
+ * |     0 |  8       (PB0)  |
+ * |     1 |  9       (PB1)  |
+ * |     2 | 10 SS    (PB2)  |
+ * |     3 | 11 MISO  (PB3)  |
+ * |     4 | 12 MOSI  (PB4)  |
+ * |     5 | 13 SCK   (PB5)  |
+ * |     6 |    XTAL1 (PB6)* |
+ * |     7 |    XTAL2 (PB7)* |
+ * | ----- | --------------- |
+ * |     8 | A0       (PC0)  |
+ * |     9 | A1       (PC1)  |
+ * |    10 | A2       (PC2)  |
+ * |    11 | A3       (PC3)  |
+ * |    12 | A4 SDA   (PC4)  |
+ * |    13 | A5 SDC   (PC5)  |
+ * |    14 |    RST   (PC6)* |
+ * |    15 |                 |
+ * | ----- | --------------- |
+ * |    16 |  0 RX    (PD0)  |
+ * |    17 |  1 TX    (PD1)  |
+ * |    18 |  2 INT0  (PD2)  |
+ * |    19 |  3 INT1  (PD3)  |
+ * |    20 |  4       (PD4)  |
+ * |    21 |  5       (PD5)  |
+ * |    22 |  6       (PD6)  |
+ * |    23 |  7       (PD7)  |
+ * | ----- | --------------- |
+
  */
 #define AILPIN_INT 18
 #define ELEVPIN_INT 19
@@ -75,12 +107,12 @@ Flight stabilization software
 #define ROLL_KI 3.9f
 #define ROLL_KD 0.0f
 // Pitch
-#define PITCH_KP 9.f
+#define PITCH_KP 9.0f
 #define PITCH_KI 2.2f
 #define PITCH_KD 0.0f
 // Yaw
 #define YAW_KP 10.4f
-#define YAW_KI 2.1f
+#define YAW_KI 0.1f
 #define YAW_KD 0.0f
 // ------------------------------------------------------------------------------------------------------
 
@@ -103,9 +135,9 @@ Flight stabilization software
 #define PASSTHROUGH_RES 1000
 
 // Stick resolution (degrees)
-#define MAX_ROLL_RATE_DEGS 70
-#define MAX_PITCH_RATE_DEGS 70
-#define MAX_YAW_RATE_DEGS 70
+#define MAX_ROLL_RATE_DEGS 60
+#define MAX_PITCH_RATE_DEGS 60
+#define MAX_YAW_RATE_DEGS 60
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
@@ -122,29 +154,69 @@ Flight stabilization software
 #define INPUT_THRESHOLD 200
 // ------------------------------------------------------------------------------------------------------
 
-// Set any of these to either 1 or 0 to reverse stabilization output direction
+// Comment or uncomment to reverse stabilization output direction
 // Reverses stabilization output in stabilize mode
-#define REVERSE_ROLL_STABILIZE 1
-#define REVERSE_PITCH_STABILIZE 1
-#define REVERSE_YAW_STABILIZE 0
+#define REVERSE_ROLL_STABILIZE
+#define REVERSE_PITCH_STABILIZE
+// #define REVERSE_YAW_STABILIZE
 
 // Reverses gyro output in rate mode
-#define REVERSE_ROLL_GYRO 1
-#define REVERSE_PITCH_GYRO 0
-#define REVERSE_YAW_GYRO 1
-// ------------------------------------------------------------------------------------------------------
+#define REVERSE_ROLL_GYRO
+// #define REVERSE_PITCH_GYRO
+#define REVERSE_YAW_GYRO
 
-// Utility
-#define CALIBRATE 0
+// Use rudder mixing for turn coordinations
+// Rudder mixing value is set in percentage ( value / 100)
+#define RUDDER_MIXING 0.30f
 // ------------------------------------------------------------------------------------------------------
 
 /*
- * Set to 1 to enable the respective debugging, zero otherwise
- * To enable any of the XX_DEBUG, set DEBUG to 1 first
- * It is wise to enable only one debug at a time (i.e. LOOP_DEBUG or IO_DEBUG) due to the atmega328p memory constraints
+ * MANDATORY
+ * Airplane type
+ * Uncomment the type of airplane being flown
+ * Only tested with a full house plane
+ * Proceed with caution
+ * FULL_PLANE: Has ailerons(1 or 2 channel), elevator and rudder.
+ * FULL_PLANE_V_TAIL: Has ailerons(1 or 2 channel) and v tail deflectors. Left V tail deflector goes to elevator, right goes to rudder. Swap if not
+ * RUDDER_ELEVATOR_ONLY: Only rudder and elevator. They go to their respective channels.
+ * FLYING_WING_RUDDER: Has 2 ailerons and a rudder. The aileron output is mixed with elevator output(elevon). Has rudder control
+ * FLYING_WING_NO_RUDDER: Only has 2 ailerons. The aileron output is mixed with elevator output(elevon).
+ * RUDDER_ELEVATOR_ONLY_V_TAIL: No ailerons, left V tail deflector goes to elevator, right goes to rudder. Swap if not
  */
-#define DEBUG 0
-#define LOOP_DEBUG 0
-#define IO_DEBUG 0
+#define FULL_PLANE
+// #define FULL_PLANE_V_TAIL
+// #define RUDDER_ELEVATOR_ONLY
+// #define FLYING_WING_RUDDER
+// #define FLYING_WING_NO_RUDDER
+// #defined RUDDER_ELEVATOR_ONLY_V_TAIL
+
+#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
+#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
+#error Aileron, Elevator and Rudder interrupt pins need to be defined!
+#endif
+#endif
+
+#if defined(RUDDER_ELEVATOR_ONLY) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
+#if !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
+#error Elevator and Rudder interrupt pins need to be defined!
+#endif
+#endif
+
+#if defined(FLYING_WING_NO_RUDDER)
+#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
+#error Aileron and Elevator interrupt pins need to be defined
+#endif
+#endif
+// ------------------------------------------------------------------------------------------------------
+
+/*
+ * Uncomment to enable the respective debugging, zero otherwise
+ * It is wise to enable only one debug at a time to avoid chaos on serial bus
+ */
+// #define LOOP_DEBUG
+// #define IO_DEBUG
+// #define MIXING_DEBUG
+// #define CALIBRATE_DEBUG
+// #define CALIBRATE
 // ------------------------------------------------------------------------------------------------------
 #endif

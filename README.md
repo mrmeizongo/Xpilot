@@ -58,15 +58,17 @@ Connect receiver to Arduino Nano as shown below
 |    Rudder     |  4  |
 | AUX1/2 - Mode |  5  |
 
-Connect aileron, elevator and rudder servos to Arduino Nano as shown below.
+Can use both aileron outputs to individual aileron servos or both aileron servos can be connected using a Y-cable extension and plugged into any aileron output.
+Connect ailerons, elevator and rudder servos to Arduino Nano as shown below.
 
 | CHANNEL  | PIN |
 | :------: | :-: |
-| Aileron  |  9  |
+| Aileron1 |  8  |
+| Aileron2 |  9  |
 | Elevator | 10  |
 |  Rudder  | 11  |
 
-Setup one 3-position switch on the transmitter to act as the Mode switch.
+Set up one 3-position switch on the transmitter to act as the Mode switch.
 When properly setup, mode switch states is shown below.
 
 | AUX Switch Position |    Mode     |
@@ -93,15 +95,18 @@ There are 3 flight modes; modes 1 = manual/passthrough, 2 = fly-by-wire, and 3 -
 |        Rate - 2        |                               Gyro based rate control                               |
 |     Stabilize - 3      | Surfaces follow stick movement up-to set limits with wing-leveling on stick release |
 
-Rate mode is the most popular among inexperienced flyers. Passthrough is for advanced flyers and is also the default mode of operation if mode switch has not been configured.
-Note that there is currently no aileron and rudder mixing available to coordinate turns. This will be fixed in an upcoming update.
+## NOTICE
 
-Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
+Throttle is always under manual control. Signal wire for throttle goes directly to receiver for input.
+
+Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch has not been configured. Passthrough is for advanced flyers.
 
 ## Preflight
 
-Be sure to go through [config.h](lib/Xpilot/src/config.h) and perform modifications and preflight checks before flight.
+Be sure to go through the entirety of [config.h](lib/Xpilot/src/config.h) and perform modifications and preflight checks before flight.
 May your landings be beautiful! ❤️
+
+Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
 
 ## Disclaimer:
 

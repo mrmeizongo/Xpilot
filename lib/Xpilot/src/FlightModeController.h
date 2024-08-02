@@ -33,13 +33,16 @@ Flight stabilization software
 #define _MODE_H
 
 #include <PID.h>
+#include "config.h"
 
 class FlightModeController
 {
 public:
-    FlightModeController();
+    FlightModeController(void);
     void update(long);
     void process(void);
+    void planeMixer(void);
+    void rudderMixer(void);
 
 private:
     PID *rollPID;

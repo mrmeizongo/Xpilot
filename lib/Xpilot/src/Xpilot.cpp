@@ -31,28 +31,14 @@ Flight stabilization software
 */
 
 #include "Xpilot.h"
-#include <PinChangeInterrupt.h>
 #include "FlightModeController.h"
+#include "Radio.h"
 
 #define IMU_WARMUP_LOOP 1000U
 #define I2C_CLOCK_1MHZ 1000000U
 
 // Timer variables
 unsigned long nowMs, outputLastMs = 0;
-
-// -------------------------
-
-// Aileron variables
-volatile long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
-
-// Elevator variables
-volatile long elevatorCurrentTIme, elevatorStartTime, elevatorPulses = 0;
-
-// Rudder variables
-volatile long rudderCurrentTIme, rudderStartTime, rudderPulses = 0;
-
-// Mode variables
-volatile long modeCurrentTime, modeStartTime, modePulses = 0;
 // -------------------------
 
 Xpilot::Xpilot(void)
@@ -61,14 +47,10 @@ Xpilot::Xpilot(void)
 
 void Xpilot::setup(void)
 {
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT) || !defined(MODEPIN_INT)
-#error "Ensure interrupt pins for aileron, elevator, rudder and mode are defined"
-#endif
-
     Wire.begin();
     Wire.setClock(I2C_CLOCK_1MHZ); // Overclocking I2C to 1Mhz
 
-#if DEBUG
+#if defined(MIXING_DEBUG) || defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(CALIBRATE_DEBUG)
     Serial.begin(9600);
     while (!Serial)
     {
@@ -82,14 +64,13 @@ void Xpilot::setup(void)
     { // change to your own address
         for (;;)
         {
-#if DEBUG
+#if defined(IO_DEBUG)
             Serial.println("No MPU found! Check connection");
 #endif
             delay(1000);
         }
     }
-#if CALIBRATE
-#if DEBUG
+#if defined(CALIBRATE_DEBUG)
     Serial.println("Accel Gyro calibration will start in 3sec.");
     Serial.println("Please leave the device still on the flat plane.");
     imu.verbose(true);
@@ -98,31 +79,29 @@ void Xpilot::setup(void)
     imu.calibrateAccelGyro();
     Serial.println("Calibration complete.");
     print_calibration();
-#else
+#elif defined(CALIBRATE)
     imu.verbose(false);
     imu.calibrateAccelGyro();
 #endif
-#endif
+
+    rx.init(); // Initialize radio
 
     // All input pins use pin change interrupts
     // Aileron setup
-    aileronServo.attach(AILPIN_OUTPUT);
+    aileron1Servo.attach(AILPIN1_OUTPUT);
+    aileron2Servo.attach(AILPIN2_OUTPUT);
     pinMode(AILPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AILPIN_INT, CHANGE);
 
     // Elevator setup
     elevatorServo.attach(ELEVPIN_OUTPUT);
     pinMode(ELEVPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
 
     // Rudder setup
     rudderServo.attach(RUDDPIN_OUTPUT);
     pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
 
     // Mode setup
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
 
     // Warm up the IMU
     for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
@@ -138,8 +117,8 @@ void Xpilot::setup(void)
 void Xpilot::loop(void)
 {
     nowMs = millis();
-    processInput();
     processIMU();
+    rx.processInput();
 
     // Process output to servos at 50Hz intervals
     if (nowMs - outputLastMs >= 20)
@@ -148,18 +127,17 @@ void Xpilot::loop(void)
         outputLastMs = nowMs;
     }
 
-#if IO_DEBUG
+#if defined(IO_DEBUG)
     static unsigned long debugLastMs = 0;
     if (nowMs - debugLastMs >= 1000)
     {
         print_imu();
-        print_input();
         print_output();
         debugLastMs = nowMs;
     }
 #endif
 
-#if LOOP_DEBUG
+#if defined(LOOP_DEBUG)
     unsigned long loopMillis = millis() - nowMs;
     Serial.print("Loop time: ");
     Serial.print(loopMillis);
@@ -171,61 +149,40 @@ void Xpilot::loop(void)
 #endif
 }
 
-void Xpilot::processInput(void)
-{
-    uint8_t oldSREG = SREG;
-
-    // Disable interrupts as pulses are being read to avoid race conditionS
-    cli();
-    if (modePulses >= SERVO_MIN_PWM && modePulses <= SERVO_MAX_PWM)
-        modeController.update(modePulses);
-
-    if (aileronPulses >= SERVO_MIN_PWM && aileronPulses <= SERVO_MAX_PWM)
-        aileronPulseWidth = aileronPulses;
-
-    if (elevatorPulses >= SERVO_MIN_PWM && elevatorPulses <= SERVO_MAX_PWM)
-        elevatorPulseWidth = elevatorPulses;
-
-    if (rudderPulses >= SERVO_MIN_PWM && rudderPulses <= SERVO_MAX_PWM)
-        rudderPulseWidth = rudderPulses;
-
-    SREG = oldSREG;
-}
-
 void Xpilot::processIMU(void)
 {
     if (imu.update())
     {
-#if REVERSE_ROLL_STABILIZE
+#if defined(REVERSE_ROLL_STABILIZE)
         ahrs_roll = -((int16_t)(imu.getRoll() + IMU_ROLL_TRIM));
 #else
         ahrs_roll = (int16_t)(imu.getRoll() + IMU_ROLL_TRIM);
 #endif
 
-#if REVERSE_PITCH_STABILIZE
+#if defined(REVERSE_PITCH_STABILIZE)
         ahrs_pitch = -((int16_t)(imu.getPitch() + IMU_PITCH_TRIM));
 #else
         ahrs_pitch = (int16_t)(imu.getPitch() + IMU_PITCH_TRIM);
 #endif
 
-#if REVERSE_YAW_STABILIZE
+#if defined(REVERSE_YAW_STABILIZE)
         ahrs_yaw = -((int16_t)(imu.getYaw() + IMU_YAW_TRIM));
 #else
         ahrs_yaw = (int16_t)(imu.getYaw() + IMU_YAW_TRIM);
 #endif
     }
 
-#if REVERSE_ROLL_GYRO
+#if defined(REVERSE_ROLL_GYRO)
     gyroX = -((int16_t)imu.getGyroX());
 #else
     gyroX = (int16_t)imu.getGyroX();
 #endif
-#if REVERSE_PITCH_GYRO
+#if defined(REVERSE_PITCH_GYRO)
     gyroY = -((int16_t)imu.getGyroY());
 #else
     gyroY = (int16_t)imu.getGyroY();
 #endif
-#if REVERSE_YAW_GYRO
+#if defined(REVERSE_YAW_GYRO)
     gyroZ = -((int16_t)imu.getGyroZ());
 #else
     gyroZ = (int16_t)imu.getGyroZ();
@@ -236,55 +193,19 @@ void Xpilot::processOutput(void)
 {
     modeController.process();
 
-    aileronServo.writeMicroseconds(aileron_out);
+    aileron1_out = constrain(aileron1_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    aileron2_out = constrain(aileron2_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    elevator_out = constrain(elevator_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    rudder_out = constrain(rudder_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
+
+    aileron1Servo.writeMicroseconds(aileron1_out);
+    aileron2Servo.writeMicroseconds(aileron2_out);
     elevatorServo.writeMicroseconds(elevator_out);
     rudderServo.writeMicroseconds(rudder_out);
 }
 
-// ISR
-void PinChangeInterruptEvent(AILPIN_INT)(void)
-{
-    aileronCurrentTime = micros();
-    if (aileronCurrentTime > aileronStartTime)
-    {
-        aileronPulses = aileronCurrentTime - aileronStartTime;
-        aileronStartTime = aileronCurrentTime;
-    }
-}
-
-void PinChangeInterruptEvent(ELEVPIN_INT)(void)
-{
-    elevatorCurrentTIme = micros();
-    if (elevatorCurrentTIme > elevatorStartTime)
-    {
-        elevatorPulses = elevatorCurrentTIme - elevatorStartTime;
-        elevatorStartTime = elevatorCurrentTIme;
-    }
-}
-
-void PinChangeInterruptEvent(RUDDPIN_INT)(void)
-{
-    rudderCurrentTIme = micros();
-    if (rudderCurrentTIme > rudderStartTime)
-    {
-        rudderPulses = rudderCurrentTIme - rudderStartTime;
-        rudderStartTime = rudderCurrentTIme;
-    }
-}
-
-void PinChangeInterruptEvent(MODEPIN_INT)(void)
-{
-    modeCurrentTime = micros();
-    if (modeCurrentTime > modeStartTime)
-    {
-        modePulses = modeCurrentTime - modeStartTime;
-        modeStartTime = modeCurrentTime;
-    }
-}
-// ----------------------------
-
 // IO Debug functions
-#if IO_DEBUG
+#if defined(IO_DEBUG)
 void Xpilot::print_imu(void)
 {
     // Serial.print("Yaw: ");
@@ -298,32 +219,21 @@ void Xpilot::print_imu(void)
     Serial.println();
 }
 
-void Xpilot::print_input(void)
-{
-    Serial.print("Elevator Pulse: ");
-    Serial.println(elevatorPulseWidth);
-    Serial.print("Aileron Pulse: ");
-    Serial.println(aileronPulseWidth);
-    Serial.print("Rudder Pulse: ");
-    Serial.println(rudderPulseWidth);
-    Serial.print("Flight Mode: ");
-    Serial.println((int)currentMode);
-    Serial.println();
-}
-
 void Xpilot::print_output(void)
 {
     Serial.print("Elevator Servo: ");
     Serial.println(elevator_out);
-    Serial.print("Aileron Servo: ");
-    Serial.println(aileron_out);
+    Serial.print("Aileron Servo 1: ");
+    Serial.println(aileron1_out);
+    Serial.print("Aileron Servo 2: ");
+    Serial.println(aileron2_out);
     Serial.print("Rudder Servo: ");
     Serial.println(rudder_out);
     Serial.println();
 }
 #endif
 
-#if DEBUG
+#if defined(CALIBRATE_DEBUG)
 void Xpilot::print_calibration(void)
 {
     Serial.println("< calibration parameters >");
