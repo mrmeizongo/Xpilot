@@ -127,12 +127,16 @@ void Xpilot::loop(void)
         outputLastMs = nowMs;
     }
 
-#if defined(IO_DEBUG)
+#if defined(IO_DEBUG) || defined(IMU_DEBUG)
     static unsigned long debugLastMs = 0;
     if (nowMs - debugLastMs >= 1000)
     {
+#if defined(IMU_DEBUG)
         print_imu();
+#endif
+#if defined(IO_DEBUG)
         print_output();
+#endif
         debugLastMs = nowMs;
     }
 #endif
