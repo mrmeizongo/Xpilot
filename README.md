@@ -44,7 +44,7 @@ In the context of RC planes, an execution loop of 250Hz provides a smooth and re
 
 ## Setup
 
-Connect GY-91/MPU9250 to Arduino Nano as shown below
+Connect MPU9250 to Arduino Nano as shown below
 
 | PIN | VALUE |
 | :-: | :---: |
@@ -82,10 +82,10 @@ When properly setup, mode switch states is shown below.
 |          2          |  Stabilize  |
 
 DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
-However, the Nano, GY-91/MPU9250 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
+However, the Nano, MPU9250 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
 
-These pin numbers with the exception of GY-91/MPU9250 can be reconfigured in [config.h](lib/Xpilot/src/config.h).
-Ensure all components share a common ground. The Nano and GY-91/MPU9250 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
+These pin numbers with the exception of MPU9250 can be reconfigured in [config.h](lib/Xpilot/src/config.h).
+Ensure all components share a common ground. The Nano and MPU9250 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
 
 ![Schematics](assets/img/Schematics.png)
 
