@@ -167,7 +167,8 @@ Flight stabilization software
 
 // Mix rudder for turn coordinations
 // Rudder mixing value is set in percentage ( value / 100)
-#define RUDDER_MIXING 0.20f
+// #define RUDDER_MIX_IN_PASS
+#define RUDDER_MIXING 0.30f
 // ------------------------------------------------------------------------------------------------------
 
 /*

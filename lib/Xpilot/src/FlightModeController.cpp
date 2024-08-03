@@ -83,14 +83,17 @@ void FlightModeController::process(void)
 {
     switch (xpilot.getCurrentMode())
     {
-    default:
     case Xpilot::FLIGHT_MODE::PASSTHROUGH:
+#if defined(RUDDER_MIX_IN_PASS)
+        rudderMixer();
+#endif
         passthroughMode();
         xpilot.aileron1_out = map(xpilot.aileron1_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.aileron2_out = map(xpilot.aileron2_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.elevator_out = map(xpilot.elevator_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.rudder_out = map(xpilot.rudder_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
+    default:
     case Xpilot::FLIGHT_MODE::RATE:
         rudderMixer();
         rateMode();

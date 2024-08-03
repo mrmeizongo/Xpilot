@@ -99,7 +99,7 @@ There are 3 flight modes; modes 1 = manual/passthrough, 2 = fly-by-wire, and 3 -
 
 Throttle is always under manual control. Signal wire for throttle goes directly to receiver for input.
 
-Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch has not been configured. Passthrough is for advanced flyers.
+Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch has not been configured. Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize mode and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [config.h](lib/Xpilot/src/config.h).
 
 ## Preflight
 
