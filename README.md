@@ -30,12 +30,16 @@ Copyright (C) 2024 Jamal Meizongo
 
 ### Servos need to be installed correctly for this to work.
 
-Designed with a 3-channel system(AIL, ELEV, RUDD) in mind; some modifications are necessary to convert it for a 2-channel system.
-The atmega328p chip in the arduino nano is fast enough to run the entire stabilization loop in 4ms.
-This gives us a frequency of ~250Hz. Output to the control servos are updated at 50Hz for standard servos.
+Xpilot is a flight stabilization system based on the ATMEGA328P chip in the Arduino Nano, Uno and Mini microcontrollers and MPU9250.
+It is capable of stabilizing various airplane types including the traditional airplane, V-tail and flying wing.
+It also works for various configurations of these airplanes i.e. 1 channel AIL, ELEV, and RUDD(traditional tail and V-tail),
+2 channel AIL, ELEV and RUDD(traditional tail, V-tail and flying wing) or ELEV and RUDD only(traditional tail and V-tail).
+See [config.h](lib/Xpilot/src/config.h) for airplane type configuration.
 
-The frequency refers to the rate at which the software is updating or making corrections.
+## Stabilization system loop
 
+The atmega328p chip is capable of running the entire stabilization loop in 4ms.
+This gives us ap update frequency of ~250Hz. Output to the control servos are updated at 50Hz for standard servos.
 In the context of RC planes, an execution loop of 250Hz provides a smooth and responsive control, which is particularly beneficial for maintaining stability in changing flight conditions.
 
 ## Setup
