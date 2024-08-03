@@ -84,7 +84,7 @@ void Xpilot::setup(void)
     imu.calibrateAccelGyro();
 #endif
 
-    rx.init(); // Initialize radio
+    radio.init(); // Initialize radio
 
     // All input pins use pin change interrupts
     // Aileron setup
@@ -122,7 +122,7 @@ void Xpilot::loop(void)
     // Process output to servos at 50Hz intervals
     if (nowMs - outputLastMs >= 20)
     {
-        rx.processInput();
+        radio.processInput();
         processOutput();
         outputLastMs = nowMs;
     }

@@ -1,21 +1,15 @@
 #include <Arduino.h>
 #include "Radio.h"
-#include "Xpilot.h"
 #include "config.h"
 #include "FlightModeController.h"
 #include <PinChangeInterrupt.h>
 
-// Aileron variables
 volatile long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
-
-// Elevator variables
 volatile long elevatorCurrentTIme, elevatorStartTime, elevatorPulses = 0;
-
-// Rudder variables
 volatile long rudderCurrentTIme, rudderStartTime, rudderPulses = 0;
-
-// Mode variables
 volatile long modeCurrentTime, modeStartTime, modePulses = 0;
+
+uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 // -------------------------
 
 // Helper function
@@ -42,37 +36,41 @@ void Radio::processInput(void)
     // Disable interrupts as pulses are being read to avoid race conditionS
     cli();
     if (modePulses >= SERVO_MIN_PWM && modePulses <= SERVO_MAX_PWM)
-        modeController.update(modePulses);
+    {
+        if (modePulses >= SERVO_MAX_PWM - INPUT_THRESHOLD)
+            rx.mode = SwitchState::low;
+        else if (modePulses >= SERVO_MIN_PWM + INPUT_THRESHOLD && modePulses <= SERVO_MAX_PWM - INPUT_THRESHOLD)
+            rx.mode = SwitchState::mid;
+        else if (modePulses <= SERVO_MIN_PWM + INPUT_THRESHOLD)
+            rx.mode = SwitchState::high;
+    }
+
+    modeController.update();
 
     if (aileronPulses >= SERVO_MIN_PWM && aileronPulses <= SERVO_MAX_PWM)
         aileronPulseWidth = aileronPulses;
-
     if (elevatorPulses >= SERVO_MIN_PWM && elevatorPulses <= SERVO_MAX_PWM)
         elevatorPulseWidth = elevatorPulses;
-
     if (rudderPulses >= SERVO_MIN_PWM && rudderPulses <= SERVO_MAX_PWM)
         rudderPulseWidth = rudderPulses;
 
-    switch (xpilot.getCurrentMode())
+    switch (rx.mode)
     {
     default:
-    case Xpilot::FLIGHT_MODE::PASSTHROUGH:
-        xpilot.aileron1_out = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
-        xpilot.aileron2_out = xpilot.aileron1_out;
-        xpilot.elevator_out = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
-        xpilot.rudder_out = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    case SwitchState::low:
+        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
         break;
-    case Xpilot::FLIGHT_MODE::RATE:
-        xpilot.aileron1_out = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-        xpilot.aileron2_out = xpilot.aileron1_out;
-        xpilot.elevator_out = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-        xpilot.rudder_out = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
+    case SwitchState::mid:
+        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
+        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
-    case Xpilot::FLIGHT_MODE::STABILIZE:
-        xpilot.aileron1_out = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
-        xpilot.aileron2_out = xpilot.aileron1_out;
-        xpilot.elevator_out = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
-        xpilot.rudder_out = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
+    case SwitchState::high:
+        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
+        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
+        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
     }
 
@@ -133,9 +131,9 @@ void Radio::printInput(void)
     Serial.print("Rudder Pulse: ");
     Serial.println(rudderPulseWidth);
     Serial.print("Flight Mode: ");
-    Serial.println((int)xpilot.getCurrentMode());
+    Serial.println((int)rx.mode);
     Serial.println();
 }
 #endif
 
-Radio rx;
+Radio radio;

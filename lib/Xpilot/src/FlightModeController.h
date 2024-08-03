@@ -33,15 +33,16 @@ Flight stabilization software
 #define _MODE_H
 
 #include <PID.h>
+#include <Arduino.h>
 #include "config.h"
 
 class FlightModeController
 {
 public:
     FlightModeController(void);
-    void update(long);
+    void update();
     void process(void);
-    void planeMixer(void);
+    void planeMixer(int16_t, int16_t, int16_t);
     void rudderMixer(void);
 
 private:

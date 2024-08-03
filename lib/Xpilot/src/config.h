@@ -165,9 +165,9 @@ Flight stabilization software
 // #define REVERSE_PITCH_GYRO
 #define REVERSE_YAW_GYRO
 
-// Use rudder mixing for turn coordinations
+// Mix rudder for turn coordinations
 // Rudder mixing value is set in percentage ( value / 100)
-#define RUDDER_MIXING 0.30f
+#define RUDDER_MIXING 0.20f
 // ------------------------------------------------------------------------------------------------------
 
 /*
