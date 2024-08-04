@@ -87,7 +87,7 @@ That is done by the macros. */
 #define PCINT_ALINKAGE
 
 // force compile all enabled port ISRs (with .a linkage)
-#define PCINT_COMPILE_ENABLED_ISR
+// #define PCINT_COMPILE_ENABLED_ISR
 
 #endif
 

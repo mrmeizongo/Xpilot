@@ -23,9 +23,17 @@ Radio::Radio(void)
 void Radio::init(void)
 {
     // All input pins use pin change interrupts
+    // AIleron setup
+    pinMode(AILPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AILPIN_INT, CHANGE);
+    // Elevator setup
+    pinMode(ELEVPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
+    // Rudder setup
+    pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
+    // Mode setup
+    pinMode(MODEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
 }
 

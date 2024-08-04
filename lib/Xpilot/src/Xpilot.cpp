@@ -86,22 +86,10 @@ void Xpilot::setup(void)
 
     radio.init(); // Initialize radio
 
-    // All input pins use pin change interrupts
-    // Aileron setup
     aileron1Servo.attach(AILPIN1_OUTPUT);
     aileron2Servo.attach(AILPIN2_OUTPUT);
-    pinMode(AILPIN_INPUT, INPUT_PULLUP);
-
-    // Elevator setup
     elevatorServo.attach(ELEVPIN_OUTPUT);
-    pinMode(ELEVPIN_INPUT, INPUT_PULLUP);
-
-    // Rudder setup
     rudderServo.attach(RUDDPIN_OUTPUT);
-    pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
-
-    // Mode setup
-    pinMode(MODEPIN_INPUT, INPUT_PULLUP);
 
     // Warm up the IMU
     for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)

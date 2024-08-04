@@ -37,6 +37,7 @@ Flight stabilization software
 #define ELEVPIN_INPUT 3
 #define RUDDPIN_INPUT 4
 #define MODEPIN_INPUT 5
+// #define THROTPIN_INPUT 6
 // ------------------------------------------------------------------------------------------------------
 
 // Output pins
@@ -44,6 +45,7 @@ Flight stabilization software
 #define AILPIN2_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
+// #define THROTPIN_OUTPUT 12
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -88,6 +90,7 @@ Flight stabilization software
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
 #define MODEPIN_INT 21
+// #define THROTPIN_INT 22
 // ------------------------------------------------------------------------------------------------------
 
 /*
