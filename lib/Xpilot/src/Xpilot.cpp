@@ -90,6 +90,9 @@ void Xpilot::setup(void)
     aileron2Servo.attach(AILPIN2_OUTPUT);
     elevatorServo.attach(ELEVPIN_OUTPUT);
     rudderServo.attach(RUDDPIN_OUTPUT);
+#if defined(THROTPIN_INPUT)
+    throttle.attach(THROTPIN_OUTPUT);
+#endif
 
     // Warm up the IMU
     for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)

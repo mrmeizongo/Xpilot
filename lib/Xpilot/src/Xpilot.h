@@ -90,6 +90,13 @@ private:
      */
     MPU9250 imu;
 
+#if defined(THROTPIN_INPUT)
+    /*
+     * Throttle control variables
+     */
+    Servo throttle;           // ESC channel ESCs use the same PWM values as servos
+    int16_t throttle_out = 0; // Throttle output variable
+#endif
     /*
      * Aileron control variables
      */

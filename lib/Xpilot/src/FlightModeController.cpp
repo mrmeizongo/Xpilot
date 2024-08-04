@@ -52,7 +52,7 @@ FlightModeController::FlightModeController(void)
 // Update flight mode from mode switch position
 // Do nothing if we're already in the selected mode
 // Otherwise reset PID values and set current mode
-void FlightModeController::update()
+void FlightModeController::update(void)
 {
     if (radio.rx.mode == SwitchState::low)
     {

@@ -4,12 +4,16 @@
 #include "FlightModeController.h"
 #include <PinChangeInterrupt.h>
 
-volatile long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
-volatile long elevatorCurrentTIme, elevatorStartTime, elevatorPulses = 0;
-volatile long rudderCurrentTIme, rudderStartTime, rudderPulses = 0;
-volatile long modeCurrentTime, modeStartTime, modePulses = 0;
+volatile unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
+volatile unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
+volatile unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
+volatile unsigned long modeCurrentTime, modeStartTime, modePulses = 0;
+volatile unsigned long throttleCurrentTime, throttleStartTime, throttlePulses = 0;
 
 uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
+#if defined(THROTPIN_INPUT)
+uint16_t throttlePulseWidth = 0;
+#endif
 // -------------------------
 
 // Helper function
@@ -25,16 +29,24 @@ void Radio::init(void)
     // All input pins use pin change interrupts
     // AIleron setup
     pinMode(AILPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AILPIN_INT, CHANGE);
     // Elevator setup
     pinMode(ELEVPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
     // Rudder setup
     pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
     // Mode setup
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
+#if defined(THROTPIN_INPUT)
+    // Throttle setup
+    pinMode(THROTPIN_INPUT, INPUT_PULLUP);
+#endif
+
+    attachPinChangeInterrupt(AILPIN_INT, CHANGE);
+    attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
+    attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
+#if defined(THROTPIN_INPUT)
+    attachPinChangeInterrupt(THROTPIN_INT, CHANGE);
+#endif
 }
 
 void Radio::processInput(void)
@@ -98,21 +110,21 @@ void PinChangeInterruptEvent(AILPIN_INT)(void)
 
 void PinChangeInterruptEvent(ELEVPIN_INT)(void)
 {
-    elevatorCurrentTIme = micros();
-    if (elevatorCurrentTIme > elevatorStartTime)
+    elevatorCurrentTime = micros();
+    if (elevatorCurrentTime > elevatorStartTime)
     {
-        elevatorPulses = elevatorCurrentTIme - elevatorStartTime;
-        elevatorStartTime = elevatorCurrentTIme;
+        elevatorPulses = elevatorCurrentTime - elevatorStartTime;
+        elevatorStartTime = elevatorCurrentTime;
     }
 }
 
 void PinChangeInterruptEvent(RUDDPIN_INT)(void)
 {
-    rudderCurrentTIme = micros();
-    if (rudderCurrentTIme > rudderStartTime)
+    rudderCurrentTime = micros();
+    if (rudderCurrentTime > rudderStartTime)
     {
-        rudderPulses = rudderCurrentTIme - rudderStartTime;
-        rudderStartTime = rudderCurrentTIme;
+        rudderPulses = rudderCurrentTime - rudderStartTime;
+        rudderStartTime = rudderCurrentTime;
     }
 }
 
@@ -125,7 +137,19 @@ void PinChangeInterruptEvent(MODEPIN_INT)(void)
         modeStartTime = modeCurrentTime;
     }
 }
-// ----------------------------
+
+#if defined(THROTPIN_INPUT)
+void PinChangeInterruptEvent(THROTPIN_INT)(void)
+{
+    throttleCurrentTime = micros();
+    if (throttleCurrentTime > throttleStartTime)
+    {
+        throttlePulses = throttleCurrentTime - throttleStartTime;
+        throttleStartTime = throttleCurrentTime;
+    }
+}
+#endif
+//  ----------------------------
 
 #if defined(IO_DEBUG)
 void Radio::printInput(void)
