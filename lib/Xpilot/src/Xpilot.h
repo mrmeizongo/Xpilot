@@ -58,7 +58,6 @@ public:
     void loop(void);
 
     void processIMU(void);
-    void processInput(void);
     void processOutput(void);
 
     FLIGHT_MODE getCurrentMode() { return currentMode; }
@@ -72,7 +71,6 @@ public:
     }
 
 #if defined(IO_DEBUG)
-    void print_input(void);
     void print_output(void);
 #endif
 
@@ -90,13 +88,6 @@ private:
      */
     MPU9250 imu;
 
-#if defined(THROTPIN_INPUT)
-    /*
-     * Throttle control variables
-     */
-    Servo throttle;           // ESC channel ESCs use the same PWM values as servos
-    int16_t throttle_out = 0; // Throttle output variable
-#endif
     /*
      * Aileron control variables
      */

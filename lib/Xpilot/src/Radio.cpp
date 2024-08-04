@@ -8,12 +8,8 @@ volatile unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
 volatile unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
 volatile unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
 volatile unsigned long modeCurrentTime, modeStartTime, modePulses = 0;
-volatile unsigned long throttleCurrentTime, throttleStartTime, throttlePulses = 0;
 
 uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
-#if defined(THROTPIN_INPUT)
-uint16_t throttlePulseWidth = 0;
-#endif
 // -------------------------
 
 // Helper function
