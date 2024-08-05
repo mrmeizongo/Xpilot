@@ -25,24 +25,16 @@ void Radio::init(void)
     // All input pins use pin change interrupts
     // AIleron setup
     pinMode(AILPIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AILPIN_INT, CHANGE);
     // Elevator setup
     pinMode(ELEVPIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
     // Rudder setup
     pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
     // Mode setup
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
-#if defined(THROTPIN_INPUT)
-    // Throttle setup
-    pinMode(THROTPIN_INPUT, INPUT_PULLUP);
-#endif
-
-    attachPinChangeInterrupt(AILPIN_INT, CHANGE);
-    attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
-    attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
-#if defined(THROTPIN_INPUT)
-    attachPinChangeInterrupt(THROTPIN_INT, CHANGE);
-#endif
 }
 
 void Radio::processInput(void)
