@@ -51,7 +51,6 @@ public:
     };
 
     friend class FlightModeController; // Flight mode controller
-    friend class Radio;                // Input controller
 
     // Only functions called from the Arduino setup and loop functions
     void setup(void);
