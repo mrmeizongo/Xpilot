@@ -53,14 +53,14 @@ void Radio::processInput(void)
             rx.mode = SwitchState::high;
     }
 
-    modeController.update();
-
     if (aileronPulses >= SERVO_MIN_PWM && aileronPulses <= SERVO_MAX_PWM)
         aileronPulseWidth = aileronPulses;
     if (elevatorPulses >= SERVO_MIN_PWM && elevatorPulses <= SERVO_MAX_PWM)
         elevatorPulseWidth = elevatorPulses;
     if (rudderPulses >= SERVO_MIN_PWM && rudderPulses <= SERVO_MAX_PWM)
         rudderPulseWidth = rudderPulses;
+
+    modeController.update();
 
     switch (rx.mode)
     {

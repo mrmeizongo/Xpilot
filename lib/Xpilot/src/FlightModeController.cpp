@@ -173,6 +173,7 @@ void FlightModeController::stabilizeMode(void)
  *
  * Default
  * For V-Tail - If servos are mounted on top, with face of servo facing the same direction
+ *
  *                 Rudder Left
  *
  *                                ^
