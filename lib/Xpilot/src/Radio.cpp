@@ -125,18 +125,6 @@ void PinChangeInterruptEvent(MODEPIN_INT)(void)
         modeStartTime = modeCurrentTime;
     }
 }
-
-#if defined(THROTPIN_INPUT)
-void PinChangeInterruptEvent(THROTPIN_INT)(void)
-{
-    throttleCurrentTime = micros();
-    if (throttleCurrentTime > throttleStartTime)
-    {
-        throttlePulses = throttleCurrentTime - throttleStartTime;
-        throttleStartTime = throttleCurrentTime;
-    }
-}
-#endif
 //  ----------------------------
 
 #if defined(IO_DEBUG)
