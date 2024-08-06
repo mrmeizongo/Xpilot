@@ -62,6 +62,7 @@ void Radio::processInput(void)
 
     modeController.updateMode();
 
+    // Set stick resolutions
     switch (rx.mode)
     {
     case SwitchState::low:
