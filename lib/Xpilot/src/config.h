@@ -108,17 +108,18 @@ Flight stabilization software
 
 #if defined(FLYING_WING_NO_RUDDER)
 #if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
-#error Aileron and Elevator interrupt pins need to be defined
+#error Aileron and Elevator interrupt pins need to be defined!
 #endif
 #endif
 // ------------------------------------------------------------------------------------------------------
+
+// ATmega328p pin definitions
 
 // Input pins
 #define AILPIN_INPUT 2
 #define ELEVPIN_INPUT 3
 #define RUDDPIN_INPUT 4
 #define MODEPIN_INPUT 5
-// ------------------------------------------------------------------------------------------------------
 
 // Output pins
 #define AILPIN1_OUTPUT 8
@@ -139,6 +140,7 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // PID gain values
+
 // Roll
 #define ROLL_KP 11.4f
 #define ROLL_KI 3.9f
@@ -162,16 +164,18 @@ Flight stabilization software
 #define IMU_YAW_TRIM 0.0f
 // ------------------------------------------------------------------------------------------------------
 
-// If your transmitter has drift, be sure to modify these values
+// To correct transmitter stick drift, be sure to modify these values
 #define ROLL_INPUT_DEADBAND 20
 #define PITCH_INPUT_DEADBAND 20
 #define YAW_INPUT_DEADBAND 20
 // ------------------------------------------------------------------------------------------------------
 
 // Radio resolution values
+
+// Stick resolution in passthrough mode
 #define PASSTHROUGH_RES 1000
 
-// Stick resolution (degrees)
+// Stick resolution in rate mode (degrees)
 #define MAX_ROLL_RATE_DEGS 60
 #define MAX_PITCH_RATE_DEGS 60
 #define MAX_YAW_RATE_DEGS 60
@@ -192,6 +196,7 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // Comment or uncomment to reverse stabilization output direction
+
 // Reverses stabilization output in stabilize mode
 #define REVERSE_ROLL_STABILIZE
 #define REVERSE_PITCH_STABILIZE
@@ -202,15 +207,17 @@ Flight stabilization software
 // #define REVERSE_PITCH_GYRO
 #define REVERSE_YAW_GYRO
 
-// Mix rudder for turn coordinations
-// Rudder mixing value is set in percentage ( value / 100)
-// #define RUDDER_MIX_IN_PASS
+/*
+ * Mix rudder to enable turn coordinations
+ * Rudder mixing value is set in percentage ( value / 100)
+ */
+#define RUDDER_MIX_IN_PASS
 #define RUDDER_MIXING 0.30f
 // ------------------------------------------------------------------------------------------------------
 
 /*
- * Uncomment to enable the respective debugging, zero otherwise
- * It is wise to enable only one debug at a time to avoid chaos on serial bus
+ * Uncomment to enable the respective debugging
+ * It is porbably wise to enable only one debug at a time to avoid chaos on serial bus
  */
 // #define LOOP_DEBUG
 // #define IMU_DEBUG
