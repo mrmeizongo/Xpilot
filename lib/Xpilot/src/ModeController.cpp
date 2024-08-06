@@ -214,7 +214,7 @@ void ModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
     xpilot.aileron2_out = roll + pitch;
     xpilot.elevator_out = 0;
     xpilot.rudder_out = 0;
-#elif defined(RUDDER_ELEVATOR_ONLY)
+#elif defined(RUDDER_ELEVATOR_ONLY_PLANE)
     xpilot.aileron1_out = 0;
     xpilot.aileron2_out = 0;
     xpilot.elevator_out = pitch;

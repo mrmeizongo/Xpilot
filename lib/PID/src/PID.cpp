@@ -40,14 +40,15 @@ void PID::ResetPID(void)
 {
     previousError = 0;
     integral = 0;
-    previousTime = millis();
+    previousTime = micros();
 }
 
 // Main function to be called to get PID control value
 int16_t PID::Compute(int16_t currentError)
 {
-    unsigned long currentTime = millis();
-    float dt = (currentTime - previousTime) * 0.001;
+    unsigned long currentTime = micros();
+    double dt = currentTime - previousTime;
+    dt = (dt * 0.001 * 0.001);
     integral += (currentError * dt);
     double derivative = (currentError - previousError) / dt;
     previousError = currentError;

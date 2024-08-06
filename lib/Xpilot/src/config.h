@@ -45,7 +45,7 @@ Flight stabilization software
  */
 #define FULL_PLANE
 // #define FULL_PLANE_V_TAIL
-// #define RUDDER_ELEVATOR_ONLY
+// #define RUDDER_ELEVATOR_ONLY_PLANE
 // #define FLYING_WING_RUDDER
 // #define FLYING_WING_NO_RUDDER
 // #defined RUDDER_ELEVATOR_ONLY_V_TAIL
@@ -100,7 +100,7 @@ Flight stabilization software
 #endif
 #endif
 
-#if defined(RUDDER_ELEVATOR_ONLY) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
+#if defined(RUDDER_ELEVATOR_ONLY_PLANE) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
 #if !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
 #error Elevator and Rudder interrupt pins need to be defined!
 #endif
@@ -176,9 +176,9 @@ Flight stabilization software
 #define PASSTHROUGH_RES 1000
 
 // Stick resolution in rate mode (degrees)
-#define MAX_ROLL_RATE_DEGS 60
-#define MAX_PITCH_RATE_DEGS 60
-#define MAX_YAW_RATE_DEGS 60
+#define MAX_ROLL_RATE_DEGS 180
+#define MAX_PITCH_RATE_DEGS 180
+#define MAX_YAW_RATE_DEGS 100
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
@@ -212,7 +212,7 @@ Flight stabilization software
  * Rudder mixing value is set in percentage ( value / 100)
  */
 // #define RUDDER_MIX_IN_PASS
-#define RUDDER_MIXING 0.30f
+#define RUDDER_MIXING 0.10f
 // ------------------------------------------------------------------------------------------------------
 
 /*

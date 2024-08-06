@@ -9,7 +9,7 @@ public:
     IMU(void);
     void init(void);
 
-    void processIMU(void);
+    bool processIMU(void);
 
 #if defined(CALIBRATE_DEBUG)
     void print_calibration(void);

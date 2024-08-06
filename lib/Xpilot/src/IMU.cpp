@@ -31,7 +31,7 @@ void IMU::init(void)
 #endif
 }
 
-void IMU::processIMU(void)
+bool IMU::processIMU(void)
 {
     if (mpu9250.update())
     {
@@ -52,23 +52,26 @@ void IMU::processIMU(void)
 #else
         ahrs_yaw = (int16_t)(mpu9250.getYaw() + IMU_YAW_TRIM);
 #endif
-    }
 
 #if defined(REVERSE_ROLL_GYRO)
-    gyroX = -((int16_t)mpu9250.getGyroX());
+        gyroX = -((int16_t)mpu9250.getGyroX());
 #else
-    gyroX = (int16_t)mpu9250.getGyroX();
+        gyroX = (int16_t)mpu9250.getGyroX();
 #endif
 #if defined(REVERSE_PITCH_GYRO)
-    gyroY = -((int16_t)mpu9250.getGyroY());
+        gyroY = -((int16_t)mpu9250.getGyroY());
 #else
-    gyroY = (int16_t)mpu9250.getGyroY();
+        gyroY = (int16_t)mpu9250.getGyroY();
 #endif
 #if defined(REVERSE_YAW_GYRO)
-    gyroZ = -((int16_t)mpu9250.getGyroZ());
+        gyroZ = -((int16_t)mpu9250.getGyroZ());
 #else
-    gyroZ = (int16_t)mpu9250.getGyroZ();
+        gyroZ = (int16_t)mpu9250.getGyroZ();
 #endif
+        return true;
+    }
+
+    return false;
 }
 
 // IO Debug functions
