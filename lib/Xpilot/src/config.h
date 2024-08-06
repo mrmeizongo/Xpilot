@@ -32,6 +32,43 @@ Flight stabilization software
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+/*
+ * MANDATORY
+ * Airplane type
+ * Uncomment to select the type of airplane being flown
+ * FULL_PLANE: Has ailerons(1 or 2 channel), elevator and rudder.
+ * FULL_PLANE_V_TAIL: Has ailerons(1 or 2 channel) and v tail deflectors. Left V tail deflector goes to elevator, right goes to rudder. Swap if not
+ * RUDDER_ELEVATOR_ONLY: Only rudder and elevator. They go to their respective channels.
+ * FLYING_WING_RUDDER: Has 2 ailerons and a rudder. The aileron output is mixed with elevator output(elevon). Has rudder control
+ * FLYING_WING_NO_RUDDER: Only has 2 ailerons. The aileron output is mixed with elevator output(elevon).
+ * RUDDER_ELEVATOR_ONLY_V_TAIL: No ailerons, left V tail deflector goes to elevator, right goes to rudder. Swap if not
+ */
+#define FULL_PLANE
+// #define FULL_PLANE_V_TAIL
+// #define RUDDER_ELEVATOR_ONLY
+// #define FLYING_WING_RUDDER
+// #define FLYING_WING_NO_RUDDER
+// #defined RUDDER_ELEVATOR_ONLY_V_TAIL
+
+#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
+#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
+#error Aileron, Elevator and Rudder interrupt pins need to be defined!
+#endif
+#endif
+
+#if defined(RUDDER_ELEVATOR_ONLY) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
+#if !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
+#error Elevator and Rudder interrupt pins need to be defined!
+#endif
+#endif
+
+#if defined(FLYING_WING_NO_RUDDER)
+#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
+#error Aileron and Elevator interrupt pins need to be defined
+#endif
+#endif
+// ------------------------------------------------------------------------------------------------------
+
 // Input pins
 #define AILPIN_INPUT 2
 #define ELEVPIN_INPUT 3
@@ -169,45 +206,6 @@ Flight stabilization software
 // Rudder mixing value is set in percentage ( value / 100)
 // #define RUDDER_MIX_IN_PASS
 #define RUDDER_MIXING 0.30f
-// ------------------------------------------------------------------------------------------------------
-
-/*
- * MANDATORY
- * Airplane type
- * Uncomment the type of airplane being flown
- * Only tested with a full house plane
- * Proceed with caution
- * FULL_PLANE: Has ailerons(1 or 2 channel), elevator and rudder.
- * FULL_PLANE_V_TAIL: Has ailerons(1 or 2 channel) and v tail deflectors. Left V tail deflector goes to elevator, right goes to rudder. Swap if not
- * RUDDER_ELEVATOR_ONLY: Only rudder and elevator. They go to their respective channels.
- * FLYING_WING_RUDDER: Has 2 ailerons and a rudder. The aileron output is mixed with elevator output(elevon). Has rudder control
- * FLYING_WING_NO_RUDDER: Only has 2 ailerons. The aileron output is mixed with elevator output(elevon).
- * RUDDER_ELEVATOR_ONLY_V_TAIL: No ailerons, left V tail deflector goes to elevator, right goes to rudder. Swap if not
- */
-#define FULL_PLANE
-// #define FULL_PLANE_V_TAIL
-// #define RUDDER_ELEVATOR_ONLY
-// #define FLYING_WING_RUDDER
-// #define FLYING_WING_NO_RUDDER
-// #defined RUDDER_ELEVATOR_ONLY_V_TAIL
-
-#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
-#error Aileron, Elevator and Rudder interrupt pins need to be defined!
-#endif
-#endif
-
-#if defined(RUDDER_ELEVATOR_ONLY) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
-#if !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
-#error Elevator and Rudder interrupt pins need to be defined!
-#endif
-#endif
-
-#if defined(FLYING_WING_NO_RUDDER)
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
-#error Aileron and Elevator interrupt pins need to be defined
-#endif
-#endif
 // ------------------------------------------------------------------------------------------------------
 
 /*
