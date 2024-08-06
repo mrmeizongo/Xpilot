@@ -36,11 +36,11 @@ Flight stabilization software
 #include <Arduino.h>
 #include "config.h"
 
-class FlightModeController
+class ModeController
 {
 public:
-    FlightModeController(void);
-    void updateFlightMode(void);
+    ModeController(void);
+    void updateMode(void);
     void process(void);
     void planeMixer(int16_t, int16_t, int16_t);
     void rudderMixer(void);
@@ -54,5 +54,5 @@ private:
     void stabilizeMode(void);
 };
 
-extern FlightModeController modeController;
+extern ModeController modeController;
 #endif //_MODE_H

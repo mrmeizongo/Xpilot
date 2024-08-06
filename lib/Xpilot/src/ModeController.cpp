@@ -30,7 +30,7 @@ Flight stabilization software
 ===============================================
 */
 
-#include "FlightModeController.h"
+#include "ModeController.h"
 #include "Xpilot.h"
 #include "Radio.h"
 #include "IMU.h"
@@ -43,7 +43,7 @@ Flight stabilization software
     yawPID->ResetPID();
 // -----------------------------------------------------------------------------------------------------------------
 
-FlightModeController::FlightModeController(void)
+ModeController::ModeController(void)
 {
     rollPID = new PID(ROLL_KP, ROLL_KI, ROLL_KD);
     pitchPID = new PID(PITCH_KP, PITCH_KI, PITCH_KD);
@@ -53,7 +53,7 @@ FlightModeController::FlightModeController(void)
 // Update flight mode from mode switch position
 // Do nothing if we're already in the selected mode
 // Otherwise reset PID values and set current mode
-void FlightModeController::updateFlightMode(void)
+void ModeController::updateMode(void)
 {
     if (radio.rx.mode == SwitchState::low)
     {
@@ -80,7 +80,7 @@ void FlightModeController::updateFlightMode(void)
     }
 }
 
-void FlightModeController::process(void)
+void ModeController::process(void)
 {
     switch (xpilot.getCurrentMode())
     {
@@ -116,7 +116,7 @@ void FlightModeController::process(void)
 
 // Manual mode gives full control of the rc plane flight surfaces
 // No stabilization and rate control
-void FlightModeController::passthroughMode(void)
+void ModeController::passthroughMode(void)
 {
     planeMixer(radio.rx.roll, radio.rx.pitch, radio.rx.yaw);
     xpilot.aileron1_out = constrain(xpilot.aileron1_out, -PASSTHROUGH_RES, PASSTHROUGH_RES);
@@ -127,7 +127,7 @@ void FlightModeController::passthroughMode(void)
 
 // Rate mode uses gyroscope values to maintain a desired rate of change
 // Flight surfaces move to prevent sudden changes in direction
-void FlightModeController::rateMode(void)
+void ModeController::rateMode(void)
 {
     int16_t rollDemand = radio.rx.roll - imu.gyroX;
     int16_t pitchDemand = radio.rx.pitch - imu.gyroY;
@@ -146,7 +146,7 @@ void FlightModeController::rateMode(void)
 
 // Roll and pitch follow stick input up to set limits
 // Roll and pitch leveling on stick release
-void FlightModeController::stabilizeMode(void)
+void ModeController::stabilizeMode(void)
 {
     int16_t rollDemand = radio.rx.roll - imu.ahrs_roll;
     int16_t pitchDemand = radio.rx.pitch - imu.ahrs_pitch;
@@ -187,7 +187,7 @@ void FlightModeController::stabilizeMode(void)
  *
  * For Flying Wings, reverse install elevon servos same as you would ailerons for planes
  */
-void FlightModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
+void ModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
 {
 #if defined(FULL_PLANE)
     xpilot.aileron1_out = roll;
@@ -224,11 +224,11 @@ void FlightModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
 #endif
 }
 
-void FlightModeController::rudderMixer(void)
+void ModeController::rudderMixer(void)
 {
 #if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
     radio.rx.yaw = radio.rx.yaw + (radio.rx.roll * RUDDER_MIXING);
 #endif
 }
 
-FlightModeController modeController;
+ModeController modeController;

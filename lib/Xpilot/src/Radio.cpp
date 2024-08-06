@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "Radio.h"
 #include "config.h"
-#include "FlightModeController.h"
+#include "ModeController.h"
 #include <PinChangeInterrupt.h>
 
 volatile unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
@@ -60,7 +60,7 @@ void Radio::processInput(void)
     if (rudderPulses >= SERVO_MIN_PWM && rudderPulses <= SERVO_MAX_PWM)
         rudderPulseWidth = rudderPulses;
 
-    modeController.updateFlightMode();
+    modeController.updateMode();
 
     switch (rx.mode)
     {

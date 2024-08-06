@@ -31,7 +31,7 @@ Flight stabilization software
 */
 
 #include "Xpilot.h"
-#include "FlightModeController.h"
+#include "ModeController.h"
 #include "Radio.h"
 #include "IMU.h"
 
