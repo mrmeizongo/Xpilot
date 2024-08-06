@@ -33,6 +33,7 @@ Flight stabilization software
 #include "FlightModeController.h"
 #include "Xpilot.h"
 #include "Radio.h"
+#include "IMU.h"
 #include "config.h"
 
 // Helper functions
@@ -52,7 +53,7 @@ FlightModeController::FlightModeController(void)
 // Update flight mode from mode switch position
 // Do nothing if we're already in the selected mode
 // Otherwise reset PID values and set current mode
-void FlightModeController::update(void)
+void FlightModeController::updateFlightMode(void)
 {
     if (radio.rx.mode == SwitchState::low)
     {
@@ -128,9 +129,9 @@ void FlightModeController::passthroughMode(void)
 // Flight surfaces move to prevent sudden changes in direction
 void FlightModeController::rateMode(void)
 {
-    int16_t rollDemand = radio.rx.roll - xpilot.gyroX;
-    int16_t pitchDemand = radio.rx.pitch - xpilot.gyroY;
-    int16_t yawDemand = radio.rx.yaw - xpilot.gyroZ;
+    int16_t rollDemand = radio.rx.roll - imu.gyroX;
+    int16_t pitchDemand = radio.rx.pitch - imu.gyroY;
+    int16_t yawDemand = radio.rx.yaw - imu.gyroZ;
 
     int16_t roll = rollPID->Compute(rollDemand);
     int16_t pitch = pitchPID->Compute(pitchDemand);
@@ -147,15 +148,15 @@ void FlightModeController::rateMode(void)
 // Roll and pitch leveling on stick release
 void FlightModeController::stabilizeMode(void)
 {
-    int16_t rollDemand = radio.rx.roll - xpilot.ahrs_roll;
-    int16_t pitchDemand = radio.rx.pitch - xpilot.ahrs_pitch;
-    int16_t yawDemand = radio.rx.yaw - xpilot.gyroZ;
+    int16_t rollDemand = radio.rx.roll - imu.ahrs_roll;
+    int16_t pitchDemand = radio.rx.pitch - imu.ahrs_pitch;
+    int16_t yawDemand = radio.rx.yaw - imu.gyroZ;
 
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
-    int16_t roll = rollPID->Compute(rollDemand - xpilot.gyroX);
-    int16_t pitch = pitchPID->Compute(pitchDemand - xpilot.gyroY);
+    int16_t roll = rollPID->Compute(rollDemand - imu.gyroX);
+    int16_t pitch = pitchPID->Compute(pitchDemand - imu.gyroY);
     int16_t yaw = yawPID->Compute(yawDemand);
 
     planeMixer(roll, pitch, yaw);

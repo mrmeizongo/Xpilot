@@ -60,7 +60,7 @@ void Radio::processInput(void)
     if (rudderPulses >= SERVO_MIN_PWM && rudderPulses <= SERVO_MAX_PWM)
         rudderPulseWidth = rudderPulses;
 
-    modeController.update();
+    modeController.updateFlightMode();
 
     switch (rx.mode)
     {

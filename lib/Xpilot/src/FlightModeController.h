@@ -40,7 +40,7 @@ class FlightModeController
 {
 public:
     FlightModeController(void);
-    void update(void);
+    void updateFlightMode(void);
     void process(void);
     void planeMixer(int16_t, int16_t, int16_t);
     void rudderMixer(void);

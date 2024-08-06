@@ -56,7 +56,6 @@ public:
     void setup(void);
     void loop(void);
 
-    void processIMU(void);
     void processOutput(void);
 
     FLIGHT_MODE getCurrentMode() { return currentMode; }
@@ -73,20 +72,7 @@ public:
     void print_output(void);
 #endif
 
-#if defined(IMU_DEBUG)
-    void print_imu(void);
-#endif
-
-#if defined(CALIBRATE_DEBUG)
-    void print_calibration(void);
-#endif
-
 private:
-    /*
-     * Inertial measurement unit variable
-     */
-    MPU9250 imu;
-
     /*
      * Aileron control variables
      */
@@ -108,9 +94,6 @@ private:
     int16_t rudder_out = 0; // Rudder servo output variable
 
     FLIGHT_MODE currentMode{FLIGHT_MODE::RATE}; // RATE is default mode
-
-    int16_t ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Airplane coordinate system values
-    int16_t gyroX, gyroY, gyroZ = 0;             // Angular velocity around the respective axis
 };
 
 extern Xpilot xpilot;

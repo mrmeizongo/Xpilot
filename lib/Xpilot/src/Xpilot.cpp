@@ -33,6 +33,7 @@ Flight stabilization software
 #include "Xpilot.h"
 #include "FlightModeController.h"
 #include "Radio.h"
+#include "IMU.h"
 
 #define IMU_WARMUP_LOOP 1000U
 #define I2C_CLOCK_1MHZ 1000000U
@@ -59,30 +60,7 @@ void Xpilot::setup(void)
     }
 #endif
 
-    // Initialize MPU
-    if (!imu.setup(0x68))
-    { // change to your own address
-        for (;;)
-        {
-#if defined(IMU_DEBUG)
-            Serial.println("No MPU found! Check connection");
-#endif
-            delay(1000);
-        }
-    }
-#if defined(CALIBRATE_DEBUG)
-    Serial.println("Accel Gyro calibration will start in 3sec.");
-    Serial.println("Please leave the device still on the flat plane.");
-    imu.verbose(true);
-    delay(3000);
-    // Calibrate IMU accelerometer and gyro
-    imu.calibrateAccelGyro();
-    Serial.println("Calibration complete.");
-    print_calibration();
-#elif defined(CALIBRATE)
-    imu.verbose(false);
-    imu.calibrateAccelGyro();
-#endif
+    imu.init();
 
     radio.init(); // Initialize radio
 
@@ -94,7 +72,7 @@ void Xpilot::setup(void)
     // Warm up the IMU
     for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
     {
-        processIMU();
+        imu.processIMU();
     }
 }
 
@@ -105,7 +83,7 @@ void Xpilot::setup(void)
 void Xpilot::loop(void)
 {
     nowMs = millis();
-    processIMU();
+    imu.processIMU();
 
     // Process output to servos at 50Hz intervals
     if (nowMs - outputLastMs >= 20)
@@ -120,7 +98,7 @@ void Xpilot::loop(void)
     if (nowMs - debugLastMs >= 1000)
     {
 #if defined(IMU_DEBUG)
-        print_imu();
+        imu.print_imu();
 #endif
 #if defined(IO_DEBUG)
         print_output();
@@ -141,46 +119,6 @@ void Xpilot::loop(void)
 #endif
 }
 
-void Xpilot::processIMU(void)
-{
-    if (imu.update())
-    {
-#if defined(REVERSE_ROLL_STABILIZE)
-        ahrs_roll = -((int16_t)(imu.getRoll() + IMU_ROLL_TRIM));
-#else
-        ahrs_roll = (int16_t)(imu.getRoll() + IMU_ROLL_TRIM);
-#endif
-
-#if defined(REVERSE_PITCH_STABILIZE)
-        ahrs_pitch = -((int16_t)(imu.getPitch() + IMU_PITCH_TRIM));
-#else
-        ahrs_pitch = (int16_t)(imu.getPitch() + IMU_PITCH_TRIM);
-#endif
-
-#if defined(REVERSE_YAW_STABILIZE)
-        ahrs_yaw = -((int16_t)(imu.getYaw() + IMU_YAW_TRIM));
-#else
-        ahrs_yaw = (int16_t)(imu.getYaw() + IMU_YAW_TRIM);
-#endif
-    }
-
-#if defined(REVERSE_ROLL_GYRO)
-    gyroX = -((int16_t)imu.getGyroX());
-#else
-    gyroX = (int16_t)imu.getGyroX();
-#endif
-#if defined(REVERSE_PITCH_GYRO)
-    gyroY = -((int16_t)imu.getGyroY());
-#else
-    gyroY = (int16_t)imu.getGyroY();
-#endif
-#if defined(REVERSE_YAW_GYRO)
-    gyroZ = -((int16_t)imu.getGyroZ());
-#else
-    gyroZ = (int16_t)imu.getGyroZ();
-#endif
-}
-
 void Xpilot::processOutput(void)
 {
     modeController.process();
@@ -196,22 +134,6 @@ void Xpilot::processOutput(void)
     rudderServo.writeMicroseconds(rudder_out);
 }
 
-// IO Debug functions
-#if defined(IMU_DEBUG)
-void Xpilot::print_imu(void)
-{
-    // Serial.print("Yaw: ");
-    // Serial.println(ahrs_yaw);
-    Serial.print("Roll: ");
-    Serial.println(ahrs_roll);
-    Serial.print("Pitch: ");
-    Serial.println(ahrs_pitch);
-    Serial.print("Yaw: ");
-    Serial.println(ahrs_yaw);
-    Serial.println();
-}
-#endif
-
 #if defined(IO_DEBUG)
 void Xpilot::print_output(void)
 {
@@ -223,41 +145,6 @@ void Xpilot::print_output(void)
     Serial.println(aileron2_out);
     Serial.print("Rudder Servo: ");
     Serial.println(rudder_out);
-    Serial.println();
-}
-#endif
-
-#if defined(CALIBRATE_DEBUG)
-void Xpilot::print_calibration(void)
-{
-    Serial.println("< calibration parameters >");
-    Serial.println("accel bias [g]: ");
-    Serial.print(imu.getAccBiasX() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
-    Serial.print(", ");
-    Serial.print(imu.getAccBiasY() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
-    Serial.print(", ");
-    Serial.print(imu.getAccBiasZ() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
-    Serial.println();
-    Serial.println("gyro bias [deg/s]: ");
-    Serial.print(imu.getGyroBiasX() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
-    Serial.print(", ");
-    Serial.print(imu.getGyroBiasY() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
-    Serial.print(", ");
-    Serial.print(imu.getGyroBiasZ() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
-    Serial.println();
-    Serial.println("mag bias [mG]: ");
-    Serial.print(imu.getMagBiasX());
-    Serial.print(", ");
-    Serial.print(imu.getMagBiasY());
-    Serial.print(", ");
-    Serial.print(imu.getMagBiasZ());
-    Serial.println();
-    Serial.println("mag scale []: ");
-    Serial.print(imu.getMagScaleX());
-    Serial.print(", ");
-    Serial.print(imu.getMagScaleY());
-    Serial.print(", ");
-    Serial.print(imu.getMagScaleZ());
     Serial.println();
 }
 #endif
