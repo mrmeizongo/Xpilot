@@ -60,16 +60,16 @@ void Xpilot::setup(void)
     }
 #endif
 
-    imu.init();
-
+    imu.init();   // Initialize IMU
     radio.init(); // Initialize radio
 
+    // Set up output servos
     aileron1Servo.attach(AILPIN1_OUTPUT);
     aileron2Servo.attach(AILPIN2_OUTPUT);
     elevatorServo.attach(ELEVPIN_OUTPUT);
     rudderServo.attach(RUDDPIN_OUTPUT);
 
-    // Warm up the IMU
+    // Warm up the IMU before initial use
     for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
     {
         imu.processIMU();
