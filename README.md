@@ -132,3 +132,4 @@ THE SOFTWARE.
 
 hideakitai - [MPU9250 library](https://github.com/hideakitai/MPU9250)
 NicoHood - [PinChangeInterrupt library](https://github.com/NicoHood/PinChangeInterrupt)
+PlainFlight - [PlainFlight](https://github.com/plainFlight/plainFlightController)
