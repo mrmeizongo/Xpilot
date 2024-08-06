@@ -50,39 +50,6 @@ Flight stabilization software
 // #define FLYING_WING_NO_RUDDER
 // #defined RUDDER_ELEVATOR_ONLY_V_TAIL
 
-#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
-#error Aileron, Elevator and Rudder interrupt pins need to be defined!
-#endif
-#endif
-
-#if defined(RUDDER_ELEVATOR_ONLY) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
-#if !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
-#error Elevator and Rudder interrupt pins need to be defined!
-#endif
-#endif
-
-#if defined(FLYING_WING_NO_RUDDER)
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
-#error Aileron and Elevator interrupt pins need to be defined
-#endif
-#endif
-// ------------------------------------------------------------------------------------------------------
-
-// Input pins
-#define AILPIN_INPUT 2
-#define ELEVPIN_INPUT 3
-#define RUDDPIN_INPUT 4
-#define MODEPIN_INPUT 5
-// ------------------------------------------------------------------------------------------------------
-
-// Output pins
-#define AILPIN1_OUTPUT 8
-#define AILPIN2_OUTPUT 9
-#define ELEVPIN_OUTPUT 10
-#define RUDDPIN_OUTPUT 11
-// ------------------------------------------------------------------------------------------------------
-
 /*
  * ISR vectors
  * All input pins use pin change interrupts
@@ -125,6 +92,39 @@ Flight stabilization software
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
 #define MODEPIN_INT 21
+// ------------------------------------------------------------------------------------------------------
+
+#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
+#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
+#error Aileron, Elevator and Rudder interrupt pins need to be defined!
+#endif
+#endif
+
+#if defined(RUDDER_ELEVATOR_ONLY) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
+#if !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
+#error Elevator and Rudder interrupt pins need to be defined!
+#endif
+#endif
+
+#if defined(FLYING_WING_NO_RUDDER)
+#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
+#error Aileron and Elevator interrupt pins need to be defined
+#endif
+#endif
+// ------------------------------------------------------------------------------------------------------
+
+// Input pins
+#define AILPIN_INPUT 2
+#define ELEVPIN_INPUT 3
+#define RUDDPIN_INPUT 4
+#define MODEPIN_INPUT 5
+// ------------------------------------------------------------------------------------------------------
+
+// Output pins
+#define AILPIN1_OUTPUT 8
+#define AILPIN2_OUTPUT 9
+#define ELEVPIN_OUTPUT 10
+#define RUDDPIN_OUTPUT 11
 // ------------------------------------------------------------------------------------------------------
 
 /*
