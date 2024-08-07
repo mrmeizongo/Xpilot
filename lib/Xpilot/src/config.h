@@ -35,7 +35,7 @@ Flight stabilization software
 /*
  * MANDATORY
  * Airplane type
- * Uncomment to select the type of airplane being flown
+ * Uncomment only one to select the type of airplane being flown
  * Directions are airplane-wise i.e. looking down the nose
  * FULL_PLANE: Has ailerons(1 or 2 channel), elevator and rudder.
  * FULL_PLANE_V_TAIL: Has ailerons(1 or 2 channel) and v tail deflectors. Left V tail deflector goes to elevator, right goes to rudder.
