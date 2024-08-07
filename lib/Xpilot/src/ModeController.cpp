@@ -129,9 +129,9 @@ void ModeController::passthroughMode(void)
 // Flight surfaces move to prevent sudden changes in direction
 void ModeController::rateMode(void)
 {
-    int16_t rollDemand = radio.rx.roll - imu.gyroX;
-    int16_t pitchDemand = radio.rx.pitch - imu.gyroY;
-    int16_t yawDemand = radio.rx.yaw - imu.gyroZ;
+    float rollDemand = radio.rx.roll - imu.gyroX;
+    float pitchDemand = radio.rx.pitch - imu.gyroY;
+    float yawDemand = radio.rx.yaw - imu.gyroZ;
 
     int16_t roll = rollPID->Compute(rollDemand);
     int16_t pitch = pitchPID->Compute(pitchDemand);
@@ -148,9 +148,9 @@ void ModeController::rateMode(void)
 // Roll and pitch leveling on stick release
 void ModeController::stabilizeMode(void)
 {
-    int16_t rollDemand = radio.rx.roll - imu.ahrs_roll;
-    int16_t pitchDemand = radio.rx.pitch - imu.ahrs_pitch;
-    int16_t yawDemand = radio.rx.yaw - imu.gyroZ;
+    float rollDemand = radio.rx.roll - imu.ahrs_roll;
+    float pitchDemand = radio.rx.pitch - imu.ahrs_pitch;
+    float yawDemand = radio.rx.yaw - imu.gyroZ;
 
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
@@ -227,6 +227,9 @@ void ModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
 void ModeController::rudderMixer(void)
 {
 #if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
+#if defined(REVERSE_RUDDER_MIX)
+    radio.rx.yaw = radio.rx.yaw - (radio.rx.roll * RUDDER_MIXING);
+#else
     radio.rx.yaw = radio.rx.yaw + (radio.rx.roll * RUDDER_MIXING);
 #endif
 }

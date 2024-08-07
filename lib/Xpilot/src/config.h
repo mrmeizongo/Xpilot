@@ -139,8 +139,16 @@ Flight stabilization software
 #define SERVO_MAX_PWM 2000
 // ------------------------------------------------------------------------------------------------------
 
+/*
+ * Transmitter / Receiver values
+ * Used to separate the 3 flight modes input threshold
+ */
+#define INPUT_THRESHOLD 200
+// ------------------------------------------------------------------------------------------------------
+
 // PID gain values
 
+/*
 // Roll
 #define ROLL_KP 11.4f
 #define ROLL_KI 3.9f
@@ -153,6 +161,22 @@ Flight stabilization software
 #define YAW_KP 10.4f
 #define YAW_KI 0.0f
 #define YAW_KD 0.0f
+*/
+// Roll
+#define ROLL_KP 1.0f
+#define ROLL_KI 0.0f
+#define ROLL_KD 0.0f
+// Pitch
+#define PITCH_KP 1.0f
+#define PITCH_KI 0.0f
+#define PITCH_KD 0.0f
+// Yaw
+#define YAW_KP 1.0f
+#define YAW_KI 0.0f
+#define YAW_KD 0.0f
+
+// PID output limits
+#define MAX_PID_OUTPUT 180
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -178,21 +202,11 @@ Flight stabilization software
 // Stick resolution in rate mode (degrees)
 #define MAX_ROLL_RATE_DEGS 180
 #define MAX_PITCH_RATE_DEGS 180
-#define MAX_YAW_RATE_DEGS 100
+#define MAX_YAW_RATE_DEGS 180
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
 #define MAX_PITCH_ANGLE_DEGS 60
-
-// PID output limits
-#define MAX_PID_OUTPUT 1000
-// ------------------------------------------------------------------------------------------------------
-
-/*
- * Transmitter / Receiver values
- * Used to separate the 3 flight modes input threshold
- */
-#define INPUT_THRESHOLD 200
 // ------------------------------------------------------------------------------------------------------
 
 // Comment or uncomment to reverse stabilization output direction
@@ -212,7 +226,8 @@ Flight stabilization software
  * Rudder mixing value is set in percentage ( value / 100)
  */
 // #define RUDDER_MIX_IN_PASS
-#define RUDDER_MIXING 0.10f
+// #define REVERSE_RUDDER_MIX
+#define RUDDER_MIXING 0.15f
 // ------------------------------------------------------------------------------------------------------
 
 /*

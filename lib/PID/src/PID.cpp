@@ -22,8 +22,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
-#include "PID.h"
 #include <Arduino.h>
+#include "PID.h"
 
 PID::PID() {}
 
@@ -40,17 +40,17 @@ void PID::ResetPID(void)
 {
     previousError = 0;
     integral = 0;
-    previousTime = micros();
+    previousTime = millis();
 }
 
 // Main function to be called to get PID control value
-int16_t PID::Compute(int16_t currentError)
+int16_t PID::Compute(float currentError)
 {
-    unsigned long currentTime = micros();
-    double dt = currentTime - previousTime;
-    dt = (dt * 0.001 * 0.001);
+    unsigned long currentTime = millis();
+    float dt = currentTime - previousTime;
+    dt = (dt * 0.001f);
     integral += (currentError * dt);
-    double derivative = (currentError - previousError) / dt;
+    float derivative = (currentError - previousError) / dt;
     previousError = currentError;
     previousTime = currentTime;
     return static_cast<int16_t>((Kp * currentError) + (Ki * integral) + (Kd * derivative));

@@ -515,9 +515,9 @@ public:
         rpy[0] = atan2f(a31, a33);
         rpy[1] = -asinf(a32);
         rpy[2] = atan2f(a12, a22);
-        rpy[0] *= 180.0f / PI;
-        rpy[1] *= 180.0f / PI;
-        rpy[2] *= 180.0f / PI;
+        rpy[0] *= 57.29577951;
+        rpy[1] *= 57.29577951;
+        rpy[2] *= 57.29577951;
         rpy[2] += magnetic_declination;
         if (rpy[2] >= +180.f)
             rpy[2] -= 360.f;

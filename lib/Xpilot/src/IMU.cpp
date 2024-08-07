@@ -36,37 +36,37 @@ bool IMU::processIMU(void)
     if (mpu9250.update())
     {
 #if defined(REVERSE_ROLL_STABILIZE)
-        ahrs_roll = -((int16_t)(mpu9250.getRoll() + IMU_ROLL_TRIM));
+        ahrs_roll = -((mpu9250.getRoll() + IMU_ROLL_TRIM));
 #else
-        ahrs_roll = (int16_t)(mpu9250.getRoll() + IMU_ROLL_TRIM);
+        ahrs_roll = (mpu9250.getRoll() + IMU_ROLL_TRIM);
 #endif
 
 #if defined(REVERSE_PITCH_STABILIZE)
-        ahrs_pitch = -((int16_t)(mpu9250.getPitch() + IMU_PITCH_TRIM));
+        ahrs_pitch = -((mpu9250.getPitch() + IMU_PITCH_TRIM));
 #else
-        ahrs_pitch = (int16_t)(mpu9250.getPitch() + IMU_PITCH_TRIM);
+        ahrs_pitch = (mpu9250.getPitch() + IMU_PITCH_TRIM);
 #endif
 
 #if defined(REVERSE_YAW_STABILIZE)
-        ahrs_yaw = -((int16_t)(mpu9250.getYaw() + IMU_YAW_TRIM));
+        ahrs_yaw = -((mpu9250.getYaw() + IMU_YAW_TRIM));
 #else
-        ahrs_yaw = (int16_t)(mpu9250.getYaw() + IMU_YAW_TRIM);
+        ahrs_yaw = (mpu9250.getYaw() + IMU_YAW_TRIM);
 #endif
 
 #if defined(REVERSE_ROLL_GYRO)
-        gyroX = -((int16_t)mpu9250.getGyroX());
+        gyroX = -(mpu9250.getGyroX());
 #else
-        gyroX = (int16_t)mpu9250.getGyroX();
+        gyroX = mpu9250.getGyroX();
 #endif
 #if defined(REVERSE_PITCH_GYRO)
-        gyroY = -((int16_t)mpu9250.getGyroY());
+        gyroY = -(mpu9250.getGyroY());
 #else
-        gyroY = (int16_t)mpu9250.getGyroY();
+        gyroY = mpu9250.getGyroY();
 #endif
 #if defined(REVERSE_YAW_GYRO)
-        gyroZ = -((int16_t)mpu9250.getGyroZ());
+        gyroZ = -(mpu9250.getGyroZ());
 #else
-        gyroZ = (int16_t)mpu9250.getGyroZ();
+        gyroZ = mpu9250.getGyroZ();
 #endif
         return true;
     }

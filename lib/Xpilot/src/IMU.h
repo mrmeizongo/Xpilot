@@ -19,8 +19,8 @@ public:
     void print_imu(void);
 #endif
 
-    int16_t ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Airplane coordinate system values
-    int16_t gyroX, gyroY, gyroZ = 0;             // Angular velocity around the respective axis
+    float ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Airplane coordinate system values
+    float gyroX, gyroY, gyroZ = 0;             // Angular velocity around the respective axis
 
 private:
     /*

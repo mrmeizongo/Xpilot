@@ -137,12 +137,12 @@ void Xpilot::processOutput(void)
 #if defined(IO_DEBUG)
 void Xpilot::print_output(void)
 {
-    Serial.print("Elevator Servo: ");
-    Serial.println(elevator_out);
     Serial.print("Aileron Servo 1: ");
     Serial.println(aileron1_out);
     Serial.print("Aileron Servo 2: ");
     Serial.println(aileron2_out);
+    Serial.print("Elevator Servo: ");
+    Serial.println(elevator_out);
     Serial.print("Rudder Servo: ");
     Serial.println(rudder_out);
     Serial.println();

@@ -33,7 +33,15 @@ public:
     PID();                    // Empty Constructor
     PID(float, float, float); // Constructor with initialization parameters
     void ResetPID(void);      // Reset PID controller parameters
-    int16_t Compute(int16_t); // Generate the PID output to be added to the servo
+    int16_t Compute(float);   // Generate the PID output to be added to the servo
+
+    float getKp(void) { return Kp; }
+    float getKi(void) { return Ki; }
+    float getKd(void) { return Kd; }
+
+    void setKp(float _Kp) { Kp = _Kp; }
+    void setKi(float _Ki) { Ki = _Ki; }
+    void setKd(float _Kd) { Kd = _Kd; }
 
 private:
     float Kp;
