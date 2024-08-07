@@ -232,6 +232,7 @@ void ModeController::rudderMixer(void)
 #else
     radio.rx.yaw = radio.rx.yaw + (radio.rx.roll * RUDDER_MIXING);
 #endif
+#endif
 }
 
 ModeController modeController;
