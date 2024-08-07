@@ -54,6 +54,7 @@ Flight stabilization software
 /*
  * ISR vectors
  * All input pins use pin change interrupts
+ * Depending on airplane type selected, input interrupt pins must be defined
  * Change these values to match your selected input pins
  * If you modify these values you will also have to modify the settings in the PinChangeInterrupt library
  * A cleaner config method will probaby be useful here
@@ -93,25 +94,6 @@ Flight stabilization software
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
 #define MODEPIN_INT 21
-// ------------------------------------------------------------------------------------------------------
-
-#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
-#error Aileron, Elevator and Rudder interrupt pins need to be defined!
-#endif
-#endif
-
-#if defined(RUDDER_ELEVATOR_ONLY_PLANE) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
-#if !defined(ELEVPIN_INT) || !defined(RUDDPIN_INT)
-#error Elevator and Rudder interrupt pins need to be defined!
-#endif
-#endif
-
-#if defined(FLYING_WING_NO_RUDDER)
-#if !defined(AILPIN_INT) || !defined(ELEVPIN_INT)
-#error Aileron and Elevator interrupt pins need to be defined!
-#endif
-#endif
 // ------------------------------------------------------------------------------------------------------
 
 // ATmega328p pin definitions
