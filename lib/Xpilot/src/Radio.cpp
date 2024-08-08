@@ -43,6 +43,7 @@ void Radio::processInput(void)
 
     // Disable interrupts as pulses are being read to avoid race conditionS
     cli();
+    // Record the length of the pulse if it is within the 1ms to 2ms range
     if (modePulses >= SERVO_MIN_PWM && modePulses <= SERVO_MAX_PWM)
     {
         if (modePulses >= SERVO_MAX_PWM - INPUT_THRESHOLD)
@@ -86,7 +87,15 @@ void Radio::processInput(void)
     SREG = oldSREG;
 }
 
-// ISR
+/*
+ * ISR
+ * Typical hobby servos expect to see a pulse every 20ms and the length of the pulse determines the position to set the servo
+ * This signal control is known as Pulse Width Modulation
+ * The length of the pulse is typically between 1ms - 2ms with 1ms setting the servo position to 0°, 1.5ms to 90° and 2ms to 180°
+ * RC transmitters are designed to send a pulse to the receiver every 20ms within this range, going HIGH for the duration of the pulse and LOW otherwise
+ * If the output of the channel on the receiver is attached to an interrupt pin on the arduino, we can capture the length between the changes
+ * millis() causes problems when called in an ISR so we use micros() instead (1us -> 1000ms)
+ */
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
     aileronCurrentTime = micros();

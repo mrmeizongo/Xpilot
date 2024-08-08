@@ -51,6 +51,8 @@ Flight stabilization software
 // #define FLYING_WING_NO_RUDDER
 // #defined RUDDER_ELEVATOR_ONLY_V_TAIL
 
+// ATmega328p pin definitions
+
 /*
  * ISR vectors
  * All input pins use pin change interrupts
@@ -88,15 +90,11 @@ Flight stabilization software
  * |    22 |  6       (PD6)  |
  * |    23 |  7       (PD7)  |
  * | ----- | --------------- |
-
  */
 #define AILPIN_INT 18
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
 #define MODEPIN_INT 21
-// ------------------------------------------------------------------------------------------------------
-
-// ATmega328p pin definitions
 
 // Input pins
 #define AILPIN_INPUT 2
@@ -112,9 +110,9 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 /*
- * Servo PWM range
+ * Servo PWM range in micro seconds
  * Edit this to suit your servo PWN values
- * You can find these values in the datasheet that comes with your servo
+ * You can find these values in the data sheet that comes with your servo
  * These values are conservative and should work for most servos
  */
 #define SERVO_MIN_PWM 1000
@@ -131,20 +129,6 @@ Flight stabilization software
 
 // PID gain values
 
-/*
-// Roll
-#define ROLL_KP 11.4f
-#define ROLL_KI 3.9f
-#define ROLL_KD 0.0f
-// Pitch
-#define PITCH_KP 9.0f
-#define PITCH_KI 2.2f
-#define PITCH_KD 0.0f
-// Yaw
-#define YAW_KP 10.4f
-#define YAW_KI 0.0f
-#define YAW_KD 0.0f
-*/
 // Roll
 #define ROLL_KP 1.0f
 #define ROLL_KI 0.0f
