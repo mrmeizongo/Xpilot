@@ -143,7 +143,7 @@ Flight stabilization software
 #define YAW_KD 0.0f
 
 // PID output limits
-#define MAX_PID_OUTPUT 180
+#define MAX_PID_OUTPUT 90
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -167,9 +167,9 @@ Flight stabilization software
 #define PASSTHROUGH_RES 1000
 
 // Stick resolution in rate mode (degrees)
-#define MAX_ROLL_RATE_DEGS 180
-#define MAX_PITCH_RATE_DEGS 180
-#define MAX_YAW_RATE_DEGS 180
+#define MAX_ROLL_RATE_DEGS 90
+#define MAX_PITCH_RATE_DEGS 90
+#define MAX_YAW_RATE_DEGS 90
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
