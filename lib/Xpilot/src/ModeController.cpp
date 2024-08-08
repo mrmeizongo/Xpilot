@@ -155,8 +155,11 @@ void ModeController::stabilizeMode(void)
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
-    int16_t roll = rollPID->Compute(rollDemand - imu.gyroX);
-    int16_t pitch = pitchPID->Compute(pitchDemand - imu.gyroY);
+    rollDemand = rollDemand - imu.gyroX;
+    pitchDemand = pitchDemand - imu.gyroY;
+
+    int16_t roll = rollPID->Compute(rollDemand);
+    int16_t pitch = pitchPID->Compute(pitchDemand);
     int16_t yaw = yawPID->Compute(yawDemand);
 
     planeMixer(roll, pitch, yaw);
