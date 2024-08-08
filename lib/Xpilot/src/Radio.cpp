@@ -94,7 +94,7 @@ void Radio::processInput(void)
  * The length of the pulse is typically between 1ms - 2ms with 1ms setting the servo position to 0°, 1.5ms to 90° and 2ms to 180°
  * RC transmitters are designed to send a pulse to the receiver every 20ms within this range, going HIGH for the duration of the pulse and LOW otherwise
  * If the output of the channel on the receiver is attached to an interrupt pin on the arduino, we can capture the length between the changes
- * millis() causes problems when called in an ISR so we use micros() instead (1us -> 1000ms)
+ * millis() causes problems when called in an ISR so we play it safe and use micros() instead (1us -> 1000ms)
  */
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
@@ -103,6 +103,11 @@ void PinChangeInterruptEvent(AILPIN_INT)(void)
     {
         aileronPulses = aileronCurrentTime - aileronStartTime;
         aileronStartTime = aileronCurrentTime;
+    }
+    else if (aileronStartTime > aileronCurrentTime)
+    {
+        // micros() overflows after approximately 70min
+        aileronStartTime = 0;
     }
 }
 
@@ -114,6 +119,11 @@ void PinChangeInterruptEvent(ELEVPIN_INT)(void)
         elevatorPulses = elevatorCurrentTime - elevatorStartTime;
         elevatorStartTime = elevatorCurrentTime;
     }
+    else if (elevatorStartTime > elevatorCurrentTime)
+    {
+        // micros() overflows after approximately 70min
+        elevatorStartTime = 0;
+    }
 }
 
 void PinChangeInterruptEvent(RUDDPIN_INT)(void)
@@ -124,6 +134,11 @@ void PinChangeInterruptEvent(RUDDPIN_INT)(void)
         rudderPulses = rudderCurrentTime - rudderStartTime;
         rudderStartTime = rudderCurrentTime;
     }
+    else if (rudderStartTime > rudderCurrentTime)
+    {
+        // micros() overflows after approximately 70min
+        rudderStartTime = 0;
+    }
 }
 
 void PinChangeInterruptEvent(MODEPIN_INT)(void)
@@ -133,6 +148,11 @@ void PinChangeInterruptEvent(MODEPIN_INT)(void)
     {
         modePulses = modeCurrentTime - modeStartTime;
         modeStartTime = modeCurrentTime;
+    }
+    else if (modeStartTime > modeCurrentTime)
+    {
+        // micros() overflows after approximately 70min
+        modeStartTime = 0;
     }
 }
 //  ----------------------------
