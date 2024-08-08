@@ -43,7 +43,7 @@ void Radio::processInput(void)
 
     // Disable interrupts as pulses are being read to avoid race conditionS
     cli();
-    // Record the length of the pulse if it is within the 1ms to 2ms range
+    // Record the length of the pulse if it is within the 1ms to 2ms range (pulse is in uS)
     if (modePulses >= SERVO_MIN_PWM && modePulses <= SERVO_MAX_PWM)
     {
         if (modePulses >= SERVO_MAX_PWM - INPUT_THRESHOLD)
