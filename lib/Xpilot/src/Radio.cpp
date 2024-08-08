@@ -104,7 +104,7 @@ void PinChangeInterruptEvent(AILPIN_INT)(void)
         aileronPulses = aileronCurrentTime - aileronStartTime;
         aileronStartTime = aileronCurrentTime;
     }
-    else if (aileronStartTime > aileronCurrentTime)
+    else
     {
         // micros() overflows after approximately 70min
         aileronStartTime = 0;
@@ -119,7 +119,7 @@ void PinChangeInterruptEvent(ELEVPIN_INT)(void)
         elevatorPulses = elevatorCurrentTime - elevatorStartTime;
         elevatorStartTime = elevatorCurrentTime;
     }
-    else if (elevatorStartTime > elevatorCurrentTime)
+    else
     {
         // micros() overflows after approximately 70min
         elevatorStartTime = 0;
@@ -134,7 +134,7 @@ void PinChangeInterruptEvent(RUDDPIN_INT)(void)
         rudderPulses = rudderCurrentTime - rudderStartTime;
         rudderStartTime = rudderCurrentTime;
     }
-    else if (rudderStartTime > rudderCurrentTime)
+    else
     {
         // micros() overflows after approximately 70min
         rudderStartTime = 0;
@@ -149,7 +149,7 @@ void PinChangeInterruptEvent(MODEPIN_INT)(void)
         modePulses = modeCurrentTime - modeStartTime;
         modeStartTime = modeCurrentTime;
     }
-    else if (modeStartTime > modeCurrentTime)
+    else
     {
         // micros() overflows after approximately 70min
         modeStartTime = 0;
