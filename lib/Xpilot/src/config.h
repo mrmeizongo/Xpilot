@@ -115,9 +115,9 @@ Flight stabilization software
  * You can find these values in the data sheet that comes with your servo
  * These values are conservative and should work for most servos
  */
-#define SERVO_MIN_PWM 1000
+#define SERVO_MIN_PWM 800
 #define SERVO_MID_PWM 1500
-#define SERVO_MAX_PWM 2000
+#define SERVO_MAX_PWM 2200
 
 /*
  * Transmitter PWM range in micro seconds
