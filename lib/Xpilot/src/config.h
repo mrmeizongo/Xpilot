@@ -109,12 +109,10 @@ Flight stabilization software
 #define RUDDPIN_OUTPUT 11
 // ------------------------------------------------------------------------------------------------------
 
-// Default values obtained from SPEKTRUM SPMR6750 DX6 US VERSION and AR620 tx/rx combo
-
 /*
  * Servo PWM range in micro seconds
- * Edit this to suit your servo PWN values
- * You can find these values in the data sheet that comes with your servo
+ * Edit these to suit your servo PWN values
+ * You can find these values in your servo data sheet
  * These values are conservative and should work for most servos
  */
 #define SERVO_MIN_PWM 800
@@ -124,9 +122,12 @@ Flight stabilization software
 /*
  * Transmitter PWM range in micro seconds
  * All tx and rx are not designed the same
+ * Default values obtained using SPEKTRUM SPMR6750 DX6 US VERSION and AR620 tx/rx combo
  * Refer to your tx/rx's manual to determine the incoming PWM range
  * If it is not specified, uncomment IO_DEBUG to view input/output data in serial monitor
- * Switch to PASSTHROUGH mode. The input range should be between the defined (-PASSTHROUGH_RES) to (PASSTHROUGH_RES)
+ * Switch to PASSTHROUGH mode for this. Move stick through low and high points
+ * The input range should be between the defined (-PASSTHROUGH_RES) to (PASSTHROUGH_RES)
+ * The output range should be between the defined (SERVO_MIN_PWM) to (SERVO_MAX_PWM)
  * Adjust these values accordingly if there is a discrepancy
  */
 #define INPUT_MIN_PWM 1100
