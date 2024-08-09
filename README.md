@@ -39,8 +39,8 @@ See [config.h](lib/Xpilot/src/config.h) for airplane type configuration.
 ## Stabilization system loop
 
 The atmega328p chip is capable of running the entire stabilization loop in 4ms.
-This gives us ap update frequency of ~250Hz. Output to the control servos are updated at 50Hz for standard servos.
-In the context of RC planes, an execution loop of 250Hz provides a smooth and responsive control, which is particularly beneficial for maintaining stability in changing flight conditions.
+This gives us ap update frequency of ~200Hz. Output to the control servos are updated at 50Hz for standard servos.
+In the context of RC planes, an execution loop of 200Hz provides a smooth and responsive control, which is particularly beneficial for maintaining stability in changing flight conditions.
 
 ## Setup
 
