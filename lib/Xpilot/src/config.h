@@ -59,7 +59,7 @@ Flight stabilization software
  * Depending on airplane type selected, input interrupt pins must be defined
  * Change these values to match your selected input pins
  * Best to keep these unchanged unless absolutely necessary
- * Changing any of these values require modifications made to PinChangeInterrupt library
+ * Changing any XXXXPIN_INT or XXXXPIN_INPUT value require modifications made to PinChangeInterrupt library
  *
  * | PCINT |  Uno/Nano/Mini  |
  * | ----- | --------------- |
