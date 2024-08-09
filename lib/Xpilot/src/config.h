@@ -130,20 +130,20 @@ Flight stabilization software
 // PID gain values
 
 // Roll
-#define ROLL_KP 1.0f
-#define ROLL_KI 0.0f
+#define ROLL_KP 11.4f
+#define ROLL_KI 3.9f
 #define ROLL_KD 0.0f
 // Pitch
-#define PITCH_KP 1.0f
-#define PITCH_KI 0.0f
+#define PITCH_KP 9.0f
+#define PITCH_KI 2.1f
 #define PITCH_KD 0.0f
 // Yaw
-#define YAW_KP 1.0f
+#define YAW_KP 10.4f
 #define YAW_KI 0.0f
 #define YAW_KD 0.0f
 
 // PID output limits
-#define MAX_PID_OUTPUT 90
+#define MAX_PID_OUTPUT 1000
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -167,9 +167,9 @@ Flight stabilization software
 #define PASSTHROUGH_RES 1000
 
 // Stick resolution in rate mode (degrees)
-#define MAX_ROLL_RATE_DEGS 90
-#define MAX_PITCH_RATE_DEGS 90
-#define MAX_YAW_RATE_DEGS 90
+#define MAX_ROLL_RATE_DEGS 60
+#define MAX_PITCH_RATE_DEGS 60
+#define MAX_YAW_RATE_DEGS 60
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60

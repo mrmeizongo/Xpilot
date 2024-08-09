@@ -155,6 +155,9 @@ void ModeController::stabilizeMode(void)
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
+    rollDemand = constrain(rollDemand, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+    pitchDemand = constrain(pitchDemand, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
+
     rollDemand = rollDemand - imu.gyroX;
     pitchDemand = pitchDemand - imu.gyroY;
 
