@@ -26,10 +26,6 @@ public:
     void init(void);
     void processInput(void);
     Control rx;
-
-#if defined(IO_DEBUG)
-    void printInput(void);
-#endif
 };
 
 extern Radio radio;

@@ -118,6 +118,18 @@ Flight stabilization software
 #define SERVO_MIN_PWM 1000
 #define SERVO_MID_PWM 1500
 #define SERVO_MAX_PWM 2000
+
+/*
+ * Transmitter PWM range in micro seconds
+ * All transmitters are not designed the same
+ * Refer to your transmitter's manual to determine the incoming PWM range
+ * If it is not specified, set these to the same values as SERVO_XXX_PWM above then uncomment IO_DEBUG
+ * Input range from serial monitor should be between -1000 to 1000
+ * Adjust these values accordingly if there is a discrepancy
+ */
+#define INPUT_MIN_PWM 1100
+#define INPUT_MID_PWM 1500
+#define INPUT_MAX_PWM 1900
 // ------------------------------------------------------------------------------------------------------
 
 /*

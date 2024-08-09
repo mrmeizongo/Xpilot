@@ -59,17 +59,10 @@ public:
     void processOutput(void);
 
     FLIGHT_MODE getCurrentMode() { return currentMode; }
-    void setCurrentMode(FLIGHT_MODE _currentMode)
-    {
-#if defined(IO_DEBUG)
-        Serial.print("Flight mode: ");
-        Serial.println((uint8_t)_currentMode);
-#endif
-        currentMode = _currentMode;
-    }
+    void setCurrentMode(FLIGHT_MODE _currentMode) { currentMode = _currentMode; }
 
 #if defined(IO_DEBUG)
-    void print_output(void);
+    void print_IO(void);
 #endif
 
 private:

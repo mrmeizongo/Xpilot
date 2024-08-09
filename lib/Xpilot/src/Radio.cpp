@@ -44,21 +44,21 @@ void Radio::processInput(void)
     // Disable interrupts as pulses are being read to avoid race conditionS
     cli();
     // Record the length of the pulse if it is within the 1ms to 2ms range (pulse is in uS)
-    if (modePulses >= SERVO_MIN_PWM && modePulses <= SERVO_MAX_PWM)
+    if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
     {
-        if (modePulses >= SERVO_MAX_PWM - INPUT_THRESHOLD)
+        if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD)
             rx.mode = SwitchState::low;
-        else if (modePulses >= SERVO_MIN_PWM + INPUT_THRESHOLD && modePulses <= SERVO_MAX_PWM - INPUT_THRESHOLD)
+        else if (modePulses >= INPUT_MIN_PWM + INPUT_THRESHOLD && modePulses <= INPUT_MAX_PWM - INPUT_THRESHOLD)
             rx.mode = SwitchState::mid;
-        else if (modePulses <= SERVO_MIN_PWM + INPUT_THRESHOLD)
+        else if (modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
             rx.mode = SwitchState::high;
     }
 
-    if (aileronPulses >= SERVO_MIN_PWM && aileronPulses <= SERVO_MAX_PWM)
+    if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
         aileronPulseWidth = aileronPulses;
-    if (elevatorPulses >= SERVO_MIN_PWM && elevatorPulses <= SERVO_MAX_PWM)
+    if (elevatorPulses >= INPUT_MIN_PWM && elevatorPulses <= INPUT_MAX_PWM)
         elevatorPulseWidth = elevatorPulses;
-    if (rudderPulses >= SERVO_MIN_PWM && rudderPulses <= SERVO_MAX_PWM)
+    if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
         rudderPulseWidth = rudderPulses;
 
     modeController.updateMode();
@@ -67,20 +67,20 @@ void Radio::processInput(void)
     switch (rx.mode)
     {
     case SwitchState::low:
-        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
-        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
-        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
+        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
         break;
     default:
     case SwitchState::mid:
-        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
+        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
+        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
     case SwitchState::high:
-        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
-        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
-        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
+        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
+        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
+        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
     }
 
@@ -156,22 +156,5 @@ void PinChangeInterruptEvent(MODEPIN_INT)(void)
     }
 }
 //  ----------------------------
-
-#if defined(IO_DEBUG)
-void Radio::printInput(void)
-{
-    Serial.print("Elevator Pulse: ");
-    Serial.println(elevatorPulseWidth);
-    Serial.print("Aileron 1 Pulse: ");
-    Serial.println(aileronPulseWidth);
-    Serial.print("Aileron 2 Pulse: ");
-    Serial.println(aileronPulseWidth);
-    Serial.print("Rudder Pulse: ");
-    Serial.println(rudderPulseWidth);
-    Serial.print("Flight Mode: ");
-    Serial.println((int)rx.mode);
-    Serial.println();
-}
-#endif
 
 Radio radio;

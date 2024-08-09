@@ -101,7 +101,7 @@ void Xpilot::loop(void)
         imu.print_imu();
 #endif
 #if defined(IO_DEBUG)
-        print_output();
+        print_IO();
 #endif
         debugLastMs = nowMs;
     }
@@ -135,15 +135,37 @@ void Xpilot::processOutput(void)
 }
 
 #if defined(IO_DEBUG)
-void Xpilot::print_output(void)
+void Xpilot::print_IO(void)
 {
-    Serial.print("Aileron Servo 1: ");
+    Serial.print("\t\t");
+    Serial.print("Flight Mode: ");
+    Serial.println((int)radio.rx.mode);
+    Serial.print("Input");
+    Serial.print("\t\t\t\t");
+    Serial.println("Output");
+
+    Serial.print("Aileron 1: ");
+    Serial.print(radio.rx.roll);
+    Serial.print("\t\t\t");
+    Serial.print("Aileron 1: ");
     Serial.println(aileron1_out);
-    Serial.print("Aileron Servo 2: ");
+
+    Serial.print("Aileron 2: ");
+    Serial.print(radio.rx.roll);
+    Serial.print("\t\t\t");
+    Serial.print("Aileron 2: ");
     Serial.println(aileron2_out);
-    Serial.print("Elevator Servo: ");
+
+    Serial.print("Elevator: ");
+    Serial.print(radio.rx.pitch);
+    Serial.print("\t\t\t");
+    Serial.print("Elevator: ");
     Serial.println(elevator_out);
-    Serial.print("Rudder Servo: ");
+
+    Serial.print("Rudder: ");
+    Serial.print(radio.rx.yaw);
+    Serial.print("\t\t\t");
+    Serial.print("Rudder: ");
     Serial.println(rudder_out);
     Serial.println();
 }
