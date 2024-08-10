@@ -219,7 +219,6 @@ Flight stabilization software
 // #define LOOP_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
-// #define MIXING_DEBUG
 // #define CALIBRATE_DEBUG
 // #define CALIBRATE
 // ------------------------------------------------------------------------------------------------------
