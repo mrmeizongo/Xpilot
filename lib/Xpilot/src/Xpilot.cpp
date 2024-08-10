@@ -31,6 +31,7 @@ Flight stabilization software
 */
 
 #include "Xpilot.h"
+#include "config.h"
 #include "ModeController.h"
 #include "Radio.h"
 #include "IMU.h"
@@ -64,10 +65,10 @@ void Xpilot::setup(void)
     radio.init(); // Initialize radio
 
     // Set up output servos
-    aileron1Servo.attach(AILPIN1_OUTPUT);
-    aileron2Servo.attach(AILPIN2_OUTPUT);
-    elevatorServo.attach(ELEVPIN_OUTPUT);
-    rudderServo.attach(RUDDPIN_OUTPUT);
+    aileron1Servo.attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    aileron2Servo.attach(AILPIN2_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
+    elevatorServo.attach(ELEVPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
+    rudderServo.attach(RUDDPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
 
     // Warm up the IMU before initial use
     for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
