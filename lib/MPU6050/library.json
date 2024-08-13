@@ -1,0 +1,18 @@
+{
+	"name": "MPU6050",
+	"keywords": "i2c,wire,imu",
+	"description": "Arduino library for MPU6050 Six-Axis (Gyro + Accelerometer) MEMS MotionTracking™ Device",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mrmeizongo/MPU6050.git"
+	},
+	"authors": {
+		"name": "Jamal Meizongo",
+		"url": "https://github.com/mrmeizongo",
+		"maintainer": true
+	},
+	"version": "0.0.1",
+	"license": "MIT",
+	"frameworks": "arduino",
+	"platforms": "*"
+}
