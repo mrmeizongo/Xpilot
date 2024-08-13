@@ -165,9 +165,9 @@ Flight stabilization software
  * Trim values to be used to correct gyro misalignment
  * You might want to modify these to suit your airplane
  */
-#define IMU_ROLL_TRIM -1.51f
-#define IMU_PITCH_TRIM 2.12f
-#define IMU_YAW_TRIM 0.0f
+#define IMU_ROLL_TRIM 1.44f
+#define IMU_PITCH_TRIM -2.18f
+#define IMU_YAW_TRIM 7.40f
 // ------------------------------------------------------------------------------------------------------
 
 // To correct transmitter stick drift, be sure to modify these values

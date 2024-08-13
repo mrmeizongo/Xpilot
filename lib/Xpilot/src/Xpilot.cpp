@@ -94,11 +94,11 @@ void Xpilot::loop(void)
         outputLastMs = nowMs;
     }
 
-#if defined(IO_DEBUG) || defined(IMU_DEBUG)
+#if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     static unsigned long debugLastMs = 0;
     if (nowMs - debugLastMs >= 1000)
     {
-#if defined(IMU_DEBUG)
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
         imu.print_imu();
 #endif
 #if defined(IO_DEBUG)

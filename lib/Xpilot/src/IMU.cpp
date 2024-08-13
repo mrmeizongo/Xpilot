@@ -6,11 +6,11 @@ IMU::IMU(void) {}
 void IMU::init(void)
 {
     // Initialize MPU
-    if (!mpu9250.setup(0x68))
+    if (!mpu6050.setup(0x68))
     { // change to your own address
         for (;;)
         {
-#if defined(IMU_DEBUG)
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
             Serial.println("No MPU found! Check connection");
 #endif
             delay(1000);
@@ -19,54 +19,54 @@ void IMU::init(void)
 #if defined(CALIBRATE_DEBUG)
     Serial.println("Accel Gyro calibration will start in 3sec.");
     Serial.println("Please leave the device still on the flat plane.");
-    mpu9250.verbose(true);
+    mpu6050.verbose(true);
     delay(3000);
     // Calibrate IMU accelerometer and gyro
-    mpu9250.calibrateAccelGyro();
+    mpu6050.calibrateAccelGyro();
     Serial.println("Calibration complete.");
     print_calibration();
 #elif defined(CALIBRATE)
-    mpu9250.verbose(false);
-    mpu9250.calibrateAccelGyro();
+    mpu6050.verbose(false);
+    mpu6050.calibrateAccelGyro();
 #endif
 }
 
 bool IMU::processIMU(void)
 {
-    if (mpu9250.update())
+    if (mpu6050.update())
     {
 #if defined(REVERSE_ROLL_STABILIZE)
-        ahrs_roll = -((mpu9250.getRoll() + IMU_ROLL_TRIM));
+        ahrs_roll = -((mpu6050.getRoll() + IMU_ROLL_TRIM));
 #else
-        ahrs_roll = (mpu9250.getRoll() + IMU_ROLL_TRIM);
+        ahrs_roll = (mpu6050.getRoll() + IMU_ROLL_TRIM);
 #endif
 
 #if defined(REVERSE_PITCH_STABILIZE)
-        ahrs_pitch = -((mpu9250.getPitch() + IMU_PITCH_TRIM));
+        ahrs_pitch = -((mpu6050.getPitch() + IMU_PITCH_TRIM));
 #else
-        ahrs_pitch = (mpu9250.getPitch() + IMU_PITCH_TRIM);
+        ahrs_pitch = (mpu6050.getPitch() + IMU_PITCH_TRIM);
 #endif
 
 #if defined(REVERSE_YAW_STABILIZE)
-        ahrs_yaw = -((mpu9250.getYaw() + IMU_YAW_TRIM));
+        ahrs_yaw = -((mpu6050.getYaw() + IMU_YAW_TRIM));
 #else
-        ahrs_yaw = (mpu9250.getYaw() + IMU_YAW_TRIM);
+        ahrs_yaw = (mpu6050.getYaw() + IMU_YAW_TRIM);
 #endif
 
 #if defined(REVERSE_ROLL_GYRO)
-        gyroX = -(mpu9250.getGyroX());
+        gyroX = -(mpu6050.getGyroX());
 #else
-        gyroX = mpu9250.getGyroX();
+        gyroX = mpu6050.getGyroX();
 #endif
 #if defined(REVERSE_PITCH_GYRO)
-        gyroY = -(mpu9250.getGyroY());
+        gyroY = -(mpu6050.getGyroY());
 #else
-        gyroY = mpu9250.getGyroY();
+        gyroY = mpu6050.getGyroY();
 #endif
 #if defined(REVERSE_YAW_GYRO)
-        gyroZ = -(mpu9250.getGyroZ());
+        gyroZ = -(mpu6050.getGyroZ());
 #else
-        gyroZ = mpu9250.getGyroZ();
+        gyroZ = mpu6050.getGyroZ();
 #endif
         return true;
     }
@@ -75,7 +75,7 @@ bool IMU::processIMU(void)
 }
 
 // IO Debug functions
-#if defined(IMU_DEBUG)
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
 void IMU::print_imu(void)
 {
     // Serial.print("Yaw: ");
@@ -93,34 +93,20 @@ void IMU::print_imu(void)
 #if defined(CALIBRATE_DEBUG)
 void IMU::print_calibration(void)
 {
-    Serial.println("< calibration parameters >");
+    Serial.println("< Calibration Parameters >");
     Serial.println("accel bias [g]: ");
-    Serial.print(mpu9250.getAccBiasX() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
+    Serial.print(mpu6050.getAccBiasX() * 1000.f / (float)MPU6050::CALIB_ACCEL_SENSITIVITY);
     Serial.print(", ");
-    Serial.print(mpu9250.getAccBiasY() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
+    Serial.print(mpu6050.getAccBiasY() * 1000.f / (float)MPU6050::CALIB_ACCEL_SENSITIVITY);
     Serial.print(", ");
-    Serial.print(mpu9250.getAccBiasZ() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY);
+    Serial.print(mpu6050.getAccBiasZ() * 1000.f / (float)MPU6050::CALIB_ACCEL_SENSITIVITY);
     Serial.println();
     Serial.println("gyro bias [deg/s]: ");
-    Serial.print(mpu9250.getGyroBiasX() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
+    Serial.print(mpu6050.getGyroBiasX() / (float)MPU6050::CALIB_GYRO_SENSITIVITY);
     Serial.print(", ");
-    Serial.print(mpu9250.getGyroBiasY() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
+    Serial.print(mpu6050.getGyroBiasY() / (float)MPU6050::CALIB_GYRO_SENSITIVITY);
     Serial.print(", ");
-    Serial.print(mpu9250.getGyroBiasZ() / (float)MPU9250::CALIB_GYRO_SENSITIVITY);
-    Serial.println();
-    Serial.println("mag bias [mG]: ");
-    Serial.print(mpu9250.getMagBiasX());
-    Serial.print(", ");
-    Serial.print(mpu9250.getMagBiasY());
-    Serial.print(", ");
-    Serial.print(mpu9250.getMagBiasZ());
-    Serial.println();
-    Serial.println("mag scale []: ");
-    Serial.print(mpu9250.getMagScaleX());
-    Serial.print(", ");
-    Serial.print(mpu9250.getMagScaleY());
-    Serial.print(", ");
-    Serial.print(mpu9250.getMagScaleZ());
+    Serial.print(mpu6050.getGyroBiasZ() / (float)MPU6050::CALIB_GYRO_SENSITIVITY);
     Serial.println();
 }
 #endif

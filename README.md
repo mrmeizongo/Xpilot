@@ -30,7 +30,7 @@ Copyright (C) 2024 Jamal Meizongo
 
 ### Servos need to be installed correctly for this to work.
 
-Xpilot is a flight stabilization system based on the ATMEGA328P chip in the Arduino Nano, Uno and Mini microcontrollers and MPU9250.
+Xpilot is a flight stabilization system based on the ATMEGA328P chip in the Arduino Nano, Uno and Mini microcontrollers and MPU6050.
 It is capable of stabilizing various airplane types including the traditional airplane, V-tail and flying wing.
 It also works for various configurations of these airplanes i.e. 1 channel AIL, ELEV, and RUDD(traditional tail and V-tail),
 2 channel AIL, ELEV and RUDD(traditional tail, V-tail and flying wing) or ELEV and RUDD only(traditional tail and V-tail).
@@ -44,7 +44,7 @@ In the context of RC planes, an execution loop of 200Hz provides a smooth and re
 
 ## Setup
 
-Connect MPU9250 to Arduino Nano as shown below
+Connect MPU6050 to Arduino Nano as shown below
 
 | PIN | VALUE |
 | :-: | :---: |
@@ -82,10 +82,10 @@ When properly setup, mode switch states is shown below.
 |          2          |  Stabilize  |
 
 DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
-However, the Nano, MPU9250 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
+However, the Nano, MPU6050 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
 
-These pin numbers with the exception of MPU9250 can be reconfigured in [config.h](lib/Xpilot/src/config.h).
-Ensure all components share a common ground. The Nano and MPU9250 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
+These pin numbers with the exception of MPU6050 can be reconfigured in [config.h](lib/Xpilot/src/config.h).
+Ensure all components share a common ground. The Nano and MPU6050 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
 
 ![Schematics](assets/img/Schematics.png)
 
@@ -130,6 +130,5 @@ THE SOFTWARE.
 
 ## Credits
 
-hideakitai - [MPU9250 library](https://github.com/hideakitai/MPU9250)
 NicoHood - [PinChangeInterrupt library](https://github.com/NicoHood/PinChangeInterrupt)
 PlainFlight - [PlainFlight](https://github.com/plainFlight/plainFlightController)

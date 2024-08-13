@@ -1,6 +1,6 @@
 #ifndef _IMU_H
 #define _IMU_H
-#include <MPU9250.h>
+#include <MPU6050.h>
 #include "config.h"
 
 class IMU
@@ -15,7 +15,7 @@ public:
     void print_calibration(void);
 #endif
 
-#if defined(IMU_DEBUG)
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     void print_imu(void);
 #endif
 
@@ -26,7 +26,7 @@ private:
     /*
      * Inertial measurement unit variable
      */
-    MPU9250 mpu9250;
+    MPU6050 mpu6050;
 };
 
 extern IMU imu;

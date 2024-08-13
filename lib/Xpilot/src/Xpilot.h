@@ -34,7 +34,6 @@ Flight stabilization software
 #define _XPILOT_H
 
 #include <Arduino.h>
-#include <MPU9250.h>
 #include <Servo.h>
 #include "config.h"
 
