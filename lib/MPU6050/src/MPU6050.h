@@ -174,11 +174,7 @@ public:
         calibrate_acc_gyro_impl();
     }
 
-    bool isConnected()
-    {
-        has_connected = isConnectedMPU6050();
-        return has_connected;
-    }
+    bool isConnected() { return has_connected; }
 
     bool isConnectedMPU6050()
     {
