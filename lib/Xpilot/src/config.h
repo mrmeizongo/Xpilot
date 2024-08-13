@@ -184,7 +184,7 @@ Flight stabilization software
 // Stick resolution in rate mode (degrees)
 #define MAX_ROLL_RATE_DEGS 60
 #define MAX_PITCH_RATE_DEGS 60
-#define MAX_YAW_RATE_DEGS 60
+#define MAX_YAW_RATE_DEGS 50
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
