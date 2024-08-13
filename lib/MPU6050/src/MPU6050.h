@@ -79,10 +79,8 @@ class MPU6050_
 
     // settings
     MPU6050Setting setting;
-    // TODO: this should be configured!!
-    static constexpr uint8_t MAG_MODE{0x06}; // 0x02 for 8 Hz, 0x06 for 100 Hz continuous magnetometer data read
-    float acc_resolution{0.f};               // scale resolutions per LSB for the sensors
-    float gyro_resolution{0.f};              // scale resolutions per LSB for the sensors
+    float acc_resolution{0.f};  // scale resolutions per LSB for the sensors
+    float gyro_resolution{0.f}; // scale resolutions per LSB for the sensors
 
     // Calibration Parameters
     float acc_bias[3]{0.0f, 0.0f, 0.0f};  // acc calibration value in ACCEL_FS_SEL: 2g
