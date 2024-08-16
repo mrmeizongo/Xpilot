@@ -68,7 +68,7 @@ bool IMU::processIMU(void)
 }
 
 // IO Debug functions
-#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+#if defined(IMU_DEBUG)
 void IMU::print_imu(void)
 {
     // Serial.print("Yaw: ");
@@ -79,27 +79,6 @@ void IMU::print_imu(void)
     Serial.println(ahrs_pitch);
     Serial.print("Yaw: ");
     Serial.println(ahrs_yaw);
-    Serial.println();
-}
-#endif
-
-#if defined(CALIBRATE_DEBUG)
-void IMU::print_calibration(void)
-{
-    Serial.println("< Calibration Parameters >");
-    Serial.println("accel bias [g]: ");
-    Serial.print(mpu6050.getAccBiasX() * 1000.f / (float)MPU6050::CALIB_ACCEL_SENSITIVITY);
-    Serial.print(", ");
-    Serial.print(mpu6050.getAccBiasY() * 1000.f / (float)MPU6050::CALIB_ACCEL_SENSITIVITY);
-    Serial.print(", ");
-    Serial.print(mpu6050.getAccBiasZ() * 1000.f / (float)MPU6050::CALIB_ACCEL_SENSITIVITY);
-    Serial.println();
-    Serial.println("gyro bias [deg/s]: ");
-    Serial.print(mpu6050.getGyroBiasX() / (float)MPU6050::CALIB_GYRO_SENSITIVITY);
-    Serial.print(", ");
-    Serial.print(mpu6050.getGyroBiasY() / (float)MPU6050::CALIB_GYRO_SENSITIVITY);
-    Serial.print(", ");
-    Serial.print(mpu6050.getGyroBiasZ() / (float)MPU6050::CALIB_GYRO_SENSITIVITY);
     Serial.println();
 }
 #endif

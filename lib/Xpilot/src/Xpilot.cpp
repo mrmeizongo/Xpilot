@@ -103,11 +103,11 @@ void Xpilot::loop(void)
         outputLastMs = nowMs;
     }
 
-#if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+#if defined(IO_DEBUG) || defined(IMU_DEBUG)
     static unsigned long debugLastMs = 0;
     if (nowMs - debugLastMs >= ONEHZ_LOOP)
     {
-#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+#if defined(IMU_DEBUG)
         imu.print_imu();
 #endif
 #if defined(IO_DEBUG)
