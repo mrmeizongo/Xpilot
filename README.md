@@ -93,6 +93,8 @@ Ensure all components share a common ground. The Nano and MPU6050 do not require
 
 There are 3 flight modes; modes 1 = manual/passthrough, 2 = fly-by-wire, and 3 - stabilize.
 
+Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch has not been configured. Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize mode and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [config.h](lib/Xpilot/src/config.h).
+
 |      Flight mode       |                                     Description                                     |
 | :--------------------: | :---------------------------------------------------------------------------------: |
 | Manual/Passthrough - 1 |                 Manual flight control surface movement, passthrough                 |
@@ -102,8 +104,6 @@ There are 3 flight modes; modes 1 = manual/passthrough, 2 = fly-by-wire, and 3 -
 ## NOTICE
 
 Throttle is always under manual control. Signal wire for throttle goes directly to ESC for motor control.
-
-Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch has not been configured. Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize mode and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [config.h](lib/Xpilot/src/config.h).
 
 The MPU6050 does not really need to be calibrated as long as it passes the self test function. To enable self test, uncomment SELF_TEST_ACCEL_GYRO in [config.h](lib/Xpilot/src/config.h). Be sure to comment it when done. Uncomment IMU_DEBUG in [config.h](lib/Xpilot/src/config.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. Aim for a +/- .5 value when plane is placed on a level surface and not being moved.
 
