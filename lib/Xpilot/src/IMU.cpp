@@ -16,6 +16,12 @@ void IMU::init(void)
             delay(1000);
         }
     }
+
+#if defined(SELF_TEST_ACCEL_GYRO)
+    mpu6050.selftest() ? Serial.println("Self test passed.") : Serial.println("Self test failed");
+    while (true)
+        ;
+#endif
 #if defined(CALIBRATE_DEBUG)
     Serial.println("Accel Gyro calibration will start in 3sec.");
     Serial.println("Please leave the device still on the flat plane.");

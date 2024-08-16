@@ -49,8 +49,6 @@ public:
         STABILIZE
     };
 
-    friend class ModeController; // Flight mode controller
-
     // Only functions called from the Arduino setup and loop functions
     void setup(void);
     void loop(void);
@@ -65,6 +63,8 @@ public:
 #endif
 
 private:
+    friend class ModeController; // Flight mode controller
+
     /*
      * Aileron control variables
      */

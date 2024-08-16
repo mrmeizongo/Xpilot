@@ -36,11 +36,14 @@ Flight stabilization software
 #include "Radio.h"
 #include "IMU.h"
 
+#define TWOHUNDREDHZ_LOOP 5U
+#define FIFTYHZ_LOOP 20U
+#define ONEHZ_LOOP 1000U
 #define IMU_WARMUP_LOOP 1000U
 #define I2C_CLOCK_1MHZ 1000000U
 
 // Timer variables
-unsigned long nowMs, outputLastMs = 0;
+unsigned long nowMs, outputLastMs, imuLastMs = 0;
 // -------------------------
 
 Xpilot::Xpilot(void)
@@ -52,7 +55,7 @@ void Xpilot::setup(void)
     Wire.begin();
     Wire.setClock(I2C_CLOCK_1MHZ); // Overclocking I2C to 1Mhz
 
-#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(CALIBRATE_DEBUG) || defined(IMU_DEBUG)
+#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(CALIBRATE_DEBUG) || defined(IMU_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
     Serial.begin(9600);
     while (!Serial)
     {
@@ -84,10 +87,16 @@ void Xpilot::setup(void)
 void Xpilot::loop(void)
 {
     nowMs = millis();
-    imu.processIMU();
 
-    // Process output to servos at 50Hz intervals
-    if (nowMs - outputLastMs >= 20)
+    // Process IMU at 200Hz intervals
+    if (nowMs - imuLastMs >= TWOHUNDREDHZ_LOOP)
+    {
+        imu.processIMU();
+        imuLastMs = nowMs;
+    }
+
+    // Process radio input and servo output at 50Hz intervals
+    if (nowMs - outputLastMs >= FIFTYHZ_LOOP)
     {
         radio.processInput();
         processOutput();
@@ -96,7 +105,7 @@ void Xpilot::loop(void)
 
 #if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     static unsigned long debugLastMs = 0;
-    if (nowMs - debugLastMs >= 1000)
+    if (nowMs - debugLastMs >= ONEHZ_LOOP)
     {
 #if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
         imu.print_imu();

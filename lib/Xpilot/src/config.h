@@ -146,14 +146,14 @@ Flight stabilization software
 
 // Roll
 #define ROLL_KP 14.2f
-#define ROLL_KI 1.9f
-#define ROLL_KD 0.0f
+#define ROLL_KI 10.8f
+#define ROLL_KD 0.02f
 // Pitch
 #define PITCH_KP 5.1f
 #define PITCH_KI 1.3f
-#define PITCH_KD 0.03f
+#define PITCH_KD 0.01f
 // Yaw
-#define YAW_KP 8.7f
+#define YAW_KP 9.1f
 #define YAW_KI 0.0f
 #define YAW_KD 0.0f
 
@@ -165,9 +165,10 @@ Flight stabilization software
  * Trim values to be used to correct gyro misalignment
  * You might want to modify these to suit your airplane
  */
-#define IMU_ROLL_TRIM 1.44f
-#define IMU_PITCH_TRIM -2.18f
-#define IMU_YAW_TRIM 7.40f
+
+#define IMU_ROLL_TRIM 0.9
+#define IMU_PITCH_TRIM -4.1
+#define IMU_YAW_TRIM 0
 // ------------------------------------------------------------------------------------------------------
 
 // To correct transmitter stick drift, be sure to modify these values
@@ -214,12 +215,13 @@ Flight stabilization software
 
 /*
  * Uncomment to enable the respective debugging
- * It is porbably wise to enable only one debug at a time to avoid chaos on serial bus
+ * It is probably wise to enable only one debug at a time to avoid chaos on serial bus
  */
 // #define LOOP_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
 // #define CALIBRATE_DEBUG
 // #define CALIBRATE
+// #define SELF_TEST_ACCEL_GYRO
 // ------------------------------------------------------------------------------------------------------
 #endif
