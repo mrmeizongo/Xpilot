@@ -10,7 +10,7 @@ void IMU::init(void)
     { // change to your own address
         for (;;)
         {
-#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+#if defined(IMU_DEBUG)
             Serial.println("No MPU found! Check connection");
 #endif
             delay(1000);
@@ -21,19 +21,6 @@ void IMU::init(void)
     mpu6050.selftest() ? Serial.println("Self test passed.") : Serial.println("Self test failed");
     while (true)
         ;
-#endif
-#if defined(CALIBRATE_DEBUG)
-    Serial.println("Accel Gyro calibration will start in 3sec.");
-    Serial.println("Please leave the device still on the flat plane.");
-    mpu6050.verbose(true);
-    delay(3000);
-    // Calibrate IMU accelerometer and gyro
-    mpu6050.calibrateAccelGyro();
-    Serial.println("Calibration complete.");
-    print_calibration();
-#elif defined(CALIBRATE)
-    mpu6050.verbose(false);
-    mpu6050.calibrateAccelGyro();
 #endif
 }
 
@@ -54,9 +41,9 @@ bool IMU::processIMU(void)
 #endif
 
 #if defined(REVERSE_YAW_STABILIZE)
-        ahrs_yaw = -((mpu6050.getYaw() + IMU_YAW_TRIM));
+        ahrs_yaw = -mpu6050.getYaw();
 #else
-        ahrs_yaw = (mpu6050.getYaw() + IMU_YAW_TRIM);
+        ahrs_yaw = mpu6050.getYaw();
 #endif
 
 #if defined(REVERSE_ROLL_GYRO)

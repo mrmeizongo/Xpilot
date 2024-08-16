@@ -168,7 +168,6 @@ Flight stabilization software
 
 #define IMU_ROLL_TRIM 0.9
 #define IMU_PITCH_TRIM -4.1
-#define IMU_YAW_TRIM 0
 // ------------------------------------------------------------------------------------------------------
 
 // To correct transmitter stick drift, be sure to modify these values
@@ -220,8 +219,6 @@ Flight stabilization software
 // #define LOOP_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
-// #define CALIBRATE_DEBUG
-// #define CALIBRATE
 // #define SELF_TEST_ACCEL_GYRO
 // ------------------------------------------------------------------------------------------------------
 #endif

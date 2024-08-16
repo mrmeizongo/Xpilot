@@ -55,7 +55,7 @@ void Xpilot::setup(void)
     Wire.begin();
     Wire.setClock(I2C_CLOCK_1MHZ); // Overclocking I2C to 1Mhz
 
-#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(CALIBRATE_DEBUG) || defined(IMU_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
+#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
     Serial.begin(9600);
     while (!Serial)
     {
