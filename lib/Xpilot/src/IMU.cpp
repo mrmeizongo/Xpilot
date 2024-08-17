@@ -67,12 +67,10 @@ bool IMU::processIMU(void)
     return false;
 }
 
-// IO Debug functions
+// IMU Debug functions
 #if defined(IMU_DEBUG)
 void IMU::print_imu(void)
 {
-    // Serial.print("Yaw: ");
-    // Serial.println(ahrs_yaw);
     Serial.print("Roll: ");
     Serial.println(ahrs_roll);
     Serial.print("Pitch: ");

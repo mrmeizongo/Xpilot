@@ -53,8 +53,6 @@ void Radio::processInput(void)
         else if (modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
             rx.mode = SwitchState::high;
     }
-    else
-        rx.mode = SwitchState::mid; // Default to rate mode if mode switch has not being configured
 
     if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
         aileronPulseWidth = aileronPulses;
@@ -62,6 +60,8 @@ void Radio::processInput(void)
         elevatorPulseWidth = elevatorPulses;
     if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
         rudderPulseWidth = rudderPulses;
+
+    SREG = oldSREG;
 
     modeController.updateMode();
 
@@ -85,8 +85,6 @@ void Radio::processInput(void)
         rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
     }
-
-    SREG = oldSREG;
 }
 
 /*
