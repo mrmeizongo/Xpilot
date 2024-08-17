@@ -17,7 +17,7 @@ public:
         newTime = micros();
         deltaT = newTime - oldTime;
         oldTime = newTime;
-        deltaT = fabs(deltaT * 0.001 * 0.001);
+        deltaT = (deltaT * 0.001 * 0.001);
 
         madgwick6DOF(ax, ay, az, gx, gy, gz, deltaT, q);
     }
@@ -30,11 +30,6 @@ public:
         float s0, s1, s2, s3;
         float qDot1, qDot2, qDot3, qDot4;
         float _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2, _8q1, _8q2, q0q0, q1q1, q2q2, q3q3;
-
-        // Convert gyroscope degrees/sec to radians/sec
-        // gx *= 0.0174533f;
-        // gy *= 0.0174533f;
-        // gz *= 0.0174533f;
 
         // Rate of change of quaternion from gyroscope
         qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
