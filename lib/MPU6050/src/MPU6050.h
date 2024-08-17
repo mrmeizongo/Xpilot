@@ -169,7 +169,7 @@ public:
             Serial.print("MPU6050 WHO AM I = ");
             Serial.println(c, HEX);
         }
-        return (c == MPU6050_WHOAMI_DEFAULT_VALUE);
+        return (c == mpu_i2c_addr);
     }
 
     bool isSleeping()
@@ -218,8 +218,8 @@ public:
 
         if (!b_ahrs)
         {
-            temperature_count = read_temperature_data();              // Read the adc values
-            temperature = ((float)temperature_count) / 333.87 + 21.0; // Temperature in degrees Centigrade
+            temperature_count = read_temperature_data();            // Read the adc values
+            temperature = (float)(temperature_count / 340) + 36.53; // Temperature in degrees Centigrade
         }
         else
         {
@@ -394,8 +394,8 @@ public:
         a[1] = (float)raw_acc_gyro_data[1] * acc_resolution;
         a[2] = (float)raw_acc_gyro_data[2] * acc_resolution;
 
-        temperature_count = raw_acc_gyro_data[3];                 // Read the adc values
-        temperature = ((float)temperature_count) / 333.87 + 21.0; // Temperature in degrees Centigrade
+        temperature_count = raw_acc_gyro_data[3];               // Read the adc values
+        temperature = (float)(temperature_count / 340) + 36.53; // Temperature in degrees Centigrade
 
         // Calculate the gyro value into actual degrees per second
         g[0] = (float)raw_acc_gyro_data[4] * gyro_resolution; // get actual gyro value, this depends on scale being set
