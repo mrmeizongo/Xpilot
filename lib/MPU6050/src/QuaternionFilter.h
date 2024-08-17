@@ -6,7 +6,6 @@ class QuaternionFilter
 {
     // for madgwick
     float GyroMeasError = PI * (40.0f / 180.0f);    // gyroscope measurement error in rads/s (start at 40 deg/s)
-    float GyroMeasDrift = PI * (0.0f / 180.0f);     // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
     float beta = sqrt(3.0f / 4.0f) * GyroMeasError; // compute beta
 
     float deltaT{0.};
@@ -44,10 +43,11 @@ public:
         qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
 
         // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
-        if (!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f)))
+        float a_norm = (ax * ax) + (ay * ay) + (az * az);
+        if (a_norm != 0.)
         {
             // Normalize accelerometer measurement
-            recipNorm = 1.0 / sqrt((ax * ax) + (ay * ay) + (az * az));
+            recipNorm = 1.0 / sqrt(a_norm);
             ax *= recipNorm;
             ay *= recipNorm;
             az *= recipNorm;
