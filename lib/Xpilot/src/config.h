@@ -166,10 +166,6 @@ Flight stabilization software
  * You might want to modify these to suit your airplane
  */
 
-// #define IMU_ROLL_TRIM 0.9
-// #define IMU_PITCH_TRIM -4.1
-// #define IMU_YAW_TRIM 0
-
 #define IMU_ROLL_TRIM 0.f
 #define IMU_PITCH_TRIM 0.f
 #define IMU_YAW_TRIM 0.f

@@ -234,9 +234,9 @@ void ModeController::rudderMixer(void)
 {
 #if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
 #if defined(REVERSE_RUDDER_MIX)
-    radio.rx.yaw = radio.rx.yaw - (radio.rx.roll * RUDDER_MIXING);
+    xpilot.rudder_out = xpilot.rudder_out - (xpilot.aileron1_out * RUDDER_MIXING);
 #else
-    radio.rx.yaw = radio.rx.yaw + (radio.rx.roll * RUDDER_MIXING);
+    xpilot.rudder_out = xpilot.rudder_out + (xpilot.aileron1_out * RUDDER_MIXING);
 #endif
 #endif
 }
