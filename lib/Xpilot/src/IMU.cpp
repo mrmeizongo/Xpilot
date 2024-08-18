@@ -43,7 +43,6 @@ void IMU::init(void)
     Serial.println("Calibrating...");
     mpu6050.verbose(true);
     mpu6050.calibrateAccelGyro();
-    printCalibration();
 #elif defined(CALIBRATE)
     mpu6050.verbose(false);
     mpu6050.calibrateAccelGyro();
@@ -106,27 +105,6 @@ void IMU::printIMU(void)
     Serial.println(ahrs_pitch);
     Serial.print("Yaw: ");
     Serial.println(ahrs_yaw);
-    Serial.println();
-}
-#endif
-
-#if defined(CALIBRATE_DEBUG)
-void IMU::printCalibration(void)
-{
-    Serial.println("< Calibration Parameters >");
-    Serial.println("accel bias [g]: ");
-    Serial.print(mpu6050.getAccBiasX());
-    Serial.print(", ");
-    Serial.print(mpu6050.getAccBiasY());
-    Serial.print(", ");
-    Serial.print(mpu6050.getAccBiasZ());
-    Serial.println();
-    Serial.println("gyro bias [deg/s]: ");
-    Serial.print(mpu6050.getGyroBiasX());
-    Serial.print(", ");
-    Serial.print(mpu6050.getGyroBiasY());
-    Serial.print(", ");
-    Serial.print(mpu6050.getGyroBiasZ());
     Serial.println();
 }
 #endif

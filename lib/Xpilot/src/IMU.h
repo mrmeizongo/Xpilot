@@ -10,10 +10,6 @@ public:
     void init(void);
     bool processIMU(void);
 
-#if defined(CALIBRATE_DEBUG)
-    void printCalibration(void);
-#endif
-
 #if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     void printIMU(void);
 #endif

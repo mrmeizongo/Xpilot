@@ -425,6 +425,24 @@ private:
         set_acc_gyro_to_calibration();
         collect_acc_gyro_data_to(acc_bias, gyro_bias);
         delay(100);
+        if (verbose)
+        {
+            Serial.println("< Calibration Parameters >");
+            Serial.println("Accel bias [g]: ");
+            Serial.print(acc_bias[0]);
+            Serial.print(", ");
+            Serial.print(acc_bias[1]);
+            Serial.print(", ");
+            Serial.print(acc_bias[2]);
+            Serial.println();
+            Serial.println("Gyro bias [deg/s]: ");
+            Serial.print(gyro_bias[0]);
+            Serial.print(", ");
+            Serial.print(gyro_bias[1]);
+            Serial.print(", ");
+            Serial.print(gyro_bias[2]);
+            Serial.println();
+        }
         initMPU6050();
         delay(1000);
     }
