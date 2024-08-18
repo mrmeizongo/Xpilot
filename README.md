@@ -82,7 +82,7 @@ When properly setup, mode switch states is shown below.
 |          2          |  Stabilize  |
 
 DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
-However, the Nano, MPU6050 and servos can be powered from one 5VDC power source. It is also a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
+However, the Nano, MPU6050 and servos can be powered from the same external 5VDC power source. It is a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
 
 These pin numbers with the exception of MPU6050 can be reconfigured in [config.h](lib/Xpilot/src/config.h).
 Ensure all components share a common ground. The Nano and MPU6050 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
