@@ -455,7 +455,7 @@ private:
         write_byte(PWR_MGMT_1, 0x00);   // Turn on internal clock source
         write_byte(I2C_MST_CTRL, 0x00); // Disable I2C master
         write_byte(USER_CTRL, 0x00);    // Disable FIFO and I2C master modes
-        write_byte(USER_CTRL, 0x0C);    // Reset FIFO and DMP
+        write_byte(USER_CTRL, 0x04);    // Reset FIFO
         delay(15);
 
         // Configure MPU6050 gyro and accelerometer for bias calculation
@@ -466,7 +466,7 @@ private:
 
         // Configure FIFO to capture accelerometer and gyro data for bias calculation
         write_byte(USER_CTRL, 0x40); // Enable FIFO
-        write_byte(FIFO_EN, 0x78);   // Enable gyro and accelerometer sensors for FIFO  (max size 512 bytes in MPU-9150)
+        write_byte(FIFO_EN, 0x78);   // Enable gyro and accelerometer sensors for FIFO  (max size 1024 bytes in MPU-6050)
         delay(40);                   // accumulate 40 samples in 40 milliseconds = 480 bytes
     }
 

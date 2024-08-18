@@ -40,7 +40,7 @@ Flight stabilization software
 #define FIFTYHZ_LOOP 20U
 #define ONEHZ_LOOP 1000U
 #define IMU_WARMUP_LOOP 1000U
-#define I2C_CLOCK_1MHZ 1000000U
+#define I2C_CLOCK_400KHZ 400000U
 
 // Timer variables
 unsigned long nowMs, outputLastMs, imuLastMs = 0;
@@ -53,7 +53,7 @@ Xpilot::Xpilot(void)
 void Xpilot::setup(void)
 {
     Wire.begin();
-    Wire.setClock(I2C_CLOCK_1MHZ); // Overclocking I2C to 1Mhz
+    Wire.setClock(I2C_CLOCK_400KHZ); // Setting I2C clock to 400Khz
 
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
     Serial.begin(9600);
