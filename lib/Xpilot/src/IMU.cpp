@@ -13,6 +13,8 @@
 #define GYRO_Y_BIAS -49.28f
 #define GYRO_Z_BIAS -100.99f
 
+#define IMU_WARMUP_LOOP 1000U
+
 IMU::IMU(void) {}
 
 void IMU::init(void)
@@ -50,6 +52,12 @@ void IMU::init(void)
     mpu6050.setAccBias(ACC_X_BIAS, ACC_Y_BIAS, ACC_Z_BIAS);
     mpu6050.setGyroBias(GYRO_X_BIAS, GYRO_Y_BIAS, GYRO_Z_BIAS);
 #endif
+
+    // Warm up the IMU before initial use
+    for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
+    {
+        processIMU();
+    }
 }
 
 void IMU::processIMU(void)

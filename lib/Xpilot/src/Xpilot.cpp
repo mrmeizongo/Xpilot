@@ -38,7 +38,6 @@ Flight stabilization software
 
 #define FIFTYHZ_LOOP 20U
 #define ONEHZ_LOOP 1000U
-#define IMU_WARMUP_LOOP 1000U
 #define I2C_CLOCK_400KHZ 400000U
 
 // Timer variables
@@ -71,12 +70,6 @@ void Xpilot::setup(void)
     aileron2Servo.attach(AILPIN2_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
     elevatorServo.attach(ELEVPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
     rudderServo.attach(RUDDPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
-
-    // Warm up the IMU before initial use
-    for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
-    {
-        imu.processIMU();
-    }
 }
 
 /*
