@@ -59,7 +59,7 @@ public:
     void setCurrentMode(FLIGHT_MODE _currentMode) { currentMode = _currentMode; }
 
 #if defined(IO_DEBUG)
-    void print_IO(void);
+    void printIO(void);
 #endif
 
 private:

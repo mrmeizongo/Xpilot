@@ -55,7 +55,7 @@ void Xpilot::setup(void)
     Wire.begin();
     Wire.setClock(I2C_CLOCK_400KHZ); // Setting I2C clock to 400Khz
 
-#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
+#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
     Serial.begin(9600);
     while (!Serial)
     {
@@ -103,15 +103,15 @@ void Xpilot::loop(void)
         outputLastMs = nowMs;
     }
 
-#if defined(IO_DEBUG) || defined(IMU_DEBUG)
+#if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     static unsigned long debugLastMs = 0;
     if (nowMs - debugLastMs >= ONEHZ_LOOP)
     {
-#if defined(IMU_DEBUG)
-        imu.print_imu();
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+        imu.printIMU();
 #endif
 #if defined(IO_DEBUG)
-        print_IO();
+        printIO();
 #endif
         debugLastMs = nowMs;
     }
@@ -145,7 +145,7 @@ void Xpilot::processOutput(void)
 }
 
 #if defined(IO_DEBUG)
-void Xpilot::print_IO(void)
+void Xpilot::printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");

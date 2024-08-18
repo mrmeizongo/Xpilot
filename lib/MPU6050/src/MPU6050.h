@@ -70,7 +70,7 @@ class MPU6050_
     // Calibration Parameters
     float acc_bias[3]{0.0f, 0.0f, 0.0f};  // acc calibration value in ACCEL_FS_SEL: 2g
     float gyro_bias[3]{0.0f, 0.0f, 0.0f}; // gyro calibration value in GYRO_FS_SEL: 250dps
-    // float magnetic_declination = -8.01f;  // Camden, DE, 27th July 2024
+    float magnetic_declination = -10.43f; // Camden Wyo, DE 18th Aug 2024
 
     // Temperature
     int16_t temperature_count{0}; // temperature raw count output
@@ -115,7 +115,7 @@ public:
         setting = mpu_setting;
         wire = &w;
 
-        if (isConnectedMPU6050())
+        if (isConnected())
         {
             initMPU6050();
         }
@@ -159,9 +159,7 @@ public:
         calibrate_acc_gyro_impl();
     }
 
-    bool isConnected() { return has_connected; }
-
-    bool isConnectedMPU6050()
+    bool isConnected()
     {
         byte c = read_byte(WHO_AM_I_MPU6050);
         if (b_verbose)
@@ -216,15 +214,7 @@ public:
             quat_filter.update(an, ae, ad, gn, ge, gd, q);
         }
 
-        if (!b_ahrs)
-        {
-            temperature_count = read_temperature_data();            // Read the adc values
-            temperature = (float)(temperature_count / 340) + 36.53; // Temperature in degrees Centigrade
-        }
-        else
-        {
-            update_rpy(q[0], q[1], q[2], q[3]);
-        }
+        update_rpy(q[0], q[1], q[2], q[3]);
         return true;
     }
 
@@ -374,6 +364,7 @@ public:
         rpy[0] *= 57.29577951;
         rpy[1] *= 57.29577951;
         rpy[2] *= 57.29577951;
+        rpy[2] += magnetic_declination;
         if (rpy[2] >= +180.f)
             rpy[2] -= 360.f;
         else if (rpy[2] < -180.f)
@@ -390,17 +381,17 @@ public:
         read_accel_gyro(raw_acc_gyro_data); // INT cleared on any read
 
         // Now we'll calculate the accleration value into actual g's
-        a[0] = (float)raw_acc_gyro_data[0] * acc_resolution; // get actual g value, this depends on scale being set
-        a[1] = (float)raw_acc_gyro_data[1] * acc_resolution;
-        a[2] = (float)raw_acc_gyro_data[2] * acc_resolution;
+        a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution; // get actual g value, this depends on scale being set
+        a[1] = ((float)raw_acc_gyro_data[1] - acc_bias[1]) * acc_resolution;
+        a[2] = ((float)raw_acc_gyro_data[2] - acc_bias[2]) * acc_resolution;
 
         temperature_count = raw_acc_gyro_data[3];               // Read the adc values
         temperature = (float)(temperature_count / 340) + 36.53; // Temperature in degrees Centigrade
 
         // Calculate the gyro value into actual degrees per second
-        g[0] = (float)raw_acc_gyro_data[4] * gyro_resolution; // get actual gyro value, this depends on scale being set
-        g[1] = (float)raw_acc_gyro_data[5] * gyro_resolution;
-        g[2] = (float)raw_acc_gyro_data[6] * gyro_resolution;
+        g[0] = ((float)raw_acc_gyro_data[4] - gyro_bias[0]) * gyro_resolution; // get actual gyro value, this depends on scale being set
+        g[1] = ((float)raw_acc_gyro_data[5] - gyro_bias[1]) * gyro_resolution;
+        g[2] = ((float)raw_acc_gyro_data[6] - gyro_bias[2]) * gyro_resolution;
     }
 
 private:
@@ -459,7 +450,7 @@ private:
         delay(15);
 
         // Configure MPU6050 gyro and accelerometer for bias calculation
-        write_byte(MPU_CONFIG, 0x01);   // Set low-pass filter to 188 Hz
+        write_byte(MPU_CONFIG, 0x01);   // Set gyro low-pass filter to 188 Hz and accel to 184 Hz
         write_byte(SMPLRT_DIV, 0x00);   // Set sample rate to 1 kHz
         write_byte(GYRO_CONFIG, 0x00);  // Set gyro full-scale to 250 degrees per second, maximum sensitivity
         write_byte(ACCEL_CONFIG, 0x00); // Set accelerometer full-scale to 2 g, maximum sensitivity
@@ -467,7 +458,7 @@ private:
         // Configure FIFO to capture accelerometer and gyro data for bias calculation
         write_byte(USER_CTRL, 0x40); // Enable FIFO
         write_byte(FIFO_EN, 0x78);   // Enable gyro and accelerometer sensors for FIFO  (max size 1024 bytes in MPU-6050)
-        delay(40);                   // accumulate 40 samples in 40 milliseconds = 480 bytes
+        delay(80);                   // accumulate 80 samples in 80 milliseconds = 960 bytes to prevent FIFO overflow
     }
 
     void collect_acc_gyro_data_to(float *a_bias, float *g_bias)
@@ -496,6 +487,8 @@ private:
             g_bias[0] += (float)gyro_temp[0];
             g_bias[1] += (float)gyro_temp[1];
             g_bias[2] += (float)gyro_temp[2];
+
+            delay(2);
         }
         a_bias[0] /= (float)packet_count; // Normalize sums to get average count biases
         a_bias[1] /= (float)packet_count;

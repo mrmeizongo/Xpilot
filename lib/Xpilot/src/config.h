@@ -166,8 +166,13 @@ Flight stabilization software
  * You might want to modify these to suit your airplane
  */
 
-#define IMU_ROLL_TRIM 0.9
-#define IMU_PITCH_TRIM -4.1
+// #define IMU_ROLL_TRIM 0.9
+// #define IMU_PITCH_TRIM -4.1
+// #define IMU_YAW_TRIM 0
+
+#define IMU_ROLL_TRIM 0.f
+#define IMU_PITCH_TRIM 0.f
+#define IMU_YAW_TRIM 0.f
 // ------------------------------------------------------------------------------------------------------
 
 // To correct transmitter stick drift, be sure to modify these values
@@ -215,10 +220,13 @@ Flight stabilization software
 /*
  * Uncomment to enable the respective debugging
  * It is wise to enable only one debug at a time to avoid chaos on serial bus
+ * Use 9600 baudrate
  */
 // #define LOOP_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
+// #define CALIBRATE_DEBUG
+// #define CALIBRATE
 // #define SELF_TEST_ACCEL_GYRO
 // ------------------------------------------------------------------------------------------------------
 #endif

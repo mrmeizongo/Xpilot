@@ -1,6 +1,18 @@
 #include <Arduino.h>
 #include "IMU.h"
 
+/*
+ * ACCEL & GYRO biases obtained from running calibration function
+ * Uncomment CALIBRATION_DEBUG to obtain these values
+ * See NOTICE section in README.md for more information
+ */
+#define ACC_X_BIAS 1625.16f
+#define ACC_Y_BIAS -244.20f
+#define ACC_Z_BIAS 3652.10f
+#define GYRO_X_BIAS -343.88f
+#define GYRO_Y_BIAS -56.52f
+#define GYRO_Z_BIAS -124.02f
+
 IMU::IMU(void) {}
 
 void IMU::init(void)
@@ -18,9 +30,26 @@ void IMU::init(void)
     }
 
 #if defined(SELF_TEST_ACCEL_GYRO)
+    mpu6050.verbose(true);
     mpu6050.selftest() ? Serial.println("Self test passed.") : Serial.println("Self test failed");
     while (true)
         ;
+#endif
+
+/*
+ * After calibration, be sure to record the obtained values and enter them in the XXX_X_BIAS definitions above
+ */
+#if defined(CALIBRATE_DEBUG)
+    Serial.println("Calibrating...");
+    mpu6050.verbose(true);
+    mpu6050.calibrateAccelGyro();
+    printCalibration();
+#elif defined(CALIBRATE)
+    mpu6050.verbose(false);
+    mpu6050.calibrateAccelGyro();
+#else
+    mpu6050.setAccBias(ACC_X_BIAS, ACC_Y_BIAS, ACC_Z_BIAS);
+    mpu6050.setGyroBias(GYRO_X_BIAS, GYRO_Y_BIAS, GYRO_Z_BIAS);
 #endif
 }
 
@@ -68,8 +97,8 @@ bool IMU::processIMU(void)
 }
 
 // IMU Debug functions
-#if defined(IMU_DEBUG)
-void IMU::print_imu(void)
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+void IMU::printIMU(void)
 {
     Serial.print("Roll: ");
     Serial.println(ahrs_roll);
@@ -77,6 +106,27 @@ void IMU::print_imu(void)
     Serial.println(ahrs_pitch);
     Serial.print("Yaw: ");
     Serial.println(ahrs_yaw);
+    Serial.println();
+}
+#endif
+
+#if defined(CALIBRATE_DEBUG)
+void IMU::printCalibration(void)
+{
+    Serial.println("< Calibration Parameters >");
+    Serial.println("accel bias [g]: ");
+    Serial.print(mpu6050.getAccBiasX());
+    Serial.print(", ");
+    Serial.print(mpu6050.getAccBiasY());
+    Serial.print(", ");
+    Serial.print(mpu6050.getAccBiasZ());
+    Serial.println();
+    Serial.println("gyro bias [deg/s]: ");
+    Serial.print(mpu6050.getGyroBiasX());
+    Serial.print(", ");
+    Serial.print(mpu6050.getGyroBiasY());
+    Serial.print(", ");
+    Serial.print(mpu6050.getGyroBiasZ());
     Serial.println();
 }
 #endif

@@ -91,7 +91,7 @@ Ensure all components share a common ground. The Nano and MPU6050 do not require
 
 ## Flight modes
 
-There are 3 flight modes; modes 1 = manual/passthrough, 2 = fly-by-wire, and 3 - stabilize.
+There are 3 flight modes; mode 1 = manual/passthrough, 2 = fly-by-wire, and 3 - stabilize.
 
 Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch has not been configured. Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize mode and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [config.h](lib/Xpilot/src/config.h).
 
@@ -105,7 +105,11 @@ Rate mode is the most popular among inexperienced flyers and is also the default
 
 Throttle is always under manual control. Signal wire for throttle goes directly to ESC for motor control.
 
-The MPU6050 does not really need to be calibrated as long as it passes the self test function. To enable self test, uncomment SELF_TEST_ACCEL_GYRO in [config.h](lib/Xpilot/src/config.h). Be sure to comment it when done. Uncomment IMU_DEBUG in [config.h](lib/Xpilot/src/config.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. Aim for a +/- .5 value when plane is placed on a level surface and not being moved.
+Even though a calibration function is provided(recommended), the MPU6050 does not really need to be calibrated as long as it passes the self test function. Uncomment SELF_TEST_ACCEL_GYRO in [config.h](lib/Xpilot/src/config.h) to enable. Be sure to comment it when done. Uncomment IMU_DEBUG in [config.h](lib/Xpilot/src/config.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. This might require several attempts. Aim for a +/- .5 value when plane is placed on a level surface and not being moved.
+
+(RECOMMENDED)A calibration function is also provided. Uncommenting CALIBRATE runs the calibration function and stores the biases in volatile memory. This will have to be performed on every startup. You can uncomment CALIBRATE_DEBUG which runs the calibration function, stores the biases in volatile memory and prints the biases in the serial monitor. You should record these values and assign them to the bias definitions in [IMU.cpp](lib/Xpilot/src/IMU.cpp).
+
+After all debug operations, be sure to uncomment and reupload Xpilot for normal operation.
 
 ## Preflight
 

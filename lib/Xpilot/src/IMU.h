@@ -10,8 +10,12 @@ public:
     void init(void);
     bool processIMU(void);
 
-#if defined(IMU_DEBUG)
-    void print_imu(void);
+#if defined(CALIBRATE_DEBUG)
+    void printCalibration(void);
+#endif
+
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+    void printIMU(void);
 #endif
 
     float ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Airplane coordinate system values
