@@ -126,11 +126,6 @@ void Xpilot::processOutput(void)
 {
     modeController.process();
 
-    aileron1_out = constrain(aileron1_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    aileron2_out = constrain(aileron2_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    elevator_out = constrain(elevator_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    rudder_out = constrain(rudder_out, SERVO_MIN_PWM, SERVO_MAX_PWM);
-
     aileron1Servo.writeMicroseconds(aileron1_out);
     aileron2Servo.writeMicroseconds(aileron2_out);
     elevatorServo.writeMicroseconds(elevator_out);
