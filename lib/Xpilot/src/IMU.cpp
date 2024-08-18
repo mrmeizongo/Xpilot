@@ -6,12 +6,12 @@
  * Uncomment CALIBRATION_DEBUG to obtain these values
  * See NOTICE section in README.md for more information
  */
-#define ACC_X_BIAS 1625.16f
-#define ACC_Y_BIAS -244.20f
-#define ACC_Z_BIAS 3652.10f
-#define GYRO_X_BIAS -343.88f
-#define GYRO_Y_BIAS -56.52f
-#define GYRO_Z_BIAS -124.02f
+#define ACC_X_BIAS 1942.35f
+#define ACC_Y_BIAS -275.16f
+#define ACC_Z_BIAS 3707.83f
+#define GYRO_X_BIAS -354.04f
+#define GYRO_Y_BIAS -49.28f
+#define GYRO_Z_BIAS -100.99f
 
 IMU::IMU(void) {}
 
