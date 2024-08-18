@@ -36,7 +36,6 @@ Flight stabilization software
 #include "Radio.h"
 #include "IMU.h"
 
-#define TWOHUNDREDHZ_LOOP 5U
 #define FIFTYHZ_LOOP 20U
 #define ONEHZ_LOOP 1000U
 #define IMU_WARMUP_LOOP 1000U
@@ -87,13 +86,7 @@ void Xpilot::setup(void)
 void Xpilot::loop(void)
 {
     nowMs = millis();
-
-    // Process IMU at 200Hz intervals
-    if (nowMs - imuLastMs >= TWOHUNDREDHZ_LOOP)
-    {
-        imu.processIMU();
-        imuLastMs = nowMs;
-    }
+    imu.processIMU();
 
     // Process radio input and servo output at 50Hz intervals
     if (nowMs - outputLastMs >= FIFTYHZ_LOOP)

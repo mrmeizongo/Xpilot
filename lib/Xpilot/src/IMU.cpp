@@ -52,7 +52,7 @@ void IMU::init(void)
 #endif
 }
 
-bool IMU::processIMU(void)
+void IMU::processIMU(void)
 {
     if (mpu6050.update())
     {
@@ -89,10 +89,7 @@ bool IMU::processIMU(void)
 #else
         gyroZ = mpu6050.getGyroZ();
 #endif
-        return true;
     }
-
-    return false;
 }
 
 // IMU Debug functions

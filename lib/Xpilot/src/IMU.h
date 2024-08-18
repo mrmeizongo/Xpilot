@@ -8,7 +8,7 @@ class IMU
 public:
     IMU(void);
     void init(void);
-    bool processIMU(void);
+    void processIMU(void);
 
 #if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     void printIMU(void);
