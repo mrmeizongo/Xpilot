@@ -25,7 +25,7 @@ void IMU::init(void)
         for (;;)
         {
 #if defined(IMU_DEBUG)
-            Serial.println("No MPU found! Check connection");
+            Serial.println("MPU6050 not found! Check device address or I2C connection");
 #endif
             delay(1000);
         }
