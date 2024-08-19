@@ -102,13 +102,16 @@ void Xpilot::loop(void)
 
 #if defined(LOOP_DEBUG)
     unsigned long loopMillis = millis() - nowMs;
-    Serial.print("Loop time: ");
+    Serial.print("Loop time");
+    Serial.print("\t\t\t");
+    Serial.println("Loop rate");
     Serial.print(loopMillis);
-    Serial.println("ms");
-    Serial.print("Loop rate: ");
+    Serial.print("ms");
+    Serial.print("\t\t\t\t");
     loopMillis = loopMillis == 0 ? 1 : loopMillis; // To prevent division by 0
     Serial.print(1000 / loopMillis);
     Serial.println("Hz");
+    Serial.println();
 #endif
 }
 
