@@ -57,14 +57,14 @@ void ModeController::updateMode(void)
 {
     if (radio.rx.currentMode == FlightMode::passthrough)
     {
-        if (radio.rx.previousMode == FlightMode::passthrough)
+        if (radio.rx.previousMode == radio.rx.currentMode)
             return;
 
         radio.rx.previousMode = radio.rx.currentMode;
     }
     else if (radio.rx.currentMode == FlightMode::rate)
     {
-        if (radio.rx.previousMode == FlightMode::rate)
+        if (radio.rx.previousMode == radio.rx.currentMode)
             return;
 
         RESETPIDCONTROLLERS();
@@ -72,7 +72,7 @@ void ModeController::updateMode(void)
     }
     else if (radio.rx.currentMode == FlightMode::stabilize)
     {
-        if (radio.rx.previousMode == FlightMode::stabilize)
+        if (radio.rx.previousMode == radio.rx.currentMode)
             return;
 
         RESETPIDCONTROLLERS();
