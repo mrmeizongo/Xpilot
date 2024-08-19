@@ -43,7 +43,7 @@ Flight stabilization software
 #define I2C_CLOCK_400KHZ 400000U
 
 // Timer variables
-unsigned long nowMs, outputLastMs = 0;
+static unsigned long nowMs, outputLastMs = 0;
 // -------------------------
 
 // Helper functions for debugging
