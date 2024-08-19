@@ -97,7 +97,9 @@ void ModeController::process(void)
     default:
     case Xpilot::FLIGHT_MODE::RATE:
         rateMode();
+#if defined(RUDDER_MIX_IN_RATE)
         rudderMixer();
+#endif
         xpilot.aileron1_out = map(xpilot.aileron1_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.aileron2_out = map(xpilot.aileron2_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
@@ -105,7 +107,9 @@ void ModeController::process(void)
         break;
     case Xpilot::FLIGHT_MODE::STABILIZE:
         stabilizeMode();
+#if defined(RUDDER_MIX_IN_STABILIZE)
         rudderMixer();
+#endif
         xpilot.aileron1_out = map(xpilot.aileron1_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.aileron2_out = map(xpilot.aileron2_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);

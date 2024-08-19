@@ -208,7 +208,10 @@ Flight stabilization software
  * Mix rudder to enable turn coordinations
  * Rudder mixing value is set in percentage ( value / 100)
  */
-// #define RUDDER_MIX_IN_PASS   // Uncomment to add rudder mixing in passthrough nide
+// #define RUDDER_MIX_IN_PASS   // Uncomment to add rudder mixing in passthrough mode
+#define RUDDER_MIX_IN_RATE   // Uncomment to add rudder mixing in rate mode
+#define RUDDER_MIX_STABILIZE // Uncomment to add rudder mixing in stabilize mode
+
 // #define REVERSE_RUDDER_MIX   // Uncomment to reverse rudder mixing input if surfaces don't move in the expected direction
 #define RUDDER_MIXING 0.15f // Amount of aileron input to mix with rudder to coordinate turns (10-20% is recommended)
 // ------------------------------------------------------------------------------------------------------
