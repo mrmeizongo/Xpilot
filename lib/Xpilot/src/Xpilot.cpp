@@ -43,11 +43,10 @@ Flight stabilization software
 #define I2C_CLOCK_400KHZ 400000U
 
 // Timer variables
-unsigned long nowMs = 0;
+unsigned long nowMs, outputLastMs = 0;
 // -------------------------
-
-// Helper function to print debug messages to serial monitor
 void printDebug(void);
+void printIO(void);
 
 Xpilot::Xpilot(void)
 {
@@ -83,7 +82,6 @@ void Xpilot::loop(void)
     radio.processInput();
 
     // Process servo output at 50Hz intervals
-    static unsigned long outputLastMs = 0;
     if (nowMs - outputLastMs >= FIFTYHZ_LOOP)
     {
         processOutput();
@@ -134,8 +132,7 @@ void printDebug(void)
 #endif
 }
 
-#if defined(IO_DEBUG)
-void Xpilot::printIO(void)
+void printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");
@@ -148,28 +145,27 @@ void Xpilot::printIO(void)
     Serial.print(radio.rx.roll);
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
-    Serial.println(aileron1_out);
+    Serial.println(xpilot.aileron1_out);
 
     Serial.print("Aileron 2: ");
     Serial.print(radio.rx.roll);
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
-    Serial.println(aileron2_out);
+    Serial.println(xpilot.aileron2_out);
 
     Serial.print("Elevator: ");
     Serial.print(radio.rx.pitch);
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
-    Serial.println(elevator_out);
+    Serial.println(xpilot.elevator_out);
 
     Serial.print("Rudder: ");
     Serial.print(radio.rx.yaw);
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
-    Serial.println(rudder_out);
+    Serial.println(xpilot.rudder_out);
     Serial.println();
 }
-#endif
 // ---------------------------
 
 Xpilot xpilot;

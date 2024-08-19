@@ -54,12 +54,10 @@ public:
     FLIGHT_MODE getCurrentMode() { return currentMode; }
     void setCurrentMode(FLIGHT_MODE _currentMode) { currentMode = _currentMode; }
 
-#if defined(IO_DEBUG)
-    void printIO(void);
-#endif
-
 private:
-    friend class ModeController;                // Flight mode controller
+    friend class ModeController; // Flight mode controller
+    friend void printIO(void);   // Print servo values
+
     FLIGHT_MODE currentMode{FLIGHT_MODE::RATE}; // RATE is default mode
 
     int16_t aileron1_out = 0; // Aileron servo output variable
