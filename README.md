@@ -38,7 +38,7 @@ See [config.h](lib/Xpilot/src/config.h) for airplane type configuration.
 
 ## Stabilization system loop
 
-The atmega328p chip is capable of running the entire stabilization loop in 4ms.
+The atmega328p chip is capable of running the entire stabilization loop in 3ms.
 This gives us an update frequency of ~333Hz. Output to the control servos are updated at 50Hz for standard servos.
 In the context of RC planes, an execution loop of 333Hz provides a smooth and responsive control, which is particularly beneficial for maintaining stability in changing flight conditions.
 
@@ -62,7 +62,7 @@ Connect receiver to Arduino Nano as shown below
 |    Rudder     |  4  |
 | AUX1/2 - Mode |  5  |
 
-Can use both aileron outputs to individual aileron servos or both aileron servos can be connected using a Y-cable extension and plugged into any aileron output.
+Can use both aileron channel outputs to individual aileron servos or both aileron servos can be connected to one aileron channel output using a Y-cable extension. Flying wings require individual aileron channel control.
 Connect ailerons, elevator and rudder servos to Arduino Nano as shown below.
 
 | CHANNEL  | PIN |
@@ -72,7 +72,7 @@ Connect ailerons, elevator and rudder servos to Arduino Nano as shown below.
 | Elevator | 10  |
 |  Rudder  | 11  |
 
-Set up one 3-position switch on the transmitter to act as the Mode switch.
+Set up a 3-position switch on the transmitter to act as the Mode switch.
 When properly setup, mode switch states is shown below.
 
 | AUX Switch Position |    Mode     |
@@ -81,19 +81,22 @@ When properly setup, mode switch states is shown below.
 |          1          |    Rate     |
 |          2          |  Stabilize  |
 
-DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
-However, the Nano, MPU6050 and servos can be powered from the same external 5VDC power source. It is a good idea to make use of 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
+After setup, enable IO_DEBUG in [config.h](lib/Xpilot/src/config.h) to verify proper operation.
 
-These pin numbers with the exception of MPU6050 can be reconfigured in [config.h](lib/Xpilot/src/config.h).
-Ensure all components share a common ground. The Nano and MPU6050 do not require decoupling capacitors as the breakout boards come with their own decoupling capacitors.
+DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
+However, the Nano, MPU6050 and servos can be powered from the same external 5VDC power source(ESC BEC). Make use of a 1-female/2-male Y cable splitter to power the Xpilot board and receiver.
+It is a good idea to add a 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
+
+These pin numbers with the exception of MPU6050 can be reconfigured in [config.h](lib/Xpilot/src/config.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.
+Ensure all components share a common ground. The Nano and MPU6050 do not require decoupling capacitors as the breakout boards come with their own voltage regulators and decoupling capacitors.
 
 ![Schematics](assets/img/Schematics.png)
 
 ## Flight modes
 
-There are 3 flight modes; mode 1 = manual/passthrough, 2 = fly-by-wire, and 3 - stabilize.
+There are 3 flight modes; 1 = passthrough/manual, 2 = rate, and 3 - stabilize.
 
-Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch has not been configured. Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize mode and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [config.h](lib/Xpilot/src/config.h).
+Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch is not configured. Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [config.h](lib/Xpilot/src/config.h).
 
 |      Flight mode       |                                     Description                                     |
 | :--------------------: | :---------------------------------------------------------------------------------: |
@@ -105,9 +108,11 @@ Rate mode is the most popular among inexperienced flyers and is also the default
 
 Throttle is always under manual control. Signal wire for throttle goes directly to ESC for motor control.
 
+Rate/Expo should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however the mode switch on your transmitter to enable Rate/Expo in passthrough(1) flight mode.
+
 Even though a calibration function is provided(recommended), the MPU6050 does not really need to be calibrated as long as it passes the self test function. Uncomment SELF_TEST_ACCEL_GYRO in [config.h](lib/Xpilot/src/config.h) to enable. Be sure to comment it when done. Uncomment IMU_DEBUG in [config.h](lib/Xpilot/src/config.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. This might require several attempts. Aim for a +/- .5 value when plane is placed on a level surface and not being moved.
 
-A calibration function is also provided. Uncommenting CALIBRATE runs the calibration function and stores the biases in volatile memory. This will have to be performed on every startup. Ensure the airplane is held level and still throughout the calibration process.
+A calibration function is also provided. Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in volatile memory. This will have to be performed on every startup. Ensure the airplane is held level and still throughout the calibration process.
 
 (RECOMMENDED)You can uncomment CALIBRATE_DEBUG which runs the calibration function, stores the biases in volatile memory and prints the biases in the serial monitor. You should record these values and assign them to the bias definitions in [IMU.cpp](lib/Xpilot/src/IMU.cpp). Ensure the airplane is held level and still throughout the calibration process.
 
@@ -115,7 +120,7 @@ After all debug operations, be sure to uncomment and reupload Xpilot for normal 
 
 ## Preflight
 
-Be sure to go through the entirety of [config.h](lib/Xpilot/src/config.h) and perform modifications and preflight checks before flight.
+Be sure to go through the entirety of [config.h](lib/Xpilot/src/config.h) and perform any required modifications and preflight checks before flight.
 May your landings be beautiful! ❤️
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
