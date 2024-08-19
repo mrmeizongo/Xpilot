@@ -38,11 +38,11 @@ Flight stabilization software
  * Uncomment only one to select the type of airplane being flown
  * Directions are airplane-wise i.e. looking down the nose
  * FULL_PLANE: Has ailerons(1 or 2 channel), elevator and rudder.
- * FULL_PLANE_V_TAIL: Has ailerons(1 or 2 channel) and v tail deflectors. Left V tail deflector goes to elevator ouput, right goes to rudder output.
+ * FULL_PLANE_V_TAIL: Has ailerons(1 or 2 channel) and v tail deflectors. Left V-tail deflector goes to elevator ouput, right goes to rudder output.
  * FLYING_WING_W_RUDDER: Has 2 independent ailerons and a rudder. The aileron I/O is mixed with elevator I/O(elevon). Has rudder control
  * FLYING_WING_NO_RUDDER: Only has 2 independent ailerons. The aileron I/O is mixed with elevator I/O(elevon).
  * RUDDER_ELEVATOR_ONLY: Only rudder and elevator. They go to their respective channels.
- * RUDDER_ELEVATOR_ONLY_V_TAIL: No ailerons, left V tail deflector goes to elevator, right goes to rudder.
+ * RUDDER_ELEVATOR_ONLY_V_TAIL: No ailerons. Left V-tail deflector goes to elevator ouput, right goes to rudder output.
  */
 #define FULL_PLANE
 // #define FULL_PLANE_V_TAIL
