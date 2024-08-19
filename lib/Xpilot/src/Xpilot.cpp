@@ -106,7 +106,7 @@ void Xpilot::loop(void)
     Serial.print(loopMillis);
     Serial.println("ms");
     Serial.print("Loop rate: ");
-    loopMillis = loopMillis <= 0 ? 1 : loopMillis; // To prevent division by 0
+    loopMillis = loopMillis == 0 ? 1 : loopMillis; // To prevent division by 0
     Serial.print(1000 / loopMillis);
     Serial.println("Hz");
 #endif
@@ -116,10 +116,10 @@ void Xpilot::processOutput(void)
 {
     modeController.process();
 
-    actuators.writeServo(Actuators::ControlSurface::AILERON1, aileron1_out);
-    actuators.writeServo(Actuators::ControlSurface::AILERON2, aileron2_out);
-    actuators.writeServo(Actuators::ControlSurface::ELEVATOR, elevator_out);
-    actuators.writeServo(Actuators::ControlSurface::RUDDER, rudder_out);
+    actuators.writeServo(Actuators::Control::AILERON1, aileron1_out);
+    actuators.writeServo(Actuators::Control::AILERON2, aileron2_out);
+    actuators.writeServo(Actuators::Control::ELEVATOR, elevator_out);
+    actuators.writeServo(Actuators::Control::RUDDER, rudder_out);
 }
 
 #if defined(IO_DEBUG)

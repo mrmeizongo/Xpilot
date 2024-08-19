@@ -33,10 +33,12 @@ Flight stabilization software
 #define _ACTUATORS_H
 #include <Servo.h>
 
+#define MAX_CHANNELS 4
+
 class Actuators
 {
 public:
-    enum class ControlSurface : uint8_t
+    enum Control : uint8_t
     {
         AILERON1 = 0,
         AILERON2,
@@ -46,13 +48,10 @@ public:
 
     Actuators(void);
     void init(void);
-    void writeServo(ControlSurface, int16_t);
+    void writeServo(Control, int16_t);
 
 private:
-    Servo aileron1Servo; // Aileron servo channel
-    Servo aileron2Servo; // Aileron servo channel
-    Servo elevatorServo; // Elevator servo channel
-    Servo rudderServo;   // Rudder servo channel
+    Servo controlSurfaces[MAX_CHANNELS]; // Flight control surfaces
 };
 
 extern Actuators actuators;
