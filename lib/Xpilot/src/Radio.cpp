@@ -18,7 +18,8 @@ uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 
 Radio::Radio(void)
 {
-    // Sets default values for radio, flight mode is RATE
+    // Sets default values for radio on power up
+    // With an unconfigured mode switch, the default flight mode is rate mode
     rx = {0, 0, 0, FlightMode::rate};
 }
 
@@ -48,11 +49,11 @@ void Radio::processInput(void)
     // Record the length of the pulse if it is within the 1ms to 2ms range (pulse is in uS)
     if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
     {
-        if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD)
+        if (modePulses > INPUT_MAX_PWM - INPUT_THRESHOLD)
             rx.currentMode = FlightMode::passthrough;
         else if (modePulses >= INPUT_MIN_PWM + INPUT_THRESHOLD && modePulses <= INPUT_MAX_PWM - INPUT_THRESHOLD)
             rx.currentMode = FlightMode::rate;
-        else if (modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
+        else if (modePulses < INPUT_MIN_PWM + INPUT_THRESHOLD)
             rx.currentMode = FlightMode::stabilize;
     }
 
