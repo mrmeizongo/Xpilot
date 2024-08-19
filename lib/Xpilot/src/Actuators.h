@@ -33,7 +33,7 @@ Flight stabilization software
 #define _ACTUATORS_H
 #include <Servo.h>
 
-#define MAX_CHANNELS 4
+#define MAX_SERVO_CHANNELS 4
 
 class Actuators
 {
@@ -51,7 +51,7 @@ public:
     void writeServo(Control, int16_t);
 
 private:
-    Servo controlSurfaces[MAX_CHANNELS]; // Flight control surfaces
+    Servo controlSurfaces[MAX_SERVO_CHANNELS]; // Flight control surfaces
 };
 
 extern Actuators actuators;

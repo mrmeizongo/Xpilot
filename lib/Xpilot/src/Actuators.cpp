@@ -16,7 +16,7 @@ void Actuators::init(void)
 
 void Actuators::writeServo(Control surface, int16_t value)
 {
-    if (surface < 0 || surface >= MAX_CHANNELS)
+    if (surface < 0 || surface >= MAX_SERVO_CHANNELS)
         return;
 
     controlSurfaces[surface].writeMicroseconds(value);
