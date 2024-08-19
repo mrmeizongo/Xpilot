@@ -55,36 +55,36 @@ ModeController::ModeController(void)
 // Otherwise reset PID values and set current mode
 void ModeController::updateMode(void)
 {
-    if (radio.rx.mode == SwitchState::low)
+    if (radio.rx.currentMode == FlightMode::passthrough)
     {
-        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::PASSTHROUGH)
+        if (radio.rx.previousMode == FlightMode::passthrough)
             return;
 
-        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::PASSTHROUGH);
+        radio.rx.previousMode = radio.rx.currentMode;
     }
-    else if (radio.rx.mode == SwitchState::mid)
+    else if (radio.rx.currentMode == FlightMode::rate)
     {
-        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::RATE)
+        if (radio.rx.previousMode == FlightMode::rate)
             return;
 
         RESETPIDCONTROLLERS();
-        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::RATE);
+        radio.rx.previousMode = radio.rx.currentMode;
     }
-    else if (radio.rx.mode == SwitchState::high)
+    else if (radio.rx.currentMode == FlightMode::stabilize)
     {
-        if (xpilot.getCurrentMode() == Xpilot::FLIGHT_MODE::STABILIZE)
+        if (radio.rx.previousMode == FlightMode::stabilize)
             return;
 
         RESETPIDCONTROLLERS();
-        xpilot.setCurrentMode(Xpilot::FLIGHT_MODE::STABILIZE);
+        radio.rx.previousMode = radio.rx.currentMode;
     }
 }
 
 void ModeController::process(void)
 {
-    switch (xpilot.getCurrentMode())
+    switch (radio.rx.currentMode)
     {
-    case Xpilot::FLIGHT_MODE::PASSTHROUGH:
+    case FlightMode::passthrough:
         passthroughMode();
 #if defined(RUDDER_MIX_IN_PASS)
         rudderMixer();
@@ -95,7 +95,7 @@ void ModeController::process(void)
         xpilot.rudder_out = map(xpilot.rudder_out, -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
     default:
-    case Xpilot::FLIGHT_MODE::RATE:
+    case FlightMode::rate:
         rateMode();
 #if defined(RUDDER_MIX_IN_RATE)
         rudderMixer();
@@ -105,7 +105,7 @@ void ModeController::process(void)
         xpilot.elevator_out = map(xpilot.elevator_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         xpilot.rudder_out = map(xpilot.rudder_out, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         break;
-    case Xpilot::FLIGHT_MODE::STABILIZE:
+    case FlightMode::stabilize:
         stabilizeMode();
 #if defined(RUDDER_MIX_IN_STABILIZE)
         rudderMixer();

@@ -138,7 +138,7 @@ void printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");
-    Serial.println((int)radio.rx.mode);
+    Serial.println((uint8_t)radio.rx.currentMode);
     Serial.print("Input");
     Serial.print("\t\t\t\t");
     Serial.println("Output");

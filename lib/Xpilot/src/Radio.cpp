@@ -18,6 +18,8 @@ uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 
 Radio::Radio(void)
 {
+    // Sets default values for radio, flight mode is RATE
+    rx = {0, 0, 0, FlightMode::rate};
 }
 
 void Radio::init(void)
@@ -47,11 +49,11 @@ void Radio::processInput(void)
     if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
     {
         if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD)
-            rx.mode = SwitchState::low;
+            rx.currentMode = FlightMode::passthrough;
         else if (modePulses >= INPUT_MIN_PWM + INPUT_THRESHOLD && modePulses <= INPUT_MAX_PWM - INPUT_THRESHOLD)
-            rx.mode = SwitchState::mid;
+            rx.currentMode = FlightMode::rate;
         else if (modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
-            rx.mode = SwitchState::high;
+            rx.currentMode = FlightMode::stabilize;
     }
 
     if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
@@ -66,20 +68,20 @@ void Radio::processInput(void)
     modeController.updateMode();
 
     // Set stick resolutions
-    switch (rx.mode)
+    switch (rx.currentMode)
     {
-    case SwitchState::low:
+    case FlightMode::passthrough:
         rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
         rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
         rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
         break;
     default:
-    case SwitchState::mid:
+    case FlightMode::rate:
         rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
         rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
         rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
-    case SwitchState::high:
+    case FlightMode::stabilize:
         rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
         rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
         rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);

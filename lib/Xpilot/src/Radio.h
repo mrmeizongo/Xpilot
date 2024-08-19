@@ -4,19 +4,20 @@
 #include <Arduino.h>
 #include "config.h"
 
-typedef enum
+typedef enum : uint8_t
 {
-    low = 1U,
-    mid = 2U,
-    high = 3U
-} SwitchState;
+    passthrough = 1U,
+    rate = 2U,
+    stabilize = 3U
+} FlightMode;
 
 typedef struct
 {
     int16_t roll;
     int16_t pitch;
     int16_t yaw;
-    SwitchState mode;
+    FlightMode currentMode;
+    FlightMode previousMode;
 } Control;
 
 class Radio

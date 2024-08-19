@@ -38,27 +38,15 @@ class Xpilot
 public:
     Xpilot(void);
 
-    enum class FLIGHT_MODE : uint8_t
-    {
-        PASSTHROUGH = 1,
-        RATE,
-        STABILIZE
-    };
-
     // Only functions called from the Arduino setup and loop functions
     void setup(void);
     void loop(void);
 
     void processOutput(void);
 
-    FLIGHT_MODE getCurrentMode() { return currentMode; }
-    void setCurrentMode(FLIGHT_MODE _currentMode) { currentMode = _currentMode; }
-
 private:
     friend class ModeController; // Flight mode controller
     friend void printIO(void);   // Print servo values
-
-    FLIGHT_MODE currentMode{FLIGHT_MODE::RATE}; // RATE is default mode
 
     int16_t aileron1_out = 0; // Aileron servo output variable
     int16_t aileron2_out = 0; // Aileron servo output variable
