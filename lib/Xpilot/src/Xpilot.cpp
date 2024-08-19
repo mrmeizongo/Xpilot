@@ -43,8 +43,11 @@ Flight stabilization software
 #define I2C_CLOCK_400KHZ 400000U
 
 // Timer variables
-unsigned long nowMs, outputLastMs, imuLastMs = 0;
+unsigned long nowMs = 0;
 // -------------------------
+
+// Helper function to print debug messages to serial monitor
+void printDebug(void);
 
 Xpilot::Xpilot(void)
 {
@@ -70,7 +73,7 @@ void Xpilot::setup(void)
 }
 
 /*
-    Main xpilot execution loop
+    Main Xpilot execution loop
     Read input, read imu data, process output to servos
 */
 void Xpilot::loop(void)
@@ -80,12 +83,28 @@ void Xpilot::loop(void)
     radio.processInput();
 
     // Process servo output at 50Hz intervals
+    static unsigned long outputLastMs = 0;
     if (nowMs - outputLastMs >= FIFTYHZ_LOOP)
     {
         processOutput();
         outputLastMs = nowMs;
     }
 
+    printDebug();
+}
+
+void Xpilot::processOutput(void)
+{
+    modeController.process();
+
+    actuators.writeServo(Actuators::Control::AILERON1, aileron1_out);
+    actuators.writeServo(Actuators::Control::AILERON2, aileron2_out);
+    actuators.writeServo(Actuators::Control::ELEVATOR, elevator_out);
+    actuators.writeServo(Actuators::Control::RUDDER, rudder_out);
+}
+
+void printDebug(void)
+{
 #if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     static unsigned long debugLastMs = 0;
     if (nowMs - debugLastMs >= ONEHZ_LOOP)
@@ -102,27 +121,17 @@ void Xpilot::loop(void)
 
 #if defined(LOOP_DEBUG)
     unsigned long loopMillis = millis() - nowMs;
+    loopMillis = loopMillis == 0 ? 1 : loopMillis; // To prevent division by 0
     Serial.print("Loop time");
     Serial.print("\t\t\t");
     Serial.println("Loop rate");
     Serial.print(loopMillis);
     Serial.print("ms");
     Serial.print("\t\t\t\t");
-    loopMillis = loopMillis == 0 ? 1 : loopMillis; // To prevent division by 0
     Serial.print(1000 / loopMillis);
     Serial.println("Hz");
     Serial.println();
 #endif
-}
-
-void Xpilot::processOutput(void)
-{
-    modeController.process();
-
-    actuators.writeServo(Actuators::Control::AILERON1, aileron1_out);
-    actuators.writeServo(Actuators::Control::AILERON2, aileron2_out);
-    actuators.writeServo(Actuators::Control::ELEVATOR, elevator_out);
-    actuators.writeServo(Actuators::Control::RUDDER, rudder_out);
 }
 
 #if defined(IO_DEBUG)
