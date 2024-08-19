@@ -214,7 +214,7 @@ void ModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
     xpilot.aileron2_out = 0;
     xpilot.elevator_out = yaw + pitch;
     xpilot.rudder_out = yaw - pitch;
-#elif defined(FLYING_WING_RUDDER)
+#elif defined(FLYING_WING_W_RUDDER)
     xpilot.aileron1_out = roll - pitch;
     xpilot.aileron2_out = roll + pitch;
     xpilot.elevator_out = 0;
@@ -236,7 +236,7 @@ void ModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
 
 void ModeController::rudderMixer(void)
 {
-#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_RUDDER)
+#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
 #if defined(REVERSE_RUDDER_MIX)
     xpilot.rudder_out = xpilot.rudder_out - (xpilot.aileron1_out * RUDDER_MIXING);
 #else

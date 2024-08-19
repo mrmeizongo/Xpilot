@@ -47,7 +47,7 @@ Flight stabilization software
 #define FULL_PLANE
 // #define FULL_PLANE_V_TAIL
 // #define RUDDER_ELEVATOR_ONLY_PLANE
-// #define FLYING_WING_RUDDER
+// #define FLYING_WING_W_RUDDER
 // #define FLYING_WING_NO_RUDDER
 // #defined RUDDER_ELEVATOR_ONLY_V_TAIL
 
