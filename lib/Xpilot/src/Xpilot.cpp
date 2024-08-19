@@ -45,6 +45,8 @@ Flight stabilization software
 // Timer variables
 unsigned long nowMs, outputLastMs = 0;
 // -------------------------
+
+// Helper functions for debugging
 void printDebug(void);
 void printIO(void);
 
