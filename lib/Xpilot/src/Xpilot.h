@@ -33,10 +33,6 @@ Flight stabilization software
 #ifndef _XPILOT_H
 #define _XPILOT_H
 
-#include <Arduino.h>
-#include <Servo.h>
-#include "config.h"
-
 class Xpilot
 {
 public:
@@ -63,29 +59,13 @@ public:
 #endif
 
 private:
-    friend class ModeController; // Flight mode controller
+    friend class ModeController;                // Flight mode controller
+    FLIGHT_MODE currentMode{FLIGHT_MODE::RATE}; // RATE is default mode
 
-    /*
-     * Aileron control variables
-     */
-    Servo aileron1Servo;      // Aileron servo channel
-    Servo aileron2Servo;      // Aileron servo channel
     int16_t aileron1_out = 0; // Aileron servo output variable
     int16_t aileron2_out = 0; // Aileron servo output variable
-
-    /*
-     * Elevator control variables
-     */
-    Servo elevatorServo;      // Elevator servo channel
     int16_t elevator_out = 0; // Elevator servo output variable
-
-    /*
-     * Rudder control variables
-     */
-    Servo rudderServo;      // Rudder servo channel
-    int16_t rudder_out = 0; // Rudder servo output variable
-
-    FLIGHT_MODE currentMode{FLIGHT_MODE::RATE}; // RATE is default mode
+    int16_t rudder_out = 0;   // Rudder servo output variable
 };
 
 extern Xpilot xpilot;

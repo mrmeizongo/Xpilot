@@ -30,10 +30,12 @@ Flight stabilization software
 ===============================================
 */
 
+#include <Arduino.h>
 #include "Xpilot.h"
 #include "config.h"
 #include "ModeController.h"
 #include "Radio.h"
+#include "Actuators.h"
 #include "IMU.h"
 
 #define FIFTYHZ_LOOP 20U
@@ -62,14 +64,9 @@ void Xpilot::setup(void)
     }
 #endif
 
-    imu.init();   // Initialize IMU
-    radio.init(); // Initialize radio
-
-    // Set up output servos
-    aileron1Servo.attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    aileron2Servo.attach(AILPIN2_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
-    elevatorServo.attach(ELEVPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
-    rudderServo.attach(RUDDPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
+    imu.init();       // Initialize IMU
+    radio.init();     // Initialize radio
+    actuators.init(); // Initialize control servos
 }
 
 /*
@@ -80,11 +77,11 @@ void Xpilot::loop(void)
 {
     nowMs = millis();
     imu.processIMU();
+    radio.processInput();
 
-    // Process radio input and servo output at 50Hz intervals
+    // Process servo output at 50Hz intervals
     if (nowMs - outputLastMs >= FIFTYHZ_LOOP)
     {
-        radio.processInput();
         processOutput();
         outputLastMs = nowMs;
     }
@@ -119,10 +116,10 @@ void Xpilot::processOutput(void)
 {
     modeController.process();
 
-    aileron1Servo.writeMicroseconds(aileron1_out);
-    aileron2Servo.writeMicroseconds(aileron2_out);
-    elevatorServo.writeMicroseconds(elevator_out);
-    rudderServo.writeMicroseconds(rudder_out);
+    actuators.writeServo(Actuators::ControlSurface::AILERON1, aileron1_out);
+    actuators.writeServo(Actuators::ControlSurface::AILERON2, aileron2_out);
+    actuators.writeServo(Actuators::ControlSurface::ELEVATOR, elevator_out);
+    actuators.writeServo(Actuators::ControlSurface::RUDDER, rudder_out);
 }
 
 #if defined(IO_DEBUG)
