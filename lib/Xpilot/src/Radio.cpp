@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include "Radio.h"
-#include "config.h"
-#include "ModeController.h"
 #include <PinChangeInterrupt.h>
+#include "Radio.h"
+#include "ModeController.h"
+#include "config.h"
 
 volatile unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
 volatile unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
@@ -20,7 +20,7 @@ Radio::Radio(void)
 {
     // Sets default values for radio on power up
     // With an unconfigured mode switch, the default flight mode is rate mode
-    rx = {0, 0, 0, FlightMode::rate};
+    rx = {0, 0, 0, FlightMode::rate, FlightMode::rate};
 }
 
 void Radio::init(void)
