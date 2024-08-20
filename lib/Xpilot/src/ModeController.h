@@ -40,6 +40,7 @@ class ModeController
 {
 public:
     ModeController(void);
+    void init(void);
     void updateMode(void);
     void processMode(void);
     void planeMixer(int16_t, int16_t, int16_t);

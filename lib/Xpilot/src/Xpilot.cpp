@@ -68,9 +68,10 @@ void Xpilot::setup(void)
     }
 #endif
 
-    imu.init();       // Initialize IMU
-    radio.init();     // Initialize radio
-    actuators.init(); // Initialize servos
+    imu.init();            // Initialize IMU
+    radio.init();          // Initialize radio
+    actuators.init();      // Initialize servos
+    modeController.init(); // Initialize mode controller
 }
 
 /*

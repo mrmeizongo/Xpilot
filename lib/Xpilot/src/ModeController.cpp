@@ -50,6 +50,10 @@ static int16_t SRVout[MAX_SERVO_CHANNELS]{0, 0, 0, 0};
 
 ModeController::ModeController(void)
 {
+}
+
+void ModeController::init(void)
+{
     rollPID = new PID(ROLL_KP, ROLL_KI, ROLL_KD);
     pitchPID = new PID(PITCH_KP, PITCH_KI, PITCH_KD);
     yawPID = new PID(YAW_KP, YAW_KI, YAW_KD);

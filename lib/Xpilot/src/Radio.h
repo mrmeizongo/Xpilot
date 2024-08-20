@@ -36,7 +36,7 @@ public:
     FlightMode getRxCurrentMode(void) { return rx.currentMode; }
 
 private:
-    Control rx;
+    Control rx{0, 0, 0, FlightMode::rate, FlightMode::rate}; // Sets default radio values on power up
 };
 
 extern Radio radio;

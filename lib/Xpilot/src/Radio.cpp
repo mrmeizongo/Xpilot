@@ -18,9 +18,6 @@ uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 
 Radio::Radio(void)
 {
-    // Sets default values for radio on power up
-    // With an unconfigured mode switch, the default flight mode is rate mode
-    rx = {0, 0, 0, FlightMode::rate, FlightMode::rate};
 }
 
 void Radio::init(void)
@@ -42,18 +39,16 @@ void Radio::init(void)
 
 void Radio::processInput(void)
 {
-    uint8_t oldSREG = SREG;
-
     // Disable interrupts as pulses are being read to avoid race conditionS
     cli();
-    // Record the length of the pulse if it is within the 1ms to 2ms range (pulse is in uS)
+    // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
     if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
     {
-        if (modePulses > INPUT_MAX_PWM - INPUT_THRESHOLD)
+        if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD && modePulses <= INPUT_MAX_PWM)
             rx.currentMode = FlightMode::passthrough;
-        else if (modePulses >= INPUT_MIN_PWM + INPUT_THRESHOLD && modePulses <= INPUT_MAX_PWM - INPUT_THRESHOLD)
+        else if (modePulses > INPUT_MIN_PWM + INPUT_THRESHOLD && modePulses < INPUT_MAX_PWM - INPUT_THRESHOLD)
             rx.currentMode = FlightMode::rate;
-        else if (modePulses < INPUT_MIN_PWM + INPUT_THRESHOLD)
+        else if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
             rx.currentMode = FlightMode::stabilize;
     }
 
@@ -63,8 +58,8 @@ void Radio::processInput(void)
         elevatorPulseWidth = elevatorPulses;
     if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
         rudderPulseWidth = rudderPulses;
-
-    SREG = oldSREG;
+    // Enable interrupts
+    sei();
 
     // Set stick resolutions
     switch (rx.currentMode)
@@ -107,11 +102,6 @@ void PinChangeInterruptEvent(AILPIN_INT)(void)
         aileronPulses = aileronCurrentTime - aileronStartTime;
         aileronStartTime = aileronCurrentTime;
     }
-    else
-    {
-        // micros() overflows after approximately 70min
-        aileronStartTime = 0;
-    }
 }
 
 void PinChangeInterruptEvent(ELEVPIN_INT)(void)
@@ -121,11 +111,6 @@ void PinChangeInterruptEvent(ELEVPIN_INT)(void)
     {
         elevatorPulses = elevatorCurrentTime - elevatorStartTime;
         elevatorStartTime = elevatorCurrentTime;
-    }
-    else
-    {
-        // micros() overflows after approximately 70min
-        elevatorStartTime = 0;
     }
 }
 
@@ -137,11 +122,6 @@ void PinChangeInterruptEvent(RUDDPIN_INT)(void)
         rudderPulses = rudderCurrentTime - rudderStartTime;
         rudderStartTime = rudderCurrentTime;
     }
-    else
-    {
-        // micros() overflows after approximately 70min
-        rudderStartTime = 0;
-    }
 }
 
 void PinChangeInterruptEvent(MODEPIN_INT)(void)
@@ -151,11 +131,6 @@ void PinChangeInterruptEvent(MODEPIN_INT)(void)
     {
         modePulses = modeCurrentTime - modeStartTime;
         modeStartTime = modeCurrentTime;
-    }
-    else
-    {
-        // micros() overflows after approximately 70min
-        modeStartTime = 0;
     }
 }
 //  ----------------------------
