@@ -58,9 +58,11 @@ void ModeController::init(void)
     yawPID = new PID(YAW_KP, YAW_KI, YAW_KD);
 }
 
-// Update flight mode from mode switch position
-// Do nothing if we're already in the selected mode
-// Otherwise reset PID values and set current mode
+/*
+ * Update flight mode from mode switch position
+ * Function has access to radio private rx variable
+ * See Radio
+ */
 void ModeController::updateMode(void)
 {
     if (radio.rx.previousMode == radio.rx.currentMode)
