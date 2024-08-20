@@ -46,9 +46,10 @@ Flight stabilization software
 static unsigned long nowMs, outputLastMs = 0;
 // -------------------------
 
-// Helper functions for debugging
+// Debug helper functions
 void printDebug(void);
 void printIO(void);
+// -------------------------
 
 Xpilot::Xpilot(void)
 {
@@ -96,6 +97,7 @@ void Xpilot::loop(void)
     printDebug();
 }
 
+// Debug helper functions
 void printDebug(void)
 {
 #if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
@@ -106,7 +108,7 @@ void printDebug(void)
         imu.printIMU();
 #endif
 #if defined(IO_DEBUG)
-        xpilot.printIO();
+        printIO();
 #endif
         debugLastMs = nowMs;
     }
@@ -127,7 +129,7 @@ void printDebug(void)
 #endif
 }
 
-void Xpilot::printIO(void)
+void printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");

@@ -41,7 +41,6 @@ public:
     // Only functions called from the Arduino setup and loop functions
     void setup(void);
     void loop(void);
-    void printIO(void);
 };
 
 extern Xpilot xpilot;
