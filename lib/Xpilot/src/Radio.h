@@ -27,6 +27,7 @@ public:
     Radio(void);
     void init(void);
     void processInput(void);
+
     friend void ModeController::updateMode();
 
     int16_t getRxRoll(void) { return rx.roll; }

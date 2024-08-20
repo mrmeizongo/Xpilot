@@ -66,8 +66,6 @@ void Radio::processInput(void)
 
     SREG = oldSREG;
 
-    modeController.updateMode();
-
     // Set stick resolutions
     switch (rx.currentMode)
     {
@@ -88,6 +86,8 @@ void Radio::processInput(void)
         rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
     }
+
+    modeController.updateMode();
 }
 
 /*

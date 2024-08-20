@@ -139,7 +139,7 @@ Flight stabilization software
  * Transmitter / Receiver values
  * Used to separate the 3 flight modes input threshold
  */
-#define INPUT_THRESHOLD 200
+#define INPUT_THRESHOLD (((INPUT_MAX_PWM) - (INPUT_MIN_PWM)) / 3)
 // ------------------------------------------------------------------------------------------------------
 
 // PID gain values
