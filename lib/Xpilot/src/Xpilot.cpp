@@ -130,31 +130,31 @@ void Xpilot::printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");
-    Serial.println((uint8_t)radio.rx.currentMode);
+    Serial.println((uint8_t)radio.getRxCurrentMode());
     Serial.print("Input");
     Serial.print("\t\t\t\t");
     Serial.println("Output");
 
     Serial.print("Aileron 1: ");
-    Serial.print(radio.rx.roll);
+    Serial.print(radio.getRxRoll());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
     Serial.println(actuators.getServoOut(Actuators::Control::AILERON1));
 
     Serial.print("Aileron 2: ");
-    Serial.print(radio.rx.roll);
+    Serial.print(radio.getRxRoll());
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
     Serial.println(actuators.getServoOut(Actuators::Control::AILERON2));
 
     Serial.print("Elevator: ");
-    Serial.print(radio.rx.pitch);
+    Serial.print(radio.getRxPitch());
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
     Serial.println(actuators.getServoOut(Actuators::Control::ELEVATOR));
 
     Serial.print("Rudder: ");
-    Serial.print(radio.rx.yaw);
+    Serial.print(radio.getRxYaw());
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
     Serial.println(actuators.getServoOut(Actuators::Control::RUDDER));

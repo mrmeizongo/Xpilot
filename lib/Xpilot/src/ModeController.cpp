@@ -68,7 +68,7 @@ void ModeController::updateMode(void)
 
 void ModeController::processMode(void)
 {
-    switch (radio.rx.currentMode)
+    switch (radio.getRxCurrentMode())
     {
     case FlightMode::passthrough:
         passthroughMode();
@@ -111,7 +111,7 @@ void ModeController::processMode(void)
 // No stabilization and rate control
 void ModeController::passthroughMode(void)
 {
-    planeMixer(radio.rx.roll, radio.rx.pitch, radio.rx.yaw);
+    planeMixer(radio.getRxRoll(), radio.getRxPitch(), radio.getRxYaw());
     SRVout[Actuators::Control::AILERON1] = constrain(SRVout[Actuators::Control::AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[Actuators::Control::AILERON2] = constrain(SRVout[Actuators::Control::AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[Actuators::Control::ELEVATOR] = constrain(SRVout[Actuators::Control::ELEVATOR], -PASSTHROUGH_RES, PASSTHROUGH_RES);
@@ -122,9 +122,9 @@ void ModeController::passthroughMode(void)
 // Flight surfaces move to prevent sudden changes in direction
 void ModeController::rateMode(void)
 {
-    float rollDemand = radio.rx.roll - imu.gyroX;
-    float pitchDemand = radio.rx.pitch - imu.gyroY;
-    float yawDemand = radio.rx.yaw - imu.gyroZ;
+    float rollDemand = radio.getRxRoll() - imu.gyroX;
+    float pitchDemand = radio.getRxPitch() - imu.gyroY;
+    float yawDemand = radio.getRxYaw() - imu.gyroZ;
 
     int16_t roll = rollPID->Compute(rollDemand);
     int16_t pitch = pitchPID->Compute(pitchDemand);
@@ -141,9 +141,9 @@ void ModeController::rateMode(void)
 // Roll and pitch leveling on stick release
 void ModeController::stabilizeMode(void)
 {
-    float rollDemand = radio.rx.roll - imu.ahrs_roll;
-    float pitchDemand = radio.rx.pitch - imu.ahrs_pitch;
-    float yawDemand = radio.rx.yaw - imu.gyroZ;
+    float rollDemand = radio.getRxRoll() - imu.ahrs_roll;
+    float pitchDemand = radio.getRxPitch() - imu.ahrs_pitch;
+    float yawDemand = radio.getRxYaw() - imu.gyroZ;
 
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
