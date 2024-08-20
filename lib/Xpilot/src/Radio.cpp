@@ -12,7 +12,7 @@ volatile unsigned long modeCurrentTime, modeStartTime, modePulses = 0;
 uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 // -------------------------
 
-// Helper function
+// Helper function to set Radio rx values
 #define SETINPUT(rawValue, deadBand, inLowRange, inMidRange, inHighRange, outLowRange, outHighRange) \
     (abs((rawValue) - (inMidRange)) <= (deadBand) ? 0 : map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange)))
 
@@ -39,7 +39,7 @@ void Radio::init(void)
 
 void Radio::processInput(void)
 {
-    // Disable interrupts as pulses are being read to avoid race conditionS
+    // Disable interrupts as pulses are being read
     cli();
     // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
     if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
