@@ -50,8 +50,6 @@ void Radio::processInput(void)
             rx.currentMode = FlightMode::rate;
         else if (modePulses >= INPUT_MIN_PWM)
             rx.currentMode = FlightMode::stabilize;
-        else
-            rx.currentMode = rx.previousMode;
     }
 
     if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
