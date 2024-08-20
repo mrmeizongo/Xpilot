@@ -1,7 +1,7 @@
 #ifndef _RADIO_H
 #define _RADIO_H
 
-#include <Arduino.h>
+#include <inttypes.h>
 #include "ModeController.h"
 #include "config.h"
 

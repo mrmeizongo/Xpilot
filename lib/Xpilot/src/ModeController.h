@@ -33,7 +33,7 @@ Flight stabilization software
 #define _MODE_H
 
 #include <PID.h>
-#include <Arduino.h>
+#include <inttypes.h>
 #include "config.h"
 
 class ModeController

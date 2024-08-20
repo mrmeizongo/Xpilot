@@ -29,9 +29,8 @@ Flight stabilization software
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
-
+#include <Arduino.h>
 #include "ModeController.h"
-#include "Xpilot.h"
 #include "Radio.h"
 #include "IMU.h"
 #include "Actuators.h"

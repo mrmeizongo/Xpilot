@@ -25,7 +25,7 @@ Copyright (C) 2024 Jamal Meizongo
 
 #ifndef _PID_H
 #define _PID_H
-#include <Arduino.h>
+#include <inttypes.h>
 
 class PID
 {

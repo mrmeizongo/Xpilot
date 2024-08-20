@@ -3,7 +3,7 @@
 #define _MPU6050_H
 
 #include <Wire.h>
-
+#include <Arduino.h>
 #include "MPU6050RegisterMap.h"
 #include "QuaternionFilter.h"
 
