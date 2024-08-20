@@ -48,10 +48,13 @@ public:
 
     Actuators(void);
     void init(void);
-    void writeServo(Control, int16_t);
+    void writeServos(void);
+    void setServoOut(const int16_t[]);
+    int16_t getServoOut(Control);
 
 private:
-    Servo controlSurfaces[MAX_SERVO_CHANNELS]; // Flight control surfaces
+    Servo controlServo[MAX_SERVO_CHANNELS]; // Flight control surfaces
+    int16_t channelOut[MAX_SERVO_CHANNELS]; // Servo output
 };
 
 extern Actuators actuators;

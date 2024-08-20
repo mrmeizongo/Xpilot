@@ -80,27 +80,19 @@ void Xpilot::setup(void)
 void Xpilot::loop(void)
 {
     nowMs = millis();
+
     imu.processIMU();
     radio.processInput();
 
     // Process servo output at 50Hz intervals
     if (nowMs - outputLastMs >= FIFTYHZ_LOOP)
     {
-        processOutput();
+        modeController.processMode();
+        actuators.writeServos();
         outputLastMs = nowMs;
     }
 
     printDebug();
-}
-
-void Xpilot::processOutput(void)
-{
-    modeController.process();
-
-    actuators.writeServo(Actuators::Control::AILERON1, aileron1_out);
-    actuators.writeServo(Actuators::Control::AILERON2, aileron2_out);
-    actuators.writeServo(Actuators::Control::ELEVATOR, elevator_out);
-    actuators.writeServo(Actuators::Control::RUDDER, rudder_out);
 }
 
 void printDebug(void)
@@ -113,7 +105,7 @@ void printDebug(void)
         imu.printIMU();
 #endif
 #if defined(IO_DEBUG)
-        printIO();
+        xpilot.printIO();
 #endif
         debugLastMs = nowMs;
     }
@@ -134,7 +126,7 @@ void printDebug(void)
 #endif
 }
 
-void printIO(void)
+void Xpilot::printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");
@@ -147,25 +139,25 @@ void printIO(void)
     Serial.print(radio.rx.roll);
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
-    Serial.println(xpilot.aileron1_out);
+    Serial.println(actuators.getServoOut(Actuators::Control::AILERON1));
 
     Serial.print("Aileron 2: ");
     Serial.print(radio.rx.roll);
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
-    Serial.println(xpilot.aileron2_out);
+    Serial.println(actuators.getServoOut(Actuators::Control::AILERON2));
 
     Serial.print("Elevator: ");
     Serial.print(radio.rx.pitch);
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
-    Serial.println(xpilot.elevator_out);
+    Serial.println(actuators.getServoOut(Actuators::Control::ELEVATOR));
 
     Serial.print("Rudder: ");
     Serial.print(radio.rx.yaw);
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
-    Serial.println(xpilot.rudder_out);
+    Serial.println(actuators.getServoOut(Actuators::Control::RUDDER));
     Serial.println();
 }
 // ---------------------------

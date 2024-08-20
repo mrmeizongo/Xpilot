@@ -41,17 +41,7 @@ public:
     // Only functions called from the Arduino setup and loop functions
     void setup(void);
     void loop(void);
-
-    void processOutput(void);
-
-private:
-    friend class ModeController; // Flight mode controller
-    friend void printIO(void);   // Print servo values
-
-    int16_t aileron1_out = 0; // Aileron servo output variable
-    int16_t aileron2_out = 0; // Aileron servo output variable
-    int16_t elevator_out = 0; // Elevator servo output variable
-    int16_t rudder_out = 0;   // Rudder servo output variable
+    void printIO(void);
 };
 
 extern Xpilot xpilot;

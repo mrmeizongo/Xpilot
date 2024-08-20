@@ -41,7 +41,7 @@ class ModeController
 public:
     ModeController(void);
     void updateMode(void);
-    void process(void);
+    void processMode(void);
     void planeMixer(int16_t, int16_t, int16_t);
     void rudderMixer(void);
 
