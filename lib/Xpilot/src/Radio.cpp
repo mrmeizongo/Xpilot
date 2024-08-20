@@ -44,12 +44,14 @@ void Radio::processInput(void)
     // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
     if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
     {
-        if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD && modePulses <= INPUT_MAX_PWM)
+        if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD)
             rx.currentMode = FlightMode::passthrough;
-        else if (modePulses > INPUT_MIN_PWM + INPUT_THRESHOLD && modePulses < INPUT_MAX_PWM - INPUT_THRESHOLD)
+        else if (modePulses > INPUT_MIN_PWM + INPUT_THRESHOLD)
             rx.currentMode = FlightMode::rate;
-        else if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
+        else if (modePulses >= INPUT_MIN_PWM)
             rx.currentMode = FlightMode::stabilize;
+        else
+            rx.currentMode = rx.previousMode;
     }
 
     if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
