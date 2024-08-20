@@ -192,7 +192,7 @@ Flight stabilization software
 #define MAX_PITCH_ANGLE_DEGS 60
 // ------------------------------------------------------------------------------------------------------
 
-// Comment or uncomment to reverse stabilization output direction
+// Uncomment or comment to set and unset respectively
 
 // Reverses stabilization output in stabilize mode
 #define REVERSE_ROLL_STABILIZE
@@ -208,9 +208,9 @@ Flight stabilization software
  * Mix rudder to enable turn coordinations
  * Rudder mixing value is set in percentage ( value / 100)
  */
-// #define RUDDER_MIX_IN_PASS   // Uncomment to add rudder mixing in passthrough mode
-#define RUDDER_MIX_IN_RATE      // Uncomment to add rudder mixing in rate mode
-#define RUDDER_MIX_IN_STABILIZE // Uncomment to add rudder mixing in stabilize mode
+// #define RUDDER_MIX_IN_PASS
+#define RUDDER_MIX_IN_RATE
+#define RUDDER_MIX_IN_STABILIZE
 
 // #define REVERSE_RUDDER_MIX   // Uncomment to reverse rudder mixing input if surfaces don't move in the expected direction
 #define RUDDER_MIXING 0.15f // Amount of aileron input to mix with rudder to coordinate turns (10-20% is recommended)
