@@ -43,5 +43,4 @@ public:
     void loop(void);
 };
 
-extern Xpilot xpilot;
 #endif // _XPILOT_H

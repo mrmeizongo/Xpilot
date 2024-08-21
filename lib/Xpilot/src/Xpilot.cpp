@@ -164,5 +164,3 @@ static void printIO(void)
     Serial.println();
 }
 // ---------------------------
-
-Xpilot xpilot;
