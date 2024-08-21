@@ -49,6 +49,7 @@ static unsigned long nowMs, outputLastMs = 0;
 // Debug helper functions
 static void printDebug(void) __attribute__((unused));
 static void printIO(void) __attribute__((unused));
+static void printIMU(void) __attribute__((unused));
 // -------------------------
 
 // Flight mode controller
@@ -111,7 +112,7 @@ static void printDebug(void)
     if (nowMs - debugLastMs >= ONEHZ_LOOP)
     {
 #if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
-        imu.printIMU();
+        printIMU();
 #endif
 #if defined(IO_DEBUG)
         printIO();
@@ -167,6 +168,17 @@ static void printIO(void)
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
     Serial.println(actuators.getServoOut(Actuators::Control::RUDDER));
+    Serial.println();
+}
+
+static void printIMU(void)
+{
+    Serial.print("Roll: ");
+    Serial.println(imu.getRoll());
+    Serial.print("Pitch: ");
+    Serial.println(imu.getPitch());
+    Serial.print("Yaw: ");
+    Serial.println(imu.getYaw());
     Serial.println();
 }
 // ---------------------------

@@ -100,18 +100,4 @@ void IMU::processIMU(void)
     }
 }
 
-// IMU Debug functions
-#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
-void IMU::printIMU(void)
-{
-    Serial.print("Roll: ");
-    Serial.println(ahrs_roll);
-    Serial.print("Pitch: ");
-    Serial.println(ahrs_pitch);
-    Serial.print("Yaw: ");
-    Serial.println(ahrs_yaw);
-    Serial.println();
-}
-#endif
-
 IMU imu;

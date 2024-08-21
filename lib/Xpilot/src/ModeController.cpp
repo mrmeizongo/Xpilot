@@ -131,9 +131,9 @@ void ModeController::passthroughMode(void)
 // Flight surfaces move to prevent sudden changes in direction
 void ModeController::rateMode(void)
 {
-    float rollDemand = radio.getRxRoll() - imu.gyroX;
-    float pitchDemand = radio.getRxPitch() - imu.gyroY;
-    float yawDemand = radio.getRxYaw() - imu.gyroZ;
+    float rollDemand = radio.getRxRoll() - imu.getGyroX();
+    float pitchDemand = radio.getRxPitch() - imu.getGyroY();
+    float yawDemand = radio.getRxYaw() - imu.getGyroZ();
 
     int16_t roll = rollPID->Compute(rollDemand);
     int16_t pitch = pitchPID->Compute(pitchDemand);
@@ -150,9 +150,9 @@ void ModeController::rateMode(void)
 // Roll and pitch leveling on stick release
 void ModeController::stabilizeMode(void)
 {
-    float rollDemand = radio.getRxRoll() - imu.ahrs_roll;
-    float pitchDemand = radio.getRxPitch() - imu.ahrs_pitch;
-    float yawDemand = radio.getRxYaw() - imu.gyroZ;
+    float rollDemand = radio.getRxRoll() - imu.getRoll();
+    float pitchDemand = radio.getRxPitch() - imu.getPitch();
+    float yawDemand = radio.getRxYaw() - imu.getGyroZ();
 
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
@@ -160,8 +160,8 @@ void ModeController::stabilizeMode(void)
     rollDemand = constrain(rollDemand, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = constrain(pitchDemand, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
-    rollDemand = rollDemand - imu.gyroX;
-    pitchDemand = pitchDemand - imu.gyroY;
+    rollDemand = rollDemand - imu.getGyroX();
+    pitchDemand = pitchDemand - imu.getGyroY();
 
     int16_t roll = rollPID->Compute(rollDemand);
     int16_t pitch = pitchPID->Compute(pitchDemand);
