@@ -34,6 +34,9 @@ void Radio::init(void)
     // Mode setup
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
+
+    // Default rx values on power up
+    rx = {0, 0, 0, FlightMode::rate, FlightMode::rate};
 }
 
 void Radio::processInput(void)
