@@ -79,38 +79,38 @@ void ModeController::processMode(void)
 {
     switch (radio.getRxCurrentMode())
     {
-    case FlightMode::passthrough:
+    case PASSTHROUGH:
         passthroughMode();
 #if defined(RUDDER_MIX_IN_PASS)
         rudderMixer();
 #endif
-        SRVout[Actuators::Control::AILERON1] = map(SRVout[Actuators::Control::AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::AILERON2] = map(SRVout[Actuators::Control::AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::ELEVATOR] = map(SRVout[Actuators::Control::ELEVATOR], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::RUDDER] = map(SRVout[Actuators::Control::RUDDER], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[AILERON1] = map(SRVout[AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[AILERON2] = map(SRVout[AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[ELEVATOR] = map(SRVout[ELEVATOR], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[RUDDER] = map(SRVout[RUDDER], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         actuators.setServoOut(SRVout);
         break;
     default:
-    case FlightMode::rate:
+    case RATE:
         rateMode();
 #if defined(RUDDER_MIX_IN_RATE)
         rudderMixer();
 #endif
-        SRVout[Actuators::Control::AILERON1] = map(SRVout[Actuators::Control::AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::AILERON2] = map(SRVout[Actuators::Control::AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::ELEVATOR] = map(SRVout[Actuators::Control::ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::RUDDER] = map(SRVout[Actuators::Control::RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[AILERON1] = map(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[AILERON2] = map(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[ELEVATOR] = map(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[RUDDER] = map(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         actuators.setServoOut(SRVout);
         break;
-    case FlightMode::stabilize:
+    case STABILIZE:
         stabilizeMode();
 #if defined(RUDDER_MIX_IN_STABILIZE)
         rudderMixer();
 #endif
-        SRVout[Actuators::Control::AILERON1] = map(SRVout[Actuators::Control::AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::AILERON2] = map(SRVout[Actuators::Control::AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::ELEVATOR] = map(SRVout[Actuators::Control::ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        SRVout[Actuators::Control::RUDDER] = map(SRVout[Actuators::Control::RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[AILERON1] = map(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[AILERON2] = map(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[ELEVATOR] = map(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        SRVout[RUDDER] = map(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         actuators.setServoOut(SRVout);
         break;
     }
@@ -121,10 +121,10 @@ void ModeController::processMode(void)
 void ModeController::passthroughMode(void)
 {
     planeMixer(radio.getRxRoll(), radio.getRxPitch(), radio.getRxYaw());
-    SRVout[Actuators::Control::AILERON1] = constrain(SRVout[Actuators::Control::AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES);
-    SRVout[Actuators::Control::AILERON2] = constrain(SRVout[Actuators::Control::AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES);
-    SRVout[Actuators::Control::ELEVATOR] = constrain(SRVout[Actuators::Control::ELEVATOR], -PASSTHROUGH_RES, PASSTHROUGH_RES);
-    SRVout[Actuators::Control::RUDDER] = constrain(SRVout[Actuators::Control::RUDDER], -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    SRVout[AILERON1] = constrain(SRVout[AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    SRVout[AILERON2] = constrain(SRVout[AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -PASSTHROUGH_RES, PASSTHROUGH_RES);
+    SRVout[RUDDER] = constrain(SRVout[RUDDER], -PASSTHROUGH_RES, PASSTHROUGH_RES);
 }
 
 // Rate mode uses gyroscope values to maintain a desired rate of change
@@ -140,10 +140,10 @@ void ModeController::rateMode(void)
     int16_t yaw = yawPID->Compute(yawDemand);
 
     planeMixer(roll, pitch, yaw);
-    SRVout[Actuators::Control::AILERON1] = constrain(SRVout[Actuators::Control::AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-    SRVout[Actuators::Control::AILERON2] = constrain(SRVout[Actuators::Control::AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-    SRVout[Actuators::Control::ELEVATOR] = constrain(SRVout[Actuators::Control::ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-    SRVout[Actuators::Control::RUDDER] = constrain(SRVout[Actuators::Control::RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+    SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+    SRVout[AILERON2] = constrain(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+    SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+    SRVout[RUDDER] = constrain(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
 }
 
 // Roll and pitch follow stick input up to set limits
@@ -168,10 +168,10 @@ void ModeController::stabilizeMode(void)
     int16_t yaw = yawPID->Compute(yawDemand);
 
     planeMixer(roll, pitch, yaw);
-    SRVout[Actuators::Control::AILERON1] = constrain(SRVout[Actuators::Control::AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-    SRVout[Actuators::Control::AILERON2] = constrain(SRVout[Actuators::Control::AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-    SRVout[Actuators::Control::ELEVATOR] = constrain(SRVout[Actuators::Control::ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-    SRVout[Actuators::Control::RUDDER] = constrain(SRVout[Actuators::Control::RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+    SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+    SRVout[AILERON2] = constrain(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+    SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+    SRVout[RUDDER] = constrain(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
 }
 
 /*
@@ -198,35 +198,35 @@ void ModeController::stabilizeMode(void)
 static void planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
 {
 #if defined(FULL_PLANE)
-    SRVout[Actuators::Control::AILERON1] = roll;
-    SRVout[Actuators::Control::AILERON2] = roll;
-    SRVout[Actuators::Control::ELEVATOR] = pitch;
-    SRVout[Actuators::Control::RUDDER] = yaw;
+    SRVout[AILERON1] = roll;
+    SRVout[AILERON2] = roll;
+    SRVout[ELEVATOR] = pitch;
+    SRVout[RUDDER] = yaw;
 #elif defined(FULL_PLANE_V_TAIL)
-    SRVout[Actuators::Control::AILERON1] = roll;
-    SRVout[Actuators::Control::AILERON2] = roll;
-    SRVout[Actuators::Control::ELEVATOR] = yaw + pitch;
-    SRVout[Actuators::Control::RUDDER] = yaw - pitch;
+    SRVout[AILERON1] = roll;
+    SRVout[AILERON2] = roll;
+    SRVout[ELEVATOR] = yaw + pitch;
+    SRVout[RUDDER] = yaw - pitch;
 #elif defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
-    SRVout[Actuators::Control::AILERON1] = 0;
-    SRVout[Actuators::Control::AILERON2] = 0;
-    SRVout[Actuators::Control::ELEVATOR] = yaw + pitch;
-    SRVout[Actuators::Control::RUDDER] = yaw - pitch;
+    SRVout[AILERON1] = 0;
+    SRVout[AILERON2] = 0;
+    SRVout[ELEVATOR] = yaw + pitch;
+    SRVout[RUDDER] = yaw - pitch;
 #elif defined(FLYING_WING_W_RUDDER)
-    SRVout[Actuators::Control::AILERON1] = roll - pitch;
-    SRVout[Actuators::Control::AILERON2] = roll + pitch;
-    SRVout[Actuators::Control::ELEVATOR] = 0;
-    SRVout[Actuators::Control::RUDDER] = yaw;
+    SRVout[AILERON1] = roll - pitch;
+    SRVout[AILERON2] = roll + pitch;
+    SRVout[ELEVATOR] = 0;
+    SRVout[RUDDER] = yaw;
 #elif defined(FLYING_WING_NO_RUDDER)
-    SRVout[Actuators::Control::AILERON1] = roll - pitch;
-    SRVout[Actuators::Control::AILERON2] = roll + pitch;
-    SRVout[Actuators::Control::ELEVATOR] = 0;
-    SRVout[Actuators::Control::RUDDER] = 0;
+    SRVout[AILERON1] = roll - pitch;
+    SRVout[AILERON2] = roll + pitch;
+    SRVout[ELEVATOR] = 0;
+    SRVout[RUDDER] = 0;
 #elif defined(RUDDER_ELEVATOR_ONLY_PLANE)
-    SRVout[Actuators::Control::AILERON1] = 0;
-    SRVout[Actuators::Control::AILERON2] = 0;
-    SRVout[Actuators::Control::ELEVATOR] = pitch;
-    SRVout[Actuators::Control::RUDDER] = yaw;
+    SRVout[AILERON1] = 0;
+    SRVout[AILERON2] = 0;
+    SRVout[ELEVATOR] = pitch;
+    SRVout[RUDDER] = yaw;
 #else
 #error No airplane type selected!
 #endif
@@ -236,9 +236,9 @@ static void rudderMixer(void)
 {
 #if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
 #if defined(REVERSE_RUDDER_MIX)
-    SRVout[Actuators::Control::RUDDER] = SRVout[Actuators::Control::RUDDER] - (SRVout[Actuators::Control::AILERON1] * RUDDER_MIXING);
+    SRVout[RUDDER] = SRVout[RUDDER] - (SRVout[AILERON1] * RUDDER_MIXING);
 #else
-    SRVout[Actuators::Control::RUDDER] = SRVout[Actuators::Control::RUDDER] + (SRVout[Actuators::Control::AILERON1] * RUDDER_MIXING);
+    SRVout[RUDDER] = SRVout[RUDDER] + (SRVout[AILERON1] * RUDDER_MIXING);
 #endif
 #endif
 }

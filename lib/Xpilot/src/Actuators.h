@@ -33,29 +33,34 @@ Flight stabilization software
 #define _ACTUATORS_H
 #include <Servo.h>
 #include <inttypes.h>
+#include "config.h"
 
-#define MAX_SERVO_CHANNELS 4
+#if MAX_SERVO_CHANNELS > 12
+#error "Too many servos installed. Max 12 servos per permitted."
+#endif
+
+// Maintain consecutive surface numbering starting from 0
+enum Channel : uint8_t
+{
+    AILERON1 = 0U,
+    AILERON2,
+    ELEVATOR,
+    RUDDER,
+    CHANNEL_COUNT // If adding more control surfaces, ensure this is always at the bottom
+};
 
 class Actuators
 {
 public:
-    enum Control : uint8_t
-    {
-        AILERON1 = 0,
-        AILERON2,
-        ELEVATOR,
-        RUDDER
-    };
-
     Actuators(void);
     void init(void);
     void writeServos(void);
     void setServoOut(const int16_t (&SRVout)[MAX_SERVO_CHANNELS]);
-    int16_t getServoOut(Control);
+    int16_t getServoOut(Channel);
 
 private:
-    Servo controlServo[MAX_SERVO_CHANNELS]; // Flight control surfaces
-    int16_t channelOut[MAX_SERVO_CHANNELS]; // Servo output
+    Servo controlServo[MAX_SERVO_CHANNELS]; // Control servos
+    int16_t channelOut[MAX_SERVO_CHANNELS]; // Servo output values
 };
 
 extern Actuators actuators;

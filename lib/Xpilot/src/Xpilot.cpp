@@ -149,25 +149,25 @@ static void printIO(void)
     Serial.print(radio.getRxRoll());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
-    Serial.println(actuators.getServoOut(Actuators::Control::AILERON1));
+    Serial.println(actuators.getServoOut(AILERON1));
 
     Serial.print("Aileron 2: ");
     Serial.print(radio.getRxRoll());
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
-    Serial.println(actuators.getServoOut(Actuators::Control::AILERON2));
+    Serial.println(actuators.getServoOut(AILERON2));
 
     Serial.print("Elevator: ");
     Serial.print(radio.getRxPitch());
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
-    Serial.println(actuators.getServoOut(Actuators::Control::ELEVATOR));
+    Serial.println(actuators.getServoOut(ELEVATOR));
 
     Serial.print("Rudder: ");
     Serial.print(radio.getRxYaw());
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
-    Serial.println(actuators.getServoOut(Actuators::Control::RUDDER));
+    Serial.println(actuators.getServoOut(RUDDER));
     Serial.println();
 }
 

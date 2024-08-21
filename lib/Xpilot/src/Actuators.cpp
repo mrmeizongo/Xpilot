@@ -1,5 +1,4 @@
 #include "Actuators.h"
-#include "config.h"
 
 Actuators::Actuators(void)
 {
@@ -8,10 +7,10 @@ Actuators::Actuators(void)
 void Actuators::init(void)
 {
     // Set up output servos
-    controlServo[Control::AILERON1].attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    controlServo[Control::AILERON2].attach(AILPIN2_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
-    controlServo[Control::ELEVATOR].attach(ELEVPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
-    controlServo[Control::RUDDER].attach(RUDDPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
+    controlServo[AILERON1].attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[AILERON2].attach(AILPIN2_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
+    controlServo[ELEVATOR].attach(ELEVPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
+    controlServo[RUDDER].attach(RUDDPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
 }
 
 void Actuators::setServoOut(const int16_t (&SRVout)[MAX_SERVO_CHANNELS])
@@ -22,12 +21,12 @@ void Actuators::setServoOut(const int16_t (&SRVout)[MAX_SERVO_CHANNELS])
     }
 }
 
-int16_t Actuators::getServoOut(Control control)
+int16_t Actuators::getServoOut(Channel channel)
 {
-    if (control < 0 || control >= MAX_SERVO_CHANNELS)
+    if (channel < 0 || channel >= CHANNEL_COUNT)
         return -1;
 
-    return channelOut[control];
+    return channelOut[channel];
 }
 
 void Actuators::writeServos(void)
