@@ -43,8 +43,6 @@ public:
     void init(void);
     void updateMode(void);
     void processMode(void);
-    void planeMixer(int16_t, int16_t, int16_t);
-    void rudderMixer(void);
 
 private:
     PID *rollPID;

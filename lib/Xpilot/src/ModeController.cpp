@@ -41,6 +41,9 @@ Flight stabilization software
     rollPID->ResetPID();      \
     pitchPID->ResetPID();     \
     yawPID->ResetPID();
+
+static void planeMixer(int16_t, int16_t, int16_t);
+static void rudderMixer(void);
 // -----------------------------------------------------------------------------------------------------------------
 
 // Servo channel out
@@ -192,7 +195,7 @@ void ModeController::stabilizeMode(void)
  *
  * For Flying Wings, reverse install elevon servos same as you would ailerons for planes
  */
-void ModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
+static void planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
 {
 #if defined(FULL_PLANE)
     SRVout[Actuators::Control::AILERON1] = roll;
@@ -229,7 +232,7 @@ void ModeController::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
 #endif
 }
 
-void ModeController::rudderMixer(void)
+static void rudderMixer(void)
 {
 #if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
 #if defined(REVERSE_RUDDER_MIX)
