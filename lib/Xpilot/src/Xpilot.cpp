@@ -47,8 +47,8 @@ static unsigned long nowMs, outputLastMs = 0;
 // -------------------------
 
 // Debug helper functions
-void printDebug(void);
-void printIO(void);
+static void printDebug(void);
+static void printIO(void) __attribute__((unused));
 // -------------------------
 
 Xpilot::Xpilot(void)
@@ -98,7 +98,7 @@ void Xpilot::loop(void)
 }
 
 // Debug helper functions
-void printDebug(void)
+static void printDebug(void)
 {
 #if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     static unsigned long debugLastMs = 0;
@@ -129,7 +129,7 @@ void printDebug(void)
 #endif
 }
 
-void printIO(void)
+static void printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");
