@@ -196,12 +196,12 @@ Flight stabilization software
 
 // Reverses stabilization output in stabilize mode
 #define REVERSE_ROLL_STABILIZE
-#define REVERSE_PITCH_STABILIZE
+// #define REVERSE_PITCH_STABILIZE
 // #define REVERSE_YAW_STABILIZE
 
 // Reverses gyro output in rate mode
 #define REVERSE_ROLL_GYRO
-// #define REVERSE_PITCH_GYRO
+#define REVERSE_PITCH_GYRO
 #define REVERSE_YAW_GYRO
 
 /*

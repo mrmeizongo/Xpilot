@@ -59,6 +59,7 @@ void Radio::processInput(void)
     if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
         rudderPulseWidth = rudderPulses;
     // Enable interrupts
+
     sei();
 
     // Set stick resolutions
