@@ -99,7 +99,7 @@ void Xpilot::loop(void)
         outputLastMs = nowMs;
     }
 
-#if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(LOOP_DEBUG)
+#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     printDebug();
 #endif
 }
