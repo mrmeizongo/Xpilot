@@ -47,7 +47,7 @@ static unsigned long nowMs, outputLastMs = 0;
 // -------------------------
 
 // Debug helper functions
-static void printDebug(void);
+static void printDebug(void) __attribute__((unused));
 static void printIO(void) __attribute__((unused));
 // -------------------------
 
@@ -98,7 +98,9 @@ void Xpilot::loop(void)
         outputLastMs = nowMs;
     }
 
+#if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(LOOP_DEBUG)
     printDebug();
+#endif
 }
 
 // Debug helper functions
