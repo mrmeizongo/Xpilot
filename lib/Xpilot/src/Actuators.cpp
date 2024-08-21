@@ -14,7 +14,7 @@ void Actuators::init(void)
     controlServo[Control::RUDDER].attach(RUDDPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
 }
 
-void Actuators::setServoOut(const int16_t SRVout[])
+void Actuators::setServoOut(const int16_t (&SRVout)[MAX_SERVO_CHANNELS])
 {
     for (uint8_t i = 0; i < MAX_SERVO_CHANNELS; i++)
     {

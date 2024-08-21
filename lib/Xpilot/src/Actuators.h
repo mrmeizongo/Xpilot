@@ -32,6 +32,7 @@ Flight stabilization software
 #ifndef _ACTUATORS_H
 #define _ACTUATORS_H
 #include <Servo.h>
+#include <inttypes.h>
 
 #define MAX_SERVO_CHANNELS 4
 
@@ -49,7 +50,7 @@ public:
     Actuators(void);
     void init(void);
     void writeServos(void);
-    void setServoOut(const int16_t[]);
+    void setServoOut(const int16_t (&SRVout)[MAX_SERVO_CHANNELS]);
     int16_t getServoOut(Control);
 
 private:
