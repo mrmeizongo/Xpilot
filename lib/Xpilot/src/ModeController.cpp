@@ -239,5 +239,3 @@ void ModeController::rudderMixer(void)
 #endif
 #endif
 }
-
-ModeController modeController;

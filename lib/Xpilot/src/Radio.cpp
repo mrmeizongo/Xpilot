@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <PinChangeInterrupt.h>
 #include "Radio.h"
-#include "ModeController.h"
 #include "config.h"
 
 volatile unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
@@ -83,8 +82,6 @@ void Radio::processInput(void)
     default:
         break;
     }
-
-    modeController.updateMode();
 }
 
 /*

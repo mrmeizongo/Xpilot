@@ -51,6 +51,9 @@ static void printDebug(void);
 static void printIO(void) __attribute__((unused));
 // -------------------------
 
+// Flight mode controller
+ModeController modeController;
+
 Xpilot::Xpilot(void)
 {
 }
@@ -85,6 +88,7 @@ void Xpilot::loop(void)
 
     imu.processIMU();
     radio.processInput();
+    modeController.updateMode();
 
     // Process servo output at 50Hz intervals
     if (nowMs - outputLastMs >= FIFTYHZ_LOOP)
