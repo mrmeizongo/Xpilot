@@ -47,10 +47,10 @@ void Radio::processInput(void)
     {
         if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD)
             rx.currentMode = PASSTHROUGH;
-        else if (modePulses > INPUT_MIN_PWM + INPUT_THRESHOLD)
-            rx.currentMode = RATE;
-        else if (modePulses >= INPUT_MIN_PWM)
+        else if (modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
             rx.currentMode = STABILIZE;
+        else
+            rx.currentMode = RATE;
     }
 
     if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
