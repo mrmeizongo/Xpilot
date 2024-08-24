@@ -60,7 +60,7 @@ template <typename WireType>
 class MPU6050_
 {
     static constexpr uint8_t MPU6050_DEFAULT_ADDRESS{0x68}; // Device address when ADO = 0
-    uint8_t mpu_i2c_addr{MPU6050_DEFAULT_ADDRESS};
+    uint8_t mpu_i2c_addr;
 
     // settings
     MPU6050Setting setting;
@@ -100,7 +100,7 @@ public:
     static constexpr uint16_t CALIB_GYRO_SENSITIVITY{131};    // LSB/degrees/sec
     static constexpr uint16_t CALIB_ACCEL_SENSITIVITY{16384}; // LSB/g
 
-    bool setup(const uint8_t addr, const MPU6050Setting &mpu_setting = MPU6050Setting(), WireType &w = Wire)
+    bool setup(const uint8_t addr = MPU6050_DEFAULT_ADDRESS, const MPU6050Setting &mpu_setting = MPU6050Setting(), WireType &w = Wire)
     {
         // addr should be valid for MPU
         if ((addr < MPU6050_DEFAULT_ADDRESS) || (addr > MPU6050_DEFAULT_ADDRESS + 7))

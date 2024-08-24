@@ -20,7 +20,7 @@ IMU::IMU(void) {}
 void IMU::init(void)
 {
     // Initialize MPU
-    if (!mpu6050.setup(0x68))
+    if (!mpu6050.setup())
     { // change to your own address
         for (;;)
         {
