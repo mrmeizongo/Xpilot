@@ -299,10 +299,10 @@ private:
         delay(200);
 
         // Configure Gyro and Accelerometer
-        // Disable FSYNC and set accel and gyro bandwidth to 44 HZ and 42 Hz, respectively;
-        // minimum delay time for this setting is 4.9 ms, which means sensor fusion update rates cannot
-        // be higher than 1 / 0.0049 = 204 Hz
-        // DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1000 Hz for both
+        // Disable FSYNC and set accelerometer and gyroscope bandwidth to 44 HZ and 42 Hz, respectively;
+        // Minimum delay time for this setting is 4.8 ms, which means sensor fusion update rates cannot
+        // be higher than 1 / 0.0048 = 208 Hz
+        // Setting DLPF_CFG = bits 2:0 = 100; this limits the sample rate to 1000 Hz for both acccelerometer and gyroscope
         // With the MPU6050, it is possible to get gyro sample rates of 8 kHz, or 1 kHz
         uint8_t mpu_config = (uint8_t)setting.gyro_dlpf_cfg;
         write_byte(MPU_CONFIG, mpu_config);
