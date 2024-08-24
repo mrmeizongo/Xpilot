@@ -592,7 +592,7 @@ private:
         self_test_data[3] = read_byte(SELF_TEST_A);
 
         // Accel self test values are stored in 2 registers; i.e. SELF_TEST_X, Y and Z and A
-        // First 2 bytes of accel are stored in SELF_TEST_A X[5,4], Y[3,2] and Z[1,0] and the last 3 bits are stored in SELF_TEST_X, Y, and Z
+        // First 2 bits of accel are stored in SELF_TEST_A X[5,4], Y[3,2] and Z[1,0] and the last 3 bits are stored in SELF_TEST_X, Y, and Z
         self_test_result[0] = ((self_test_data[0] & 0xE0) >> 3) | ((self_test_data[3] & 0x30) >> 4); // Xa
         self_test_result[1] = ((self_test_data[1] & 0xE0) >> 3) | ((self_test_data[3] & 0x0C) >> 2); // Ya
         self_test_result[2] = ((self_test_data[2] & 0xE0) >> 3) | ((self_test_data[3] & 0x03));      // Za
