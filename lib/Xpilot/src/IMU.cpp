@@ -34,7 +34,7 @@ void IMU::init(void)
 #if defined(SELF_TEST_ACCEL_GYRO)
     mpu6050.verbose(true);
     mpu6050.selftest() ? Serial.println("Self test passed.") : Serial.println("Self test failed");
-    while (true)
+    for (;;)
         ;
 #endif
 
