@@ -52,7 +52,7 @@ struct MPU6050Setting
 {
     ACCEL_FS_SEL accel_fs_sel{ACCEL_FS_SEL::A2G};
     GYRO_FS_SEL gyro_fs_sel{GYRO_FS_SEL::G250DPS};
-    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_250HZ};
+    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_200HZ};
     GYRO_DLPF_CFG gyro_dlpf_cfg{GYRO_DLPF_CFG::DLPF_42HZ};
 };
 
