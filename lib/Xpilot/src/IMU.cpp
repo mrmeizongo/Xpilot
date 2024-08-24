@@ -6,12 +6,12 @@
  * Uncomment CALIBRATION_DEBUG to obtain these values
  * See NOTICE section in README.md for more information
  */
-#define ACC_X_BIAS 1618.32f
-#define ACC_Y_BIAS -126.62f
-#define ACC_Z_BIAS 3664.28f
-#define GYRO_X_BIAS -343.52f
-#define GYRO_Y_BIAS -57.49f
-#define GYRO_Z_BIAS -111.62f
+#define ACC_X_BIAS 919.48f
+#define ACC_Y_BIAS -437.80f
+#define ACC_Z_BIAS 3838.37f
+#define GYRO_X_BIAS -344.23f
+#define GYRO_Y_BIAS -31.68f
+#define GYRO_Z_BIAS -105.15f
 
 #define IMU_WARMUP_LOOP 1000U
 
@@ -65,19 +65,19 @@ void IMU::processIMU(void)
     if (mpu6050.update())
     {
 #if defined(REVERSE_ROLL_STABILIZE)
-        ahrs_roll = -((mpu6050.getRoll() + IMU_ROLL_TRIM));
+        ahrs_roll = -(mpu6050.getRoll() + IMU_ROLL_TRIM);
 #else
-        ahrs_roll = (mpu6050.getRoll() + IMU_ROLL_TRIM);
+        ahrs_roll = mpu6050.getRoll() + IMU_ROLL_TRIM;
 #endif
 
 #if defined(REVERSE_PITCH_STABILIZE)
-        ahrs_pitch = -((mpu6050.getPitch() + IMU_PITCH_TRIM));
+        ahrs_pitch = -(mpu6050.getPitch() + IMU_PITCH_TRIM);
 #else
-        ahrs_pitch = (mpu6050.getPitch() + IMU_PITCH_TRIM);
+        ahrs_pitch = mpu6050.getPitch() + IMU_PITCH_TRIM;
 #endif
 
 #if defined(REVERSE_YAW_STABILIZE)
-        ahrs_yaw = -mpu6050.getYaw();
+        ahrs_yaw = -(mpu6050.getYaw());
 #else
         ahrs_yaw = mpu6050.getYaw();
 #endif
@@ -87,11 +87,13 @@ void IMU::processIMU(void)
 #else
         gyroX = mpu6050.getGyroX();
 #endif
+
 #if defined(REVERSE_PITCH_GYRO)
         gyroY = -(mpu6050.getGyroY());
 #else
         gyroY = mpu6050.getGyroY();
 #endif
+
 #if defined(REVERSE_YAW_GYRO)
         gyroZ = -(mpu6050.getGyroZ());
 #else
