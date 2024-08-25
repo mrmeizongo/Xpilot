@@ -183,7 +183,7 @@ Flight stabilization software
 // Radio resolution values
 
 // Stick resolution in passthrough mode
-#define PASSTHROUGH_RES 1000
+#define PASSTHROUGH_RES 700
 
 // Stick resolution in rate mode (degrees)
 #define MAX_ROLL_RATE_DEGS 60
