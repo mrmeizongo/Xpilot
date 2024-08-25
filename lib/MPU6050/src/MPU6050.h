@@ -34,7 +34,7 @@ enum class FIFO_SAMPLE_RATE : uint8_t
     SMPL_125HZ,
 };
 
-enum class GYRO_DLPF_CFG : uint8_t
+enum class ACCEL_GYRO_DLPF_CFG : uint8_t
 {
     DLPF_256HZ,
     DLPF_188HZ,
@@ -52,8 +52,8 @@ struct MPU6050Setting
 {
     ACCEL_FS_SEL accel_fs_sel{ACCEL_FS_SEL::A2G};
     GYRO_FS_SEL gyro_fs_sel{GYRO_FS_SEL::G250DPS};
-    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_333HZ};
-    GYRO_DLPF_CFG gyro_dlpf_cfg{GYRO_DLPF_CFG::DLPF_98HZ};
+    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_250HZ};
+    ACCEL_GYRO_DLPF_CFG accel_gyro_dlpf_cfg{ACCEL_GYRO_DLPF_CFG::DLPF_42HZ};
 };
 
 template <typename WireType>
@@ -299,17 +299,20 @@ private:
         delay(200);
 
         // Configure Gyro and Accelerometer
-        // Disable FSYNC and set accelerometer and gyroscope bandwidth to 94 HZ and 98 Hz, respectively;
-        // Minimum delay time for this setting is 2.8 ms, which means sensor fusion update rates cannot
-        // be higher than 1 / 0.0028 = 357 Hz
-        // Setting DLPF_CFG = bits 2:0 = 100; this limits the sample rate to 1000 Hz for both acccelerometer and gyroscope
+        // Disable FSYNC and set accelerometer and gyroscope DLPF bandwidth to 44 HZ and 42 Hz, respectively;
+        // According to the Nyquist theorem, to accurately capture data filtered at an arbitrary frequency,
+        // the sample rate should be at least twice the filter rate(which, in this case, would be 84Hz)
+        // However, a good rule of thumb is 3-5 times the frequency. This is based on practical considerations as simply doubling
+        // the frequency might not be enough in real-world applications such as robotics or drones.
+        // Aiming for the higher end gives us 220Hz and 210Hz(44Hz * 5, 42Hz x 5) so we're going to use 250Hz for our sample rate
+        // Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1000 Hz for both accelerometer and gyroscope
         // With the MPU6050, it is possible to get gyro sample rates of 8 kHz, or 1 kHz
-        uint8_t mpu_config = (uint8_t)setting.gyro_dlpf_cfg;
+        uint8_t mpu_config = (uint8_t)setting.accel_gyro_dlpf_cfg;
         write_byte(MPU_CONFIG, mpu_config);
 
         // Set sample rate = gyroscope output rate/(1 + SMPLRT_DIV)
         uint8_t sample_rate = (uint8_t)setting.fifo_sample_rate;
-        write_byte(SMPLRT_DIV, sample_rate); // Use a 333Hz rate; a rate consistent with the filter update rate
+        write_byte(SMPLRT_DIV, sample_rate); // Use a 250Hz rate; a rate consistent with the filter update rate
                                              // determined inset in CONFIG above
 
         // Set gyroscope full scale range
@@ -328,7 +331,7 @@ private:
         write_byte(ACCEL_CONFIG, c);                  // Write new ACCEL_CONFIG register value
 
         // The accelerometer, gyro, and thermometer are set to 1 kHz sample rates,
-        // but all these rates are further reduced by a factor of 3 to 333 Hz because of the SMPLRT_DIV setting
+        // but all these rates are further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting
 
         // Configure Interrupts and Bypass Enable
         // Set interrupt pin active high, push-pull, hold interrupt pin level HIGH until interrupt cleared,
