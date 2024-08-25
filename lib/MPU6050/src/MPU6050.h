@@ -143,19 +143,17 @@ public:
 
         update_accel_gyro();
 
-        // Madgwick function needs to be fed North, East, and Down direction like
-        // (AN, AE, AD, GN, GE, GD)
-        // Accel and Gyro direction is Right-Hand, X-Forward, Z-Up
-        // Magneto direction is Right-Hand, Y-Forward, Z-Down
-        // So to adopt to the general Aircraft coordinate system (Right-Hand, X-Forward, Z-Down),
-        // we need to feed (ax, -ay, -az, gx, -gy, -gz)
-        // but we pass (-ax, ay, az, gx, -gy, -gz)
-        // because gravity is by convention positive down, we need to ivnert the accel data
-
-        // get quaternion based on aircraft coordinate (Right-Hand, X-Forward, Z-Down)
-        // acc[mg], gyro[deg/s]
-        // gyro will be convert from [deg/s] to [rad/s] inside of this function
-        // quat_filter.update(-a[0], a[1], a[2], g[0] * DEG_TO_RAD, -g[1] * DEG_TO_RAD, -g[2] * DEG_TO_RAD, q);
+        /*
+         * Madgwick function needs to be fed North, East, and Down direction like
+         * (AN, AE, AD, GN, GE, GD)
+         * Accel and Gyro direction is Right-Hand, X-Forward, Z-Up
+         * Magneto direction is Right-Hand, Y-Forward, Z-Down
+         * So to adopt to the general Aircraft coordinate system (Right-Hand, X-Forward, Z-Down),
+         * we need to feed (ax, -ay, -az, gx, -gy, -gz) but we pass (-ax, ay, az, gx, -gy, -gz)
+         * because gravity is by convention positive down, we need to invert the accel data.
+         * Get quaternion based on aircraft coordinate (Right-Hand, X-Forward, Z-Down)
+         * Gyro will be converted from [deg/s] to [rad/s] inside of this function.
+         */
 
         float an = -a[0];
         float ae = +a[1];
