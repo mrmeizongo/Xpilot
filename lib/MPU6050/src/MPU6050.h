@@ -295,7 +295,7 @@ private:
         delay(100);                   // Wait for all registers to reset
 
         // get stable time source
-        write_byte(PWR_MGMT_1, 0x01); // Auto select clock source to be PLL gyroscope reference if ready else
+        write_byte(PWR_MGMT_1, 0x01); // Auto select clock source to be PLL gyroscope reference
         delay(200);
 
         // Configure Gyro and Accelerometer
@@ -306,6 +306,7 @@ private:
         // the frequency might not be enough in real-world applications such as robotics or drones.
         // Aiming for the higher end gives us 220Hz and 210Hz(44Hz * 5, 42Hz x 5) so we're going to use 250Hz for our sample rate
         // Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1000 Hz for both accelerometer and gyroscope
+        // This is further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting
         // With the MPU6050, it is possible to get gyro sample rates of 8 kHz, or 1 kHz
         uint8_t mpu_config = (uint8_t)setting.accel_gyro_dlpf_cfg;
         write_byte(MPU_CONFIG, mpu_config);
@@ -329,9 +330,6 @@ private:
         c = c & ~0x18;                                // Clear ACCEL_FS_SEL bits [4:3]
         c = c | (uint8_t(setting.accel_fs_sel) << 3); // Set full scale range for the accelerometer
         write_byte(ACCEL_CONFIG, c);                  // Write new ACCEL_CONFIG register value
-
-        // The accelerometer, gyro, and thermometer are set to 1 kHz sample rates,
-        // but all these rates are further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting
 
         // Configure Interrupts and Bypass Enable
         // Set interrupt pin active high, push-pull, hold interrupt pin level HIGH until interrupt cleared,
