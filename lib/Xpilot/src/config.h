@@ -202,12 +202,12 @@ Flight stabilization software
 // - on pitch up, + on down pitch down
 // + on right yaw, - on left yaw
 
-// Reverses stabilization output
+// Uncomment to reverse stabilization output
 #define REVERSE_ROLL_STABILIZE
 // #define REVERSE_PITCH_STABILIZE
 // #define REVERSE_YAW_STABILIZE
 
-// Reverses gyro output
+// Uncomment to reverse gyro output
 #define REVERSE_ROLL_GYRO
 #define REVERSE_PITCH_GYRO
 #define REVERSE_YAW_GYRO
