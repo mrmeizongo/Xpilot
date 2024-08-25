@@ -166,7 +166,7 @@ Flight stabilization software
 
 /*
  * Trim values to be used to correct gyro misalignment
- * You might want to modify these to suit your airplane
+ * Modify these values to suit your airplane if not calibrated properly
  */
 
 #define IMU_ROLL_TRIM 0.f
@@ -196,6 +196,11 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // Uncomment or comment to set and unset respectively
+// This depends on the mount direction of the MPU6050 on the circuit board
+// Based on the aircraft coordinate system (Right-Hand, X-Forward, Z-Down)
+// + on right roll, - on left roll
+// - on pitch up, + on down pitch down
+// + on right yaw, - on left yaw
 
 // Reverses stabilization output in stabilize mode
 #define REVERSE_ROLL_STABILIZE
