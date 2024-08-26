@@ -48,10 +48,18 @@ enum ACCEL_GYRO_DLPF_CFG : uint8_t
 
 struct MPU6050Setting
 {
-    ACCEL_FS_SEL accel_fs_sel{ACCEL_FS_SEL::A2G};
-    GYRO_FS_SEL gyro_fs_sel{GYRO_FS_SEL::G250DPS};
-    FIFO_SAMPLE_RATE fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_250HZ};
-    ACCEL_GYRO_DLPF_CFG accel_gyro_dlpf_cfg{ACCEL_GYRO_DLPF_CFG::DLPF_42HZ};
+    ACCEL_FS_SEL accel_fs_sel;
+    GYRO_FS_SEL gyro_fs_sel;
+    FIFO_SAMPLE_RATE fifo_sample_rate;
+    ACCEL_GYRO_DLPF_CFG accel_gyro_dlpf_cfg;
+
+    MPU6050Setting()
+        : accel_fs_sel{ACCEL_FS_SEL::A2G}, gyro_fs_sel{GYRO_FS_SEL::G250DPS},
+          fifo_sample_rate{FIFO_SAMPLE_RATE::SMPL_1000HZ}, accel_gyro_dlpf_cfg{ACCEL_GYRO_DLPF_CFG::DLPF_256HZ} {}
+
+    MPU6050Setting(ACCEL_FS_SEL _accel_fs_sel, GYRO_FS_SEL _gyro_fs_sel, FIFO_SAMPLE_RATE _fifo_sample_rate, ACCEL_GYRO_DLPF_CFG _accel_gyro_dlpf_cfg)
+        : accel_fs_sel{_accel_fs_sel}, gyro_fs_sel{_gyro_fs_sel},
+          fifo_sample_rate{_fifo_sample_rate}, accel_gyro_dlpf_cfg{_accel_gyro_dlpf_cfg} {}
 };
 
 template <typename WireType>
@@ -289,17 +297,16 @@ private:
         write_byte(PWR_MGMT_1, 0x01); // Auto select clock source to be PLL gyroscope reference
         delay(200);
 
-        // Configure Gyro and Accelerometer
-        // Disable FSYNC and set accelerometer and gyroscope DLPF to 3; bandwidths 44Hz and 42Hz respectively
-        // DLPF 3 also introduces a processing delay of 4.8ms which will set the filtering frequency to 208Hz
-        // We don't want to go below this value for our sample rate so will use 250Hz(i.e. SMPRT_DIV = 3)
-        // Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1kHz for both accelerometer and gyroscope
-        // This is further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting (gyroscope output rate/(1 + SMPLRT_DIV))
+        // Configure Accelerometer & Gyro
+        // If MPUSetting is not defined and passed to setup, the default settings are as follows
+        // Accelerometer full scale range is +/-250 deg/s and Gyro is +/-2g (highest sensitivity)
+        // Accelerometer outputs data at 1kHz and Gyro at 8kHz
+        // SMPLRT_DIV is 0; setting Sample Rate to 8kHz ( Sample Rate = Gyroscope Output Rate / 1 + SMPLRT_DIV)
+        // DLPF is set to 256Hz bandwidth and has a delay of 0.98ms
         uint8_t mpu_config = (uint8_t)setting.accel_gyro_dlpf_cfg;
         write_byte(MPU_CONFIG, mpu_config);
         uint8_t sample_rate = (uint8_t)setting.fifo_sample_rate;
-        write_byte(SMPLRT_DIV, sample_rate); // Use a 250Hz rate; a rate consistent with the filter update rate
-                                             // determined inset in CONFIG above
+        write_byte(SMPLRT_DIV, sample_rate);
 
         // Set gyroscope full scale range
         // Range selects FS_SEL and GFS_SEL are 0 - 3, so 2-bit values are left-shifted into positions 4:3
