@@ -22,9 +22,9 @@ enum class GYRO_FS_SEL
     G2000DPS
 };
 
-enum class FIFO_SAMPLE_RATE : uint8_t
+enum FIFO_SAMPLE_RATE : uint8_t
 {
-    SMPL_1000HZ,
+    SMPL_1000HZ = 0,
     SMPL_500HZ,
     SMPL_333HZ,
     SMPL_250HZ,
@@ -34,9 +34,9 @@ enum class FIFO_SAMPLE_RATE : uint8_t
     SMPL_125HZ,
 };
 
-enum class ACCEL_GYRO_DLPF_CFG : uint8_t
+enum ACCEL_GYRO_DLPF_CFG : uint8_t
 {
-    DLPF_256HZ,
+    DLPF_256HZ = 0,
     DLPF_188HZ,
     DLPF_98HZ,
     DLPF_42HZ,
