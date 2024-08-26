@@ -16,7 +16,7 @@ enum class ACCEL_FS_SEL : uint8_t
     A16G
 };
 
-// Gyro sensitivity - G250DPS (most sensitivity)
+// Gyro sensitivity - G250DPS (most sensitive)
 enum class GYRO_FS_SEL : uint8_t
 {
     G250DPS,
