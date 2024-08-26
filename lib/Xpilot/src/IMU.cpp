@@ -31,6 +31,7 @@ void IMU::init(void)
      *
      * Settings options are;
      *
+     * Accel sensitivity            Gyro sensitivity            FIFO sample rate            Accel & Gyro DLPF config
      * enum class ACCEL_FS_SEL      enum class GYRO_FS_SEL      enum class SAMPLE_RATE      enum class ACCEL_GYRO_DLPF_CFG
      * {                            {                           {                           {
      *      A2G,                        G250DPS,                    SMPL_1000HZ = 0,            DLPF_260HZx256HZ = 0,
