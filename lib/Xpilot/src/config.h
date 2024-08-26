@@ -183,6 +183,8 @@ Flight stabilization software
 // Radio resolution values
 
 // Stick resolution in passthrough mode
+// This assumes a centered servo is exactly at the midpoint of MAX and MIN
+// Change if not
 #define PASSTHROUGH_RES ((SERVO_MAX_PWM) - (SERVO_MIN_PWM)) / 2
 
 // Stick resolution in rate mode (degrees)

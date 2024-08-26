@@ -290,19 +290,13 @@ private:
         delay(200);
 
         // Configure Gyro and Accelerometer
-        // Disable FSYNC and set accelerometer and gyroscope DLPF bandwidth to 44 HZ and 42 Hz, respectively;
-        // According to the Nyquist theorem, to accurately capture data filtered at an arbitrary frequency,
-        // the sample rate should be at least twice the filter rate(which, in this case, would be 84Hz)
-        // However, a good rule of thumb is 3-5 times the frequency. This is based on practical considerations as simply doubling
-        // the frequency might not be enough in real-world applications such as robotics or drones.
-        // Aiming for the higher end gives us 220Hz and 210Hz(44Hz * 5, 42Hz x 5) so we're going to use 250Hz for our sample rate
-        // Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1000 Hz for both accelerometer and gyroscope
-        // This is further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting
-        // With the MPU6050, it is possible to get gyro sample rates of 8 kHz, or 1 kHz
+        // Disable FSYNC and set accelerometer and gyroscope DLPF to 3; bandwidths 44Hz and 42Hz respectively
+        // DLPF 3 also introduces a processing delay of 4.8ms which will set the filtering frequency to 208Hz
+        // We don't want to go below this value for our sample rate so will use 250Hz(i.e. SMPRT_DIV = 3)
+        // Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1kHz for both accelerometer and gyroscope
+        // This is further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting (gyroscope output rate/(1 + SMPLRT_DIV))
         uint8_t mpu_config = (uint8_t)setting.accel_gyro_dlpf_cfg;
         write_byte(MPU_CONFIG, mpu_config);
-
-        // Set sample rate = gyroscope output rate/(1 + SMPLRT_DIV)
         uint8_t sample_rate = (uint8_t)setting.fifo_sample_rate;
         write_byte(SMPLRT_DIV, sample_rate); // Use a 250Hz rate; a rate consistent with the filter update rate
                                              // determined inset in CONFIG above
