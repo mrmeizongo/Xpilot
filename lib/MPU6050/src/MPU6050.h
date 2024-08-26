@@ -8,7 +8,7 @@
 #include "QuaternionFilter.h"
 
 // Accel sensitivity - A2G (most sensitive)
-enum class ACCEL_FS_SEL
+enum class ACCEL_FS_SEL : uint8_t
 {
     A2G,
     A4G,
@@ -17,7 +17,7 @@ enum class ACCEL_FS_SEL
 };
 
 // Gyro sensitivity - G250DPS (most sensitivity)
-enum class GYRO_FS_SEL
+enum class GYRO_FS_SEL : uint8_t
 {
     G250DPS,
     G500DPS,
@@ -28,7 +28,7 @@ enum class GYRO_FS_SEL
 // Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV)
 // This assumes ACCEL_GYRO_DLPF_CFG is set to DLPF_184HZx188HZ - DLPF_5HZx5HZ, setting gyro and accelerometer output to 1kHz
 // If ACCEL_GYRO_DLPF_CFG is set to DLPF_260HZx256HZ or DLPF_RESERVED, gyro output and Sample Rate is 8kHz, accelerometer is still 1kHz
-enum SAMPLE_RATE : uint8_t
+enum class SAMPLE_RATE : uint8_t
 {
     SMPL_1000HZ = 0,
     SMPL_500HZ,
@@ -41,7 +41,7 @@ enum SAMPLE_RATE : uint8_t
 };
 
 // AccelxGyro filter Bandwidth
-enum ACCEL_GYRO_DLPF_CFG : uint8_t
+enum class ACCEL_GYRO_DLPF_CFG : uint8_t
 {
     DLPF_260HZx256HZ = 0, // Accel delay 0ms, Gyro delay 0.98ms
     DLPF_184HZx188HZ,     // Accel delay 2.0ms, Gyro delay 1.9ms
