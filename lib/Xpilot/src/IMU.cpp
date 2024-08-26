@@ -20,7 +20,7 @@ IMU::IMU(void) {}
 
 void IMU::init(void)
 {
-    // Disable FSYNC and set accelerometer and gyroscope DLPF to 3; bandwidths 44Hz and 42Hz respectively
+    // Disable External FSYNC and set accelerometer and gyroscope DLPF to 3; bandwidths 44Hz and 42Hz respectively
     // DLPF 3 also introduces a processing delay of 4.8ms which will set the filtering frequency to 208Hz
     // We don't want to go below this value for our sample rate so will use 250Hz(i.e. SMPRT_DIV = 3)
     // Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1kHz for both accelerometer and gyroscope
