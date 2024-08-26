@@ -25,7 +25,7 @@ void IMU::init(void)
     // We don't want to go below this value for our sample rate so will use 250Hz(i.e. SMPRT_DIV = 3)
     // Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1kHz for both accelerometer and gyroscope
     // This is further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting (gyroscope output rate/(1 + SMPLRT_DIV))
-    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, FIFO_SAMPLE_RATE::SMPL_250HZ, ACCEL_GYRO_DLPF_CFG::DLPF_42HZ);
+    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE::SMPL_250HZ, ACCEL_GYRO_DLPF_CFG::DLPF_44HZx42HZ);
 
     // Initialize MPU
     if (!mpu6050.setup(MPU6050_ADDRESS, setting))
