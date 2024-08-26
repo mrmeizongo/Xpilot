@@ -6,25 +6,44 @@
  * Uncomment CALIBRATION_DEBUG to obtain these values
  * See NOTICE section in README.md for more information
  */
-#define ACC_X_BIAS 113.87f
-#define ACC_Y_BIAS -79.00f
-#define ACC_Z_BIAS -339.75f
-#define GYRO_X_BIAS -559.22f
-#define GYRO_Y_BIAS 5.75f
-#define GYRO_Z_BIAS -21.94f
+#define ACC_X_BIAS 919.48f
+#define ACC_Y_BIAS -437.80f
+#define ACC_Z_BIAS 3838.37f
+#define GYRO_X_BIAS -344.23f
+#define GYRO_Y_BIAS -31.68f
+#define GYRO_Z_BIAS -105.15f
 
 #define IMU_WARMUP_LOOP 1000U
 #define MPU6050_ADDRESS 0x68
 
-IMU::IMU(void) {}
+IMU::IMU(void)
+{
+}
 
 void IMU::init(void)
 {
-    // Disable External FSYNC and set accelerometer and gyroscope DLPF to 3; bandwidths 44Hz and 42Hz respectively
-    // DLPF 3 also introduces a processing delay of 4.8ms which will set the filtering frequency to 208Hz
-    // We don't want to go below this value for our sample rate so will use 250Hz(i.e. SMPRT_DIV = 3)
-    // Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1kHz for both accelerometer and gyroscope
-    // This is further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting (gyroscope output rate/(1 + SMPLRT_DIV))
+    /*
+     * Disable External FSYNC and set accelerometer and gyroscope DLPF to 3; bandwidths 44Hz and 42Hz respectively
+     * DLPF 3 also introduces a processing delay of 4.8ms which will set the filtering frequency to 208Hz
+     * We don't want to go below this value for our sample rate so will use 250Hz(i.e. SMPRT_DIV = 3)
+     * Setting DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1kHz for both accelerometer and gyroscope
+     * This is further reduced by a factor of 4 to 250 Hz because of the SMPLRT_DIV setting (gyroscope output rate/(1 + SMPLRT_DIV))
+     *
+     * Settings options are;
+     *
+     * enum class ACCEL_FS_SEL      enum class GYRO_FS_SEL      enum SAMPLE_RATE : uint8_t      enum ACCEL_GYRO_DLPF_CFG : uint8_t
+     * {                            {                           {                               {
+     *      A2G,                        G250DPS,                    SMPL_1000HZ = 0,                DLPF_260HZx256HZ = 0,
+     *      A4G,                        G500DPS,                    SMPL_500HZ,                     DLPF_184HZx188HZ,
+     *      A8G,                        G1000DPS,                   SMPL_333HZ,                     DLPF_94HZx98HZ,
+     *      A16G                        G2000DPS                    SMPL_250HZ,                     DLPF_44HZx42HZ,
+     * };                           };                              SMPL_200HZ,                     DLPF_21HZx20HZ,
+     *                                                              SMPL_167HZ,                     DLPF_10HZx10HZ,
+     *                                                              SMPL_143HZ,                     DLPF_5HZx5HZ,
+     *                                                              SMPL_125HZ                      DLPF_RESERVED
+     *                                                          };                              };
+     * See MPU6050 library for more details
+     */
     MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE::SMPL_250HZ, ACCEL_GYRO_DLPF_CFG::DLPF_44HZx42HZ);
 
     // Initialize MPU

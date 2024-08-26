@@ -34,7 +34,7 @@ enum SAMPLE_RATE : uint8_t
     SMPL_200HZ,
     SMPL_167HZ,
     SMPL_143HZ,
-    SMPL_125HZ,
+    SMPL_125HZ
 };
 
 // AccelxGyro Bandwidth
@@ -47,7 +47,7 @@ enum ACCEL_GYRO_DLPF_CFG : uint8_t
     DLPF_21HZx20HZ,       // Accel delay 8.5ms, Gyro delay 8.3ms
     DLPF_10HZx10HZ,       // Accel delay 13.8ms, Gyro delay 13.4ms
     DLPF_5HZx5HZ,         // Accel delay 19.0ms, Gyro delay 18.6ms
-    DLPF_RESERVED,
+    DLPF_RESERVED
 };
 
 struct MPU6050Setting
@@ -329,9 +329,9 @@ private:
 
         // Configure Interrupts and Bypass Enable
         // Set interrupt pin active high, push-pull, hold interrupt pin level HIGH until interrupt cleared,
-        // clear on read of INT_STATUS, and enable I2C_BYPASS_EN so additional chips
+        // clear INT_STATUS on any read operation, and enable I2C_BYPASS_EN so additional chips
         // can join the I2C bus and all can be controlled by the Arduino as master
-        write_byte(INT_PIN_CFG, 0x22);
+        write_byte(INT_PIN_CFG, 0x32);
         write_byte(INT_ENABLE, 0x01); // Enable data ready (bit 0) interrupt
         delay(100);
     }
