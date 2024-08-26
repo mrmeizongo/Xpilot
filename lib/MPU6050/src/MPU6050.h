@@ -7,6 +7,7 @@
 #include "MPU6050RegisterMap.h"
 #include "QuaternionFilter.h"
 
+// Accel sensitivity - A2G (most sensitive)
 enum class ACCEL_FS_SEL
 {
     A2G,
@@ -14,6 +15,8 @@ enum class ACCEL_FS_SEL
     A8G,
     A16G
 };
+
+// Gyro sensitivity - G250DPS (most sensitivity)
 enum class GYRO_FS_SEL
 {
     G250DPS,
@@ -37,7 +40,7 @@ enum SAMPLE_RATE : uint8_t
     SMPL_125HZ
 };
 
-// AccelxGyro Bandwidth
+// AccelxGyro filter Bandwidth
 enum ACCEL_GYRO_DLPF_CFG : uint8_t
 {
     DLPF_260HZx256HZ = 0, // Accel delay 0ms, Gyro delay 0.98ms
