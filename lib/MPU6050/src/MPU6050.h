@@ -22,9 +22,9 @@ enum class GYRO_FS_SEL
     G2000DPS
 };
 
-// Sample Rate Gyroscope Output Rate / (1 + SMPLRT_DIV)
-// This assumes ACCEL_GYRO_DLPF_CFG is set to DLPF_188Hz - DLPF_5Hz
-// If ACCEL_GYRO_DLPF_CFG is DLPF_256Hz or DLPF_RESERVED, gyro runs at 8kHz so multiply by 8
+// Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV)
+// This assumes ACCEL_GYRO_DLPF_CFG is set to DLPF_188Hz - DLPF_5Hz, setting gyro output at 1kHz
+// If ACCEL_GYRO_DLPF_CFG is DLPF_256Hz or DLPF_RESERVED, gyro outputs at 8kHz so multiply by 8
 enum SAMPLE_RATE : uint8_t
 {
     SMPL_1000HZ = 0,
