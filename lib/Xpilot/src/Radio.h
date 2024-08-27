@@ -19,6 +19,14 @@ struct Control
     int16_t yaw;
     FlightMode currentMode;
     FlightMode previousMode;
+
+    Control(void) {}
+
+    Control(int16_t _roll, int16_t _pitch, int16_t _yaw, FlightMode _currentMode, FlightMode _previousMode)
+        : roll{_roll}, pitch{_pitch}, yaw{_yaw}, currentMode{_currentMode}, previousMode{_previousMode} {}
+
+    Control(int16_t _roll, int16_t _pitch, int16_t _yaw, FlightMode _currentMode)
+        : roll{_roll}, pitch{_pitch}, yaw{_yaw}, currentMode{_currentMode}, previousMode{_currentMode} {}
 };
 
 class Radio

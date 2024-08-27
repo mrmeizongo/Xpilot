@@ -60,7 +60,7 @@ struct MPU6050Setting
     SAMPLE_RATE sample_rate;
     ACCEL_GYRO_DLPF_CFG accel_gyro_dlpf_cfg;
 
-    MPU6050Setting()
+    MPU6050Setting(void)
         : accel_fs_sel{ACCEL_FS_SEL::A2G}, gyro_fs_sel{GYRO_FS_SEL::G250DPS},
           sample_rate{SAMPLE_RATE::SMPL_1000HZ}, accel_gyro_dlpf_cfg{ACCEL_GYRO_DLPF_CFG::DLPF_260HZx256HZ} {}
 

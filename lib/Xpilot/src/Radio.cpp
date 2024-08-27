@@ -36,7 +36,7 @@ void Radio::init(void)
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
 
     // Default rx values on power up
-    rx = {0, 0, 0, RATE, RATE};
+    rx = Control{0, 0, 0, RATE};
 }
 
 void Radio::processInput(void)
