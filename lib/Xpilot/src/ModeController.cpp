@@ -37,11 +37,6 @@ Flight stabilization software
 #include "config.h"
 
 // Helper functions
-#define RESETPIDCONTROLLERS() \
-    rollPID->ResetPID();      \
-    pitchPID->ResetPID();     \
-    yawPID->ResetPID();
-
 static void planeMixer(int16_t, int16_t, int16_t);
 static void rudderMixer(void);
 // -----------------------------------------------------------------------------------------------------------------
@@ -71,7 +66,9 @@ void ModeController::updateMode(void)
     if (radio.rx.previousMode == radio.rx.currentMode)
         return;
 
-    RESETPIDCONTROLLERS();
+    rollPID->ResetPID();
+    pitchPID->ResetPID();
+    yawPID->ResetPID();
     radio.rx.previousMode = radio.rx.currentMode;
 }
 
