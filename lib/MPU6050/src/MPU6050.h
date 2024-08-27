@@ -470,13 +470,12 @@ private:
         write_byte(USER_CTRL, 0x40); // Enable FIFO
         write_byte(FIFO_EN, 0x78);   // Enable gyro and accelerometer sensors for FIFO  (max size 1024 bytes in MPU-6050)
         delay(80);                   // accumulate 80 samples in 80 milliseconds = 960 bytes to prevent FIFO overflow
+        write_byte(FIFO_EN, 0x00);   // Disable gyro and accelerometer sensors for FIFO after samples collected
     }
 
     void collect_acc_gyro_data_to(float *a_bias, float *g_bias)
     {
-        // At end of sample accumulation, turn off FIFO sensor read
         uint8_t data[12];                     // data array to hold accelerometer and gyro x, y, z, data
-        write_byte(FIFO_EN, 0x00);            // Disable gyro and accelerometer sensors for FIFO
         read_bytes(FIFO_COUNTH, 2, &data[0]); // read FIFO sample count
         uint16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
         uint16_t packet_count = fifo_count / 12; // How many sets of full gyro and accelerometer data for averaging
