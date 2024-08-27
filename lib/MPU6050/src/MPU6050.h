@@ -462,14 +462,14 @@ private:
 
         // Configure MPU6050 gyro and accelerometer for bias calculation
         write_byte(MPU_CONFIG, 0x01);   // Set gyro low-pass filter to 188 Hz and accel to 184 Hz
-        write_byte(SMPLRT_DIV, 0x00);   // Set sample rate to 1 kHz
+        write_byte(SMPLRT_DIV, 0x00);   // Set sample rate to 1 kHz (1 sample/ms)
         write_byte(GYRO_CONFIG, 0x00);  // Set gyro full-scale to 250 degrees per second, maximum sensitivity
         write_byte(ACCEL_CONFIG, 0x00); // Set accelerometer full-scale to 2 g, maximum sensitivity
 
         // Configure FIFO to capture accelerometer and gyro data for bias calculation
         write_byte(USER_CTRL, 0x40); // Enable FIFO
         write_byte(FIFO_EN, 0x78);   // Enable gyro and accelerometer sensors for FIFO  (max size 1024 bytes in MPU-6050)
-        delay(85);                   // accumulate 85 samples in 85 milliseconds = 1020 bytes to prevent FIFO overflow
+        delay(85);                   // Accumulate 85 samples in 85 milliseconds = 1020 bytes to prevent FIFO overflow
     }
 
     void collect_acc_gyro_data_to(float *a_bias, float *g_bias)
