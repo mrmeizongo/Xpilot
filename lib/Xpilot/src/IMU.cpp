@@ -25,7 +25,7 @@ void IMU::init(void)
     /*
      * Disable External FSYNC and set DLPF_CFG to 3; bandwidths 44Hz and 42Hz respectively to eliminate effects of vibration from airplane
      * Setting DLPF_CFG to 3 limits the sample rate to 1kHz for both accelerometer and gyroscope and introduces a delay of 4.8ms
-     * The sample frequency is further reduced by a factor of 4 because of the SMPLRT_DIV setting (gyroscope output rate/(1 + SMPLRT_DIV))
+     * The sample rate is further reduced by a factor of 4 because of the SMPLRT_DIV setting (gyroscope output rate/(1 + SMPLRT_DIV))
      * Due to the filtering delay of 4.8ms by the DLPF, gyroscope data is processed and stabilized at a frequency of 208Hz
      * We don't want to go below this value for our sample rate so we will use the next highest value of 250Hz(i.e. SMPRT_DIV 3 = SMPL_250HZ).
      * The Arduino Nano runs the entire loop in ~333Hz so it will handle IMU processing at 250Hz comfortably
