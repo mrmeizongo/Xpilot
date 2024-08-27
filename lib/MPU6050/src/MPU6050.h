@@ -469,16 +469,24 @@ private:
         // Configure FIFO to capture accelerometer and gyro data for bias calculation
         write_byte(USER_CTRL, 0x40); // Enable FIFO
         write_byte(FIFO_EN, 0x78);   // Enable gyro and accelerometer sensors for FIFO  (max size 1024 bytes in MPU-6050)
-        delay(80);                   // accumulate 80 samples in 80 milliseconds = 960 bytes to prevent FIFO overflow
-        write_byte(FIFO_EN, 0x00);   // Disable gyro and accelerometer sensors for FIFO after samples collected
+        delay(85);                   // accumulate 85 samples in 85 milliseconds = 1020 bytes to prevent FIFO overflow
     }
 
     void collect_acc_gyro_data_to(float *a_bias, float *g_bias)
     {
         uint8_t data[12];                     // data array to hold accelerometer and gyro x, y, z, data
+        write_byte(FIFO_EN, 0x00);            // Disable gyro and accelerometer sensors for FIFO after samples collected
         read_bytes(FIFO_COUNTH, 2, &data[0]); // read FIFO sample count
         uint16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
         uint16_t packet_count = fifo_count / 12; // How many sets of full gyro and accelerometer data for averaging
+        if (b_verbose)
+        {
+            Serial.print("Accel & Gyro FIFO packets obtained: ");
+            Serial.println(fifo_count);
+            Serial.print("Sets of ");
+            Serial.print(packet_count);
+            Serial.println(" full accel and gyro data acquired for bias calculation.");
+        }
 
         for (uint16_t ii = 0; ii < packet_count; ii++)
         {
