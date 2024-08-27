@@ -28,7 +28,7 @@ public:
     void init(void);
     void processInput(void);
 
-    friend void ModeController::updateMode();
+    friend void ModeController::updateMode(void);
 
     int16_t getRxRoll(void) { return rx.roll; }
     int16_t getRxPitch(void) { return rx.pitch; }
