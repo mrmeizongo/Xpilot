@@ -149,7 +149,7 @@ Flight stabilization software
 
 // Roll
 #define ROLL_KP 14.2f
-#define ROLL_KI 10.8f
+#define ROLL_KI 11.0f
 #define ROLL_KD 0.02f
 // Pitch
 #define PITCH_KP 5.1f

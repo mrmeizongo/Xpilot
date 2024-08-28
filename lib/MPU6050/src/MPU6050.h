@@ -377,7 +377,7 @@ private:
         int16_t raw_acc_gyro_data[7];       // used to read all 14 bytes at once from the MPU6050 accel/gyro
         read_accel_gyro(raw_acc_gyro_data); // INT cleared on any read
 
-        // Now we'll calculate the accleration value into actual g's
+        // Now we'll calculate the acceleration value into actual g's
         a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution; // get actual g value, this depends on scale being set
         a[1] = ((float)raw_acc_gyro_data[1] - acc_bias[1]) * acc_resolution;
         a[2] = ((float)raw_acc_gyro_data[2] - acc_bias[2]) * acc_resolution;
