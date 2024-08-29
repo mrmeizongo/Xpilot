@@ -15,6 +15,7 @@
 
 #define IMU_WARMUP_LOOP 1000U
 #define MPU6050_ADDRESS 0x68
+#define I2C_CLOCK_400KHZ 400000U
 
 IMU::IMU(void)
 {
@@ -22,6 +23,8 @@ IMU::IMU(void)
 
 void IMU::init(void)
 {
+    Wire.begin();
+    Wire.setClock(I2C_CLOCK_400KHZ); // Setting I2C clock to 400Khz
     /*
      * Disable External FSYNC and set DLPF_CFG to 3; bandwidths 44Hz and 42Hz respectively to eliminate effects of vibration from airplane
      * Setting DLPF_CFG to 3 limits the sample rate to 1kHz for both accelerometer and gyroscope and introduces a delay of 4.8ms

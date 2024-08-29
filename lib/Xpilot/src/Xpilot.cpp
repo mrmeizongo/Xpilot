@@ -40,7 +40,6 @@ Flight stabilization software
 
 #define FIFTYHZ_LOOP 20U
 #define ONEHZ_LOOP 1000U
-#define I2C_CLOCK_400KHZ 400000U
 
 // Timer variables
 static unsigned long nowMs, outputLastMs = 0;
@@ -61,9 +60,6 @@ Xpilot::Xpilot(void)
 
 void Xpilot::setup(void)
 {
-    Wire.begin();
-    Wire.setClock(I2C_CLOCK_400KHZ); // Setting I2C clock to 400Khz
-
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
     Serial.begin(9600);
     while (!Serial)
