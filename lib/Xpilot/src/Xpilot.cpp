@@ -63,10 +63,7 @@ void Xpilot::setup(void)
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
     Serial.begin(9600);
     while (!Serial)
-    {
-        Serial.println("Serial port communication cannot be established.");
-        delay(1000);
-    }
+        ; // Wait for Serial port to open
 #endif
 
     imu.init();            // Initialize IMU
