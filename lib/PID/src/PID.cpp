@@ -28,12 +28,10 @@
 PID::PID() {}
 
 PID::PID(float _Kp, float _Ki, float _Kd, float _IMax)
+    : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, IMax{_IMax}
 {
-    Kp = _Kp;
-    Ki = _Ki;
-    Kd = _Kd;
-    IMax = _IMax;
-    ResetI();
+    // set previousDerivative as invalid on startup
+    previousDerivative = NAN;
 }
 
 // Resets PID
@@ -52,10 +50,10 @@ int16_t PID::Compute(float currentError)
     float deltaTime = (float)dt * 0.001f;
 
     // if this PID hasn't been used for a full second then zero
-    // the intergator term. This prevents I buildup from a
+    // the integrator term. This prevents I buildup from a
     // previous fight mode from causing a massive return before
     // the integrator gets a chance to correct itself
-    if (previousTime == 0 || dt >= 1000)
+    if (previousTime == 0 || dt > 1000)
     {
         dt = 0;
         ResetI();

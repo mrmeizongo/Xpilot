@@ -45,8 +45,8 @@ public:
 
 private:
     float Kp;
-    float Kd;
     float Ki;
+    float Kd;
     float IMax;
 
     /// Low pass filter cut frequency for derivative calculation.
@@ -59,6 +59,6 @@ private:
     float integrator;
     float previousError;
     float previousDerivative; // for low-pass filter calculation
-    unsigned long previousTime = 0;
+    unsigned long previousTime;
 };
 #endif //_PID_H
