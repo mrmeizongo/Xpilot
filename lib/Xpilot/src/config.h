@@ -145,23 +145,26 @@ Flight stabilization software
 #define INPUT_THRESHOLD 200
 // ------------------------------------------------------------------------------------------------------
 
+// PID output limits
+#define MAX_PID_OUTPUT 1000
+
 // PID gain values
 
 // Roll
 #define ROLL_KP 14.2f
 #define ROLL_KI 11.0f
 #define ROLL_KD 0.02f
+#define ROLL_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point
 // Pitch
 #define PITCH_KP 5.1f
 #define PITCH_KI 1.3f
 #define PITCH_KD 0.01f
+#define PITCH_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point
 // Yaw
-#define YAW_KP 9.1f
+#define YAW_KP 10.0f
 #define YAW_KI 0.0f
 #define YAW_KD 0.0f
-
-// PID output limits
-#define MAX_PID_OUTPUT 1000
+#define YAW_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -193,8 +196,8 @@ Flight stabilization software
 #define MAX_YAW_RATE_DEGS 50
 
 // Max angles allowed in stabilize mode (angles)
-#define MAX_ROLL_ANGLE_DEGS 60
-#define MAX_PITCH_ANGLE_DEGS 60
+#define MAX_ROLL_ANGLE_DEGS 45
+#define MAX_PITCH_ANGLE_DEGS 30
 // ------------------------------------------------------------------------------------------------------
 
 // Uncomment or comment to set and unset respectively

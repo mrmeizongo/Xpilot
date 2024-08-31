@@ -2,7 +2,6 @@
 #define _RADIO_H
 
 #include <inttypes.h>
-#include "ModeController.h"
 #include "config.h"
 
 enum FlightMode : uint8_t
@@ -18,15 +17,11 @@ struct Control
     int16_t pitch;
     int16_t yaw;
     FlightMode currentMode;
-    FlightMode previousMode;
 
     Control(void) {}
 
-    Control(int16_t _roll, int16_t _pitch, int16_t _yaw, FlightMode _currentMode, FlightMode _previousMode)
-        : roll{_roll}, pitch{_pitch}, yaw{_yaw}, currentMode{_currentMode}, previousMode{_previousMode} {}
-
     Control(int16_t _roll, int16_t _pitch, int16_t _yaw, FlightMode _currentMode)
-        : roll{_roll}, pitch{_pitch}, yaw{_yaw}, currentMode{_currentMode}, previousMode{_currentMode} {}
+        : roll{_roll}, pitch{_pitch}, yaw{_yaw}, currentMode{_currentMode} {}
 };
 
 class Radio
@@ -35,8 +30,6 @@ public:
     Radio(void);
     void init(void);
     void processInput(void);
-
-    friend void ModeController::updateMode(void);
 
     int16_t getRxRoll(void) { return rx.roll; }
     int16_t getRxPitch(void) { return rx.pitch; }

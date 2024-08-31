@@ -27,31 +27,91 @@
 
 PID::PID() {}
 
-PID::PID(float _Kp, float _Ki, float _Kd)
+PID::PID(float _Kp, float _Ki, float _Kd, float _IMax)
 {
     Kp = _Kp;
     Ki = _Ki;
     Kd = _Kd;
-    ResetPID();
+    IMax = _IMax;
+    ResetI();
 }
 
 // Resets PID
-void PID::ResetPID(void)
+void PID::ResetI(void)
 {
-    previousError = 0;
-    integral = 0;
-    previousTime = millis();
+    integrator = 0;
+    previousDerivative = NAN;
 }
 
 // Main function to be called to get PID control value
 int16_t PID::Compute(float currentError)
 {
     unsigned long currentTime = millis();
-    float dt = currentTime - previousTime;
-    dt = (dt * 0.001f);
-    integral += (currentError * dt);
-    float derivative = (currentError - previousError) / dt;
-    previousError = currentError;
+    unsigned long dt = currentTime - previousTime;
+    float output = 0.0f;
+    float deltaTime = (float)dt * 0.001f;
+
+    // if this PID hasn't been used for a full second then zero
+    // the intergator term. This prevents I buildup from a
+    // previous fight mode from causing a massive return before
+    // the integrator gets a chance to correct itself
+    if (previousTime == 0 || dt >= 1000)
+    {
+        dt = 0;
+        ResetI();
+    }
+
+    // Compute proportional component
+    output += currentError * Kp;
+
+    // Compute integral component if time has elapsed
+    if ((fabsf(Ki) > 0) && (dt > 0))
+    {
+        integrator += (currentError * Ki) * deltaTime;
+        // Limit integrator wind up
+        if (integrator < -IMax)
+        {
+            integrator = -IMax;
+        }
+        else if (integrator > IMax)
+        {
+            integrator = IMax;
+        }
+        output += integrator;
+    }
+
+    // Compute derivative component if time has elapsed
+    if ((fabsf(Kd) > 0) && (dt > 0))
+    {
+        float derivative;
+
+        if (isnanf(previousDerivative))
+        {
+            // Reset called. Suppress first derivative term
+            // as we don't want a sudden change in input to cause
+            // a large D output change
+            derivative = 0;
+            previousDerivative = 0;
+        }
+        else
+            derivative = (currentError - previousError) / deltaTime;
+
+        // discrete low pass filter, cuts out the
+        // high frequency noise that can drive the controller crazy
+        float RC = 1 / (2 * M_PI * fCut);
+        derivative = previousDerivative +
+                     ((deltaTime / (RC + deltaTime)) *
+                      (derivative - previousDerivative));
+
+        // Update state
+        previousError = currentError;
+        previousDerivative = derivative;
+
+        // Add in derivative component
+        output += derivative * Kd;
+    }
+
+    // Save last time Compute was run
     previousTime = currentTime;
-    return static_cast<int16_t>((Kp * currentError) + (Ki * integral) + (Kd * derivative));
+    return static_cast<int16_t>(output);
 }

@@ -51,25 +51,9 @@ ModeController::ModeController(void)
 
 void ModeController::init(void)
 {
-    rollPID = new PID(ROLL_KP, ROLL_KI, ROLL_KD);
-    pitchPID = new PID(PITCH_KP, PITCH_KI, PITCH_KD);
-    yawPID = new PID(YAW_KP, YAW_KI, YAW_KD);
-}
-
-/*
- * Update flight mode from mode switch position
- * Function has access to radio private rx variable
- * See Radio
- */
-void ModeController::updateMode(void)
-{
-    if (radio.rx.previousMode == radio.rx.currentMode)
-        return;
-
-    rollPID->ResetPID();
-    pitchPID->ResetPID();
-    yawPID->ResetPID();
-    radio.rx.previousMode = radio.rx.currentMode;
+    rollPID = new PID(ROLL_KP, ROLL_KI, ROLL_KD, ROLL_I_WINDUP_MAX);
+    pitchPID = new PID(PITCH_KP, PITCH_KI, PITCH_KD, PITCH_I_WINDUP_MAX);
+    yawPID = new PID(YAW_KP, YAW_KI, YAW_KD, YAW_I_WINDUP_MAX);
 }
 
 void ModeController::processMode(void)

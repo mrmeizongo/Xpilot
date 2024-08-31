@@ -30,10 +30,10 @@ Copyright (C) 2024 Jamal Meizongo
 class PID
 {
 public:
-    PID();                    // Empty Constructor
-    PID(float, float, float); // Constructor with initialization parameters
-    void ResetPID(void);      // Reset PID controller parameters
-    int16_t Compute(float);   // Generate the PID output to be added to the servo
+    PID();                           // Empty Constructor
+    PID(float, float, float, float); // Constructor with initialization parameters
+    void ResetI(void);               // Reset PID integrator
+    int16_t Compute(float);          // Generate the PID output to be added to the servo
 
     float getKp(void) { return Kp; }
     float getKi(void) { return Ki; }
@@ -47,9 +47,18 @@ private:
     float Kp;
     float Kd;
     float Ki;
+    float IMax;
 
-    float integral;
+    /// Low pass filter cut frequency for derivative calculation.
+    ///
+    /// 20 Hz because anything over that is probably noise, see
+    /// http://en.wikipedia.org/wiki/Low-pass_filter.
+    ///
+    static const uint8_t fCut = 20;
+
+    float integrator;
     float previousError;
-    unsigned long previousTime;
+    float previousDerivative; // for low-pass filter calculation
+    unsigned long previousTime = 0;
 };
 #endif //_PID_H
