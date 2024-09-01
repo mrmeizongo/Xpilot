@@ -47,7 +47,7 @@ int16_t PID::Compute(float currentError)
     unsigned long currentTime = millis();
     unsigned long dt = currentTime - previousTime;
     float output = 0.0f;
-    float deltaTime = (float)dt * 0.001f;
+    float deltaTime;
 
     // if this PID hasn't been used for a full second then zero
     // the integrator term. This prevents I buildup from a
@@ -59,6 +59,9 @@ int16_t PID::Compute(float currentError)
         ResetI();
     }
 
+    deltaTime = (float)dt * 0.001f;
+    // Save last time Compute was run
+    previousTime = currentTime;
     // Compute proportional component
     output += currentError * Kp;
 
@@ -109,7 +112,5 @@ int16_t PID::Compute(float currentError)
         output += derivative * Kd;
     }
 
-    // Save last time Compute was run
-    previousTime = currentTime;
     return static_cast<int16_t>(output);
 }
