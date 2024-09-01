@@ -30,7 +30,7 @@ PID::PID() {}
 PID::PID(float _Kp, float _Ki, float _Kd, float _IMax)
     : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, IMax{_IMax}
 {
-    // set previousDerivative as invalid on startup
+    // Set previousDerivative as invalid on startup
     previousDerivative = NAN;
 }
 
@@ -38,7 +38,7 @@ PID::PID(float _Kp, float _Ki, float _Kd, float _IMax)
 void PID::ResetI(void)
 {
     integrator = 0;
-    // set previousDerivative as invalid on reset
+    // Set previousDerivative as invalid on reset
     previousDerivative = NAN;
 }
 
@@ -50,7 +50,7 @@ int16_t PID::Compute(float currentError)
     float output = 0.0f;
     float deltaTime;
 
-    // if this PID hasn't been used for a full second then zero
+    // If this PID hasn't been used for a full second then zero
     // the integrator term. This prevents I buildup from a
     // previous fight mode from causing a massive return before
     // the integrator gets a chance to correct itself
@@ -98,7 +98,7 @@ int16_t PID::Compute(float currentError)
         else
             derivative = (currentError - previousError) / deltaTime;
 
-        // discrete low pass filter, cuts out the
+        // Riscrete low pass filter, cuts out the
         // high frequency noise that can drive the controller crazy
         float RC = 1 / (2 * M_PI * fCut);
         derivative = previousDerivative +
