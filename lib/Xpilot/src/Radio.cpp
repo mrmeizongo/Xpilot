@@ -8,7 +8,7 @@ volatile unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 
 volatile unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
 volatile unsigned long modeCurrentTime, modeStartTime, modePulses = 0;
 
-uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
+static uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 // -------------------------
 
 // Helper function to set Radio rx values
