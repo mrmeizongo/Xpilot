@@ -38,6 +38,7 @@ PID::PID(float _Kp, float _Ki, float _Kd, float _IMax)
 void PID::ResetI(void)
 {
     integrator = 0;
+    // set previousDerivative as invalid on reset
     previousDerivative = NAN;
 }
 
