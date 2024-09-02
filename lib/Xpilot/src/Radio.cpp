@@ -103,6 +103,8 @@ void PinChangeInterruptEvent(AILPIN_INT)(void)
         aileronPulses = aileronCurrentTime - aileronStartTime;
         aileronStartTime = aileronCurrentTime;
     }
+    else
+        aileronStartTime = 0;
 }
 
 void PinChangeInterruptEvent(ELEVPIN_INT)(void)
@@ -113,6 +115,8 @@ void PinChangeInterruptEvent(ELEVPIN_INT)(void)
         elevatorPulses = elevatorCurrentTime - elevatorStartTime;
         elevatorStartTime = elevatorCurrentTime;
     }
+    else
+        elevatorStartTime = 0;
 }
 
 void PinChangeInterruptEvent(RUDDPIN_INT)(void)
@@ -123,6 +127,8 @@ void PinChangeInterruptEvent(RUDDPIN_INT)(void)
         rudderPulses = rudderCurrentTime - rudderStartTime;
         rudderStartTime = rudderCurrentTime;
     }
+    else
+        rudderStartTime = 0;
 }
 
 void PinChangeInterruptEvent(MODEPIN_INT)(void)
@@ -133,6 +139,8 @@ void PinChangeInterruptEvent(MODEPIN_INT)(void)
         modePulses = modeCurrentTime - modeStartTime;
         modeStartTime = modeCurrentTime;
     }
+    else
+        modeStartTime = 0;
 }
 //  ----------------------------
 
