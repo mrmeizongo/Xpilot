@@ -38,10 +38,12 @@ public:
     float getKp(void) { return Kp; }
     float getKi(void) { return Ki; }
     float getKd(void) { return Kd; }
+    float getIMax(void) { return IMax; }
 
     void setKp(float _Kp) { Kp = _Kp; }
     void setKi(float _Ki) { Ki = _Ki; }
     void setKd(float _Kd) { Kd = _Kd; }
+    void setIMax(float _IMax) { IMax = _IMax; }
 
 private:
     float Kp;
