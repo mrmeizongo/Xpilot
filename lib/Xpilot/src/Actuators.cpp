@@ -23,7 +23,7 @@ void Actuators::setServoOut(const int16_t (&SRVout)[MAX_SERVO_CHANNELS])
 
 int16_t Actuators::getServoOut(Channel channel)
 {
-    if (channel < 0 || channel >= CHANNEL_COUNT)
+    if (channel < 0 || channel >= MAX_SERVO_CHANNELS)
         return -1;
 
     return channelOut[channel];

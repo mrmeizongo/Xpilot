@@ -45,8 +45,7 @@ enum Channel : uint8_t
     AILERON1 = 0U,
     AILERON2,
     ELEVATOR,
-    RUDDER,
-    CHANNEL_COUNT // If adding more control surfaces, ensure this is always at the bottom
+    RUDDER
 };
 
 class Actuators
