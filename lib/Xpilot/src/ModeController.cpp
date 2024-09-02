@@ -158,8 +158,7 @@ void ModeController::stabilizeMode(void)
 /*
  * Mixer for airplane type
  * Only tested with a full plane i.e. ailerons, elevator and rudder
- * Proceed with caution. Depends heavily on the direction of servo travel.
- * Perform thorough pre flight checks and reverse as needed.
+ * Proceed with caution. Perform thorough pre-flight checks and reverse servo direction as needed.
  *
  * Default
  * For V-Tail - If servos are mounted on top, with face of servo facing the same direction
