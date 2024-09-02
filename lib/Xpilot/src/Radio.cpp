@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <util/atomic.h>
 #include <PinChangeInterrupt.h>
 #include "Radio.h"
 #include "config.h"
@@ -41,26 +42,26 @@ void Radio::init(void)
 
 void Radio::processInput(void)
 {
-    cli(); // Disable interrupts as pulses are being read
-    // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
-    if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
+    ATOMIC_BLOCK(ATOMIC_FORCEON)
     {
-        if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD)
-            rx.currentMode = PASSTHROUGH;
-        else if (modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
-            rx.currentMode = STABILIZE;
-        else
-            rx.currentMode = RATE;
+        // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
+        if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
+        {
+            if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD)
+                rx.currentMode = PASSTHROUGH;
+            else if (modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
+                rx.currentMode = STABILIZE;
+            else
+                rx.currentMode = RATE;
+        }
+
+        if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
+            aileronPulseWidth = aileronPulses;
+        if (elevatorPulses >= INPUT_MIN_PWM && elevatorPulses <= INPUT_MAX_PWM)
+            elevatorPulseWidth = elevatorPulses;
+        if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
+            rudderPulseWidth = rudderPulses;
     }
-
-    if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
-        aileronPulseWidth = aileronPulses;
-    if (elevatorPulses >= INPUT_MIN_PWM && elevatorPulses <= INPUT_MAX_PWM)
-        elevatorPulseWidth = elevatorPulses;
-    if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
-        rudderPulseWidth = rudderPulses;
-
-    sei(); // Enable interrupts
 
     // Set stick resolutions
     switch (rx.currentMode)
