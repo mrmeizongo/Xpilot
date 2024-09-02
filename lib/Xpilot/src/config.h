@@ -158,11 +158,11 @@ Flight stabilization software
 // Pitch
 #define PITCH_KP 5.1f
 #define PITCH_KI 1.3f
-#define PITCH_KD 0.03f
+#define PITCH_KD 0.01f
 #define PITCH_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point
 // Yaw
 #define YAW_KP 10.0f
-#define YAW_KI 0.0f
+#define YAW_KI 1.6f
 #define YAW_KD 0.0f
 #define YAW_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point
 // ------------------------------------------------------------------------------------------------------
