@@ -109,9 +109,9 @@ void IMU::processIMU(void)
 #endif
 
 #if defined(REVERSE_YAW_STABILIZE)
-        ahrs_yaw = -(mpu6050.getYaw());
+        ahrs_yaw = -(mpu6050.getYaw() + IMU_YAW_TRIM);
 #else
-        ahrs_yaw = mpu6050.getYaw();
+        ahrs_yaw = mpu6050.getYaw() + IMU_YAW_TRIM;
 #endif
 
 #if defined(REVERSE_ROLL_GYRO)
