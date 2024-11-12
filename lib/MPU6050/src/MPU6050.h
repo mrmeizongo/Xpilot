@@ -398,7 +398,7 @@ private:
     void read_accel_gyro(int16_t *destination)
     {
         uint8_t raw_data[14];                                                // x/y/z accel register data stored here
-        read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);                          // Read the 14 raw data registers into data array, register data 6 & 7 not used
+        read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);                          // Read the 14 raw data registers into data array, register data(temperature) 6 & 7 not used
         destination[0] = ((int16_t)raw_data[0] << 8) | (int16_t)raw_data[1]; // Turn the MSB and LSB into a signed 16-bit value
         destination[1] = ((int16_t)raw_data[2] << 8) | (int16_t)raw_data[3];
         destination[2] = ((int16_t)raw_data[4] << 8) | (int16_t)raw_data[5];
