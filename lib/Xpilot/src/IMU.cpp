@@ -6,12 +6,12 @@
  * Uncomment CALIBRATION_DEBUG to obtain these values
  * See NOTICE section in README.md for more information
  */
-#define ACC_X_BIAS 919.48f
-#define ACC_Y_BIAS -437.80f
-#define ACC_Z_BIAS 3838.37f
-#define GYRO_X_BIAS -344.23f
-#define GYRO_Y_BIAS -31.68f
-#define GYRO_Z_BIAS -105.15f
+#define ACC_X_BIAS 1029.76f
+#define ACC_Y_BIAS 273.84f
+#define ACC_Z_BIAS -491.22f
+#define GYRO_X_BIAS -548.62f
+#define GYRO_Y_BIAS -5.19f
+#define GYRO_Z_BIAS -29.84f
 
 #define IMU_WARMUP_LOOP 1000U
 #define MPU6050_ADDRESS 0x68

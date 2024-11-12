@@ -93,7 +93,7 @@ void Radio::processInput(void)
  * RC transmitters are designed to send a pulse to the receiver every 20ms within this range, going HIGH for the duration of the pulse and LOW otherwise
  * If the output of the channel on the receiver is attached to an interrupt pin on the arduino, we can use it to drive a pin change interrupt ISR
  * The ISR simply records the time between the changes
- * millis() causes problems when called in an ISR so we play it safe and use micros() instead (1us -> 1000ms)
+ * millis() causes problems when called in an ISR so we play it safe and use micros() instead (1000us -> 1ms)
  */
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
