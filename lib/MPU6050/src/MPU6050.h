@@ -333,9 +333,9 @@ private:
 
         // Configure Interrupts and Bypass Enable
         // Set interrupt pin active high, push-pull, hold interrupt pin level HIGH until interrupt cleared,
-        // clear INT_STATUS on any read operation, and enable I2C_BYPASS_EN so additional chips
+        // clear INT_STATUS when INT_STATUS is read, and enable I2C_BYPASS_EN so additional chips
         // can join the I2C bus and all can be controlled by the Arduino as master
-        write_byte(INT_PIN_CFG, 0x32);
+        write_byte(INT_PIN_CFG, 0x22);
         write_byte(INT_ENABLE, 0x01); // Enable data ready (bit 0) interrupt
         delay(100);
     }
@@ -375,8 +375,8 @@ private:
 
     void update_accel_gyro()
     {
-        int16_t raw_acc_gyro_data[6];       // holds 12 bytes from the MPU6050 accel/gyro data register
-        read_accel_gyro(raw_acc_gyro_data); // INT cleared on any read
+        int16_t raw_acc_gyro_data[6]; // holds 16 bits in 2's complement from the MPU6050 accel/gyro data register
+        read_accel_gyro(raw_acc_gyro_data);
 
         // Now we'll transform the acceleration value into actual g's
         a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution; // get actual g value, this depends on scale being set
