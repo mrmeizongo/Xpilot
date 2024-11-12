@@ -152,7 +152,7 @@ Flight stabilization software
 // Edit these for your plane
 
 // Roll
-#define ROLL_KP 1.f
+#define ROLL_KP 1.0f
 #define ROLL_KI 0.f
 #define ROLL_KD 0.f
 #define ROLL_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point

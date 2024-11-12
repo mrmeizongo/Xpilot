@@ -1,4 +1,4 @@
 .pio/
 .vs/
 .vscode/
-/lib/Xpilot/src/config.h
+lib/Xpilot/src/config.h
