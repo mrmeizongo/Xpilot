@@ -157,6 +157,7 @@ public:
             return false;
 
         update_accel_gyro();
+        // update_temperature();
 
         /*
          * Madgwick function needs to be fed North, East, and Down direction like
@@ -374,34 +375,36 @@ private:
 
     void update_accel_gyro()
     {
-        int16_t raw_acc_gyro_data[7];       // used to read all 14 bytes at once from the MPU6050 accel/gyro
+        int16_t raw_acc_gyro_data[6];       // holds 12 bytes from the MPU6050 accel/gyro data register
         read_accel_gyro(raw_acc_gyro_data); // INT cleared on any read
 
-        // Now we'll calculate the acceleration value into actual g's
+        // Now we'll transform the acceleration value into actual g's
         a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution; // get actual g value, this depends on scale being set
         a[1] = ((float)raw_acc_gyro_data[1] - acc_bias[1]) * acc_resolution;
         a[2] = ((float)raw_acc_gyro_data[2] - acc_bias[2]) * acc_resolution;
 
-        temperature_count = raw_acc_gyro_data[3];               // Read the adc values
-        temperature = (float)(temperature_count / 340) + 36.53; // Temperature in degrees Centigrade
+        // Transform the gyro value into actual degrees per second
+        g[0] = ((float)raw_acc_gyro_data[3] - gyro_bias[0]) * gyro_resolution; // get actual gyro value, this depends on scale being set
+        g[1] = ((float)raw_acc_gyro_data[4] - gyro_bias[1]) * gyro_resolution;
+        g[2] = ((float)raw_acc_gyro_data[5] - gyro_bias[2]) * gyro_resolution;
+    }
 
-        // Calculate the gyro value into actual degrees per second
-        g[0] = ((float)raw_acc_gyro_data[4] - gyro_bias[0]) * gyro_resolution; // get actual gyro value, this depends on scale being set
-        g[1] = ((float)raw_acc_gyro_data[5] - gyro_bias[1]) * gyro_resolution;
-        g[2] = ((float)raw_acc_gyro_data[6] - gyro_bias[2]) * gyro_resolution;
+    void update_temperature()
+    {
+        temperature_count = read_temperature_data();            // Read the adc values
+        temperature = (float)(temperature_count / 340) + 36.53; // Temperature in degrees centigrade
     }
 
     void read_accel_gyro(int16_t *destination)
     {
         uint8_t raw_data[14];                                                // x/y/z accel register data stored here
-        read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);                          // Read the 14 raw data registers into data array
+        read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);                          // Read the 14 raw data registers into data array, register data 6 & 7 not used
         destination[0] = ((int16_t)raw_data[0] << 8) | (int16_t)raw_data[1]; // Turn the MSB and LSB into a signed 16-bit value
         destination[1] = ((int16_t)raw_data[2] << 8) | (int16_t)raw_data[3];
         destination[2] = ((int16_t)raw_data[4] << 8) | (int16_t)raw_data[5];
-        destination[3] = ((int16_t)raw_data[6] << 8) | (int16_t)raw_data[7];
-        destination[4] = ((int16_t)raw_data[8] << 8) | (int16_t)raw_data[9];
-        destination[5] = ((int16_t)raw_data[10] << 8) | (int16_t)raw_data[11];
-        destination[6] = ((int16_t)raw_data[12] << 8) | (int16_t)raw_data[13];
+        destination[3] = ((int16_t)raw_data[8] << 8) | (int16_t)raw_data[9];
+        destination[4] = ((int16_t)raw_data[10] << 8) | (int16_t)raw_data[11];
+        destination[5] = ((int16_t)raw_data[12] << 8) | (int16_t)raw_data[13];
     }
 
     int16_t read_temperature_data()

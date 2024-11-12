@@ -4,6 +4,7 @@
 /*
  * ACCEL & GYRO biases obtained from running calibration function
  * Uncomment CALIBRATION_DEBUG to obtain these values
+ * TODO: Save these values in EEPROM
  * See NOTICE section in README.md for more information
  */
 #define ACC_X_BIAS 1029.76f
