@@ -83,7 +83,7 @@ void Xpilot::loop(void)
     imu.processIMU();
     radio.processInput();
 
-    // Process servo output at 50Hz intervals
+    // Process servo output at 50Hz
     if (nowMs - outputLastMs >= FIFTYHZ_LOOP)
     {
         modeController.processMode();

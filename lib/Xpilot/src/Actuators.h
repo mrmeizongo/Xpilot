@@ -39,13 +39,15 @@ Flight stabilization software
 #error "Too many servos installed. Max 12 servos permitted on Arduino Nano due to number of timers."
 #endif
 
-// Maintain consecutive surface numbering starting from 0
+// Maintain consecutive flight control surface numbering starting from 0
 enum Channel : uint8_t
 {
     AILERON1 = 0U,
     AILERON2,
     ELEVATOR,
-    RUDDER
+    RUDDER,
+    FLAP1,
+    FLAP2
 };
 
 class Actuators
