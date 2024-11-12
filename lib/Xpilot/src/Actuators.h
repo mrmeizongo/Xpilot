@@ -36,7 +36,7 @@ Flight stabilization software
 #include "config.h"
 
 #if SERVO_CHANNELS > 12
-#error "Too many servos installed. Max 12 servos per permitted."
+#error "Too many servos installed. Max 12 servos permitted on Arduino Nano due to number of timers."
 #endif
 
 // Maintain consecutive surface numbering starting from 0
