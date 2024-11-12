@@ -42,7 +42,7 @@ static void rudderMixer(void);
 // -----------------------------------------------------------------------------------------------------------------
 
 // Servo channel out
-static int16_t SRVout[MAX_SERVO_CHANNELS]{0, 0, 0, 0};
+static int16_t SRVout[SERVO_CHANNELS]{0, 0, 0, 0};
 // -----------------------------------------------------------------------------------------------------------------
 
 ModeController::ModeController(void)

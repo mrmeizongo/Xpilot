@@ -109,7 +109,7 @@ Flight stabilization software
 #define RUDDPIN_OUTPUT 11
 
 // Max 12 servos
-#define MAX_SERVO_CHANNELS 4
+#define SERVO_CHANNELS 4
 // ------------------------------------------------------------------------------------------------------
 
 /*

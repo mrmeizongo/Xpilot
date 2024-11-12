@@ -35,7 +35,7 @@ Flight stabilization software
 #include <inttypes.h>
 #include "config.h"
 
-#if MAX_SERVO_CHANNELS > 12
+#if SERVO_CHANNELS > 12
 #error "Too many servos installed. Max 12 servos per permitted."
 #endif
 
@@ -54,12 +54,12 @@ public:
     Actuators(void);
     void init(void);
     void writeServos(void);
-    void setServoOut(const int16_t (&SRVout)[MAX_SERVO_CHANNELS]);
+    void setServoOut(const int16_t (&SRVout)[SERVO_CHANNELS]);
     int16_t getServoOut(Channel);
 
 private:
-    Servo controlServo[MAX_SERVO_CHANNELS]; // Control servos
-    int16_t channelOut[MAX_SERVO_CHANNELS]; // Servo output values
+    Servo controlServo[SERVO_CHANNELS]; // Control servos
+    int16_t channelOut[SERVO_CHANNELS]; // Servo output values
 };
 
 extern Actuators actuators;
