@@ -143,5 +143,5 @@ THE SOFTWARE.
 
 ## Credits
 
-NicoHood - [PinChangeInterrupt library](https://github.com/NicoHood/PinChangeInterrupt)
+NicoHood - [PinChangeInterrupt library](https://github.com/NicoHood/PinChangeInterrupt)  
 PlainFlight - [PlainFlight](https://github.com/plainFlight/plainFlightController)
