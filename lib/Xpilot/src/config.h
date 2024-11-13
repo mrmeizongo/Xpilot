@@ -133,9 +133,9 @@ Flight stabilization software
  * The output range should be between the defined (SERVO_MIN_PWM) to (SERVO_MAX_PWM)
  * Adjust these values accordingly if there is a discrepancy
  */
-#define INPUT_MIN_PWM 1100
+#define INPUT_MIN_PWM 1000
 #define INPUT_MID_PWM 1500
-#define INPUT_MAX_PWM 1900
+#define INPUT_MAX_PWM 2000
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -155,17 +155,17 @@ Flight stabilization software
 #define ROLL_KP 1.f
 #define ROLL_KI 0.f
 #define ROLL_KD 0.f
-#define ROLL_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point
+#define ROLL_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.25f) // 10-30% of maximum control output is a good starting point
 // Pitch
 #define PITCH_KP 1.f
 #define PITCH_KI 0.f
 #define PITCH_KD 0.f
-#define PITCH_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point
+#define PITCH_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.25f) // 10-30% of maximum control output is a good starting point
 // Yaw
 #define YAW_KP 1.f
 #define YAW_KI 0.f
 #define YAW_KD 0.f
-#define YAW_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.3f) // 10-30% of maximum control output is a good starting point
+#define YAW_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.25f) // 10-30% of maximum control output is a good starting point
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -179,9 +179,9 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // To correct transmitter stick drift, be sure to modify these values
-#define ROLL_INPUT_DEADBAND 20
-#define PITCH_INPUT_DEADBAND 20
-#define YAW_INPUT_DEADBAND 20
+#define ROLL_INPUT_DEADBAND 10
+#define PITCH_INPUT_DEADBAND 10
+#define YAW_INPUT_DEADBAND 10
 // ------------------------------------------------------------------------------------------------------
 
 // Radio resolution values
@@ -194,11 +194,11 @@ Flight stabilization software
 // Stick resolution in rate mode (degrees)
 #define MAX_ROLL_RATE_DEGS 60
 #define MAX_PITCH_RATE_DEGS 60
-#define MAX_YAW_RATE_DEGS 50
+#define MAX_YAW_RATE_DEGS 60
 
 // Max angles allowed in stabilize mode (angles)
-#define MAX_ROLL_ANGLE_DEGS 45
-#define MAX_PITCH_ANGLE_DEGS 30
+#define MAX_ROLL_ANGLE_DEGS 60
+#define MAX_PITCH_ANGLE_DEGS 45
 // ------------------------------------------------------------------------------------------------------
 
 // Uncomment or comment to set and unset respectively
@@ -209,14 +209,14 @@ Flight stabilization software
 // + on right yaw, - on left yaw
 
 // Uncomment to reverse stabilization output
-#define REVERSE_ROLL_STABILIZE
-#define REVERSE_PITCH_STABILIZE
+// #define REVERSE_ROLL_STABILIZE
+// #define REVERSE_PITCH_STABILIZE
 // #define REVERSE_YAW_STABILIZE
 
 // Uncomment to reverse gyro output
-#define REVERSE_ROLL_GYRO
+// #define REVERSE_ROLL_GYRO
 // #define REVERSE_PITCH_GYRO
-#define REVERSE_YAW_GYRO
+// #define REVERSE_YAW_GYRO
 
 /*
  * Mix rudder to enable turn coordinations
@@ -226,8 +226,8 @@ Flight stabilization software
 #define RUDDER_MIX_IN_RATE
 #define RUDDER_MIX_IN_STABILIZE
 
-// #define REVERSE_RUDDER_MIX   // Uncomment to reverse rudder mixing input if surfaces don't move in the expected direction
-#define RUDDER_MIXING 0.15f // Amount of aileron input to mix with rudder to coordinate turns (10-20% is recommended)
+// #define REVERSE_RUDDER_MIX   // Uncomment to reverse rudder mixing input if rudder doesn't move in the expected direction
+#define RUDDER_MIXING 0.25f // Amount of aileron input to mix with rudder to coordinate turns (15-25% is recommended)
 // ------------------------------------------------------------------------------------------------------
 
 /*
