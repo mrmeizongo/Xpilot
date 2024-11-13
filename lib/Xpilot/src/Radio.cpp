@@ -4,10 +4,10 @@
 #include "Radio.h"
 #include "config.h"
 
-volatile unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
-volatile unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
-volatile unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
-volatile unsigned long modeCurrentTime, modeStartTime, modePulses = 0;
+volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
+volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
+volatile static unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
+volatile static unsigned long modeCurrentTime, modeStartTime, modePulses = 0;
 
 static uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 // -------------------------
@@ -19,7 +19,6 @@ static uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 Radio::Radio(void)
 {
 }
-
 void Radio::init(void)
 {
     // All input pins use pin change interrupts
