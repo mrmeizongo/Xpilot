@@ -114,7 +114,7 @@ Even though a calibration function is provided(recommended), the MPU6050 does no
 
 A calibration function is also provided. Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in volatile memory. This will have to be performed on every startup. Ensure the airplane is held level and still throughout the calibration process.
 
-(RECOMMENDED)You can uncomment CALIBRATE_DEBUG which runs the calibration function, stores the biases in volatile memory and prints the biases in the serial monitor. You should record these values and assign them to the bias definitions in [IMU.cpp](lib/Xpilot/src/IMU.cpp). Ensure the airplane is held level and still throughout the calibration process.
+(RECOMMENDED)You can uncomment CALIBRATE_DEBUG which runs the calibration function, and prints the biases in the serial monitor. You should record these values and assign them to the bias definitions in [IMU.cpp](lib/Xpilot/src/IMU.cpp). Ensure the airplane is held level and still throughout the calibration process.
 
 After all debug operations, be sure to uncomment and reupload Xpilot for normal operation.
 
