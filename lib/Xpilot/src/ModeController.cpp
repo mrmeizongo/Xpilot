@@ -235,7 +235,7 @@ static void rudderMixer(void)
 
 static void yawController(const int16_t yaw)
 {
-#ifdef USE_HEADING_HOLD
+#if defined(USE_HEADING_HOLD)
     if (yaw == 0)
     {
         yawPID.setKi(YAW_KI);
