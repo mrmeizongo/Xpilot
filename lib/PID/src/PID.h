@@ -32,7 +32,7 @@ class PID
 public:
     PID();                           // Empty Constructor
     PID(float, float, float, float); // Constructor with initialization parameters
-    void ResetI(void);               // Reset PID integrator
+    void Reset(void);                // Reset PID integrator and derivative
     int16_t Compute(float);          // Generate the PID output to be added to the servo
 
     float getKp(void) { return Kp; }

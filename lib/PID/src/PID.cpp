@@ -33,7 +33,7 @@ PID::PID(float _Kp, float _Ki, float _Kd, float _IMax)
 }
 
 // Resets PID
-void PID::ResetI(void)
+void PID::Reset(void)
 {
     integrator = 0;
     // Set previousDerivative as invalid on reset

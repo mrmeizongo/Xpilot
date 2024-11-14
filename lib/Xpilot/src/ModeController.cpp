@@ -243,10 +243,10 @@ static void yawController(const int16_t yaw)
     else
     {
         yawPID.setKi(0.f);
-        yawPID.ResetI();
+        yawPID.Reset();
     }
 #else
     yawPID.setKi(0.f);
-    yawPID.ResetI();
+    yawPID.Reset();
 #endif
 }
