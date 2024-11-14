@@ -60,7 +60,7 @@ private:
 
     float integrator = 0;
     float previousError = 0;
-    float previousDerivative = 0; // for low-pass filter calculation
+    float previousDerivative = NAN; // for low-pass filter calculation
     unsigned long previousTime = 0;
 };
 #endif //_PID_H

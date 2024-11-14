@@ -30,8 +30,6 @@ PID::PID() {}
 PID::PID(float _Kp, float _Ki, float _Kd, float _IMax)
     : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, IMax{_IMax}
 {
-    // Set previousDerivative as invalid on startup
-    previousDerivative = NAN;
 }
 
 // Resets PID
