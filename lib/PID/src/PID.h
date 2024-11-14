@@ -58,9 +58,9 @@ private:
     ///
     static const uint8_t fCut = 20;
 
-    float integrator;
-    float previousError;
-    float previousDerivative; // for low-pass filter calculation
-    unsigned long previousTime;
+    float integrator = 0;
+    float previousError = 0;
+    float previousDerivative = 0; // for low-pass filter calculation
+    unsigned long previousTime = 0;
 };
 #endif //_PID_H
