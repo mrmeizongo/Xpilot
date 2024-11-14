@@ -32,8 +32,6 @@ Flight stabilization software
 #ifndef _MODE_H
 #define _MODE_H
 
-#include <PID.h>
-
 class ModeController
 {
 public:
@@ -42,9 +40,6 @@ public:
     void processMode(void);
 
 private:
-    PID *rollPID;
-    PID *pitchPID;
-    PID *yawPID;
     void passthroughMode(void);
     void rateMode(void);
     void stabilizeMode(void);

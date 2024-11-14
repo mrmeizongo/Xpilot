@@ -34,6 +34,7 @@ Flight stabilization software
 #include "Radio.h"
 #include "IMU.h"
 #include "Actuators.h"
+#include <PID.h>
 #include "config.h"
 
 // Helper functions
@@ -45,15 +46,21 @@ static void rudderMixer(void);
 static int16_t SRVout[SERVO_CHANNELS]{0, 0, 0, 0};
 // -----------------------------------------------------------------------------------------------------------------
 
+// PID controllers
+static PID rollPID;
+static PID pitchPID;
+static PID yawPID;
+// -----------------------------------------------------------------------------------------------------------------
+
 ModeController::ModeController(void)
 {
 }
 
 void ModeController::init(void)
 {
-    rollPID = new PID(ROLL_KP, ROLL_KI, ROLL_KD, ROLL_I_WINDUP_MAX);
-    pitchPID = new PID(PITCH_KP, PITCH_KI, PITCH_KD, PITCH_I_WINDUP_MAX);
-    yawPID = new PID(YAW_KP, YAW_KI, YAW_KD, YAW_I_WINDUP_MAX);
+    rollPID = PID(ROLL_KP, ROLL_KI, ROLL_KD, ROLL_I_WINDUP_MAX);
+    pitchPID = PID(PITCH_KP, PITCH_KI, PITCH_KD, PITCH_I_WINDUP_MAX);
+    yawPID = PID(YAW_KP, YAW_KI, YAW_KD, YAW_I_WINDUP_MAX);
 }
 
 void ModeController::processMode(void)
@@ -116,9 +123,9 @@ void ModeController::rateMode(void)
     float pitchDemand = radio.getRxPitch() - imu.getGyroY();
     float yawDemand = radio.getRxYaw() - imu.getGyroZ();
 
-    int16_t roll = rollPID->Compute(rollDemand);
-    int16_t pitch = pitchPID->Compute(pitchDemand);
-    int16_t yaw = yawPID->Compute(yawDemand);
+    int16_t roll = rollPID.Compute(rollDemand);
+    int16_t pitch = pitchPID.Compute(pitchDemand);
+    int16_t yaw = yawPID.Compute(yawDemand);
 
     planeMixer(roll, pitch, yaw);
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
@@ -144,9 +151,9 @@ void ModeController::stabilizeMode(void)
     rollDemand = rollDemand - imu.getGyroX();
     pitchDemand = pitchDemand - imu.getGyroY();
 
-    int16_t roll = rollPID->Compute(rollDemand);
-    int16_t pitch = pitchPID->Compute(pitchDemand);
-    int16_t yaw = yawPID->Compute(yawDemand);
+    int16_t roll = rollPID.Compute(rollDemand);
+    int16_t pitch = pitchPID.Compute(pitchDemand);
+    int16_t yaw = yawPID.Compute(yawDemand);
 
     planeMixer(roll, pitch, yaw);
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
