@@ -40,6 +40,7 @@ Flight stabilization software
 // Helper functions
 static void planeMixer(int16_t, int16_t, int16_t);
 static void rudderMixer(void);
+static void yawController(const int16_t yaw);
 // -----------------------------------------------------------------------------------------------------------------
 
 // Servo channel out
@@ -105,7 +106,7 @@ void ModeController::processMode(void)
 }
 
 // Manual mode gives full control of the rc plane flight surfaces
-// No stabilization and rate control
+// No stabilization, rate or automatic yaw control
 void ModeController::passthroughMode(void)
 {
     planeMixer(radio.getRxRoll(), radio.getRxPitch(), radio.getRxYaw());
@@ -122,6 +123,7 @@ void ModeController::rateMode(void)
     float rollDemand = radio.getRxRoll() - imu.getGyroX();
     float pitchDemand = radio.getRxPitch() - imu.getGyroY();
     float yawDemand = radio.getRxYaw() - imu.getGyroZ();
+    yawController(radio.getRxYaw());
 
     int16_t roll = rollPID.Compute(rollDemand);
     int16_t pitch = pitchPID.Compute(pitchDemand);
@@ -150,6 +152,7 @@ void ModeController::stabilizeMode(void)
 
     rollDemand = rollDemand - imu.getGyroX();
     pitchDemand = pitchDemand - imu.getGyroY();
+    yawController(radio.getRxYaw());
 
     int16_t roll = rollPID.Compute(rollDemand);
     int16_t pitch = pitchPID.Compute(pitchDemand);
@@ -227,5 +230,23 @@ static void rudderMixer(void)
 #else
     SRVout[RUDDER] = SRVout[RUDDER] + (SRVout[AILERON1] * RUDDER_MIXING);
 #endif
+#endif
+}
+
+static void yawController(const int16_t yaw)
+{
+#ifdef USE_HEADING_HOLD
+    if (yaw == 0)
+    {
+        yawPID.setKi(YAW_KI);
+    }
+    else
+    {
+        yawPID.setKi(0.f);
+        yawPID.ResetI();
+    }
+#else
+    yawPID.setKi(0.f);
+    yawPID.ResetI();
 #endif
 }
