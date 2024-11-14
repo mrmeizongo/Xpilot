@@ -55,7 +55,7 @@ int16_t PID::Compute(float currentError)
     if (previousTime == 0 || dt > 1000)
     {
         dt = 0;
-        ResetI();
+        Reset();
     }
 
     deltaTime = (float)dt * 0.001f;
