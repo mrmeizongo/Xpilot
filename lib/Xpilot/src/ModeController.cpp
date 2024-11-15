@@ -66,49 +66,43 @@ void ModeController::init(void)
 
 void ModeController::processMode(void)
 {
+    yawController(radio.getRxYaw());
     switch (radio.getRxCurrentMode())
     {
     case PASSTHROUGH:
         passthroughMode();
-#if defined(RUDDER_MIX_IN_PASS)
-        rudderMixer();
-#endif
         SRVout[AILERON1] = map(SRVout[AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[AILERON2] = map(SRVout[AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[ELEVATOR] = map(SRVout[ELEVATOR], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[RUDDER] = map(SRVout[RUDDER], -PASSTHROUGH_RES, PASSTHROUGH_RES, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        actuators.setServoOut(SRVout);
         break;
     default:
     case RATE:
         rateMode();
-#if defined(RUDDER_MIX_IN_RATE)
-        rudderMixer();
-#endif
         SRVout[AILERON1] = map(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[AILERON2] = map(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[ELEVATOR] = map(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[RUDDER] = map(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        actuators.setServoOut(SRVout);
         break;
     case STABILIZE:
         stabilizeMode();
-#if defined(RUDDER_MIX_IN_STABILIZE)
-        rudderMixer();
-#endif
         SRVout[AILERON1] = map(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[AILERON2] = map(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[ELEVATOR] = map(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[RUDDER] = map(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        actuators.setServoOut(SRVout);
         break;
     }
+
+    actuators.setServoOut(SRVout);
 }
 
 // Manual mode gives full control of the rc plane flight surfaces
 // No stabilization, rate or automatic yaw control
 void ModeController::passthroughMode(void)
 {
+#if defined(RUDDER_MIX_IN_PASS)
+    rudderMixer();
+#endif
     planeMixer(radio.getRxRoll(), radio.getRxPitch(), radio.getRxYaw());
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES);
@@ -123,17 +117,20 @@ void ModeController::rateMode(void)
     float rollDemand = radio.getRxRoll() - imu.getGyroX();
     float pitchDemand = radio.getRxPitch() - imu.getGyroY();
     float yawDemand = radio.getRxYaw() - imu.getGyroZ();
-    yawController(radio.getRxYaw());
 
     int16_t roll = rollPID.Compute(rollDemand);
     int16_t pitch = pitchPID.Compute(pitchDemand);
     int16_t yaw = yawPID.Compute(yawDemand);
-
     planeMixer(roll, pitch, yaw);
+
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[RUDDER] = constrain(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+
+#if defined(RUDDER_MIX_IN_RATE)
+    rudderMixer();
+#endif
 }
 
 // Roll and pitch follow stick input up to set limits
@@ -147,22 +144,22 @@ void ModeController::stabilizeMode(void)
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
-    rollDemand = constrain(rollDemand, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-    pitchDemand = constrain(pitchDemand, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-
     rollDemand = rollDemand - imu.getGyroX();
     pitchDemand = pitchDemand - imu.getGyroY();
-    yawController(radio.getRxYaw());
 
     int16_t roll = rollPID.Compute(rollDemand);
     int16_t pitch = pitchPID.Compute(pitchDemand);
     int16_t yaw = yawPID.Compute(yawDemand);
-
     planeMixer(roll, pitch, yaw);
+
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[RUDDER] = constrain(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+
+#if defined(RUDDER_MIX_IN_STABILIZE)
+    rudderMixer();
+#endif
 }
 
 /*
