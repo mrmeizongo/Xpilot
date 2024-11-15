@@ -51,9 +51,6 @@ static void printIO(void) __attribute__((unused));
 static void printIMU(void) __attribute__((unused));
 // -------------------------
 
-// Flight mode controller
-ModeController modeController;
-
 Xpilot::Xpilot(void)
 {
 }

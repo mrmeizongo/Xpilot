@@ -45,4 +45,5 @@ private:
     void stabilizeMode(void);
 };
 
+extern ModeController modeController;
 #endif //_MODE_H
