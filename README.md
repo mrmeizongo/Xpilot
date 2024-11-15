@@ -110,17 +110,17 @@ Throttle is always under manual control. Signal wire for throttle goes directly 
 
 Rate/Expo should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however the mode switch on your transmitter to enable Rate/Expo in passthrough(1) flight mode.
 
-Even though a calibration function is provided(recommended), the MPU6050 does not really need to be calibrated as long as it passes the self test function. Uncomment SELF_TEST_ACCEL_GYRO in [config.h](lib/Xpilot/src/config.h) to enable. Be sure to comment it when done. Uncomment IMU_DEBUG in [config.h](lib/Xpilot/src/config.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. This might require several attempts. Aim for a +/- .5 value when plane is placed on a level surface and not being moved.
+Even though a calibration function is provided(recommended), the MPU6050 does not really need to be calibrated as long as it passes the self test function. Uncomment SELF_TEST_ACCEL_GYRO in [config.h](lib/Xpilot/src/config.h) to enable. Be sure to comment it when done. Uncomment IMU_DEBUG in [config.h](lib/Xpilot/src/config.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. This might require several attempts. Aim for a +/- .5 value when plane is placed on a level surface and held still.
 
 A calibration function is also provided. Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in volatile memory. This will have to be performed on every startup. Ensure the airplane is held level and still throughout the calibration process.
 
-(RECOMMENDED)You can uncomment CALIBRATE_DEBUG which runs the calibration function, and prints the biases in the serial monitor. You should record these values and assign them to the bias definitions in [IMU.cpp](lib/Xpilot/src/IMU.cpp). Ensure the airplane is held level and still throughout the calibration process.
+(RECOMMENDED)You can uncomment CALIBRATE_DEBUG which runs the calibration function, stores the biases in volatile memory, and prints the biases in the serial monitor. You should record these values and assign them to the bias definitions in [IMU.cpp](lib/Xpilot/src/IMU.cpp). Ensure the airplane is held level and still throughout the calibration process.
 
 After all debug operations, be sure to uncomment and reupload Xpilot for normal operation.
 
 ## Preflight
 
-Be sure to go through the entirety of [config.h](lib/Xpilot/src/config.h) and perform any required modifications and preflight checks before flight.
+Be sure to go through the entirety of [config.h](lib/Xpilot/src/config.h) and perform any required modifications and preflight checks before flight.  
 May your landings be beautiful! ❤️
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
