@@ -100,14 +100,14 @@ void ModeController::processMode(void)
 // No stabilization, rate or automatic yaw control
 void ModeController::passthroughMode(void)
 {
-#if defined(RUDDER_MIX_IN_PASS)
-    rudderMixer();
-#endif
     planeMixer(radio.getRxRoll(), radio.getRxPitch(), radio.getRxYaw());
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[RUDDER] = constrain(SRVout[RUDDER], -PASSTHROUGH_RES, PASSTHROUGH_RES);
+#if defined(RUDDER_MIX_IN_PASS)
+    rudderMixer();
+#endif
 }
 
 // Rate mode uses gyroscope values to maintain a desired rate of change
@@ -127,7 +127,6 @@ void ModeController::rateMode(void)
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[RUDDER] = constrain(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-
 #if defined(RUDDER_MIX_IN_RATE)
     rudderMixer();
 #endif
@@ -156,7 +155,6 @@ void ModeController::stabilizeMode(void)
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[RUDDER] = constrain(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-
 #if defined(RUDDER_MIX_IN_STABILIZE)
     rudderMixer();
 #endif
