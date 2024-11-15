@@ -23,33 +23,37 @@ Copyright (C) 2024 Jamal Meizongo
 ===============================================
 */
 
-#ifndef _PID_H
-#define _PID_H
+#ifndef _PIDF_H
+#define _PIDF_H
 #include <inttypes.h>
 
-class PID
+class PIDF
 {
 public:
-    PID();                           // Empty Constructor
-    PID(float, float, float, float); // Constructor with initialization parameters
-    void Reset(void);                // Reset PID integrator and derivative
-    int16_t Compute(float);          // Generate the PID output to be added to the servo
+    PIDF();                                  // Empty Constructor
+    PIDF(float, float, float, float, float); // Constructor with initialization parameters
+    void Reset(void);                        // Reset PIDF integrator and derivative
+    int16_t Compute(float, float);           // Generate the PIDF output to be added to the servo
 
     float getKp(void) { return Kp; }
     float getKi(void) { return Ki; }
     float getKd(void) { return Kd; }
+    float getKf(void) { return Kf; }
     float getIMax(void) { return IMax; }
 
     void setKp(float _Kp) { Kp = _Kp; }
     void setKi(float _Ki) { Ki = _Ki; }
     void setKd(float _Kd) { Kd = _Kd; }
+    void setKf(float _Kf) { Kf = _Kf; }
     void setIMax(float _IMax) { IMax = _IMax; }
 
 private:
     float Kp;
     float Ki;
     float Kd;
+    float Kf;
     float IMax;
+    float currentError;
 
     /// Low pass filter cut frequency for derivative calculation.
     ///
@@ -63,4 +67,4 @@ private:
     float previousDerivative = NAN; // for low-pass filter calculation
     unsigned long previousTime = 0;
 };
-#endif //_PID_H
+#endif //_PIDF_H

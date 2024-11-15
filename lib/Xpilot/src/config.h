@@ -133,9 +133,9 @@ Flight stabilization software
  * The output range should be between the defined (SERVO_MIN_PWM) to (SERVO_MAX_PWM)
  * Adjust these values accordingly if there is a discrepancy
  */
-#define INPUT_MIN_PWM 1000
+#define INPUT_MIN_PWM 1100
 #define INPUT_MID_PWM 1500
-#define INPUT_MAX_PWM 2000
+#define INPUT_MAX_PWM 1900
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -152,20 +152,23 @@ Flight stabilization software
 // Edit these for your plane
 
 // Roll
-#define ROLL_KP 1.f
-#define ROLL_KI 0.f
+#define ROLL_KP 4.8f
+#define ROLL_KI 1.f
 #define ROLL_KD 0.f
-#define ROLL_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.25f) // 10-30% of maximum control output is a good starting point
+#define ROLL_KF 0.15f
+#define ROLL_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // Pitch
-#define PITCH_KP 1.f
-#define PITCH_KI 0.f
+#define PITCH_KP 6.f
+#define PITCH_KI 1.25f
 #define PITCH_KD 0.f
-#define PITCH_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.25f) // 10-30% of maximum control output is a good starting point
+#define PITCH_KF 0.35f
+#define PITCH_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // Yaw
-#define YAW_KP 1.f
-#define YAW_KI 0.f
+#define YAW_KP 10.f
+#define YAW_KI 2.1f
 #define YAW_KD 0.f
-#define YAW_I_WINDUP_MAX ((MAX_PID_OUTPUT) * 0.25f) // 10-30% of maximum control output is a good starting point
+#define YAW_KF 0.15f
+#define YAW_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -179,22 +182,21 @@ Flight stabilization software
 // ------------------------------------------------------------------------------------------------------
 
 // To correct transmitter stick drift, be sure to modify these values
-#define ROLL_INPUT_DEADBAND 10
-#define PITCH_INPUT_DEADBAND 10
-#define YAW_INPUT_DEADBAND 10
+#define ROLL_INPUT_DEADBAND 20
+#define PITCH_INPUT_DEADBAND 20
+#define YAW_INPUT_DEADBAND 20
 // ------------------------------------------------------------------------------------------------------
 
 // Radio resolution values
 
 // Stick resolution in passthrough mode
-// This assumes a centered servo is exactly at the midpoint of MAX and MIN
-// Change if not
-#define PASSTHROUGH_RES ((SERVO_MAX_PWM) - (SERVO_MIN_PWM)) / 2
+// It is the difference between the maximum and minimum output signal
+#define PASSTHROUGH_RES 1000
 
 // Stick resolution in rate mode (degrees)
 #define MAX_ROLL_RATE_DEGS 60
-#define MAX_PITCH_RATE_DEGS 60
-#define MAX_YAW_RATE_DEGS 60
+#define MAX_PITCH_RATE_DEGS 45
+#define MAX_YAW_RATE_DEGS 30
 
 // Max angles allowed in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
@@ -209,17 +211,17 @@ Flight stabilization software
 // + on right yaw, - on left yaw
 
 // Uncomment to reverse stabilization output
-// #define REVERSE_ROLL_STABILIZE
-// #define REVERSE_PITCH_STABILIZE
+#define REVERSE_ROLL_STABILIZE
+#define REVERSE_PITCH_STABILIZE
 // #define REVERSE_YAW_STABILIZE
 
 // Uncomment to reverse gyro output
-// #define REVERSE_ROLL_GYRO
+#define REVERSE_ROLL_GYRO
 // #define REVERSE_PITCH_GYRO
-// #define REVERSE_YAW_GYRO
+#define REVERSE_YAW_GYRO
 
 /*
- * Mix rudder to enable turn coordinations
+ * Mix rudder to enable automatic turn coordinations
  * Rudder mixing value is set in percentage ( value / 100)
  */
 // #define RUDDER_MIX_IN_PASS
@@ -227,7 +229,9 @@ Flight stabilization software
 #define RUDDER_MIX_IN_STABILIZE
 
 // #define REVERSE_RUDDER_MIX   // Uncomment to reverse rudder mixing input if rudder doesn't move in the expected direction
-#define RUDDER_MIXING 0.25f // Amount of aileron input to mix with rudder to coordinate turns (15-25% is recommended)
+#define RUDDER_MIXING 0.3333f // Amount of aileron input to mix with rudder to coordinate turns (1/4 - 1/3 of aileron input is recommended)
+
+#define USE_HEADING_HOLD // Enable heading-hold-like functionality when yaw centered
 // ------------------------------------------------------------------------------------------------------
 
 /*

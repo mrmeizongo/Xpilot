@@ -23,32 +23,32 @@
 ===============================================
 */
 #include <Arduino.h>
-#include "PID.h"
+#include "PIDF.h"
 
-PID::PID() {}
+PIDF::PIDF() {}
 
-PID::PID(float _Kp, float _Ki, float _Kd, float _IMax)
-    : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, IMax{_IMax}
+PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
+    : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, Kf{_Kf}, IMax{_IMax}
 {
 }
 
-// Resets PID
-void PID::Reset(void)
+// Resets PIDF
+void PIDF::Reset(void)
 {
     integrator = 0;
     // Set previousDerivative as invalid on reset
     previousDerivative = NAN;
 }
 
-// Main function to be called to get PID control value
-int16_t PID::Compute(float currentError)
+// Main function to be called to get PIDF control value
+int16_t PIDF::Compute(float setPoint, float currentPoint)
 {
     unsigned long currentTime = millis();
     unsigned long dt = currentTime - previousTime;
     float output = 0.0f;
     float deltaTime;
 
-    // If this PID hasn't been used for a full second then zero
+    // If this PIDF hasn't been used for a full second then zero
     // the integrator term. This prevents I buildup from a
     // previous fight mode from causing a massive return before
     // the integrator gets a chance to correct itself
@@ -58,6 +58,7 @@ int16_t PID::Compute(float currentError)
         Reset();
     }
 
+    currentError = setPoint - currentPoint;
     deltaTime = (float)dt * 0.001f;
     // Save last time Compute was run
     previousTime = currentTime;
@@ -110,6 +111,13 @@ int16_t PID::Compute(float currentError)
 
         // Add in derivative component
         output += derivative * Kd;
+    }
+
+    // Compute feedforward component if time has elapsed
+    if ((fabsf(Kf) > 0) && (dt > 0))
+    {
+        float ff = setPoint * Kf;
+        output += ff;
     }
 
     return static_cast<int16_t>(output);

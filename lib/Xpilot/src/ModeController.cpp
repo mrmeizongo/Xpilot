@@ -34,7 +34,7 @@ Flight stabilization software
 #include "Radio.h"
 #include "IMU.h"
 #include "Actuators.h"
-#include <PID.h>
+#include <PIDF.h>
 #include "config.h"
 
 // Helper functions
@@ -48,9 +48,9 @@ static int16_t SRVout[SERVO_CHANNELS]{0, 0, 0, 0};
 // -----------------------------------------------------------------------------------------------------------------
 
 // PID controllers
-static PID rollPID;
-static PID pitchPID;
-static PID yawPID;
+static PIDF rollPIDF;
+static PIDF pitchPIDF;
+static PIDF yawPIDF;
 // -----------------------------------------------------------------------------------------------------------------
 
 ModeController::ModeController(void)
@@ -59,9 +59,9 @@ ModeController::ModeController(void)
 
 void ModeController::init(void)
 {
-    rollPID = PID(ROLL_KP, ROLL_KI, ROLL_KD, ROLL_I_WINDUP_MAX);
-    pitchPID = PID(PITCH_KP, PITCH_KI, PITCH_KD, PITCH_I_WINDUP_MAX);
-    yawPID = PID(YAW_KP, YAW_KI, YAW_KD, YAW_I_WINDUP_MAX);
+    rollPIDF = PIDF(ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX);
+    pitchPIDF = PIDF(PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX);
+    yawPIDF = PIDF(YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX);
 }
 
 void ModeController::processMode(void)
@@ -114,13 +114,9 @@ void ModeController::passthroughMode(void)
 // Flight surfaces move to prevent sudden changes in direction
 void ModeController::rateMode(void)
 {
-    float rollDemand = radio.getRxRoll() - imu.getGyroX();
-    float pitchDemand = radio.getRxPitch() - imu.getGyroY();
-    float yawDemand = radio.getRxYaw() - imu.getGyroZ();
-
-    int16_t roll = rollPID.Compute(rollDemand);
-    int16_t pitch = pitchPID.Compute(pitchDemand);
-    int16_t yaw = yawPID.Compute(yawDemand);
+    int16_t roll = rollPIDF.Compute(radio.getRxRoll(), imu.getGyroX());
+    int16_t pitch = pitchPIDF.Compute(radio.getRxPitch(), imu.getGyroY());
+    int16_t yaw = yawPIDF.Compute(radio.getRxYaw(), imu.getGyroZ());
     planeMixer(roll, pitch, yaw);
 
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
@@ -138,17 +134,13 @@ void ModeController::stabilizeMode(void)
 {
     float rollDemand = radio.getRxRoll() - imu.getRoll();
     float pitchDemand = radio.getRxPitch() - imu.getPitch();
-    float yawDemand = radio.getRxYaw() - imu.getGyroZ();
 
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
-    rollDemand = rollDemand - imu.getGyroX();
-    pitchDemand = pitchDemand - imu.getGyroY();
-
-    int16_t roll = rollPID.Compute(rollDemand);
-    int16_t pitch = pitchPID.Compute(pitchDemand);
-    int16_t yaw = yawPID.Compute(yawDemand);
+    int16_t roll = rollPIDF.Compute(rollDemand, imu.getGyroX());
+    int16_t pitch = pitchPIDF.Compute(pitchDemand, imu.getGyroY());
+    int16_t yaw = yawPIDF.Compute(radio.getRxYaw(), imu.getGyroZ());
     planeMixer(roll, pitch, yaw);
 
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
@@ -233,15 +225,15 @@ static void yawController(const int16_t yaw)
 #if defined(USE_HEADING_HOLD)
     if (yaw == 0)
     {
-        yawPID.setKi(YAW_KI);
+        yawPIDF.setKi(YAW_KI);
     }
     else
     {
-        yawPID.setKi(0.f);
-        yawPID.Reset();
+        yawPIDF.setKi(0.f);
+        yawPIDF.Reset();
     }
 #else
-    yawPID.setKi(0.f);
-    yawPID.Reset();
+    yawPIDF.setKi(0.f);
+    yawPIDF.Reset();
 #endif
 }
