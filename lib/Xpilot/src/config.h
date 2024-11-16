@@ -206,9 +206,9 @@ Flight stabilization software
 // Uncomment or comment to set and unset respectively
 // This depends on the mount direction of the MPU6050 on the circuit board
 // Based on the aircraft coordinate system (Right-Hand, X-Forward, Z-Down)
-// + on right roll, - on left roll
-// - on pitch up, + on down pitch down
-// + on right yaw, - on left yaw
+// + on right roll(right wing down, left wing up), - on left roll(right wing up, left wing down)
+// + on pitch up(nose up, tail down), - on down pitch down(nose down, tail up)
+// + on right yaw(nose right, tail left), - on left yaw(nose left, tail right)
 
 // Uncomment to reverse stabilization output
 #define REVERSE_ROLL_STABILIZE
