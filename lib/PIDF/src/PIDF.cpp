@@ -45,6 +45,7 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
 {
     unsigned long currentTime = millis();
     unsigned long dt = currentTime - previousTime;
+    float currentError = setPoint - currentPoint;
     float output = 0.0f;
     float deltaTime;
 
@@ -58,7 +59,6 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
         Reset();
     }
 
-    currentError = setPoint - currentPoint;
     deltaTime = (float)dt * 0.001f;
     // Save last time Compute was run
     previousTime = currentTime;
@@ -115,10 +115,7 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
 
     // Compute feedforward component if time has elapsed
     if ((fabsf(Kf) > 0) && (dt > 0))
-    {
-        float ff = setPoint * Kf;
-        output += ff;
-    }
+        output += setPoint * Kf;
 
     return static_cast<int16_t>(output);
 }

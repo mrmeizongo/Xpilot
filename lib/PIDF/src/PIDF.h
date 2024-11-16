@@ -53,7 +53,6 @@ private:
     float Kd;
     float Kf;
     float IMax;
-    float currentError;
 
     /// Low pass filter cut frequency for derivative calculation.
     ///
