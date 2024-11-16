@@ -20,12 +20,12 @@ public:
 
 private:
     /*
-     * Inertial measurement unit variable
+     * Inertial measurement unit
      */
     MPU6050 mpu6050;
 
     float ahrs_pitch, ahrs_roll, ahrs_yaw = 0; // Airplane coordinate system values
-    float gyroX, gyroY, gyroZ = 0;             // Angular velocity around the respective axis
+    float gyroX, gyroY, gyroZ = 0;             // Angular velocity about the respective axis
 };
 
 extern IMU imu;

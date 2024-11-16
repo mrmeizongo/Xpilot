@@ -4,8 +4,6 @@
 /*
  * ACCEL & GYRO biases obtained from running calibration function
  * Uncomment CALIBRATION_DEBUG to obtain these values
- * TODO: Save these values in EEPROM
- * See NOTICE section in README.md for more information
  */
 #define ACC_X_BIAS 1029.76f
 #define ACC_Y_BIAS 273.84f
@@ -25,7 +23,7 @@ IMU::IMU(void)
 void IMU::init(void)
 {
     Wire.begin();
-    Wire.setClock(I2C_CLOCK_400KHZ); // Setting I2C clock to 400Khz
+    Wire.setClock(I2C_CLOCK_400KHZ);
     /*
      * Disable External FSYNC and set DLPF_CFG to 3; bandwidths 44Hz and 42Hz respectively to eliminate effects of vibration from airplane
      * Setting DLPF_CFG to 3 limits the sample rate to 1kHz for both accelerometer and gyroscope and introduces a delay of 4.8ms
@@ -54,7 +52,7 @@ void IMU::init(void)
 
     // Initialize MPU
     if (!mpu6050.setup(MPU6050_ADDRESS, setting))
-    { // change to your own address
+    {
         for (;;)
         {
 #if defined(IMU_DEBUG)
