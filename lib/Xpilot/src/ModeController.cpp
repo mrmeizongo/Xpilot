@@ -66,7 +66,6 @@ void ModeController::init(void)
 
 void ModeController::processMode(void)
 {
-    yawController(radio.getRxYaw());
     switch (radio.getRxCurrentMode())
     {
     case PASSTHROUGH:
@@ -114,6 +113,7 @@ void ModeController::passthroughMode(void)
 // Flight surfaces move to prevent sudden changes in direction
 void ModeController::rateMode(void)
 {
+    yawController(radio.getRxYaw());
     int16_t roll = rollPIDF.Compute(radio.getRxRoll(), imu.getGyroX());
     int16_t pitch = pitchPIDF.Compute(radio.getRxPitch(), imu.getGyroY());
     int16_t yaw = yawPIDF.Compute(radio.getRxYaw(), imu.getGyroZ());
@@ -138,6 +138,7 @@ void ModeController::stabilizeMode(void)
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
+    yawController(radio.getRxYaw());
     int16_t roll = rollPIDF.Compute(rollDemand, imu.getGyroX());
     int16_t pitch = pitchPIDF.Compute(pitchDemand, imu.getGyroY());
     int16_t yaw = yawPIDF.Compute(radio.getRxYaw(), imu.getGyroZ());
