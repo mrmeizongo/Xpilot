@@ -152,16 +152,16 @@ Flight stabilization software
 // Edit these for your plane
 
 // Roll
-#define ROLL_KP 4.8f
+#define ROLL_KP 4.6f
 #define ROLL_KI 1.f
 #define ROLL_KD 0.f
 #define ROLL_KF 0.5f
 #define ROLL_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // Pitch
-#define PITCH_KP 6.f
-#define PITCH_KI 1.25f
+#define PITCH_KP 7.f
+#define PITCH_KI 1.5f
 #define PITCH_KD 0.f
-#define PITCH_KF 1.5f
+#define PITCH_KF 1.4f
 #define PITCH_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // Yaw
 #define YAW_KP 9.f
