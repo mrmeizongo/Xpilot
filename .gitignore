@@ -2,3 +2,6 @@
 .vs/
 .vscode/
 lib/PlaneConfigs/src/*
+!lib/PlaneConfigs/src/config.h
+!lib/PlaneConfigs/src/PlaneConfig.h
+!lib/PlaneConfigs/src/PlaneSelector.h
