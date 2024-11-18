@@ -102,6 +102,10 @@ Rate mode is the most popular among inexperienced flyers and is also the default
 |        Rate - 2        |                               Gyro based rate control                               |
 |     Stabilize - 3      | Surfaces follow stick movement up-to set limits with wing-leveling on stick release |
 
+## Airplane Selection
+
+See [this](lib/PlaneConfigs/README.md) for instructions on how to set up configuration files for multi airplane use.
+
 ## NOTICE
 
 Throttle is always under manual control. Signal wire for throttle goes directly to ESC for motor control.

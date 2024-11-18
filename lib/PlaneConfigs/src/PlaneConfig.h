@@ -3,9 +3,6 @@
 #include "PlaneSelector.h"
 
 /*
- * In the same directory as this file, create a new config header file for every airplane to be controlled by Xpilot,
- * copy the contents of config.h, and paste into your new airplane config header file and modify the settings as required
- *
  * Use conditional compilation based on airplane definitions in PlaneSelector
  * Exmample
  * #if defined(USE_GLIDER) || defined(USE_CUB) || defined(USE_ACRO)
@@ -28,7 +25,7 @@
 
 /*
  * NOTE
- * If you intend to modify and use the default settings in config.h you can leave this file as is
+ * If you intend to modify and use only the default settings in config.h you can leave this file as is
  */
 #define USE_DEFAULT
 
