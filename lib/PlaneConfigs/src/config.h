@@ -31,7 +31,9 @@ Flight stabilization software
 */
 #ifndef _CONFIG_H
 #define _CONFIG_H
+#include "PlaneConfig.h"
 
+#if defined(USE_DEFAULT)
 /*
  * MANDATORY
  * Airplane type
@@ -130,9 +132,9 @@ Flight stabilization software
  * The output range should be between the defined (SERVO_MIN_PWM) to (SERVO_MAX_PWM)
  * Adjust these values accordingly if there is a discrepancy
  */
-#define INPUT_MIN_PWM 1100
+#define INPUT_MIN_PWM 1000
 #define INPUT_MID_PWM 1500
-#define INPUT_MAX_PWM 1900
+#define INPUT_MAX_PWM 2000
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -149,22 +151,22 @@ Flight stabilization software
 // Edit these for your plane
 
 // Roll
-#define ROLL_KP 4.6f
-#define ROLL_KI 1.f
+#define ROLL_KP 5.f
+#define ROLL_KI 0.f
 #define ROLL_KD 0.f
-#define ROLL_KF 0.5f
+#define ROLL_KF 0.f
 #define ROLL_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // Pitch
 #define PITCH_KP 7.f
-#define PITCH_KI 1.5f
+#define PITCH_KI 0.f
 #define PITCH_KD 0.f
-#define PITCH_KF 1.4f
+#define PITCH_KF 0.f
 #define PITCH_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // Yaw
 #define YAW_KP 9.f
-#define YAW_KI 1.93f
+#define YAW_KI 0.f
 #define YAW_KD 0.f
-#define YAW_KF 0.5f
+#define YAW_KF 0.f
 #define YAW_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // ------------------------------------------------------------------------------------------------------
 
@@ -208,14 +210,14 @@ Flight stabilization software
 // + on right yaw(nose right, tail left), - on left yaw(nose left, tail right)
 
 // Uncomment to reverse stabilization output
-#define REVERSE_ROLL_STABILIZE
-#define REVERSE_PITCH_STABILIZE
+// #define REVERSE_ROLL_STABILIZE
+// #define REVERSE_PITCH_STABILIZE
 // #define REVERSE_YAW_STABILIZE
 
 // Uncomment to reverse gyro output
-#define REVERSE_ROLL_GYRO
+// #define REVERSE_ROLL_GYRO
 // #define REVERSE_PITCH_GYRO
-#define REVERSE_YAW_GYRO
+// #define REVERSE_YAW_GYRO
 // ------------------------------------------------------------------------------------------------------
 
 // Rudder control
@@ -234,7 +236,7 @@ Flight stabilization software
 // Amount of aileron input to be mixed with rudder to coordinate turns (1/4 - 1/3 of aileron input is recommended)
 #define RUDDER_MIXING 0.3333f
 
-#define USE_HEADING_HOLD // Enable heading-hold-like functionality when yaw centered
+// #define USE_HEADING_HOLD // Uncomment to enable heading-hold-like functionality when yaw centered
 // ------------------------------------------------------------------------------------------------------
 
 /*
@@ -249,4 +251,5 @@ Flight stabilization software
 // #define CALIBRATE
 // #define SELF_TEST_ACCEL_GYRO
 // ------------------------------------------------------------------------------------------------------
-#endif
+#endif // USE_DEFAULT
+#endif // _CONFIG_H
