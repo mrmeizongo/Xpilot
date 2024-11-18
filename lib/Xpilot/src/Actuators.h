@@ -35,19 +35,15 @@ Flight stabilization software
 #include <inttypes.h>
 #include "config.h"
 
-#if SERVO_CHANNELS > 12
-#error "Too many servos installed. Max 12 servos permitted on Arduino Nano due to number of timers."
-#endif
-
 // Maintain consecutive flight control surface numbering starting from 0
+// Ensure NUM_CHANNELS is the last enum in the list and does not exceed MAX_SERVOS in Servo library
 enum Channel : uint8_t
 {
     AILERON1 = 0U,
     AILERON2,
     ELEVATOR,
     RUDDER,
-    FLAP1,
-    FLAP2
+    NUM_CHANNELS
 };
 
 class Actuators
@@ -56,12 +52,12 @@ public:
     Actuators(void);
     void init(void);
     void writeServos(void);
-    void setServoOut(const int16_t (&SRVout)[SERVO_CHANNELS]);
+    void setServoOut(const int16_t (&SRVout)[NUM_CHANNELS]);
     int16_t getServoOut(Channel);
 
 private:
-    Servo controlServo[SERVO_CHANNELS]; // Control servos
-    int16_t channelOut[SERVO_CHANNELS]; // Servo output values
+    Servo controlServo[NUM_CHANNELS]; // Control servos
+    int16_t channelOut[NUM_CHANNELS]; // Servo output values
 };
 
 extern Actuators actuators;

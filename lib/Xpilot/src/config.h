@@ -107,9 +107,6 @@ Flight stabilization software
 #define AILPIN2_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
-
-// Max 12 servos
-#define SERVO_CHANNELS 4
 // ------------------------------------------------------------------------------------------------------
 
 /*

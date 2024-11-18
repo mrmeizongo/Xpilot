@@ -13,9 +13,9 @@ void Actuators::init(void)
     controlServo[RUDDER].attach(RUDDPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
 }
 
-void Actuators::setServoOut(const int16_t (&SRVout)[SERVO_CHANNELS])
+void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
 {
-    for (uint8_t i = 0; i < SERVO_CHANNELS; i++)
+    for (uint8_t i = 0; i < NUM_CHANNELS; i++)
     {
         channelOut[i] = SRVout[i];
     }
@@ -23,7 +23,7 @@ void Actuators::setServoOut(const int16_t (&SRVout)[SERVO_CHANNELS])
 
 int16_t Actuators::getServoOut(Channel channel)
 {
-    if (channel < 0 || channel >= SERVO_CHANNELS)
+    if (channel < 0 || channel >= NUM_CHANNELS)
         return -1;
 
     return channelOut[channel];
@@ -31,7 +31,7 @@ int16_t Actuators::getServoOut(Channel channel)
 
 void Actuators::writeServos(void)
 {
-    for (uint8_t i = 0; i < SERVO_CHANNELS; i++)
+    for (uint8_t i = 0; i < Channel::NUM_CHANNELS; i++)
     {
         controlServo[i].writeMicroseconds(channelOut[i]);
     }
