@@ -216,6 +216,9 @@ Flight stabilization software
 #define REVERSE_ROLL_GYRO
 // #define REVERSE_PITCH_GYRO
 #define REVERSE_YAW_GYRO
+// ------------------------------------------------------------------------------------------------------
+
+// Rudder control
 
 /*
  * Mix rudder to enable automatic turn coordinations
@@ -225,8 +228,11 @@ Flight stabilization software
 #define RUDDER_MIX_IN_RATE
 #define RUDDER_MIX_IN_STABILIZE
 
-// #define REVERSE_RUDDER_MIX   // Uncomment to reverse rudder mixing input if rudder doesn't move in the expected direction
-#define RUDDER_MIXING 0.3333f // Amount of aileron input to mix with rudder to coordinate turns (1/4 - 1/3 of aileron input is recommended)
+// Uncomment to reverse rudder mixing input if rudder doesn't move in the expected direction
+// #define REVERSE_RUDDER_MIX
+
+// Amount of aileron input to be mixed with rudder to coordinate turns (1/4 - 1/3 of aileron input is recommended)
+#define RUDDER_MIXING 0.3333f
 
 #define USE_HEADING_HOLD // Enable heading-hold-like functionality when yaw centered
 // ------------------------------------------------------------------------------------------------------
