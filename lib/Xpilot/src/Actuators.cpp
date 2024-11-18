@@ -31,7 +31,7 @@ int16_t Actuators::getServoOut(Channel channel)
 
 void Actuators::writeServos(void)
 {
-    for (uint8_t i = 0; i < Channel::NUM_CHANNELS; i++)
+    for (uint8_t i = 0; i < NUM_CHANNELS; i++)
     {
         controlServo[i].writeMicroseconds(channelOut[i]);
     }
