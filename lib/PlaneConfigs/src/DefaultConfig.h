@@ -50,6 +50,9 @@ Flight stabilization software
 // #define FLYING_WING_W_RUDDER
 // #define FLYING_WING_NO_RUDDER
 // #defined RUDDER_ELEVATOR_ONLY_V_TAIL
+// ------------------------------------------------------------------------------------------------------
+
+// Servo config
 
 /*
  * Servo PWM range in micro seconds
@@ -60,6 +63,9 @@ Flight stabilization software
 #define SERVO_MIN_PWM 1000
 #define SERVO_MID_PWM 1500
 #define SERVO_MAX_PWM 2000
+// ------------------------------------------------------------------------------------------------------
+
+// Transmitter config
 
 /*
  * Transmitter PWM range in micro seconds
@@ -75,20 +81,37 @@ Flight stabilization software
 #define INPUT_MIN_PWM 1000
 #define INPUT_MID_PWM 1500
 #define INPUT_MAX_PWM 2000
-// ------------------------------------------------------------------------------------------------------
 
 /*
  * Transmitter / Receiver values
  * Used to separate the 3 flight modes input threshold
  */
 #define INPUT_THRESHOLD 200
+
+// To correct transmitter stick drift
+#define ROLL_INPUT_DEADBAND 20
+#define PITCH_INPUT_DEADBAND 20
+#define YAW_INPUT_DEADBAND 20
+
+// Stick resolution in passthrough mode
+#define PASSTHROUGH_RES 1000
+
+// Stick resolution in rate mode (degrees)
+#define MAX_ROLL_RATE_DEGS 60
+#define MAX_PITCH_RATE_DEGS 45
+#define MAX_YAW_RATE_DEGS 30
+
+// Max allowable angle in stabilize mode (angles)
+#define MAX_ROLL_ANGLE_DEGS 60
+#define MAX_PITCH_ANGLE_DEGS 45
 // ------------------------------------------------------------------------------------------------------
+
+// PID config
 
 // PID output limits
 #define MAX_PID_OUTPUT 1000
 
 // PID gain values
-// Edit these for your plane
 
 // Roll
 #define ROLL_KP 5.f
@@ -96,12 +119,14 @@ Flight stabilization software
 #define ROLL_KD 0.f
 #define ROLL_KF 0.f
 #define ROLL_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
+
 // Pitch
 #define PITCH_KP 7.f
 #define PITCH_KI 0.f
 #define PITCH_KD 0.f
 #define PITCH_KF 0.f
 #define PITCH_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
+
 // Yaw
 #define YAW_KP 9.f
 #define YAW_KI 0.f
@@ -125,35 +150,11 @@ Flight stabilization software
 
 /*
  * Trim values to be used to correct gyro misalignment
- * Modify these values to suit your airplane if not calibrated properly
  */
 
 #define IMU_ROLL_TRIM 0.f
 #define IMU_PITCH_TRIM 0.f
 #define IMU_YAW_TRIM 0.f
-// ------------------------------------------------------------------------------------------------------
-
-// To correct transmitter stick drift, be sure to modify these values
-#define ROLL_INPUT_DEADBAND 20
-#define PITCH_INPUT_DEADBAND 20
-#define YAW_INPUT_DEADBAND 20
-// ------------------------------------------------------------------------------------------------------
-
-// Radio resolution values
-
-// Stick resolution in passthrough mode
-// It is the difference between the maximum and minimum output signal
-#define PASSTHROUGH_RES 1000
-
-// Stick resolution in rate mode (degrees)
-#define MAX_ROLL_RATE_DEGS 60
-#define MAX_PITCH_RATE_DEGS 45
-#define MAX_YAW_RATE_DEGS 30
-
-// Max angles allowed in stabilize mode (angles)
-#define MAX_ROLL_ANGLE_DEGS 60
-#define MAX_PITCH_ANGLE_DEGS 45
-// ------------------------------------------------------------------------------------------------------
 
 // Uncomment or comment to set and unset respectively
 // This depends on the mount direction of the MPU6050 on the circuit board
@@ -173,7 +174,7 @@ Flight stabilization software
 // #define REVERSE_YAW_GYRO
 // ------------------------------------------------------------------------------------------------------
 
-// Rudder control
+// Rudder config
 
 /*
  * Mix rudder to enable automatic turn coordinations
@@ -191,6 +192,8 @@ Flight stabilization software
 
 // #define USE_HEADING_HOLD // Uncomment to enable heading-hold-like functionality when yaw centered
 // ------------------------------------------------------------------------------------------------------
+
+// Debug config
 
 /*
  * Uncomment to enable the respective debugging
