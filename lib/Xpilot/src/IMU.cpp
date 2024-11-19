@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <PlaneConfig.h>
 #include "IMU.h"
 
 /*

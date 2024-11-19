@@ -31,7 +31,7 @@ Flight stabilization software
 */
 
 #include <Arduino.h>
-#include <Config.h>
+#include <PlaneConfig.h>
 #include "Xpilot.h"
 #include "ModeController.h"
 #include "Radio.h"

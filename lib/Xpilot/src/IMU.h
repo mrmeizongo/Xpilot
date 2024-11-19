@@ -1,7 +1,6 @@
 #ifndef _IMU_H
 #define _IMU_H
 #include <MPU6050.h>
-#include <Config.h>
 
 class IMU
 {

@@ -2,7 +2,6 @@
 #define _RADIO_H
 
 #include <inttypes.h>
-#include <Config.h>
 
 enum FlightMode : uint8_t
 {

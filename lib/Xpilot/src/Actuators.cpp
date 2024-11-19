@@ -1,4 +1,5 @@
 #include <BoardConfig.h>
+#include <PlaneConfig.h>
 #include "Actuators.h"
 
 Actuators::Actuators(void)
