@@ -33,18 +33,31 @@ Flight stabilization software
 #define _PLANE_CONFIG_H
 #include "PlaneSelector.h"
 
-#if defined(USE_SAM_1000) && defined(USE_GFOX)
-#error Cannot use more than one config
-#endif
+/*
+ * Use conditional compilation based on airplane definitions in PlaneSelector
+ * Exmample
+ * #if defined(USE_GLIDER) || defined(USE_CUB) || defined(USE_ACRO)
+ * #error Only one airplane need to be defined at a time
+ * #endif
+ *
+ * #if defined(USE_GLIDER)
+ * #include "Glider.h"
+ * #undef USE_GLIDER
+ * #elif defined(USE_CUB)
+ * #include "Cub.h"
+ * #undef USE_CUB
+ * #elif defined(USE_ACRO)
+ * #include "Acro.h"
+ * #undef USE_ACRO
+ * #else
+ * #include "DefaultConfig.h"
+ * #endif
+ */
 
-#if defined(USE_SAM_1000)
-#include "Sam1000.h"
-#undef USE_SAM_1000
-#elif defined(USE_GFOX)
-#include "GFox.h"
-#undef USE_GFOX
-#else
+/*
+ * NOTE
+ * If you intend to modify and use only the default settings in DefaultConfig.h you can leave this file as is
+ */
 #include "DefaultConfig.h"
-#endif
 
 #endif // PLANE_CONFIG_H
