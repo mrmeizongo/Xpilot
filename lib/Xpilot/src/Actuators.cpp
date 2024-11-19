@@ -1,3 +1,4 @@
+#include <BoardConfig.h>
 #include "Actuators.h"
 
 Actuators::Actuators(void)

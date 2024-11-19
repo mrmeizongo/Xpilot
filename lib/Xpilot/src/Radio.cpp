@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <util/atomic.h>
 #include <PinChangeInterrupt.h>
+#include <BoardConfig.h>
+#include <config.h>
 #include "Radio.h"
-#include "config.h"
 
 volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
 volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
