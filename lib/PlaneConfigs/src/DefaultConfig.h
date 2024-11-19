@@ -166,7 +166,7 @@ Flight stabilization software
 // Uncomment to reverse stabilization output
 // #define REVERSE_ROLL_STABILIZE
 // #define REVERSE_PITCH_STABILIZE
-// #define REVERSE_YAW_STABILIZE
+// #define REVERSE_YAW_STABILIZE    // Not required
 
 // Uncomment to reverse gyro output
 // #define REVERSE_ROLL_GYRO
