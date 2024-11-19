@@ -110,6 +110,19 @@ Flight stabilization software
 #define YAW_I_WINDUP_MAX 300 // 10-30% of maximum control output is a good starting point
 // ------------------------------------------------------------------------------------------------------
 
+// IMU config
+
+/*
+ * IMU ACCEL & GYRO biases obtained from running calibration function
+ * Uncomment CALIBRATION_DEBUG to obtain these values
+ */
+#define ACC_X_BIAS 0.f
+#define ACC_Y_BIAS 0.f
+#define ACC_Z_BIAS 0.f
+#define GYRO_X_BIAS 0.f
+#define GYRO_Y_BIAS 0.f
+#define GYRO_Z_BIAS 0.f
+
 /*
  * Trim values to be used to correct gyro misalignment
  * Modify these values to suit your airplane if not calibrated properly

@@ -2,17 +2,6 @@
 #include <PlaneConfig.h>
 #include "IMU.h"
 
-/*
- * ACCEL & GYRO biases obtained from running calibration function
- * Uncomment CALIBRATION_DEBUG to obtain these values
- */
-#define ACC_X_BIAS 1029.76f
-#define ACC_Y_BIAS 273.84f
-#define ACC_Z_BIAS -491.22f
-#define GYRO_X_BIAS -548.62f
-#define GYRO_Y_BIAS -5.19f
-#define GYRO_Z_BIAS -29.84f
-
 #define IMU_WARMUP_LOOP 1000U
 #define MPU6050_ADDRESS 0x68
 #define I2C_CLOCK_400KHZ 400000U
