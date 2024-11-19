@@ -2,7 +2,7 @@
 #include <util/atomic.h>
 #include <PinChangeInterrupt.h>
 #include <BoardConfig.h>
-#include <config.h>
+#include <Config.h>
 #include "Radio.h"
 
 volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;

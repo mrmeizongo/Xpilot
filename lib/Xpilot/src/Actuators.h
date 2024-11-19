@@ -33,7 +33,7 @@ Flight stabilization software
 #define _ACTUATORS_H
 #include <Servo.h>
 #include <inttypes.h>
-#include "config.h"
+#include <Config.h>
 
 // Maintain consecutive flight control surface numbering starting from 0
 // Ensure NUM_CHANNELS is the last enum in the list and does not exceed MAX_SERVOS in Servo library

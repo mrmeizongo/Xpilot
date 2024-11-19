@@ -31,12 +31,12 @@ Flight stabilization software
 */
 
 #include <Arduino.h>
+#include <Config.h>
 #include "Xpilot.h"
 #include "ModeController.h"
 #include "Radio.h"
 #include "Actuators.h"
 #include "IMU.h"
-#include "config.h"
 
 #define FIFTYHZ_LOOP 20U
 #define ONEHZ_LOOP 1000U

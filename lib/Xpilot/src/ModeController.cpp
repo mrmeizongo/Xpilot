@@ -30,12 +30,12 @@ Flight stabilization software
 ===============================================
 */
 #include <Arduino.h>
+#include <PIDF.h>
+#include <Config.h>
 #include "ModeController.h"
 #include "Radio.h"
 #include "IMU.h"
 #include "Actuators.h"
-#include <PIDF.h>
-#include "config.h"
 
 // Helper functions
 static void planeMixer(int16_t, int16_t, int16_t);
