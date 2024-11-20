@@ -1,6 +1,3 @@
-## Simple PID Controller
-
-Simple PID controller for use in Xpilot flight stabilization software
 Copyright (C) 2024 Jamal Meizongo
 
     This program is free software: you can redistribute it and/or modify
@@ -23,3 +20,7 @@ Copyright (C) 2024 Jamal Meizongo
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+## Simple PIDF Controller
+
+This is a simple PIDF controller modified for use in this project. See [PIDF](https://github.com/mrmeizongo/PIDF) for main repository
