@@ -9,10 +9,8 @@ Actuators::Actuators(void)
 void Actuators::init(void)
 {
     // Set up output servos
-    controlServo[AILERON1].attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    controlServo[AILERON2].attach(AILPIN2_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
-    controlServo[ELEVATOR].attach(ELEVPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
-    controlServo[RUDDER].attach(RUDDPIN_OUTPUT, SERVO_MID_PWM, SERVO_MAX_PWM);
+    for (uint8_t channel = AILERON1; channel < NUM_CHANNELS; channel++)
+        controlServo[channel].attach(channel, SERVO_MIN_PWM, SERVO_MAX_PWM);
 }
 
 void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
