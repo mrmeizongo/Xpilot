@@ -86,37 +86,37 @@ void IMU::processIMU(void)
     if (mpu6050.update())
     {
 #if defined(REVERSE_ROLL_STABILIZE)
-        ahrs_roll = 0 - (mpu6050.getRoll() + IMU_ROLL_TRIM);
+        ahrs_roll = -(mpu6050.getRoll() + IMU_ROLL_TRIM);
 #else
         ahrs_roll = mpu6050.getRoll() + IMU_ROLL_TRIM;
 #endif
 
 #if defined(REVERSE_PITCH_STABILIZE)
-        ahrs_pitch = 0 - (mpu6050.getPitch() + IMU_PITCH_TRIM);
+        ahrs_pitch = -(mpu6050.getPitch() + IMU_PITCH_TRIM);
 #else
         ahrs_pitch = mpu6050.getPitch() + IMU_PITCH_TRIM;
 #endif
 
 #if defined(REVERSE_YAW_STABILIZE)
-        ahrs_yaw = 0 - (mpu6050.getYaw() + IMU_YAW_TRIM);
+        ahrs_yaw = -(mpu6050.getYaw() + IMU_YAW_TRIM);
 #else
         ahrs_yaw = mpu6050.getYaw() + IMU_YAW_TRIM;
 #endif
 
 #if defined(REVERSE_ROLL_GYRO)
-        gyroX = 0 - (mpu6050.getGyroX());
+        gyroX = -(mpu6050.getGyroX());
 #else
         gyroX = mpu6050.getGyroX();
 #endif
 
 #if defined(REVERSE_PITCH_GYRO)
-        gyroY = 0 - (mpu6050.getGyroY());
+        gyroY = -(mpu6050.getGyroY());
 #else
         gyroY = mpu6050.getGyroY();
 #endif
 
 #if defined(REVERSE_YAW_GYRO)
-        gyroZ = 0 - (mpu6050.getGyroZ());
+        gyroZ = -(mpu6050.getGyroZ());
 #else
         gyroZ = mpu6050.getGyroZ();
 #endif
