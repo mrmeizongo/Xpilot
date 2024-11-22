@@ -20,6 +20,7 @@ static uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 Radio::Radio(void)
 {
 }
+
 void Radio::init(void)
 {
     // All input pins use pin change interrupts
