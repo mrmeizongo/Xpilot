@@ -40,7 +40,7 @@ Flight stabilization software
 // Helper functions
 static void planeMixer(int16_t, int16_t, int16_t);
 static void rudderMixer(void);
-static void yawController(const int16_t yaw, const uint16_t roll);
+static void yawController(void);
 // -----------------------------------------------------------------------------------------------------------------
 
 // Servo channel out
@@ -51,6 +51,10 @@ static int16_t SRVout[NUM_CHANNELS]{0, 0, 0, 0};
 static PIDF rollPIDF;
 static PIDF pitchPIDF;
 static PIDF yawPIDF;
+// -----------------------------------------------------------------------------------------------------------------
+
+// Radio input variables
+int16_t rollInput, pitchInput, yawInput = 0;
 // -----------------------------------------------------------------------------------------------------------------
 
 ModeController::ModeController(void)
@@ -66,6 +70,10 @@ void ModeController::init(void)
 
 void ModeController::processMode(void)
 {
+    rollInput = radio.getRxRoll();
+    pitchInput = radio.getRxPitch();
+    yawInput = radio.getRxYaw();
+
     switch (radio.getRxCurrentMode())
     {
     case PASSTHROUGH:
@@ -99,59 +107,61 @@ void ModeController::processMode(void)
 // No stabilization, rate or automatic yaw control
 void ModeController::passthroughMode(void)
 {
-    planeMixer(radio.getRxRoll(), radio.getRxPitch(), radio.getRxYaw());
+#if defined(RUDDER_MIX_IN_PASS)
+    rudderMixer();
+#endif
+
+    planeMixer(rollInput, pitchInput, yawInput);
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -PASSTHROUGH_RES, PASSTHROUGH_RES);
     SRVout[RUDDER] = constrain(SRVout[RUDDER], -PASSTHROUGH_RES, PASSTHROUGH_RES);
-#if defined(RUDDER_MIX_IN_PASS)
-    rudderMixer();
-#endif
 }
 
 // Rate mode uses gyroscope values to maintain a desired rate of change
-// Flight surfaces move to prevent sudden changes in direction
+// Flight surfaces counteract sudden changes in attitude on stick release
 void ModeController::rateMode(void)
 {
-    yawController(radio.getRxYaw(), radio.getRxRoll());
+#if defined(RUDDER_MIX_IN_RATE)
+    rudderMixer();
+#endif
+    yawController();
 
-    int16_t roll = rollPIDF.Compute(radio.getRxRoll(), imu.getGyroX());
-    int16_t pitch = pitchPIDF.Compute(radio.getRxPitch(), imu.getGyroY());
-    int16_t yaw = yawPIDF.Compute(radio.getRxYaw(), imu.getGyroZ());
+    int16_t roll = rollPIDF.Compute(rollInput, imu.getGyroX());
+    int16_t pitch = pitchPIDF.Compute(pitchInput, imu.getGyroY());
+    int16_t yaw = yawPIDF.Compute(yawInput, imu.getGyroZ());
+
     planeMixer(roll, pitch, yaw);
-
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[RUDDER] = constrain(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-#if defined(RUDDER_MIX_IN_RATE)
-    rudderMixer();
-#endif
 }
 
 // Roll and pitch follow stick input up to set limits
+// Flight surfaces counteract sudden changes in attitude on stick release
 // Roll and pitch leveling on stick release
 void ModeController::stabilizeMode(void)
 {
-    yawController(radio.getRxYaw(), radio.getRxRoll());
+#if defined(RUDDER_MIX_IN_STABILIZE)
+    rudderMixer();
+#endif
+    yawController();
 
-    float rollDemand = radio.getRxRoll() - imu.getRoll();
-    float pitchDemand = radio.getRxPitch() - imu.getPitch();
+    float rollDemand = rollInput - imu.getRoll();
+    float pitchDemand = pitchInput - imu.getPitch();
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
     int16_t roll = rollPIDF.Compute(rollDemand, imu.getGyroX());
     int16_t pitch = pitchPIDF.Compute(pitchDemand, imu.getGyroY());
-    int16_t yaw = yawPIDF.Compute(radio.getRxYaw(), imu.getGyroZ());
-    planeMixer(roll, pitch, yaw);
+    int16_t yaw = yawPIDF.Compute(yawInput, imu.getGyroZ());
 
+    planeMixer(roll, pitch, yaw);
     SRVout[AILERON1] = constrain(SRVout[AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[AILERON2] = constrain(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[ELEVATOR] = constrain(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
     SRVout[RUDDER] = constrain(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
-#if defined(RUDDER_MIX_IN_STABILIZE)
-    rudderMixer();
-#endif
 }
 
 /*
@@ -215,17 +225,17 @@ static void rudderMixer(void)
 {
 #if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
 #if defined(REVERSE_RUDDER_MIX)
-    SRVout[RUDDER] = SRVout[RUDDER] - (SRVout[AILERON1] * RUDDER_MIXING);
+    yawInput = yawInput - (rollInput * RUDDER_MIXING);
 #else
-    SRVout[RUDDER] = SRVout[RUDDER] + (SRVout[AILERON1] * RUDDER_MIXING);
+    yawInput = yawInput + (rollInput * RUDDER_MIXING);
 #endif
 #endif
 }
 
-static void yawController(const int16_t yaw, const uint16_t roll)
+static void yawController(void)
 {
 #if defined(USE_HEADING_HOLD)
-    if (yaw == 0 || roll == 0)
+    if (yawInput == 0)
     {
         yawPIDF.setKi(YAW_KI);
     }
