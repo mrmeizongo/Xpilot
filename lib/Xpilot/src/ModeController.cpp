@@ -40,7 +40,7 @@ Flight stabilization software
 // Helper functions
 static void planeMixer(int16_t, int16_t, int16_t);
 static void rudderMixer(void);
-static void yawController(const int16_t yaw);
+static void yawController(const int16_t yaw, const uint16_t roll);
 // -----------------------------------------------------------------------------------------------------------------
 
 // Servo channel out
@@ -113,7 +113,8 @@ void ModeController::passthroughMode(void)
 // Flight surfaces move to prevent sudden changes in direction
 void ModeController::rateMode(void)
 {
-    yawController(radio.getRxYaw());
+    yawController(radio.getRxYaw(), radio.getRxRoll());
+
     int16_t roll = rollPIDF.Compute(radio.getRxRoll(), imu.getGyroX());
     int16_t pitch = pitchPIDF.Compute(radio.getRxPitch(), imu.getGyroY());
     int16_t yaw = yawPIDF.Compute(radio.getRxYaw(), imu.getGyroZ());
@@ -132,13 +133,13 @@ void ModeController::rateMode(void)
 // Roll and pitch leveling on stick release
 void ModeController::stabilizeMode(void)
 {
+    yawController(radio.getRxYaw(), radio.getRxRoll());
+
     float rollDemand = radio.getRxRoll() - imu.getRoll();
     float pitchDemand = radio.getRxPitch() - imu.getPitch();
-
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
-    yawController(radio.getRxYaw());
     int16_t roll = rollPIDF.Compute(rollDemand, imu.getGyroX());
     int16_t pitch = pitchPIDF.Compute(pitchDemand, imu.getGyroY());
     int16_t yaw = yawPIDF.Compute(radio.getRxYaw(), imu.getGyroZ());
@@ -221,10 +222,10 @@ static void rudderMixer(void)
 #endif
 }
 
-static void yawController(const int16_t yaw)
+static void yawController(const int16_t yaw, const uint16_t roll)
 {
 #if defined(USE_HEADING_HOLD)
-    if (yaw == 0)
+    if (yaw == 0 || roll == 0)
     {
         yawPIDF.setKi(YAW_KI);
     }
