@@ -48,9 +48,9 @@ void Radio::processInput(void)
         // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
         if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
         {
-            if (modePulses >= INPUT_MAX_PWM - INPUT_THRESHOLD)
+            if (modePulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
                 rx.currentMode = PASSTHROUGH;
-            else if (modePulses <= INPUT_MIN_PWM + INPUT_THRESHOLD)
+            else if (modePulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
                 rx.currentMode = STABILIZE;
             else
                 rx.currentMode = RATE;

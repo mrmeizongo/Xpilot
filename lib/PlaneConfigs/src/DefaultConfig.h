@@ -56,8 +56,7 @@ Flight stabilization software
 
 /*
  * Servo PWM range in micro seconds
- * Edit these to suit your servo PWN values
- * You can find these values in your servo data sheet
+ * Refer to your servo datasheet to determine the control PWM range
  * These values are conservative and should work for most servos
  */
 #define SERVO_MIN_PWM 1000
@@ -69,24 +68,18 @@ Flight stabilization software
 
 /*
  * Transmitter PWM range in micro seconds
- * All tx and rx are not designed the same
- * Default values obtained using SPEKTRUM SPMR6750 DX6 US VERSION and AR620 tx/rx combo
- * Refer to your tx/rx's manual to determine the incoming PWM range
- * If it is not specified, uncomment IO_DEBUG to view input/output data in serial monitor
- * Switch to PASSTHROUGH mode for this. Move stick through low and high points
- * The input range should be between the defined (-PASSTHROUGH_RES) to (PASSTHROUGH_RES)
- * The output range should be between the defined (SERVO_MIN_PWM) to (SERVO_MAX_PWM)
- * Adjust these values accordingly if there is a discrepancy
+ * Refer to your transmitter manual to determine the incoming PWM range
+ * These values are conservative and should work for most transmitters
  */
 #define INPUT_MIN_PWM 1000
 #define INPUT_MID_PWM 1500
 #define INPUT_MAX_PWM 2000
 
 /*
- * Transmitter / Receiver values
+ * 3-position digital switch PWM separator
  * Used to separate the 3 flight modes input threshold
  */
-#define INPUT_THRESHOLD 200
+#define INPUT_SEPARATOR 200
 
 // To correct transmitter stick drift
 #define ROLL_INPUT_DEADBAND 20
