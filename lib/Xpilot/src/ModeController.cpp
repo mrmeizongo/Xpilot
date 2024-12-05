@@ -235,6 +235,8 @@ static void rudderMixer(void)
 static void yawController(void)
 {
 #if defined(USE_HEADING_HOLD)
+    // If yaw is centered and we're using heading hold, add YAW_KI to PID(if any is defined)
+    // Remove it otherwise
     if (yawInput == 0)
     {
         yawPIDF.setKi(YAW_KI);
