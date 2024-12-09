@@ -343,17 +343,17 @@ private:
 
     void update_rpy(float qw, float qx, float qy, float qz)
     {
-        // This arises from the definition of the homogeneous rotation matrix constructed from quaternions.
+        // This arises from the definition of the homogeneous rotation matrix constructed from quaternions to euler angles.
         // See https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_angles_(in_3-2-1_sequence)_conversion
         float sinr_cosp = 2 * ((qw * qx) + (qy * qz));
-        float cosr_cosp = 1 - 2 * ((qx * qx) + (qy * qy));
-        float sinp = sqrt(1 + 2 * ((qw * qy) - (qx * qz)));
-        float cosp = sqrt(1 - 2 * ((qw * qy) - (qx * qz)));
+        float cosr_cosp = 1 - (2 * ((qx * qx) + (qy * qy)));
+        float sinp = sqrt(1 + (2 * ((qw * qy) - (qx * qz))));
+        float cosp = sqrt(1 - (2 * ((qw * qy) - (qx * qz))));
         float siny_cosp = 2 * ((qw * qz) + (qx * qy));
-        float cosy_cosp = 1 - 2 * ((qy * qy) + (qz * qz));
+        float cosy_cosp = 1 - (2 * ((qy * qy) + (qz * qz)));
 
         rpy[0] = atan2f(sinr_cosp, cosr_cosp);
-        rpy[1] = 2 * atan2f(sinp, cosp) - PI / 2;
+        rpy[1] = (2 * atan2f(sinp, cosp)) - (PI / 2);
         rpy[2] = atan2f(siny_cosp, cosy_cosp);
 
         // Convert radian to degrees
@@ -361,9 +361,23 @@ private:
         rpy[1] *= RAD_TO_DEG;
         rpy[2] *= RAD_TO_DEG;
 
-        if (rpy[2] >= +180.f)
+        // Limit roll to +/-180 degrees range
+        if (rpy[0] >= +180)
+            rpy[0] -= 360.f;
+        else if (rpy[0] <= -180)
+            rpy[0] += 360.f;
+
+        // Limit pitch to +/-90 degrees range
+        // At extreme pitch angles +/-90, gimbal lock may occur
+        if (rpy[1] >= +90.f)
+            rpy[1] -= 180.f;
+        else if (rpy[1] < -90.f)
+            rpy[1] += 180.f;
+
+        // Limit yaw to +/-180 degrees range
+        if (rpy[2] >= +180)
             rpy[2] -= 360.f;
-        else if (rpy[2] < -180.f)
+        else if (rpy[2] <= -180)
             rpy[2] += 360.f;
 
         // Convert to linear acceleration
