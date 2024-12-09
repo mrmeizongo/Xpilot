@@ -343,35 +343,33 @@ private:
 
     void update_rpy(float qw, float qx, float qy, float qz)
     {
-        // Define output variables from updated quaternion---these are Tait-Bryan angles, commonly used in aircraft orientation.
-        // In this coordinate system, the positive z-axis is down toward Earth.
-        // Yaw is the angle between Sensor x-axis and Earth magnetic North (or true North if corrected for local declination, looking down on the sensor positive yaw is counterclockwise.
-        // Pitch is angle between sensor x-axis and Earth ground plane, toward the Earth is positive, up toward the sky is negative.
-        // Roll is angle between sensor y-axis and Earth ground plane, y-axis up is positive roll.
-        // These arise from the definition of the homogeneous rotation matrix constructed from quaternions.
-        // Tait-Bryan angles as well as Euler angles are non-commutative; that is, the get the correct orientation the rotations must be
-        // applied in the correct order which for this configuration is yaw, pitch, and then roll.
-        // For more see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles which has additional links.
-        float a12, a22, a31, a32, a33; // rotation matrix coefficients for Euler angles and gravity components
-        a12 = 2.0f * (qx * qy + qw * qz);
-        a22 = qw * qw + qx * qx - qy * qy - qz * qz;
-        a31 = 2.0f * (qw * qx + qy * qz);
-        a32 = 2.0f * (qx * qz - qw * qy);
-        a33 = qw * qw - qx * qx - qy * qy + qz * qz;
-        rpy[0] = atan2f(a31, a33);
-        rpy[1] = -asinf(a32);
-        rpy[2] = atan2f(a12, a22);
-        rpy[0] *= 57.29577951;
-        rpy[1] *= 57.29577951;
-        rpy[2] *= 57.29577951;
+        // This arises from the definition of the homogeneous rotation matrix constructed from quaternions.
+        // See https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_angles_(in_3-2-1_sequence)_conversion
+        float sinr_cosp = 2 * ((qw * qx) + (qy * qz));
+        float cosr_cosp = 1 - 2 * ((qx * qx) + (qy * qy));
+        float sinp = sqrt(1 + 2 * ((qw * qy) - (qx * qz)));
+        float cosp = sqrt(1 - 2 * ((qw * qy) - (qx * qz)));
+        float siny_cosp = 2 * ((qw * qz) + (qx * qy));
+        float cosy_cosp = 1 - 2 * ((qy * qy) + (qz * qz));
+
+        rpy[0] = atan2f(sinr_cosp, cosr_cosp);
+        rpy[1] = 2 * atan2f(sinp, cosp) - PI / 2;
+        rpy[2] = atan2f(siny_cosp, cosy_cosp);
+
+        // Convert radian to degrees
+        rpy[0] *= RAD_TO_DEG;
+        rpy[1] *= RAD_TO_DEG;
+        rpy[2] *= RAD_TO_DEG;
+
         if (rpy[2] >= +180.f)
             rpy[2] -= 360.f;
         else if (rpy[2] < -180.f)
             rpy[2] += 360.f;
 
-        lin_acc[0] = a[0] + a31;
-        lin_acc[1] = a[1] + a32;
-        lin_acc[2] = a[2] - a33;
+        // Convert to linear acceleration
+        lin_acc[0] = a[0] + (2 * ((qw * qy) + (qx * qz)));
+        lin_acc[1] = a[1] + (2 * ((qy * qz) - (qw * qx)));
+        lin_acc[2] = a[2] - ((qw * qw) - (qx * qx) - (qy * qy) - (qz * qz));
     }
 
     void update_accel_gyro()
