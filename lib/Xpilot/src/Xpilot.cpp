@@ -49,6 +49,7 @@ static unsigned long nowMs, outputLastMs = 0;
 static void printDebug(void) __attribute__((unused));
 static void printIO(void) __attribute__((unused));
 static void printIMU(void) __attribute__((unused));
+static void printLoopRate(void) __attribute__((unused));
 // -------------------------
 
 Xpilot::Xpilot(void)
@@ -96,32 +97,20 @@ void Xpilot::loop(void)
 // Debug helper functions
 static void printDebug(void)
 {
-#if defined(IO_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+#if defined(IO_DEBUG)
     static unsigned long debugLastMs = 0;
     if (nowMs - debugLastMs >= ONEHZ_LOOP)
     {
-#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
-        printIMU();
-#endif
-#if defined(IO_DEBUG)
         printIO();
-#endif
         debugLastMs = nowMs;
     }
 #endif
 
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+    printIMU();
+#endif
 #if defined(LOOP_DEBUG)
-    unsigned long loopMillis = millis() - nowMs;
-    loopMillis = loopMillis == 0 ? 1 : loopMillis; // To prevent division by 0
-    Serial.print("Loop time");
-    Serial.print("\t\t\t");
-    Serial.println("Loop rate");
-    Serial.print(loopMillis);
-    Serial.print("ms");
-    Serial.print("\t\t\t\t");
-    Serial.print(1000 / loopMillis);
-    Serial.println("Hz");
-    Serial.println();
+    printLoopRate();
 #endif
 }
 
@@ -162,12 +151,28 @@ static void printIO(void)
 
 static void printIMU(void)
 {
-    Serial.print("Roll: ");
-    Serial.println(imu.getRoll());
-    Serial.print("Pitch: ");
-    Serial.println(imu.getPitch());
+    Serial.print(">");
+    Serial.print("Roll");
+    Serial.print(imu.getRoll());
+    Serial.print(", ");
+    Serial.print("Pitch");
+    Serial.print(imu.getPitch());
+    Serial.print(", ");
     Serial.print("Yaw: ");
-    Serial.println(imu.getYaw());
+    Serial.print(imu.getYaw());
+    Serial.println();
+}
+
+static void printLoopRate(void)
+{
+    unsigned long loopMillis = millis() - nowMs;
+    loopMillis = loopMillis == 0 ? 1 : loopMillis; // To prevent division by 0
+    Serial.print(">");
+    Serial.print("Loop time");
+    Serial.print(loopMillis);
+    Serial.print(", ");
+    Serial.print("Loop rate");
+    Serial.print(1000 / loopMillis);
     Serial.println();
 }
 // ---------------------------
