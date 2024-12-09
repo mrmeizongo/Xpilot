@@ -141,6 +141,7 @@ void ModeController::rateMode(void)
 // Roll and pitch follow stick input up to set limits
 // Flight surfaces counteract sudden changes in attitude on stick release
 // Roll and pitch leveling on stick release
+// CAUTION: At extreme pitch angles +/-90, gimbal lock may occur!
 void ModeController::stabilizeMode(void)
 {
 #if defined(RUDDER_MIX_IN_STABILIZE)

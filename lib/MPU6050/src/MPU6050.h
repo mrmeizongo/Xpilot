@@ -368,7 +368,6 @@ private:
             rpy[0] += 360.f;
 
         // Limit pitch to +/-90 degrees range
-        // At extreme pitch angles +/-90, gimbal lock may occur
         if (rpy[1] >= +90.f)
             rpy[1] -= 180.f;
         else if (rpy[1] < -90.f)
