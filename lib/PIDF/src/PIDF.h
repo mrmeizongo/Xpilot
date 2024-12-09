@@ -61,6 +61,11 @@ private:
     ///
     static const uint8_t fCut = 20;
 
+    // Discrete low pass filter
+    // Cuts out the high frequency noise that can drive the controller crazy
+    // See https://en.wikipedia.org/wiki/Low-pass_filter#
+    static constexpr float RC = 1 / (2 * M_PI * fCut);
+
     float integrator = 0;
     float previousError = 0;
     float previousDerivative = NAN; // for low-pass filter calculation
