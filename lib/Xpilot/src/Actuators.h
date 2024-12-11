@@ -36,6 +36,7 @@ Flight stabilization software
 
 // Maintain consecutive flight control surface numbering starting from 0
 // Ensure NUM_CHANNELS is the last enum in the list and does not exceed MAX_SERVOS in Servo library
+// MAX_SERVOS for the Arduino Nano is 12 servos because it has 1 16 bit timer
 enum Channel : uint8_t
 {
     AILERON1 = 0U,
