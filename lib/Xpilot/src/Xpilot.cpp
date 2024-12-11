@@ -152,10 +152,10 @@ static void printIO(void)
 static void printIMU(void)
 {
     Serial.print(">");
-    Serial.print("Roll");
+    Serial.print("Roll: ");
     Serial.print(imu.getRoll());
     Serial.print(", ");
-    Serial.print("Pitch");
+    Serial.print("Pitch: ");
     Serial.print(imu.getPitch());
     Serial.print(", ");
     Serial.print("Yaw: ");
@@ -168,10 +168,10 @@ static void printLoopRate(void)
     unsigned long loopMillis = millis() - nowMs;
     loopMillis = loopMillis == 0 ? 1 : loopMillis; // To prevent division by 0
     Serial.print(">");
-    Serial.print("Loop time");
+    Serial.print("Loop time: ");
     Serial.print(loopMillis);
     Serial.print(", ");
-    Serial.print("Loop rate");
+    Serial.print("Loop rate: ");
     Serial.print(1000 / loopMillis);
     Serial.println();
 }
