@@ -15,6 +15,9 @@ struct Control
     int16_t roll;
     int16_t pitch;
     int16_t yaw;
+    uint16_t rollPWM;
+    uint16_t pitchPWM;
+    uint16_t yawPWM;
     FlightMode currentMode;
 
     Control(void) {}
@@ -33,6 +36,11 @@ public:
     int16_t getRxRoll(void) { return rx.roll; }
     int16_t getRxPitch(void) { return rx.pitch; }
     int16_t getRxYaw(void) { return rx.yaw; }
+
+    int16_t getRxRollPWM(void) { return rx.rollPWM; }
+    int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
+    int16_t getRxYawPWM(void) { return rx.yawPWM; }
+
     FlightMode getRxCurrentMode(void) { return rx.currentMode; }
 
 private:

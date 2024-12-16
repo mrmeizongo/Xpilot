@@ -121,10 +121,15 @@ static void printIO(void)
     Serial.println((uint8_t)radio.getRxCurrentMode());
     Serial.print("Input");
     Serial.print("\t\t\t\t");
+    Serial.print("Input PWM");
+    Serial.print("\t\t\t\t");
     Serial.println("Output");
 
     Serial.print("Aileron 1: ");
     Serial.print(radio.getRxRoll());
+    Serial.print("\t\t\t");
+    Serial.print("Aileron 1 PWM: ");
+    Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
     Serial.println(actuators.getServoOut(AILERON1));
@@ -132,17 +137,26 @@ static void printIO(void)
     Serial.print("Aileron 2: ");
     Serial.print(radio.getRxRoll());
     Serial.print("\t\t\t");
+    Serial.print("Aileron 2 PWM: ");
+    Serial.print(radio.getRxRollPWM());
+    Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
     Serial.println(actuators.getServoOut(AILERON2));
 
     Serial.print("Elevator: ");
     Serial.print(radio.getRxPitch());
     Serial.print("\t\t\t");
+    Serial.print("Elevator PWM: ");
+    Serial.print(radio.getRxPitchPWM());
+    Serial.print("\t\t\t");
     Serial.print("Elevator: ");
     Serial.println(actuators.getServoOut(ELEVATOR));
 
     Serial.print("Rudder: ");
     Serial.print(radio.getRxYaw());
+    Serial.print("\t\t\t");
+    Serial.print("Rudder PWM: ");
+    Serial.print(radio.getRxYawPWM());
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
     Serial.println(actuators.getServoOut(RUDDER));

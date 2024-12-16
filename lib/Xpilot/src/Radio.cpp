@@ -9,8 +9,6 @@ volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulse
 volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
 volatile static unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
 volatile static unsigned long modeCurrentTime, modeStartTime, modePulses = 0;
-
-static uint16_t aileronPulseWidth, elevatorPulseWidth, rudderPulseWidth = 0;
 // -------------------------
 
 // Helper function to set Radio rx values
@@ -57,11 +55,11 @@ void Radio::processInput(void)
         }
 
         if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
-            aileronPulseWidth = aileronPulses;
+            rx.rollPWM = aileronPulses;
         if (elevatorPulses >= INPUT_MIN_PWM && elevatorPulses <= INPUT_MAX_PWM)
-            elevatorPulseWidth = elevatorPulses;
+            rx.pitchPWM = elevatorPulses;
         if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
-            rudderPulseWidth = rudderPulses;
+            rx.yawPWM = rudderPulses;
     }
 
     // Set stick resolutions
@@ -69,19 +67,19 @@ void Radio::processInput(void)
     switch (rx.currentMode)
     {
     case PASSTHROUGH:
-        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, PASSTHROUGH_RES, -PASSTHROUGH_RES);
-        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, PASSTHROUGH_RES, -PASSTHROUGH_RES);
-        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, PASSTHROUGH_RES, -PASSTHROUGH_RES);
+        rx.roll = SETINPUT(rx.rollPWM, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, PASSTHROUGH_RES, -PASSTHROUGH_RES);
+        rx.pitch = SETINPUT(rx.pitchPWM, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, PASSTHROUGH_RES, -PASSTHROUGH_RES);
+        rx.yaw = SETINPUT(rx.yawPWM, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, PASSTHROUGH_RES, -PASSTHROUGH_RES);
         break;
     case RATE:
-        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_ROLL_RATE_DEGS, -MAX_ROLL_RATE_DEGS);
-        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_PITCH_RATE_DEGS, -MAX_PITCH_RATE_DEGS);
-        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_YAW_RATE_DEGS, -MAX_YAW_RATE_DEGS);
+        rx.roll = SETINPUT(rx.rollPWM, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_ROLL_RATE_DEGS, -MAX_ROLL_RATE_DEGS);
+        rx.pitch = SETINPUT(rx.pitchPWM, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_PITCH_RATE_DEGS, -MAX_PITCH_RATE_DEGS);
+        rx.yaw = SETINPUT(rx.yawPWM, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_YAW_RATE_DEGS, -MAX_YAW_RATE_DEGS);
         break;
     case STABILIZE:
-        rx.roll = SETINPUT(aileronPulseWidth, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_ANGLE_DEGS);
-        rx.pitch = SETINPUT(elevatorPulseWidth, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_ANGLE_DEGS);
-        rx.yaw = SETINPUT(rudderPulseWidth, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_YAW_RATE_DEGS, -MAX_YAW_RATE_DEGS);
+        rx.roll = SETINPUT(rx.rollPWM, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_ANGLE_DEGS);
+        rx.pitch = SETINPUT(rx.pitchPWM, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_ANGLE_DEGS);
+        rx.yaw = SETINPUT(rx.yawPWM, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, MAX_YAW_RATE_DEGS, -MAX_YAW_RATE_DEGS);
         break;
     default:
         break;
