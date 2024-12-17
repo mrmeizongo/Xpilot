@@ -59,7 +59,7 @@ Xpilot::Xpilot(void)
 void Xpilot::setup(void)
 {
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
-    Serial.begin(9600);
+    Serial.begin(115200);
     while (!Serial)
         ; // Wait for Serial port to open
 #endif
@@ -184,9 +184,11 @@ static void printLoopRate(void)
     Serial.print(">");
     Serial.print("Loop time: ");
     Serial.print(loopMillis);
+    Serial.print("ms");
     Serial.print(", ");
     Serial.print("Loop rate: ");
     Serial.print(1000 / loopMillis);
+    Serial.print("Hz");
     Serial.println();
 }
 // ---------------------------
