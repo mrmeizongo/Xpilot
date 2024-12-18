@@ -120,6 +120,10 @@ A calibration function is also provided. Uncommenting CALIBRATE runs the calibra
 
 After all debug operations, be sure to uncomment and reupload Xpilot for normal operation.
 
+## Build & Upload
+
+To build and upload the project to the microcontroller, download [vscode](https://code.visualstudio.com/download) if you don't already have it and install the PlatformIO extension. With the project folder open in vscode, run the _platformio.exe run --target upload command_ in the terminal or click on the _PlatformIO:Upload button_ in the bottom status bar.
+
 ## Preflight
 
 Be sure to go through the entirety of [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) and perform any required modifications and preflight checks before flight.  
