@@ -93,16 +93,15 @@ public:
         if (isConnected())
         {
             initMPU6050();
+            has_connected = true;
         }
         else
         {
             if (b_verbose)
                 Serial.println("Could not connect to MPU6050");
             has_connected = false;
-            return false;
         }
-        has_connected = true;
-        return true;
+        return has_connected;
     }
 
     void sleep(bool b)
