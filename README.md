@@ -122,7 +122,7 @@ After all debug operations, be sure to uncomment and reupload Xpilot for normal 
 
 ## Build & Upload
 
-To build and upload the project to the microcontroller, download [vscode](https://code.visualstudio.com/download) if you don't already have it and install the PlatformIO extension. With the project folder open in vscode, run the _platformio.exe run --target upload command_ in the terminal or click on the _PlatformIO:Upload button_ in the bottom status bar.
+To build and upload the project to the microcontroller, download [vscode](https://code.visualstudio.com/download) if you don't already have it and install the PlatformIO extension. With the project folder open in vscode, run the _platformio.exe run --target upload_ command in the terminal or click on the _PlatformIO:Upload button_ in the bottom status bar.
 
 ## Preflight
 
