@@ -125,7 +125,8 @@ After all debug operations, be sure to uncomment and reupload Xpilot for normal 
 Be sure to go through the entirety of [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) and perform any required modifications and preflight checks before flight.  
 May your landings be beautiful! ❤️
 
-Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.  
+Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
+
 If you like this project and want to support me create more open source projects like this, please consider donating to my PayPal.  
 [![Please Donate](assets/img/paypal-donate-button.png)](https://www.paypal.com/donate/?business=G7TZRNVYLUCHW&no_recurring=0&item_name=Thank+you+for+supporting+the+Xpilot+Flight+Stabilization+project.+May+your+landings+be+beautiful.+%E2%9D%A4%EF%B8%8F&currency_code=USD)
 
