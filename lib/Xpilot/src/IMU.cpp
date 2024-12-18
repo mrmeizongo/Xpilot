@@ -43,7 +43,7 @@ void IMU::init(void)
     // Initialize MPU
     if (!mpu6050.setup(MPU6050_ADDRESS, setting))
     {
-        for (;;)
+        while (true)
         {
 #if defined(IMU_DEBUG)
             Serial.println("MPU6050 not found! Check device address or I2C connection");
@@ -54,8 +54,8 @@ void IMU::init(void)
 
 #if defined(SELF_TEST_ACCEL_GYRO)
     mpu6050.verbose(true);
-    mpu6050.selftest() ? Serial.println("Self test passed.") : Serial.println("Self test failed");
-    for (;;)
+    mpu6050.selftest() ? Serial.println("Self test passed.") : Serial.println("Self test failed.");
+    while (true)
         ;
 #endif
 
