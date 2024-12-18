@@ -38,7 +38,7 @@ See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type co
 
 The atmega328p chip is capable of running the entire stabilization loop in 3ms.
 This gives us an update frequency of ~333Hz. Output to the control servos are updated at 50Hz for standard servos.
-In the context of RC planes, an execution loop of 333Hz provides a smooth and responsive control, which is particularly beneficial for maintaining stability in changing flight conditions.
+In the context of slow flying RC planes such as trainers, gliders and some mild acrobatic planes, an execution loop of 333Hz provides a smooth and responsive control, which is particularly beneficial for maintaining stability in changing flight conditions.
 
 ## Setup
 
