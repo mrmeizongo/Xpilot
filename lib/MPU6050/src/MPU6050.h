@@ -389,13 +389,13 @@ private:
         int16_t raw_acc_gyro_data[6]; // holds 16 bits in 2's complement from the MPU6050 accel/gyro data register
         read_accel_gyro(raw_acc_gyro_data);
 
-        // Now we'll transform the acceleration value into actual g's
-        a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution; // get actual g value, this depends on scale being set
+        // Transform the acceleration value into actual g's
+        a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution; // get actual g value, this depends on the set resolution
         a[1] = ((float)raw_acc_gyro_data[1] - acc_bias[1]) * acc_resolution;
         a[2] = ((float)raw_acc_gyro_data[2] - acc_bias[2]) * acc_resolution;
 
         // Transform the gyro value into actual degrees per second
-        g[0] = ((float)raw_acc_gyro_data[3] - gyro_bias[0]) * gyro_resolution; // get actual gyro value, this depends on scale being set
+        g[0] = ((float)raw_acc_gyro_data[3] - gyro_bias[0]) * gyro_resolution; // get actual gyro value, this depends on the set resolution
         g[1] = ((float)raw_acc_gyro_data[4] - gyro_bias[1]) * gyro_resolution;
         g[2] = ((float)raw_acc_gyro_data[5] - gyro_bias[2]) * gyro_resolution;
     }
@@ -408,14 +408,14 @@ private:
 
     void read_accel_gyro(int16_t *destination)
     {
-        uint8_t raw_data[14];                                                // x/y/z accel register data stored here
-        read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);                          // Read the 14 raw data registers into data array, register data(temperature) 6 & 7 not used
-        destination[0] = ((int16_t)raw_data[0] << 8) | (int16_t)raw_data[1]; // Turn the MSB and LSB into a signed 16-bit value
-        destination[1] = ((int16_t)raw_data[2] << 8) | (int16_t)raw_data[3];
-        destination[2] = ((int16_t)raw_data[4] << 8) | (int16_t)raw_data[5];
-        destination[3] = ((int16_t)raw_data[8] << 8) | (int16_t)raw_data[9];
-        destination[4] = ((int16_t)raw_data[10] << 8) | (int16_t)raw_data[11];
-        destination[5] = ((int16_t)raw_data[12] << 8) | (int16_t)raw_data[13];
+        uint8_t raw_data[14];                                       // x/y/z accel register data stored here
+        read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);                 // Read the 14 raw data registers into data array, register data(temperature) 6 & 7 not used
+        destination[0] = ((int16_t)raw_data[0] << 8) | raw_data[1]; // Turn the MSB and LSB into a signed 16-bit value
+        destination[1] = ((int16_t)raw_data[2] << 8) | raw_data[3];
+        destination[2] = ((int16_t)raw_data[4] << 8) | raw_data[5];
+        destination[3] = ((int16_t)raw_data[8] << 8) | raw_data[9];
+        destination[4] = ((int16_t)raw_data[10] << 8) | raw_data[11];
+        destination[5] = ((int16_t)raw_data[12] << 8) | raw_data[13];
     }
 
     int16_t read_temperature_data()
@@ -505,13 +505,13 @@ private:
         for (uint16_t ii = 0; ii < packet_count; ii++)
         {
             int16_t accel_temp[3] = {0, 0, 0}, gyro_temp[3] = {0, 0, 0};
-            read_bytes(FIFO_R_W, 12, &data[0]);                           // read data for averaging
-            accel_temp[0] = (int16_t)(((int16_t)data[0] << 8) | data[1]); // Form signed 16-bit integer for each sample in FIFO
-            accel_temp[1] = (int16_t)(((int16_t)data[2] << 8) | data[3]);
-            accel_temp[2] = (int16_t)(((int16_t)data[4] << 8) | data[5]);
-            gyro_temp[0] = (int16_t)(((int16_t)data[6] << 8) | data[7]);
-            gyro_temp[1] = (int16_t)(((int16_t)data[8] << 8) | data[9]);
-            gyro_temp[2] = (int16_t)(((int16_t)data[10] << 8) | data[11]);
+            read_bytes(FIFO_R_W, 12, &data[0]);                  // read data for averaging
+            accel_temp[0] = (((int16_t)data[0] << 8) | data[1]); // Form signed 16-bit integer for each sample in FIFO
+            accel_temp[1] = (((int16_t)data[2] << 8) | data[3]);
+            accel_temp[2] = (((int16_t)data[4] << 8) | data[5]);
+            gyro_temp[0] = (((int16_t)data[6] << 8) | data[7]);
+            gyro_temp[1] = (((int16_t)data[8] << 8) | data[9]);
+            gyro_temp[2] = (((int16_t)data[10] << 8) | data[11]);
 
             a_bias[0] += (float)accel_temp[0]; // Sum individual signed 16-bit biases to get accumulated signed 32-bit biases
             a_bias[1] += (float)accel_temp[1];
@@ -529,11 +529,12 @@ private:
         g_bias[1] /= (float)packet_count;
         g_bias[2] /= (float)packet_count;
 
+        // Remove gravity from the z-axis accelerometer bias calculation
         if (a_bias[2] > 0L)
         {
             a_bias[2] -= (float)CALIB_ACCEL_SENSITIVITY;
-        } // Remove gravity from the z-axis accelerometer bias calculation
-        else
+        }
+        else if (a_bias[2] < 0L)
         {
             a_bias[2] += (float)CALIB_ACCEL_SENSITIVITY;
         }
@@ -555,15 +556,15 @@ private:
         for (int ii = 0; ii < 200; ii++)
         { // get average current values of gyro and acclerometer
 
-            read_bytes(ACCEL_XOUT_H, 6, &raw_data[0]);                       // Read the six raw data registers into data array
-            aAvg[0] += (int16_t)(((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
-            aAvg[1] += (int16_t)(((int16_t)raw_data[2] << 8) | raw_data[3]);
-            aAvg[2] += (int16_t)(((int16_t)raw_data[4] << 8) | raw_data[5]);
+            read_bytes(ACCEL_XOUT_H, 6, &raw_data[0]);              // Read the six raw data registers into data array
+            aAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
+            aAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
+            aAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
 
-            read_bytes(GYRO_XOUT_H, 6, &raw_data[0]);                        // Read the six raw data registers sequentially into data array
-            gAvg[0] += (int16_t)(((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
-            gAvg[1] += (int16_t)(((int16_t)raw_data[2] << 8) | raw_data[3]);
-            gAvg[2] += (int16_t)(((int16_t)raw_data[4] << 8) | raw_data[5]);
+            read_bytes(GYRO_XOUT_H, 6, &raw_data[0]);               // Read the six raw data registers sequentially into data array
+            gAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
+            gAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
+            gAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
         }
 
         for (int ii = 0; ii < 3; ii++)
@@ -580,15 +581,15 @@ private:
         for (int ii = 0; ii < 200; ii++)
         { // get average self-test values of gyro and acclerometer
 
-            read_bytes(ACCEL_XOUT_H, 6, &raw_data[0]);                         // Read the six raw data registers into data array
-            aSTAvg[0] += (int16_t)(((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
-            aSTAvg[1] += (int16_t)(((int16_t)raw_data[2] << 8) | raw_data[3]);
-            aSTAvg[2] += (int16_t)(((int16_t)raw_data[4] << 8) | raw_data[5]);
+            read_bytes(ACCEL_XOUT_H, 6, &raw_data[0]);                // Read the six raw data registers into data array
+            aSTAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
+            aSTAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
+            aSTAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
 
-            read_bytes(GYRO_XOUT_H, 6, &raw_data[0]);                          // Read the six raw data registers sequentially into data array
-            gSTAvg[0] += (int16_t)(((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
-            gSTAvg[1] += (int16_t)(((int16_t)raw_data[2] << 8) | raw_data[3]);
-            gSTAvg[2] += (int16_t)(((int16_t)raw_data[4] << 8) | raw_data[5]);
+            read_bytes(GYRO_XOUT_H, 6, &raw_data[0]);                 // Read the six raw data registers sequentially into data array
+            gSTAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
+            gSTAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
+            gSTAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
         }
 
         for (int ii = 0; ii < 3; ii++)

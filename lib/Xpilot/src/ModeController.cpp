@@ -151,8 +151,8 @@ void ModeController::stabilizeMode(void)
 
     float rollDemand = rollInput - imu.getRoll();
     float pitchDemand = pitchInput - imu.getPitch();
-    rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, MAX_ROLL_RATE_DEGS, -MAX_ROLL_RATE_DEGS);
-    pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, MAX_PITCH_RATE_DEGS, -MAX_PITCH_RATE_DEGS);
+    rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+    pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
     int16_t roll = rollPIDF.Compute(rollDemand, imu.getGyroX());
     int16_t pitch = pitchPIDF.Compute(pitchDemand, imu.getGyroY());
