@@ -180,7 +180,6 @@ static void printIMU(void)
 static void printLoopRate(void)
 {
     unsigned long loopMillis = millis() - nowMs;
-    loopMillis = loopMillis == 0 ? 1 : loopMillis; // To prevent division by 0
     Serial.print(">");
     Serial.print("Loop time: ");
     Serial.print(loopMillis);
