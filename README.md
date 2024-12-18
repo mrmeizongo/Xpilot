@@ -110,7 +110,7 @@ See [this](lib/PlaneConfigs/README.md) for instructions on how to set up configu
 
 Throttle is always under manual control. Signal wire for throttle goes directly to ESC for motor control.
 
-Rate/Expo should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however the mode switch on your transmitter to enable Rate/Expo in passthrough(1) flight mode.
+Rate/Expo should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode.
 
 Even though a calibration function is provided(recommended), the MPU6050 does not really need to be calibrated as long as it passes the self test function. Uncomment SELF_TEST_ACCEL_GYRO in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) to enable. Be sure to comment it when done. Uncomment IMU_DEBUG in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. This might require several attempts. Aim for a +/- .5 value when plane is placed on a level surface and held still.
 
