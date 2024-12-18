@@ -63,7 +63,6 @@ void Radio::processInput(void)
     }
 
     // Set stick resolutions
-    // Output low and high ranges are inverted to match how they appear on radio transmitters
     switch (rx.currentMode)
     {
     case PASSTHROUGH:
