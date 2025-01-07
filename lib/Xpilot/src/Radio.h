@@ -23,7 +23,9 @@ struct Control
     Control(void) {}
 
     Control(int16_t _roll, int16_t _pitch, int16_t _yaw, FlightMode _currentMode)
-        : roll{_roll}, pitch{_pitch}, yaw{_yaw}, currentMode{_currentMode} {}
+        : roll{_roll}, pitch{_pitch}, yaw{_yaw},
+          rollPWM{1500}, pitchPWM{1500}, yawPWM{1500},
+          currentMode{_currentMode} {}
 };
 
 class Radio
