@@ -2,7 +2,6 @@
 #include <util/atomic.h>
 #include <PinChangeInterrupt.h>
 #include <BoardConfig.h>
-#include <PlaneConfig.h>
 #include "Radio.h"
 
 volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
@@ -35,8 +34,8 @@ void Radio::init(void)
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
 
-    // Default rx values on power up
-    rx = Control{0, 0, 0, RATE};
+    // Use default rx values on power up
+    rx = Control();
 }
 
 void Radio::processInput(void)
@@ -70,17 +69,16 @@ void Radio::processInput(void)
         rx.pitch = SETINPUT(rx.pitchPWM, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
         rx.yaw = SETINPUT(rx.yawPWM, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -PASSTHROUGH_RES, PASSTHROUGH_RES);
         break;
-    case RATE:
-        rx.roll = SETINPUT(rx.rollPWM, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-        rx.pitch = SETINPUT(rx.pitchPWM, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-        rx.yaw = SETINPUT(rx.yawPWM, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
-        break;
     case STABILIZE:
         rx.roll = SETINPUT(rx.rollPWM, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
         rx.pitch = SETINPUT(rx.pitchPWM, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
         rx.yaw = SETINPUT(rx.yawPWM, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
+    case RATE:
     default:
+        rx.roll = SETINPUT(rx.rollPWM, ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+        rx.pitch = SETINPUT(rx.pitchPWM, PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
+        rx.yaw = SETINPUT(rx.yawPWM, YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
         break;
     }
 }

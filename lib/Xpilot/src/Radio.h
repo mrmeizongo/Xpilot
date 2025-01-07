@@ -2,6 +2,7 @@
 #define _RADIO_H
 
 #include <inttypes.h>
+#include <PlaneConfig.h>
 
 enum FlightMode : uint8_t
 {
@@ -20,11 +21,14 @@ struct Control
     uint16_t yawPWM;
     FlightMode currentMode;
 
-    Control(void) {}
+    Control(void)
+        : roll{0}, pitch{0}, yaw{0},
+          rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
+          currentMode{RATE} {}
 
     Control(int16_t _roll, int16_t _pitch, int16_t _yaw, FlightMode _currentMode)
         : roll{_roll}, pitch{_pitch}, yaw{_yaw},
-          rollPWM{1500}, pitchPWM{1500}, yawPWM{1500},
+          rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
           currentMode{_currentMode} {}
 };
 
