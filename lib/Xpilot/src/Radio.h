@@ -4,6 +4,14 @@
 #include <inttypes.h>
 #include <PlaneConfig.h>
 
+/*
+ * Radio input values
+ * Roll, Pitch, Yaw, Mode
+ * Depending on transmitter settings, the pulse width can be between INPUT_MIN_PWM <-> INPUT_MAX_PWM
+ * The pulse width is read in microseconds
+ * When used with a 3 position switch, the mid point is considered 1, the low end is 0 and the high end is 2
+ * Low Point: 0 - Passthrough, Mid Point: 1 - Rate, High Point: 2 - Stabilize
+ */
 enum FlightMode : uint8_t
 {
     PASSTHROUGH = 1U,
@@ -11,6 +19,12 @@ enum FlightMode : uint8_t
     STABILIZE
 };
 
+/*
+ * Control struct
+ * Holds the radio input values
+ * Roll, Pitch, Yaw, Mode
+ * Roll, Pitch & Yaw PWM values
+ */
 struct Control
 {
     int16_t roll;
@@ -22,12 +36,10 @@ struct Control
     FlightMode currentMode;
 
     Control(void)
-        : roll{0}, pitch{0}, yaw{0},
-          rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
-          currentMode{RATE} {}
+        : Control(RATE) {}
 
-    Control(int16_t _roll, int16_t _pitch, int16_t _yaw, FlightMode _currentMode)
-        : roll{_roll}, pitch{_pitch}, yaw{_yaw},
+    Control(FlightMode _currentMode)
+        : roll{0}, pitch{0}, yaw{0},
           rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
           currentMode{_currentMode} {}
 };

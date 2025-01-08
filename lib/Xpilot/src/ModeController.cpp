@@ -44,7 +44,7 @@ static void yawController(void);
 // -----------------------------------------------------------------------------------------------------------------
 
 // Servo channel out
-static int16_t SRVout[NUM_CHANNELS]{0, 0, 0, 0};
+static int16_t SRVout[Channel::NUM_CHANNELS]{0, 0, 0, 0};
 // -----------------------------------------------------------------------------------------------------------------
 
 // PID controllers
@@ -55,6 +55,7 @@ static PIDF yawPIDF;
 
 // Radio input variables
 int16_t rollInput, pitchInput, yawInput = 0;
+FlightMode currentFlightMode;
 // -----------------------------------------------------------------------------------------------------------------
 
 ModeController::ModeController(void)
@@ -73,8 +74,9 @@ void ModeController::processMode(void)
     rollInput = radio.getRxRoll();
     pitchInput = radio.getRxPitch();
     yawInput = radio.getRxYaw();
+    currentFlightMode = radio.getRxCurrentMode();
 
-    switch (radio.getRxCurrentMode())
+    switch (currentFlightMode)
     {
     case PASSTHROUGH:
         passthroughMode();
@@ -104,7 +106,7 @@ void ModeController::processMode(void)
 }
 
 // Manual mode gives full control of the rc plane flight surfaces
-// No stabilization, rate or automatic yaw control
+// No stabilization or rate control. For experienced rc pilots, use with caution!
 void ModeController::passthroughMode(void)
 {
 #if defined(RUDDER_MIX_IN_PASS)
@@ -119,7 +121,7 @@ void ModeController::passthroughMode(void)
 }
 
 // Rate mode uses gyroscope values to maintain a desired rate of change
-// Flight surfaces counteract sudden changes in attitude on stick release
+// Flight surfaces counteract sudden changes in plane attitude due to external forces
 void ModeController::rateMode(void)
 {
 #if defined(RUDDER_MIX_IN_RATE)
