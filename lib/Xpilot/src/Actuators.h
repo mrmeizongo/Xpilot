@@ -53,6 +53,7 @@ public:
     void init(void);
     void writeServos(void);
     void setServoOut(const int16_t (&SRVout)[NUM_CHANNELS]);
+    void setServoOut(Channel, int16_t);
     int16_t getServoOut(Channel);
 
 private:

@@ -24,6 +24,14 @@ void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
     }
 }
 
+void Actuators::setServoOut(Channel ch, int16_t value)
+{
+    if (ch < AILERON1 || ch >= NUM_CHANNELS)
+        return;
+
+    channelOut[ch] = value;
+}
+
 int16_t Actuators::getServoOut(Channel ch)
 {
     if (ch < AILERON1 || ch >= NUM_CHANNELS)
