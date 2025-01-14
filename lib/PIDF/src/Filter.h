@@ -46,7 +46,7 @@ public:
     }
 
     // Filter input signal to remove unwanted high frequency noise
-    float Process(float input, float samplingFrequency)
+    float Process(float input, float samplingFrequency) override
     {
         // Calculate alpha based on the cutoff frequency and sampling frequency
         prevOutput = prevOutput + ((samplingFrequency / (rc + samplingFrequency)) * (input - prevOutput));
@@ -83,7 +83,7 @@ public:
     }
 
     // Filter input signal to remove unwanted high frequency noise
-    float Process(float input, float samplingFrequency)
+    float Process(float input, float samplingFrequency) override
     {
         CalculateCoEfficients(samplingFrequency);
         float output = (b0 * input) + (b1 * prevInput1) + (b2 * prevInput2) - (a1 * prevOutput1) - (a2 * prevOutput2);
