@@ -33,11 +33,9 @@ PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
 }
 
 // Resets PIDF
-void PIDF::Reset(void)
+void PIDF::ResetI(void)
 {
     integrator = 0;
-    // Set previousDerivative as invalid on reset
-    previousDerivative = NAN;
 }
 
 // Main function to be called to get PIDF control value
@@ -56,7 +54,7 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
     if (previousTime == 0 || dt > 1000)
     {
         dt = 0;
-        Reset();
+        ResetI();
     }
 
     deltaTime = (float)dt * 0.001f;
@@ -84,27 +82,11 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
     // Compute derivative component if time has elapsed
     if ((fabsf(Kd) > 0) && (dt > 0))
     {
-        float derivative;
-
-        if (isnanf(previousDerivative))
-        {
-            // Reset called. Suppress first derivative term
-            // as we don't want a sudden change in input to cause
-            // a large D output change
-            derivative = 0;
-            previousDerivative = 0;
-        }
-        else
-            derivative = (currentError - previousError) / deltaTime;
-
-        derivative = previousDerivative +
-                     ((deltaTime / (RC + deltaTime)) *
-                      (derivative - previousDerivative));
+        float derivative = (currentError - previousError) / deltaTime;
+        derivative = derivative_lpf.Process(derivative, deltaTime); // process low pass filter
 
         // Update state
         previousError = currentError;
-        previousDerivative = derivative;
-
         // Add in derivative component
         output += derivative * Kd;
     }

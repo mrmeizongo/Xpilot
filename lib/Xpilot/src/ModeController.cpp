@@ -247,11 +247,11 @@ static void yawController(void)
     else
     {
         yawPIDF.setKi(0.f);
-        yawPIDF.Reset();
+        yawPIDF.ResetI();
     }
 #else
     yawPIDF.setKi(0.f);
-    yawPIDF.Reset();
+    yawPIDF.ResetI();
 #endif
 }
 

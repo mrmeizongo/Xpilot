@@ -26,13 +26,14 @@ Copyright (C) 2024 Jamal Meizongo
 #ifndef _PIDF_H
 #define _PIDF_H
 #include <inttypes.h>
+#include "LowPassFilter.h"
 
 class PIDF
 {
 public:
     PIDF();                                  // Empty Constructor
     PIDF(float, float, float, float, float); // Constructor with initialization parameters
-    void Reset(void);                        // Reset PIDF integrator and derivative
+    void ResetI(void);                       // Reset PIDF integrator
     int16_t Compute(float, float);           // Generate the PIDF output to be added to the servo
 
     float getKp(void) { return Kp; }
@@ -54,21 +55,11 @@ private:
     float Kf;
     float IMax;
 
-    /// Low pass filter cut frequency for derivative calculation.
-    ///
-    /// 20 Hz because anything over that is probably noise, see
-    /// http://en.wikipedia.org/wiki/Low-pass_filter.
-    ///
-    static const uint8_t fCut = 20;
-
-    // Discrete low pass filter
-    // Cuts out the high frequency noise that can drive the controller crazy
-    // See https://en.wikipedia.org/wiki/Low-pass_filter#
-    static constexpr float RC = 1 / (2 * M_PI * fCut);
+    LowPassFilter derivative_lpf{20.0f, FilterType::SECOND_ORDER}; // Initialize low pass filter with a cutoff frequency of 20Hz
+                                                                   // using Butterworth second order filter
 
     float integrator = 0;
     float previousError = 0;
-    float previousDerivative = NAN; // for low-pass filter calculation
     unsigned long previousTime = 0;
 };
 #endif //_PIDF_H
