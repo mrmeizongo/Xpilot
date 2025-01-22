@@ -28,7 +28,7 @@
 PIDF::PIDF() {}
 
 PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
-    : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, Kf{_Kf}, IMax{_IMax}, derivative_lpf(20.0f)
+    : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, Kf{_Kf}, IMax{_IMax}
 {
 }
 
@@ -36,7 +36,7 @@ PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
 void PIDF::Reset(void)
 {
     integrator = 0;
-    derivative_lpf.Reset();
+    previousDerivative = 0;
 }
 
 // Main function to be called to get PIDF control value
@@ -85,10 +85,14 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
     if ((fabsf(Kd) > 0) && (dt > 0))
     {
         float derivative = (currentError - previousError) / deltaTime;
-        derivative = derivative_lpf.Process(derivative, deltaTime); // process low pass filter
+
+        // Apply low pass filter to eliminate high frequency noise in the derivative term
+        derivative = previousDerivative + ((deltaTime / (rc + deltaTime)) * (derivative - previousDerivative));
 
         // Update state
         previousError = currentError;
+        previousDerivative = derivative;
+
         // Add in derivative component
         output += derivative * Kd;
     }

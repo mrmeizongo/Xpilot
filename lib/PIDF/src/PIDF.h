@@ -25,8 +25,7 @@ Copyright (C) 2024 Jamal Meizongo
 
 #ifndef _PIDF_H
 #define _PIDF_H
-#include <inttypes.h>
-#include "Filter.h"
+#include <Arduino.h>
 
 class PIDF
 {
@@ -55,8 +54,10 @@ private:
     float Kf;
     float IMax;
 
-    // Second order low pass filter for derivative term
-    Filter derivative_lpf;
+    // First order low pass filter for derivative
+    // 20Hz because anything over that is probably noise
+    float rc = 1.0f / (2.0f * M_PI * 20.0f);
+    float previousDerivative = 0;
 
     float integrator = 0;
     float previousError = 0;
