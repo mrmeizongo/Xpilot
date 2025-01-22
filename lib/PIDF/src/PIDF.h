@@ -55,7 +55,7 @@ private:
     float Kf;
     float IMax;
 
-    // Second orderow pass filter for derivative term
+    // Second order low pass filter for derivative term
     Filter derivative_lpf;
 
     float integrator = 0;
