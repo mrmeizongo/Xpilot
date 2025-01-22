@@ -29,37 +29,8 @@ Copyright (C) 2025 Jamal Meizongo
 class Filter
 {
 public:
-    virtual float Process(float, float) = 0;
-    virtual ~Filter() = default;
-};
-
-// Computationally less expensive than second order filter but less effective, has slower roll-off and limited flexibility
-class FirstOrderLPF : public Filter
-{
-public:
-    FirstOrderLPF(float cutoffFrequency)
-    {
-        rc = 1.0f / (2.0f * M_PI * cutoffFrequency);
-        prevOutput = 0.0f;
-    }
-
-    // Filter input signal to remove unwanted high frequency noise
-    float Process(float input, float samplingFrequency) override
-    {
-        // Calculate alpha based on the cutoff frequency and sampling frequency
-        prevOutput = prevOutput + ((samplingFrequency / (rc + samplingFrequency)) * (input - prevOutput));
-        return prevOutput;
-    }
-
-private:
-    float prevOutput; // Previous output value
-    float rc;
-};
-
-class SecondOrderLPF : public Filter
-{
-public:
-    SecondOrderLPF(float cutoffFrequency)
+    Filter(void) {}
+    Filter(float cutoffFrequency)
         : cutoffFrequency(cutoffFrequency), prevInput1(0.0f), prevInput2(0.0f), prevOutput1(0.0f), prevOutput2(0.0f) {}
 
     void CalculateCoEfficients(float samplingFrequency)
@@ -81,7 +52,7 @@ public:
     }
 
     // Filter input signal to remove unwanted high frequency noise
-    float Process(float input, float samplingFrequency) override
+    float Process(float input, float samplingFrequency)
     {
         CalculateCoEfficients(samplingFrequency);
         float output = (b0 * input) + (b1 * prevInput1) + (b2 * prevInput2) - (a1 * prevOutput1) - (a2 * prevOutput2);
@@ -93,6 +64,14 @@ public:
         prevOutput1 = output;
 
         return output;
+    }
+
+    void Reset(void)
+    {
+        prevInput1 = 0.0f;
+        prevInput2 = 0.0f;
+        prevOutput1 = 0.0f;
+        prevOutput2 = 0.0f;
     }
 
 private:

@@ -28,14 +28,15 @@
 PIDF::PIDF() {}
 
 PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
-    : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, Kf{_Kf}, IMax{_IMax}
+    : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, Kf{_Kf}, IMax{_IMax}, derivative_lpf(20.0f)
 {
 }
 
 // Resets PIDF
-void PIDF::ResetI(void)
+void PIDF::Reset(void)
 {
     integrator = 0;
+    derivative_lpf.Reset();
 }
 
 // Main function to be called to get PIDF control value
@@ -47,14 +48,15 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
     float output = 0.0f;
     float deltaTime;
 
-    // If this PIDF hasn't been used for a full second then zero
-    // the integrator term. This prevents I buildup from a
-    // previous fight mode from causing a massive return before
-    // the integrator gets a chance to correct itself
+    /*
+     * If this PIDF hasn't been used for a full second then reset the PIDF.
+     * This prevents I buildup from a previous fight mode from causing a
+     * massive return before the integrator gets a chance to correct itself
+     */
     if (previousTime == 0 || dt > 1000)
     {
         dt = 0;
-        ResetI();
+        Reset();
     }
 
     deltaTime = (float)dt * 0.001f;

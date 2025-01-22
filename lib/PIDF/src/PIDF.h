@@ -26,14 +26,14 @@ Copyright (C) 2024 Jamal Meizongo
 #ifndef _PIDF_H
 #define _PIDF_H
 #include <inttypes.h>
-#include "LowPassFilter.h"
+#include "Filter.h"
 
 class PIDF
 {
 public:
     PIDF();                                  // Empty Constructor
     PIDF(float, float, float, float, float); // Constructor with initialization parameters
-    void ResetI(void);                       // Reset PIDF integrator
+    void Reset(void);                        // Reset PIDF integrator and derivative
     int16_t Compute(float, float);           // Generate the PIDF output to be added to the servo
 
     float getKp(void) { return Kp; }
@@ -55,8 +55,8 @@ private:
     float Kf;
     float IMax;
 
-    LowPassFilter derivative_lpf{20.0f, FilterType::SECOND_ORDER}; // Initialize low pass filter with a cutoff frequency of 20Hz
-                                                                   // using Butterworth second order filter
+    // Second orderow pass filter for derivative term
+    Filter derivative_lpf;
 
     float integrator = 0;
     float previousError = 0;
