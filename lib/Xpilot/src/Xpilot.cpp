@@ -42,7 +42,7 @@ Flight stabilization software
 #define ONEHZ_LOOP 1000U
 
 // Timer variables
-static unsigned long nowMs, outputLastMs = 0;
+static unsigned long nowMs, inputLastMs = 0;
 // -------------------------
 
 // Debug helper functions
@@ -79,15 +79,16 @@ void Xpilot::loop(void)
     nowMs = millis();
 
     imu.processIMU();
-    radio.processInput();
 
-    // Process servo output at 50Hz
-    if (nowMs - outputLastMs >= FIFTYHZ_LOOP)
+    // Process radio input at 50Hz
+    if (nowMs - inputLastMs >= FIFTYHZ_LOOP)
     {
+        radio.processInput();
         modeController.processMode();
-        actuators.writeServos();
-        outputLastMs = nowMs;
+        inputLastMs = nowMs;
     }
+
+    actuators.writeServos();
 
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     printDebug();
