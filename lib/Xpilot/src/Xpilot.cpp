@@ -72,7 +72,7 @@ void Xpilot::setup(void)
 
 /*
     Main Xpilot execution loop
-    Read input, read imu data, process output to servos
+    Read imu data, read input and process output to servos
 */
 void Xpilot::loop(void)
 {
