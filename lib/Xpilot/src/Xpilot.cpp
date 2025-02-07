@@ -84,10 +84,10 @@ void Xpilot::loop(void)
     if (nowMs - inputLastMs >= FIFTYHZ_LOOP)
     {
         radio.processInput();
-        modeController.processMode();
         inputLastMs = nowMs;
     }
 
+    modeController.processMode();
     actuators.writeServos();
 
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
