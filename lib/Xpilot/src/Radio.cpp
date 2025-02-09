@@ -84,57 +84,38 @@ void Radio::processInput(void)
  * ISR
  * Typical hobby servos expect to see a pulse every 20ms and the length of the pulse determines the position to set the servo
  * The length of the pulse is typically between 1ms - 2ms with 1ms setting the servo position to 0°, 1.5ms to 90° and 2ms to 180°
- * RC transmitters are designed to send a pulse to the receiver every 20ms within this range, going HIGH for the duration of the pulse and LOW otherwise
- * If the output of the channel on the receiver is attached to an interrupt pin on the arduino, we can use it to drive a pin change interrupt ISR
- * The ISR simply records the time between the changes
- * millis() causes problems when called in an ISR so we play it safe and use micros() instead (1000us -> 1ms)
+ * This gives us a servo refresh rate of 22ms(20ms interval + actual 1ms-2ms pulse duration)
+ * RC transmitters are designed to send a pulse to the receiver within this range, going HIGH for the duration of the pulse and LOW otherwise
+ * If the output of the channel on the receiver is attached to an interrupt pin, we can use it to drive a PCISR
+ * The ISR simply records the time between the changes. We're only interested in pulses lasting between INPUT_MIN_PWM and INPUT_MAX_PWM
+ * See plane config INPUT_MIN_PWM and INPUT_MAX_PWM
  */
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
     aileronCurrentTime = micros();
-    if (aileronCurrentTime > aileronStartTime)
-    {
-        aileronPulses = aileronCurrentTime - aileronStartTime;
-        aileronStartTime = aileronCurrentTime;
-    }
-    else
-        aileronStartTime = 0;
+    aileronPulses = aileronCurrentTime - aileronStartTime;
+    aileronStartTime = aileronCurrentTime;
 }
 
 void PinChangeInterruptEvent(ELEVPIN_INT)(void)
 {
     elevatorCurrentTime = micros();
-    if (elevatorCurrentTime > elevatorStartTime)
-    {
-        elevatorPulses = elevatorCurrentTime - elevatorStartTime;
-        elevatorStartTime = elevatorCurrentTime;
-    }
-    else
-        elevatorStartTime = 0;
+    elevatorPulses = elevatorCurrentTime - elevatorStartTime;
+    elevatorStartTime = elevatorCurrentTime;
 }
 
 void PinChangeInterruptEvent(RUDDPIN_INT)(void)
 {
     rudderCurrentTime = micros();
-    if (rudderCurrentTime > rudderStartTime)
-    {
-        rudderPulses = rudderCurrentTime - rudderStartTime;
-        rudderStartTime = rudderCurrentTime;
-    }
-    else
-        rudderStartTime = 0;
+    rudderPulses = rudderCurrentTime - rudderStartTime;
+    rudderStartTime = rudderCurrentTime;
 }
 
 void PinChangeInterruptEvent(MODEPIN_INT)(void)
 {
     modeCurrentTime = micros();
-    if (modeCurrentTime > modeStartTime)
-    {
-        modePulses = modeCurrentTime - modeStartTime;
-        modeStartTime = modeCurrentTime;
-    }
-    else
-        modeStartTime = 0;
+    modePulses = modeCurrentTime - modeStartTime;
+    modeStartTime = modeCurrentTime;
 }
 //  ----------------------------
 
