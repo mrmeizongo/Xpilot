@@ -38,7 +38,7 @@ Flight stabilization software
 #include "Actuators.h"
 #include "IMU.h"
 
-#define FIFTYHZ_LOOP 20U
+#define INPUT_REFRESH_RATE 22U
 #define ONEHZ_LOOP 1000U
 
 // Timer variables
@@ -80,8 +80,8 @@ void Xpilot::loop(void)
 
     imu.processIMU();
 
-    // Process radio input at 50Hz
-    if (nowMs - inputLastMs >= FIFTYHZ_LOOP)
+    // Process radio input
+    if (nowMs - inputLastMs >= INPUT_REFRESH_RATE)
     {
         radio.processInput();
         inputLastMs = nowMs;
