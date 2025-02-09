@@ -62,7 +62,7 @@ public:
     FlightMode getRxCurrentMode(void) { return rx.currentMode; }
 
 private:
-    Control rx;
+    Control rx; // RATE mode by default
 };
 
 extern Radio radio;

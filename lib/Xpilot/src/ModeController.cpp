@@ -54,8 +54,8 @@ static PIDF yawPIDF;
 // -----------------------------------------------------------------------------------------------------------------
 
 // Radio input variables
-int16_t rollInput, pitchInput, yawInput = 0;
-FlightMode currentFlightMode;
+static int16_t rollInput, pitchInput, yawInput = 0;
+static FlightMode currentFlightMode;
 // -----------------------------------------------------------------------------------------------------------------
 
 ModeController::ModeController(void)

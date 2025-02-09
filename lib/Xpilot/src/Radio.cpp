@@ -33,9 +33,6 @@ void Radio::init(void)
     // Mode setup
     pinMode(MODEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
-
-    // Use default rx values on power up
-    rx = Control();
 }
 
 void Radio::processInput(void)
