@@ -38,11 +38,11 @@ Flight stabilization software
 #include "Actuators.h"
 #include "IMU.h"
 
-#define INPUT_REFRESH_RATE 22U
-#define ONEHZ_LOOP 1000U
+#define INPUT_REFRESH_RATE 22000U
+#define ONEHZ_LOOP 1000000U
 
 // Timer variables
-static unsigned long nowMs, inputLastMs = 0;
+static unsigned long nowUs, inputLastUs = 0;
 // -------------------------
 
 // Debug helper functions
@@ -76,15 +76,15 @@ void Xpilot::setup(void)
 */
 void Xpilot::loop(void)
 {
-    nowMs = millis();
+    nowUs = micros();
 
     imu.processIMU();
 
     // Process radio input
-    if (nowMs - inputLastMs >= INPUT_REFRESH_RATE)
+    if (nowUs - inputLastUs >= INPUT_REFRESH_RATE)
     {
         radio.processInput();
-        inputLastMs = nowMs;
+        inputLastUs = nowUs;
     }
 
     modeController.processMode();
@@ -99,11 +99,11 @@ void Xpilot::loop(void)
 static void printDebug(void)
 {
 #if defined(IO_DEBUG)
-    static unsigned long debugLastMs = 0;
-    if (nowMs - debugLastMs >= ONEHZ_LOOP)
+    static unsigned long debugLastUs = 0;
+    if (nowUs - debugLastUs >= ONEHZ_LOOP)
     {
         printIO();
-        debugLastMs = nowMs;
+        debugLastUs = nowUs;
     }
 #endif
 
@@ -180,14 +180,14 @@ static void printIMU(void)
 
 static void printLoopRate(void)
 {
-    unsigned long loopMillis = millis() - nowMs;
+    unsigned long loopUs = micros() - nowUs;
     Serial.print(">");
     Serial.print("Loop time: ");
-    Serial.print(loopMillis);
+    Serial.print(loopUs);
     Serial.print("ms");
     Serial.print(", ");
     Serial.print("Loop rate: ");
-    Serial.print(1000 / loopMillis);
+    Serial.print(1000000 / loopUs);
     Serial.print("Hz");
     Serial.println();
 }
