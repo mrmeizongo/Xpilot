@@ -16,7 +16,8 @@ enum FlightMode : uint8_t
 {
     PASSTHROUGH = 1U,
     RATE,
-    STABILIZE
+    STABILIZE,
+    INITIALIZING
 };
 
 /*

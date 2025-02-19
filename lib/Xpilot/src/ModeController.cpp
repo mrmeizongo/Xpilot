@@ -56,6 +56,7 @@ static PIDF yawPIDF;
 // Radio input variables
 static int16_t rollInput, pitchInput, yawInput = 0;
 static FlightMode currentFlightMode;
+static FlightMode previousFlightMode;
 // -----------------------------------------------------------------------------------------------------------------
 
 ModeController::ModeController(void)
@@ -67,6 +68,8 @@ void ModeController::init(void)
     rollPIDF = PIDF(ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX);
     pitchPIDF = PIDF(PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX);
     yawPIDF = PIDF(YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX);
+    currentFlightMode = FlightMode::INITIALIZING;
+    previousFlightMode = currentFlightMode;
 }
 
 void ModeController::processMode(void)
@@ -75,6 +78,13 @@ void ModeController::processMode(void)
     pitchInput = radio.getRxPitch();
     yawInput = radio.getRxYaw();
     currentFlightMode = radio.getRxCurrentMode();
+    if (currentFlightMode != previousFlightMode)
+    {
+        rollPIDF.Reset();
+        pitchPIDF.Reset();
+        yawPIDF.Reset();
+        previousFlightMode = currentFlightMode;
+    }
 
     switch (currentFlightMode)
     {
@@ -99,6 +109,12 @@ void ModeController::processMode(void)
         SRVout[AILERON2] = map(SRVout[AILERON2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[ELEVATOR] = map(SRVout[ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
         SRVout[RUDDER] = map(SRVout[RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        break;
+    case INITIALIZING:
+        SRVout[AILERON1] = SERVO_MID_PWM;
+        SRVout[AILERON2] = SERVO_MID_PWM;
+        SRVout[ELEVATOR] = SERVO_MID_PWM;
+        SRVout[RUDDER] = SERVO_MID_PWM;
         break;
     }
 

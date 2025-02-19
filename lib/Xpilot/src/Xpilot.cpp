@@ -38,7 +38,7 @@ Flight stabilization software
 #include "Actuators.h"
 #include "IMU.h"
 
-#define INPUT_REFRESH_RATE_US 22000U
+#define INPUT_REFRESH_RATE_US 20000U
 #define ONEHZ_LOOP_US 1000000U
 
 // Timer variables
