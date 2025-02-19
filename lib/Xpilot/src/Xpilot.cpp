@@ -38,8 +38,8 @@ Flight stabilization software
 #include "Actuators.h"
 #include "IMU.h"
 
-#define INPUT_REFRESH_RATE 22000U
-#define ONEHZ_LOOP 1000000U
+#define INPUT_REFRESH_RATE_US 22000U
+#define ONEHZ_LOOP_US 1000000U
 
 // Timer variables
 static unsigned long nowUs, inputLastUs = 0;
@@ -81,7 +81,7 @@ void Xpilot::loop(void)
     imu.processIMU();
 
     // Process radio input
-    if (nowUs - inputLastUs >= INPUT_REFRESH_RATE)
+    if (nowUs - inputLastUs >= INPUT_REFRESH_RATE_US)
     {
         radio.processInput();
         inputLastUs = nowUs;
@@ -100,7 +100,7 @@ static void printDebug(void)
 {
 #if defined(IO_DEBUG)
     static unsigned long debugLastUs = 0;
-    if (nowUs - debugLastUs >= ONEHZ_LOOP)
+    if (nowUs - debugLastUs >= ONEHZ_LOOP_US)
     {
         printIO();
         debugLastUs = nowUs;
