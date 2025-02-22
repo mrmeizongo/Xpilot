@@ -1,7 +1,7 @@
 #ifndef _RADIO_H
 #define _RADIO_H
 
-#include <inttypes.h>
+#include <stdint.h>
 #include <PlaneConfig.h>
 
 /*
