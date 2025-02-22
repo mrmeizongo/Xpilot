@@ -36,9 +36,6 @@ struct Control
     uint16_t yawPWM;
     FlightMode currentMode;
 
-    Control(void)
-        : Control(RATE) {}
-
     Control(FlightMode _currentMode)
         : roll{0}, pitch{0}, yaw{0},
           rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
@@ -63,7 +60,7 @@ public:
     FlightMode getRxCurrentMode(void) { return rx.currentMode; }
 
 private:
-    Control rx; // RATE mode by default
+    Control rx{RATE}; // RATE mode by default
 };
 
 extern Radio radio;
