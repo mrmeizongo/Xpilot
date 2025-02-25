@@ -1,4 +1,5 @@
-// 03/13/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
+// Started - 03/13/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
+// Updated - 02/25/2025 by Jamal Meizongo
 // This and other library code in this repository
 // are partial releases and work is still in progress.
 // Please keep this in mind as you use this piece of software.
@@ -32,6 +33,7 @@ Flight stabilization software
 
 #ifndef _XPILOT_H
 #define _XPILOT_H
+#include "Mode.h"
 
 class Xpilot
 {
@@ -41,6 +43,19 @@ public:
     // Only functions called from the Arduino setup and loop functions
     void setup(void);
     void loop(void);
+
+    void updateFlightMode(void);
+    String getFlightModeName(void) { return currentMode->modeName4(); }
+
+private:
+    RateMode rateMode;
+    StabilizeMode stabilizeMode;
+    PassthroughMode passthroughMode;
+
+    // This is the state of the flight control system
+    Mode *currentMode = &rateMode;
+    Mode *previousMode = &rateMode;
 };
 
+extern Xpilot xpilot;
 #endif // _XPILOT_H

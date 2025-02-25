@@ -1,4 +1,5 @@
-// 08/19/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
+// Started - 08/19/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
+// Updated - 02/25/2025 by Jamal Meizongo
 // This and other library code in this repository
 // are partial releases and work is still in progress.
 // Please keep this in mind as you use this piece of software.
@@ -34,21 +35,21 @@ Flight stabilization software
 #include <Servo.h>
 #include <inttypes.h>
 
-// Maintain consecutive flight control surface numbering starting from 0
-// Ensure NUM_CHANNELS is the last enum in the list and does not exceed MAX_SERVOS in Servo library
-// MAX_SERVOS for the Arduino Nano is 12 servos because it has 1 16 bit timer
-enum Channel : uint8_t
-{
-    AILERON1 = 0U,
-    AILERON2,
-    ELEVATOR,
-    RUDDER,
-    NUM_CHANNELS
-};
-
 class Actuators
 {
 public:
+    // Maintain consecutive flight control surface numbering starting from 0
+    // Ensure NUM_CHANNELS is the last enum in the list and does not exceed MAX_SERVOS in Servo library
+    // MAX_SERVOS for the Arduino Nano is 12 servos because it has 1 16 bit timer
+    enum Channel : uint8_t
+    {
+        AILERON1 = 0U,
+        AILERON2,
+        ELEVATOR,
+        RUDDER,
+        NUM_CHANNELS
+    };
+
     Actuators(void);
     void init(void);
     void writeServos(void);

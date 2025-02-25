@@ -1,24 +1,40 @@
+// Started - 08/19/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
+// Updated - 02/25/2025 by Jamal Meizongo
+// This and other library code in this repository
+// are partial releases and work is still in progress.
+// Please keep this in mind as you use this piece of software.
+
+/* ============================================
+Flight stabilization software
+    Copyright (C) 2024 Jamal Meizongo (mrmeizongo@outlook.com)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+===============================================
+*/
 #ifndef _RADIO_H
 #define _RADIO_H
 
 #include <stdint.h>
 #include <PlaneConfig.h>
-
-/*
- * Radio input values
- * Roll, Pitch, Yaw, Mode
- * Depending on transmitter settings, the pulse width can be between INPUT_MIN_PWM <-> INPUT_MAX_PWM
- * The pulse width is read in microseconds
- * When used with a 3 position switch, the mid point is considered 1, the low end is 0 and the high end is 2
- * Low Point: 0 - Passthrough, Mid Point: 1 - Rate, High Point: 2 - Stabilize
- */
-enum FlightMode : uint8_t
-{
-    PASSTHROUGH = 1U,
-    RATE,
-    STABILIZE,
-    INITIALIZING
-};
 
 /*
  * Control struct
@@ -28,18 +44,20 @@ enum FlightMode : uint8_t
  */
 struct Control
 {
-    int16_t roll;
-    int16_t pitch;
-    int16_t yaw;
+    enum MODEPOS : uint8_t
+    {
+        LOW_POS = 0U,
+        MID_POS,
+        HIGH_POS
+    };
     uint16_t rollPWM;
     uint16_t pitchPWM;
     uint16_t yawPWM;
-    FlightMode currentMode;
+    MODEPOS modePos;
 
-    Control(FlightMode _currentMode)
-        : roll{0}, pitch{0}, yaw{0},
-          rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
-          currentMode{_currentMode} {}
+    Control(MODEPOS _modePos)
+        : rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
+          modePos{_modePos} {}
 };
 
 class Radio
@@ -49,18 +67,13 @@ public:
     void init(void);
     void processInput(void);
 
-    int16_t getRxRoll(void) { return rx.roll; }
-    int16_t getRxPitch(void) { return rx.pitch; }
-    int16_t getRxYaw(void) { return rx.yaw; }
-
     int16_t getRxRollPWM(void) { return rx.rollPWM; }
     int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
     int16_t getRxYawPWM(void) { return rx.yawPWM; }
-
-    FlightMode getRxCurrentMode(void) { return rx.currentMode; }
+    Control::MODEPOS getRxModePos(void) { return rx.modePos; }
 
 private:
-    Control rx{RATE}; // RATE mode by default
+    Control rx{Control::MODEPOS::MID_POS}; // RATE mode by default
 };
 
 extern Radio radio;

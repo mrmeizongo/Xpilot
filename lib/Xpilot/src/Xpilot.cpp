@@ -1,39 +1,6 @@
-// 03/13/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
-// This and other library code in this repository
-// are partial releases and work is still in progress.
-// Please keep this in mind as you use this piece of software.
-
-/* ============================================
-Flight stabilization software
-    Copyright (C) 2024 Jamal Meizongo (mrmeizongo@outlook.com)
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-===============================================
-*/
-
 #include <Arduino.h>
 #include <PlaneConfig.h>
 #include "Xpilot.h"
-#include "ModeController.h"
 #include "Radio.h"
 #include "Actuators.h"
 #include "IMU.h"
@@ -64,10 +31,9 @@ void Xpilot::setup(void)
         ; // Wait for Serial port to open
 #endif
 
-    imu.init();            // Initialize IMU
-    radio.init();          // Initialize radio
-    actuators.init();      // Initialize servos
-    modeController.init(); // Initialize mode controller
+    imu.init();       // Initialize IMU
+    radio.init();     // Initialize radio
+    actuators.init(); // Initialize servos
 }
 
 /*
@@ -77,22 +43,40 @@ void Xpilot::setup(void)
 void Xpilot::loop(void)
 {
     nowUs = micros();
-
     imu.processIMU();
-
     // Process radio input
     if (nowUs - inputLastUs >= INPUT_REFRESH_RATE_US)
     {
         radio.processInput();
         inputLastUs = nowUs;
     }
-
-    modeController.processMode();
+    updateFlightMode();
+    currentMode->run();
+    currentMode->setServoOut();
     actuators.writeServos();
 
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     printDebug();
 #endif
+}
+
+// Update flight mode based on radio mode switch position
+void Xpilot::updateFlightMode(void)
+{
+    Control::MODEPOS modePos = radio.getRxModePos();
+    if (modePos != currentMode->modePos())
+    {
+        if (modePos == passthroughMode.modePos())
+            currentMode = &passthroughMode;
+        else if (modePos == stabilizeMode.modePos())
+            currentMode = &stabilizeMode;
+        else if (modePos == rateMode.modePos())
+            currentMode = &rateMode;
+
+        previousMode->exit();
+        currentMode->enter();
+        previousMode = currentMode;
+    }
 }
 
 // Debug helper functions
@@ -119,48 +103,34 @@ static void printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");
-    Serial.println((uint8_t)radio.getRxCurrentMode());
-    Serial.print("Input");
-    Serial.print("\t\t\t\t");
+    Serial.println(xpilot.getFlightModeName());
     Serial.print("Input PWM");
     Serial.print("\t\t\t\t");
     Serial.println("Output PWM");
 
-    Serial.print("Aileron 1: ");
-    Serial.print(radio.getRxRoll());
-    Serial.print("\t\t\t");
     Serial.print("Aileron 1 PWM: ");
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1 PWM: ");
-    Serial.println(actuators.getServoOut(AILERON1));
+    Serial.println(actuators.getServoOut(Actuators::Channel::AILERON1));
 
-    Serial.print("Aileron 2: ");
-    Serial.print(radio.getRxRoll());
-    Serial.print("\t\t\t");
     Serial.print("Aileron 2 PWM: ");
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 2 PWM: ");
-    Serial.println(actuators.getServoOut(AILERON2));
+    Serial.println(actuators.getServoOut(Actuators::Channel::AILERON2));
 
-    Serial.print("Elevator: ");
-    Serial.print(radio.getRxPitch());
-    Serial.print("\t\t\t");
     Serial.print("Elevator PWM: ");
     Serial.print(radio.getRxPitchPWM());
     Serial.print("\t\t\t");
     Serial.print("Elevator PWM: ");
-    Serial.println(actuators.getServoOut(ELEVATOR));
+    Serial.println(actuators.getServoOut(Actuators::Channel::ELEVATOR));
 
-    Serial.print("Rudder: ");
-    Serial.print(radio.getRxYaw());
-    Serial.print("\t\t\t");
     Serial.print("Rudder PWM: ");
     Serial.print(radio.getRxYawPWM());
     Serial.print("\t\t\t");
     Serial.print("Rudder PWM: ");
-    Serial.println(actuators.getServoOut(RUDDER));
+    Serial.println(actuators.getServoOut(Actuators::Channel::RUDDER));
     Serial.println();
 }
 
@@ -181,14 +151,18 @@ static void printIMU(void)
 static void printLoopRate(void)
 {
     unsigned long loopUs = micros() - nowUs;
+    unsigned long loopMs = loopUs / 1000;
+    loopMs = loopMs <= 0 ? 1 : loopMs;
     Serial.print(">");
     Serial.print("Loop time: ");
-    Serial.print(loopUs);
+    Serial.print(loopMs);
     Serial.print("ms");
     Serial.print(", ");
     Serial.print("Loop rate: ");
-    Serial.print(1000000 / loopUs);
+    Serial.print(1000 / loopMs);
     Serial.print("Hz");
     Serial.println();
 }
+
+Xpilot xpilot;
 // ---------------------------

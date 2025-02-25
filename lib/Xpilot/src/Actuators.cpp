@@ -9,32 +9,31 @@ Actuators::Actuators(void)
 void Actuators::init(void)
 {
     // Set up output servos
-    // This assumes consecutive numbering of channels and output pins
-    for (uint8_t ch = AILERON1, pin = AILPIN1_OUTPUT; ch < NUM_CHANNELS; ch++, pin++)
-    {
-        controlServo[ch].attach(pin, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    }
+    controlServo[AILERON1].attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[AILERON2].attach(AILPIN2_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[ELEVATOR].attach(ELEVPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[RUDDER].attach(RUDDPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 }
 
 void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
 {
-    for (uint8_t ch = AILERON1; ch < NUM_CHANNELS; ch++)
-    {
-        channelOut[ch] = SRVout[ch];
-    }
+    channelOut[AILERON1] = SRVout[AILERON1];
+    channelOut[AILERON2] = SRVout[AILERON2];
+    channelOut[ELEVATOR] = SRVout[ELEVATOR];
+    channelOut[RUDDER] = SRVout[RUDDER];
 }
 
-void Actuators::setServoOut(Channel ch, int16_t value)
+void Actuators::setServoOut(Actuators::Channel ch, int16_t value)
 {
-    if (ch < AILERON1 || ch >= NUM_CHANNELS)
+    if (ch < 0 || ch >= NUM_CHANNELS)
         return;
 
     channelOut[ch] = value;
 }
 
-int16_t Actuators::getServoOut(Channel ch)
+int16_t Actuators::getServoOut(Actuators::Channel ch)
 {
-    if (ch < AILERON1 || ch >= NUM_CHANNELS)
+    if (ch < 0 || ch >= NUM_CHANNELS)
         return -1;
 
     return channelOut[ch];
@@ -42,10 +41,10 @@ int16_t Actuators::getServoOut(Channel ch)
 
 void Actuators::writeServos(void)
 {
-    for (uint8_t ch = AILERON1; ch < NUM_CHANNELS; ch++)
-    {
-        controlServo[ch].writeMicroseconds(channelOut[ch]);
-    }
+    controlServo[AILERON1].writeMicroseconds(channelOut[AILERON1]);
+    controlServo[AILERON2].writeMicroseconds(channelOut[AILERON2]);
+    controlServo[ELEVATOR].writeMicroseconds(channelOut[ELEVATOR]);
+    controlServo[RUDDER].writeMicroseconds(channelOut[RUDDER]);
 }
 
 Actuators actuators;
