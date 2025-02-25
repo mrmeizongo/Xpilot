@@ -38,7 +38,7 @@ Flight stabilization software
 #include "Actuators.h"
 #include "PIDF.h"
 
-// Helper function to set Radio rx values
+// Helper define to transform radio values to mode dependent resolutions
 #define SETINPUT(rawValue, deadBand, inLowRange, inMidRange, inHighRange, outLowRange, outHighRange) \
     (abs((rawValue) - (inMidRange)) <= (deadBand) ? 0 : map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange)))
 
