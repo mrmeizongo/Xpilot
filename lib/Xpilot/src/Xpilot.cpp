@@ -64,19 +64,19 @@ void Xpilot::loop(void)
 void Xpilot::updateFlightMode(void)
 {
     Control::MODEPOS modePos = radio.getRxModePos();
-    if (modePos != currentMode->modePos())
-    {
-        if (modePos == passthroughMode.modePos())
-            currentMode = &passthroughMode;
-        else if (modePos == stabilizeMode.modePos())
-            currentMode = &stabilizeMode;
-        else if (modePos == rateMode.modePos())
-            currentMode = &rateMode;
+    if (modePos == currentMode->modePos())
+        return;
 
-        previousMode->exit();
-        currentMode->enter();
-        previousMode = currentMode;
-    }
+    if (modePos == passthroughMode.modePos())
+        currentMode = &passthroughMode;
+    else if (modePos == stabilizeMode.modePos())
+        currentMode = &stabilizeMode;
+    else if (modePos == rateMode.modePos())
+        currentMode = &rateMode;
+
+    previousMode->exit();
+    currentMode->enter();
+    previousMode = currentMode;
 }
 
 // Debug helper functions
