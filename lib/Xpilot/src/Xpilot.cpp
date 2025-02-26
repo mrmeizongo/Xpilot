@@ -67,6 +67,7 @@ void Xpilot::updateFlightMode(void)
     if (modePos == currentMode->modePos())
         return;
 
+    // Process new mode if mode switch position has changed
     if (modePos == passthroughMode.modePos())
         currentMode = &passthroughMode;
     else if (modePos == stabilizeMode.modePos())
