@@ -20,7 +20,7 @@
  *
  * For Flying Wings, reverse install elevon servos same as you would ailerons for planes
  */
-void Mode::planeMixer(int16_t roll, int16_t pitch, int16_t yaw)
+void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw)
 {
 #if defined(FULL_PLANE)
     SRVout[Actuators::Channel::AILERON1] = roll;
