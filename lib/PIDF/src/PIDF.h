@@ -61,10 +61,10 @@ private:
 
     // First order low pass filter for derivative
     float RC;
-    float previousDerivative = 0;
+    float previousDerivative;
 
-    float integrator = 0;
-    float previousError = 0;
-    unsigned long previousTime = 0;
+    float integrator;
+    float previousError;
+    unsigned long previousTime;
 };
 #endif //_PIDF_H

@@ -32,12 +32,17 @@ PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
 {
     // 20Hz because anything over that is probably noise
     RC = 1.0f / (2.0f * M_PI * 20.0f);
+    previousDerivative = NAN;
+    integrator = 0;
+    previousError = 0;
+    previousTime = 0;
 }
 
 // Resets PIDF
 void PIDF::Reset(void)
 {
     integrator = 0;
+    // Set previousDerivative as invalid on reset
     previousDerivative = NAN;
 }
 
