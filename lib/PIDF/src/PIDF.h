@@ -47,8 +47,10 @@ public:
     void setKf(float _Kf) { Kf = _Kf; }
     void setIMax(float _IMax) { IMax = _IMax; }
 
-    void setPreviousTime(unsigned long _previousTime) { previousTime = _previousTime; } // Set last time PIDF::Compute was called. This essentially resets the PIDF
-    unsigned long getPreviousTime(void) { return previousTime; }                        // Get last time PIDF::Compute was called
+    // Set last time PIDF::Compute was called. This essentially resets the PIDF
+    // when set to 0. This is the preferred way to reset the PIDF as it affects the dt calculation
+    void setPreviousTime(unsigned long _previousTime) { previousTime = _previousTime; }
+    unsigned long getPreviousTime(void) { return previousTime; } // Get last time PIDF::Compute was called
 
 private:
     float Kp;
