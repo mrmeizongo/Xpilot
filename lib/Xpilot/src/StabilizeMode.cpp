@@ -3,10 +3,13 @@
 
 void StabilizeMode::enter(void)
 {
-    // Reset PIDF controllers on mode enter
-    rollPIDF.Reset();
-    pitchPIDF.Reset();
-    yawPIDF.Reset();
+    // Zero the last time the PIDF controllers were used.
+    // This resets the PIDF controllers on mode enter
+    // Manually calling the reset function would not affect the dt calculation
+    // and would cause the integrator to wind up on mode change causing unpredictable behavior
+    rollPIDF.setPreviousTime(0);
+    pitchPIDF.setPreviousTime(0);
+    yawPIDF.setPreviousTime(0);
 }
 
 void StabilizeMode::process(void)

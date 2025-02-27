@@ -47,6 +47,9 @@ public:
     void setKf(float _Kf) { Kf = _Kf; }
     void setIMax(float _IMax) { IMax = _IMax; }
 
+    void setPreviousTime(unsigned long _previousTime) { previousTime = _previousTime; } // Set last time PIDF::Compute was called. This essentially resets the PIDF
+    unsigned long getPreviousTime(void) { return previousTime; }                        // Get last time PIDF::Compute was called
+
 private:
     float Kp;
     float Ki;
@@ -55,8 +58,7 @@ private:
     float IMax;
 
     // First order low pass filter for derivative
-    // 20Hz because anything over that is probably noise
-    float rc = 1.0f / (2.0f * M_PI * 20.0f);
+    float RC;
     float previousDerivative = 0;
 
     float integrator = 0;

@@ -30,13 +30,15 @@ PIDF::PIDF() {}
 PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
     : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, Kf{_Kf}, IMax{_IMax}
 {
+    // 20Hz because anything over that is probably noise
+    RC = 1.0f / (2.0f * M_PI * 20.0f);
 }
 
 // Resets PIDF
 void PIDF::Reset(void)
 {
     integrator = 0;
-    previousDerivative = 0;
+    previousDerivative = NAN;
 }
 
 // Main function to be called to get PIDF control value
@@ -49,9 +51,9 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
     float deltaTime;
 
     /*
-     * If this PIDF hasn't been used for a full second then reset the PIDF.
-     * This prevents I buildup from a previous fight mode from causing a
-     * massive return before the integrator gets a chance to correct itself
+     * If this PIDF just started or hasn't been used for a full second then reset the PIDF.
+     * If it hasn't been used for a full second, it prevents I buildup from a previous fight mode
+     * from causing a massive return before the integrator gets a chance to correct itself
      */
     if (previousTime == 0 || dt > 1000)
     {
@@ -84,10 +86,21 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
     // Compute derivative component if time has elapsed
     if ((fabsf(Kd) > 0) && (dt > 0))
     {
-        float derivative = (currentError - previousError) / deltaTime;
+        float derivative = 0;
+        if (isnanf(previousDerivative))
+        {
+            /*
+             * Reset called.
+             * Suppress first derivative term as we don't want a sudden change in input to cause a large D output change
+             */
+            derivative = 0;
+            previousDerivative = 0;
+        }
+        else
+            derivative = (currentError - previousError) / deltaTime;
 
         // Apply low pass filter to eliminate high frequency noise in the derivative term
-        derivative = previousDerivative + ((deltaTime / (rc + deltaTime)) * (derivative - previousDerivative));
+        derivative = previousDerivative + ((deltaTime / (RC + deltaTime)) * (derivative - previousDerivative));
 
         // Update state
         previousError = currentError;
