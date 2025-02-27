@@ -20,7 +20,6 @@ void StabilizeMode::run(void)
 {
     process();
     rudderMixer();
-    yawController();
     float rollDemand = rollInput - imu.getRoll();
     float pitchDemand = pitchInput - imu.getPitch();
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
