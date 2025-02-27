@@ -3,13 +3,10 @@
 
 void StabilizeMode::enter(void)
 {
-    // Zero the last time the PIDF controllers were used.
-    // This resets the PIDF controllers on mode enter
-    // Manually calling the reset function would not affect the dt calculation
-    // and would cause the integrator to wind up on mode change causing unpredictable behavior
-    rollPIDF.setPreviousTime(0);
-    pitchPIDF.setPreviousTime(0);
-    yawPIDF.setPreviousTime(0);
+    // Reset PIDF controllers
+    rollPIDF.resetPIDF();
+    pitchPIDF.resetPIDF();
+    yawPIDF.resetPIDF();
 }
 
 void StabilizeMode::process(void)
@@ -22,7 +19,9 @@ void StabilizeMode::process(void)
 void StabilizeMode::run(void)
 {
     process();
+#if defined(RUDDER_MIX_IN_STABILIZE)
     rudderMixer();
+#endif
     float rollDemand = rollInput - imu.getRoll();
     float pitchDemand = pitchInput - imu.getPitch();
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);

@@ -30,8 +30,9 @@ PIDF::PIDF() {}
 PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
     : Kp{_Kp}, Ki{_Ki}, Kd{_Kd}, Kf{_Kf}, IMax{_IMax}
 {
-    // 20Hz because anything over that is probably noise
-    RC = 1.0f / (2.0f * M_PI * 20.0f);
+    // 20Hz time constant because anything over that is probably noise
+    // See https://en.wikipedia.org/wiki/Low-pass_filter#RC_filter
+    FC = 1.0f / (2.0f * M_PI * 20.0f);
     previousDerivative = NAN;
     integrator = 0;
     previousError = 0;
@@ -39,10 +40,9 @@ PIDF::PIDF(float _Kp, float _Ki, float _Kd, float _Kf, float _IMax)
 }
 
 // Resets PIDF
-void PIDF::Reset(void)
+void PIDF::ResetID(void)
 {
     integrator = 0;
-    // Set previousDerivative as invalid on reset
     previousDerivative = NAN;
 }
 
@@ -63,7 +63,7 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
     if (previousTime == 0 || dt > 1000)
     {
         dt = 0;
-        Reset();
+        ResetID();
     }
 
     deltaTime = (float)dt * 0.001f;
@@ -91,21 +91,21 @@ int16_t PIDF::Compute(float setPoint, float currentPoint)
     // Compute derivative component if time has elapsed
     if ((fabsf(Kd) > 0) && (dt > 0))
     {
-        float derivative = 0;
+        float derivative;
         if (isnanf(previousDerivative))
         {
             /*
-             * Reset called.
+             * ResetID called.
              * Suppress first derivative term as we don't want a sudden change in input to cause a large D output change
              */
-            derivative = 0;
-            previousDerivative = 0;
+            derivative = 0.f;
+            previousDerivative = 0.f;
         }
         else
             derivative = (currentError - previousError) / deltaTime;
 
         // Apply low pass filter to eliminate high frequency noise in the derivative term
-        derivative = previousDerivative + ((deltaTime / (RC + deltaTime)) * (derivative - previousDerivative));
+        derivative = previousDerivative + ((deltaTime / (FC + deltaTime)) * (derivative - previousDerivative));
 
         // Update state
         previousError = currentError;

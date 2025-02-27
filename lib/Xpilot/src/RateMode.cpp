@@ -3,13 +3,10 @@
 
 void RateMode::enter(void)
 {
-    // Zero the last time the PIDF controllers were used.
-    // This resets the PIDF controllers on mode enter
-    // Manually calling the reset function would not affect the dt calculation
-    // and would cause the integrator to wind up on mode change causing unpredictable behavior
-    rollPIDF.setPreviousTime(0);
-    pitchPIDF.setPreviousTime(0);
-    yawPIDF.setPreviousTime(0);
+    // Reset PIDF controllers
+    rollPIDF.resetPIDF();
+    pitchPIDF.resetPIDF();
+    yawPIDF.resetPIDF();
 }
 
 void RateMode::process(void)
@@ -22,7 +19,9 @@ void RateMode::process(void)
 void RateMode::run(void)
 {
     process();
+#if defined(RUDDER_MIX_IN_RATE)
     rudderMixer();
+#endif
     int16_t roll = rollPIDF.Compute(rollInput, imu.getGyroX());
     int16_t pitch = pitchPIDF.Compute(pitchInput, imu.getGyroY());
     int16_t yaw = yawPIDF.Compute(yawInput, imu.getGyroZ());

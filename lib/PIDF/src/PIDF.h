@@ -30,10 +30,10 @@ Copyright (C) 2024 Jamal Meizongo
 class PIDF
 {
 public:
-    PIDF();                                  // Empty Constructor
-    PIDF(float, float, float, float, float); // Constructor with initialization parameters
-    void Reset(void);                        // Reset PIDF integrator and derivative
-    int16_t Compute(float, float);           // Generate the PIDF output to be added to the servo
+    PIDF();                                    // Empty Constructor
+    PIDF(float, float, float, float, float);   // Constructor with initialization parameters
+    void resetPIDF(void) { previousTime = 0; } // Reset PIDF controller
+    int16_t Compute(float, float);             // Generate the PIDF output to be added to the servo
 
     float getKp(void) { return Kp; }
     float getKi(void) { return Ki; }
@@ -47,12 +47,8 @@ public:
     void setKf(float _Kf) { Kf = _Kf; }
     void setIMax(float _IMax) { IMax = _IMax; }
 
-    // Set last time PIDF::Compute was called. This essentially resets the PIDF
-    // when set to 0. This is the preferred way to reset the PIDF as it affects the dt calculation
-    void setPreviousTime(unsigned long _previousTime) { previousTime = _previousTime; }
-    unsigned long getPreviousTime(void) { return previousTime; } // Get last time PIDF::Compute was called
-
 private:
+    // Gains
     float Kp;
     float Ki;
     float Kd;
@@ -60,11 +56,13 @@ private:
     float IMax;
 
     // First order low pass filter for derivative
-    float RC;
-    float previousDerivative;
+    float FC;
 
     float integrator;
     float previousError;
+    float previousDerivative;
     unsigned long previousTime;
+
+    void ResetID(void); // Reset integrator and derivative
 };
 #endif //_PIDF_H
