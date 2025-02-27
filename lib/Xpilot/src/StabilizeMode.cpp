@@ -21,6 +21,7 @@ void StabilizeMode::run(void)
 #if defined(RUDDER_MIX_IN_STABILIZE)
     rudderMixer();
 #endif
+    yawController();
     float rollDemand = rollInput - imu.getRoll();
     float pitchDemand = pitchInput - imu.getPitch();
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);

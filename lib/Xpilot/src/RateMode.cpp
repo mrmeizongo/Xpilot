@@ -21,6 +21,7 @@ void RateMode::run(void)
 #if defined(RUDDER_MIX_IN_RATE)
     rudderMixer();
 #endif
+    yawController();
     int16_t roll = rollPIDF.Compute(rollInput, imu.getGyroX());
     int16_t pitch = pitchPIDF.Compute(pitchInput, imu.getGyroY());
     int16_t yaw = yawPIDF.Compute(yawInput, imu.getGyroZ());

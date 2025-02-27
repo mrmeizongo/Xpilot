@@ -61,6 +61,7 @@ protected:
     int16_t yawInput = 0;                                         // Yaw output
     int16_t SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0}; // Servo output array
     virtual void planeMixer(int16_t, int16_t, int16_t);           // Mixer for different airplane types
+    virtual void yawController(void);                             // Yaw control for for heading-hold-like functionality
     virtual void rudderMixer(void);                               // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
     PIDF rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX};
     PIDF pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX};
