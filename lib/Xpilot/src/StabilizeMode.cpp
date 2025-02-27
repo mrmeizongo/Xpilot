@@ -6,7 +6,6 @@ void StabilizeMode::enter(void)
     // Reset PIDF controllers
     rollPIDF.resetPIDF();
     pitchPIDF.resetPIDF();
-    yawPIDF.resetPIDF();
 }
 
 void StabilizeMode::process(void)
