@@ -42,3 +42,8 @@ void RateMode::run(void)
     SRVout[Actuators::Channel::ELEVATOR] = map(SRVout[Actuators::Channel::ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     SRVout[Actuators::Channel::RUDDER] = map(SRVout[Actuators::Channel::RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 }
+
+void RateMode::yawController(void)
+{
+    yawPIDF.resetPIDF();
+}

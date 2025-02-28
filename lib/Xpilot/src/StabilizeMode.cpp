@@ -47,3 +47,13 @@ void StabilizeMode::run(void)
     SRVout[Actuators::Channel::ELEVATOR] = map(SRVout[Actuators::Channel::ELEVATOR], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     SRVout[Actuators::Channel::RUDDER] = map(SRVout[Actuators::Channel::RUDDER], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 }
+
+void StabilizeMode::yawController(void)
+{
+#if defined(USE_HEADING_HOLD)
+    if (yawInput != 0)
+        yawPIDF.resetPIDF();
+#else
+    yawPIDF.resetPIDF();
+#endif
+}

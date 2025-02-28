@@ -68,17 +68,6 @@ void Mode::rudderMixer(void)
 #endif
 }
 
-void Mode::yawController(void)
-{
-#if defined(USE_HEADING_HOLD)
-    // If yaw input is not centered, reset the PIDF controller
-    if (yawInput != 0)
-        yawPIDF.resetPIDF();
-#else
-    yawPIDF.resetPIDF();
-#endif
-}
-
 void Mode::controlFailsafe(void)
 {
     rollInput = 0;
