@@ -52,6 +52,9 @@ void Radio::processInput(void)
         if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
             rx.yawPWM = rudderPulses;
     }
+
+    // Big brain failsafe logic
+    failsafe = false;
 }
 
 /*
@@ -62,6 +65,9 @@ void Radio::processInput(void)
  * RC transmitters are designed to send a pulse to the receiver within this range, going HIGH for the duration of the pulse and LOW otherwise
  * If the output of the channel on the receiver is attached to an interrupt pin, we can use it to drive a PCISR
  * The ISR simply records the time between the changes. We're only interested in pulses lasting between INPUT_MIN_PWM and INPUT_MAX_PWM
+ * Due to this input capture mechanism, implementing a failsafe is largely dependent on the receiver's behavior when the signal is lost
+ * Example: The Spektrum tx/rx I use will either hold the last known position when the signal is lost or default to a preset position determined at bind time
+ * The failsafe implementation is left to the user
  * See plane config INPUT_MIN_PWM and INPUT_MAX_PWM
  */
 void PinChangeInterruptEvent(AILPIN_INT)(void)

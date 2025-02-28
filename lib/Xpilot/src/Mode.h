@@ -54,6 +54,7 @@ public:
     virtual void run(void) = 0;                               // High level processing specific to this mode
     virtual void exit(void) {}                                // Perform any clean up before switching to another mode
     void setServoOut(void) { actuators.setServoOut(SRVout); } // Write servo outputs
+    virtual void controlFailsafe(void);                       // Placeholder for failsafe implementation
 
 protected:
     int16_t rollInput = 0;                                                // Roll output

@@ -66,6 +66,7 @@ public:
     Radio(void);
     void init(void);
     void processInput(void);
+    bool inFailsafe(void) { return failsafe; }
 
     int16_t getRxRollPWM(void) { return rx.rollPWM; }
     int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
@@ -74,6 +75,7 @@ public:
 
 private:
     Control rx{Control::MODEPOS::MID_POS}; // RATE mode by default
+    bool failsafe;
 };
 
 extern Radio radio;

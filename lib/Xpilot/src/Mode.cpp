@@ -78,3 +78,10 @@ void Mode::yawController(void)
     yawPIDF.resetPIDF();
 #endif
 }
+
+void Mode::controlFailsafe(void)
+{
+    rollInput = 0;
+    pitchInput = 0;
+    yawInput = 0;
+}
