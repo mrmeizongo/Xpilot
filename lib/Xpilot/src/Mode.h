@@ -48,7 +48,7 @@ class Mode
 public:
     Mode() {};
     virtual const char *modeName4(void) const = 0;            // Returns string representation of the flight mode. 4 characters max
-    virtual Control::MODEPOS modePos(void) const = 0;         // Return mode switch position for this mode
+    virtual Control::MODEPOS modeSwitchPos(void) const = 0;   // Return mode switch position for this mode
     virtual void enter(void) {}                               // Preliminary setup
     virtual void process(void) = 0;                           // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                               // High level processing specific to this mode
@@ -74,7 +74,7 @@ class PassthroughMode : public Mode
 {
 public:
     const char *modeName4(void) const override { return "PASS"; }
-    Control::MODEPOS modePos(void) const override { return Control::MODEPOS::LOW_POS; }
+    Control::MODEPOS modeSwitchPos(void) const override { return Control::MODEPOS::LOW_POS; }
     void process(void) override;
     void run(void) override;
 };
@@ -84,7 +84,7 @@ class RateMode : public Mode
 {
 public:
     const char *modeName4(void) const override { return "RATE"; }
-    Control::MODEPOS modePos(void) const override { return Control::MODEPOS::MID_POS; }
+    Control::MODEPOS modeSwitchPos(void) const override { return Control::MODEPOS::MID_POS; }
     void enter(void) override;
     void process(void) override;
     void run(void) override;
@@ -96,7 +96,7 @@ class StabilizeMode : public Mode
 {
 public:
     const char *modeName4(void) const override { return "STAB"; }
-    Control::MODEPOS modePos(void) const override { return Control::MODEPOS::HIGH_POS; }
+    Control::MODEPOS modeSwitchPos(void) const override { return Control::MODEPOS::HIGH_POS; }
     void enter(void) override;
     void process(void) override;
     void run(void) override;

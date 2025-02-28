@@ -54,7 +54,7 @@ private:
     StabilizeMode stabilizeMode;
     PassthroughMode passthroughMode;
 
-    // This is the state of the flight control system
+    // This is the state of the flight stabilization system
     Mode *currentMode = &rateMode;
     Mode *previousMode = &rateMode;
 };
