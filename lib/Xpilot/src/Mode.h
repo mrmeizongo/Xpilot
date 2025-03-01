@@ -63,7 +63,7 @@ protected:
     virtual void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
     virtual void yawController(void) {}                                   // Yaw control for for heading-hold-like functionality
     virtual void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
-    virtual void controlFailsafe(void) = 0;                               // Placeholder for failsafe implementation. Default simply sets all outputs to neutral i.e. 0
+    virtual void controlFailsafe(void) = 0;                               // Placeholder for failsafe implementation
     PIDF rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX};
     PIDF pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX};
     PIDF yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX};
