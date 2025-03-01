@@ -67,10 +67,3 @@ void Mode::rudderMixer(void)
 #endif
 #endif
 }
-
-void Mode::controlFailsafe(void)
-{
-    rollOut = 0;
-    pitchOut = 0;
-    yawOut = 0;
-}

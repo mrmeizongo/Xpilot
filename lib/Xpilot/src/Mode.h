@@ -53,7 +53,7 @@ public:
     virtual void process(void) = 0;                           // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                               // High level processing specific to this mode
     virtual void exit(void) {}                                // Perform any clean up before switching to another mode
-    virtual void controlFailsafe(void);                       // Placeholder for failsafe implementation. Default simply sets all outputs to neutral i.e. 0
+    virtual void controlFailsafe(void) = 0;                   // Placeholder for failsafe implementation. Default simply sets all outputs to neutral i.e. 0
     void setServoOut(void) { actuators.setServoOut(SRVout); } // Write servo outputs to the actuators object
 
 protected:
@@ -77,6 +77,7 @@ public:
     Control::MODEPOS modeSwitchPos(void) const override { return Control::MODEPOS::LOW_POS; }
     void process(void) override;
     void run(void) override;
+    void controlFailsafe(void) override;
 };
 
 // Gyro-based rate control
@@ -89,6 +90,7 @@ public:
     void process(void) override;
     void run(void) override;
     void yawController(void) override;
+    void controlFailsafe(void) override;
 };
 
 // Gyro-based rate control with wing leveling on stick release
@@ -101,6 +103,7 @@ public:
     void process(void) override;
     void run(void) override;
     void yawController(void) override;
+    void controlFailsafe(void) override;
 };
 
 #endif // _MODE_H

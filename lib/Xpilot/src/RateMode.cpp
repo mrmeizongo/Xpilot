@@ -47,3 +47,10 @@ void RateMode::yawController(void)
 {
     yawPIDF.resetPIDF();
 }
+
+void RateMode::controlFailsafe(void)
+{
+    rollOut = 0;
+    pitchOut = 0;
+    yawOut = 0;
+}

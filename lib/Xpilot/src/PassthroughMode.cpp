@@ -24,3 +24,10 @@ void PassthroughMode::run(void)
     SRVout[Actuators::Channel::ELEVATOR] = constrain(SRVout[Actuators::Channel::ELEVATOR], SERVO_MIN_PWM, SERVO_MAX_PWM);
     SRVout[Actuators::Channel::RUDDER] = constrain(SRVout[Actuators::Channel::RUDDER], SERVO_MIN_PWM, SERVO_MAX_PWM);
 }
+
+void PassthroughMode::controlFailsafe(void)
+{
+    rollOut = SERVO_MID_PWM;
+    pitchOut = SERVO_MID_PWM;
+    yawOut = SERVO_MID_PWM;
+}
