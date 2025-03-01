@@ -39,34 +39,36 @@ Flight stabilization software
 #include "PIDF.h"
 
 // Helper define to transform radio values to mode dependent resolutions
-#define SETINPUT(rawValue, deadBand, inLowRange, inMidRange, inHighRange, outLowRange, outHighRange) \
-    (abs((rawValue) - (inMidRange)) <= (deadBand) ? 0 : map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange)))
+#define SETINPUT(rawValue, deadBand, inLowRange, inMidRange, inHighRange, outLowRange, outMidRange, outHighRange) \
+    (abs((rawValue) - (inMidRange)) <= (deadBand) ? (outMidRange) : map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange)))
 
 // Abstract flight mode class
 class Mode
 {
 public:
     Mode() {};
-    virtual const char *modeName4(void) const = 0;            // Returns string representation of the flight mode. 4 characters max
-    virtual Control::MODEPOS modeSwitchPos(void) const = 0;   // Return mode switch position for this mode
-    virtual void enter(void) {}                               // Preliminary setup
-    virtual void process(void) = 0;                           // Convert user input to mode specific targets, should be called first in the run function
-    virtual void run(void) = 0;                               // High level processing specific to this mode
-    virtual void exit(void) {}                                // Perform any clean up before switching to another mode
-    void setServoOut(void) { actuators.setServoOut(SRVout); } // Write servo outputs to the actuators object
+    virtual const char *modeName4(void) const = 0;                   // Returns string representation of the flight mode. 4 characters max
+    virtual Control::MODEPOS modeSwitchPos(void) const = 0;          // Return mode switch position for this mode
+    virtual void enter(void) {}                                      // Preliminary setup
+    virtual void process(void) = 0;                                  // Convert user input to mode specific targets, should be called first in the run function
+    virtual void run(void) = 0;                                      // High level processing specific to this mode
+    virtual void exit(void) {}                                       // Perform any clean up before switching to another mode
+    static void setServoOut(void) { actuators.setServoOut(SRVout); } // Write servo outputs to the actuators object
 
 protected:
-    int16_t rollOut = 0;                                                  // Roll output
-    int16_t pitchOut = 0;                                                 // Pitch output
-    int16_t yawOut = 0;                                                   // Yaw output
-    int16_t SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};         // Servo output array
-    virtual void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
-    virtual void yawController(void) {}                                   // Yaw control for for heading-hold-like functionality
-    virtual void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
-    virtual void controlFailsafe(void) = 0;                               // Placeholder for failsafe implementation
-    PIDF rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX};
-    PIDF pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX};
-    PIDF yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX};
+    static int16_t rollOut;                                              // Roll output
+    static int16_t pitchOut;                                             // Pitch output
+    static int16_t yawOut;                                               // Yaw output
+    static int16_t SRVout[Actuators::Channel::NUM_CHANNELS];             // Servo output array
+    static void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
+    static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
+    virtual void yawController(void) {}                                  // Yaw control for for heading-hold-like functionality
+    virtual void controlFailsafe(void) = 0;                              // Placeholder for failsafe implementation
+
+    // PID controllers
+    static PIDF rollPIDF;
+    static PIDF pitchPIDF;
+    static PIDF yawPIDF;
 };
 
 // Manual control of flight surfaces - USE WITH CAUTION. FOR ADVANCED FLYERS ONLY!

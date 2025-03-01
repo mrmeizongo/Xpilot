@@ -4,9 +4,9 @@ void PassthroughMode::process(void)
 {
     if (!radio.inFailsafe())
     {
-        rollOut = SETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        pitchOut = SETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, SERVO_MIN_PWM, SERVO_MAX_PWM);
-        yawOut = SETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, SERVO_MIN_PWM, SERVO_MAX_PWM);
+        Mode::rollOut = SETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM);
+        Mode::pitchOut = SETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM);
+        Mode::yawOut = SETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, SERVO_MIN_PWM, SERVO_MID_PWM, SERVO_MAX_PWM);
     }
     else
         controlFailsafe();
@@ -18,16 +18,16 @@ void PassthroughMode::run(void)
 #if defined(RUDDER_MIX_IN_PASS)
     rudderMixer();
 #endif
-    planeMixer(rollOut, pitchOut, yawOut);
-    SRVout[Actuators::Channel::AILERON1] = constrain(SRVout[Actuators::Channel::AILERON1], SERVO_MIN_PWM, SERVO_MAX_PWM);
-    SRVout[Actuators::Channel::AILERON2] = constrain(SRVout[Actuators::Channel::AILERON2], SERVO_MIN_PWM, SERVO_MAX_PWM);
-    SRVout[Actuators::Channel::ELEVATOR] = constrain(SRVout[Actuators::Channel::ELEVATOR], SERVO_MIN_PWM, SERVO_MAX_PWM);
-    SRVout[Actuators::Channel::RUDDER] = constrain(SRVout[Actuators::Channel::RUDDER], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);
+    Mode::SRVout[Actuators::Channel::AILERON1] = constrain(Mode::SRVout[Actuators::Channel::AILERON1], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::AILERON2] = constrain(Mode::SRVout[Actuators::Channel::AILERON2], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::ELEVATOR] = constrain(Mode::SRVout[Actuators::Channel::ELEVATOR], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::RUDDER] = constrain(Mode::SRVout[Actuators::Channel::RUDDER], SERVO_MIN_PWM, SERVO_MAX_PWM);
 }
 
 void PassthroughMode::controlFailsafe(void)
 {
-    rollOut = SERVO_MID_PWM;
-    pitchOut = SERVO_MID_PWM;
-    yawOut = SERVO_MID_PWM;
+    Mode::rollOut = SERVO_MID_PWM;
+    Mode::pitchOut = SERVO_MID_PWM;
+    Mode::yawOut = SERVO_MID_PWM;
 }
