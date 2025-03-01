@@ -24,7 +24,7 @@ void RateMode::run(void)
 {
     process();
 #if defined(RUDDER_MIX_IN_RATE)
-    rudderMixer();
+    Mode::rudderMixer();
 #endif
     yawController();
     int16_t roll = Mode::rollPIDF.Compute(Mode::rollOut, imu.getGyroX());

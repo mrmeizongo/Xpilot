@@ -24,7 +24,7 @@ void StabilizeMode::run(void)
 {
     process();
 #if defined(RUDDER_MIX_IN_STABILIZE)
-    rudderMixer();
+    Mode::rudderMixer();
 #endif
     yawController();
     float rollDemand = Mode::rollOut - imu.getRoll();
