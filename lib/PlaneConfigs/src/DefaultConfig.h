@@ -86,9 +86,6 @@ Flight stabilization software
 #define PITCH_INPUT_DEADBAND 20
 #define YAW_INPUT_DEADBAND 20
 
-// Stick resolution in passthrough mode
-#define PASSTHROUGH_RES 1000
-
 // Stick resolution in rate mode (degrees)
 #define MAX_ROLL_RATE_DEGS 60
 #define MAX_PITCH_RATE_DEGS 45

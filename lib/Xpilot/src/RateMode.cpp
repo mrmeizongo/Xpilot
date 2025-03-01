@@ -12,9 +12,9 @@ void RateMode::process(void)
 {
     if (!radio.inFailsafe())
     {
-        rollInput = SETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-        pitchInput = SETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-        yawInput = SETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+        rollOut = SETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+        pitchOut = SETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+        yawOut = SETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, INPUT_MIN_PWM, INPUT_MID_PWM, INPUT_MAX_PWM, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     }
     else
         controlFailsafe();
@@ -27,9 +27,9 @@ void RateMode::run(void)
     rudderMixer();
 #endif
     yawController();
-    int16_t roll = rollPIDF.Compute(rollInput, imu.getGyroX());
-    int16_t pitch = pitchPIDF.Compute(pitchInput, imu.getGyroY());
-    int16_t yaw = yawPIDF.Compute(yawInput, imu.getGyroZ());
+    int16_t roll = rollPIDF.Compute(rollOut, imu.getGyroX());
+    int16_t pitch = pitchPIDF.Compute(pitchOut, imu.getGyroY());
+    int16_t yaw = yawPIDF.Compute(yawOut, imu.getGyroZ());
 
     planeMixer(roll, pitch, yaw);
     SRVout[Actuators::Channel::AILERON1] = constrain(SRVout[Actuators::Channel::AILERON1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT);

@@ -61,16 +61,16 @@ void Mode::rudderMixer(void)
 {
 #if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
 #if defined(REVERSE_RUDDER_MIX)
-    yawInput = yawInput - (rollInput * RUDDER_MIXING);
+    yawOut = yawOut - (rollOut * RUDDER_MIXING);
 #else
-    yawInput = yawInput + (rollInput * RUDDER_MIXING);
+    yawOut = yawOut + (rollOut * RUDDER_MIXING);
 #endif
 #endif
 }
 
 void Mode::controlFailsafe(void)
 {
-    rollInput = 0;
-    pitchInput = 0;
-    yawInput = 0;
+    rollOut = 0;
+    pitchOut = 0;
+    yawOut = 0;
 }
