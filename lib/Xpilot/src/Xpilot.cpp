@@ -52,7 +52,6 @@ void Xpilot::loop(void)
     }
     updateFlightMode();
     currentMode->run();
-    Mode::setServoOut();
     actuators.writeServos();
 
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
