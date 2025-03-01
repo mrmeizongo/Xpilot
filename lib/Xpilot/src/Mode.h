@@ -53,7 +53,6 @@ public:
     virtual void process(void) = 0;                           // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                               // High level processing specific to this mode
     virtual void exit(void) {}                                // Perform any clean up before switching to another mode
-    virtual void controlFailsafe(void) = 0;                   // Placeholder for failsafe implementation. Default simply sets all outputs to neutral i.e. 0
     void setServoOut(void) { actuators.setServoOut(SRVout); } // Write servo outputs to the actuators object
 
 protected:
@@ -64,6 +63,7 @@ protected:
     virtual void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
     virtual void yawController(void) {}                                   // Yaw control for for heading-hold-like functionality
     virtual void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
+    virtual void controlFailsafe(void) = 0;                               // Placeholder for failsafe implementation. Default simply sets all outputs to neutral i.e. 0
     PIDF rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX};
     PIDF pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX};
     PIDF yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX};
@@ -77,6 +77,8 @@ public:
     Control::MODEPOS modeSwitchPos(void) const override { return Control::MODEPOS::LOW_POS; }
     void process(void) override;
     void run(void) override;
+
+protected:
     void controlFailsafe(void) override;
 };
 
@@ -90,6 +92,8 @@ public:
     void process(void) override;
     void run(void) override;
     void yawController(void) override;
+
+protected:
     void controlFailsafe(void) override;
 };
 
@@ -103,6 +107,8 @@ public:
     void process(void) override;
     void run(void) override;
     void yawController(void) override;
+
+protected:
     void controlFailsafe(void) override;
 };
 
