@@ -43,23 +43,23 @@ void Xpilot::setup(void)
 void Xpilot::loop(void)
 {
     nowUs = micros();
-    imu.processIMU();
     // Process radio input
     if (nowUs - inputLastUs >= INPUT_REFRESH_RATE_US)
     {
         radio.processInput();
         inputLastUs = nowUs;
     }
-    updateFlightMode();
-    currentMode->run();
-    actuators.writeServos();
+
+    updateFlightMode();      // Update flight mode based on radio mode switch position
+    imu.processIMU();        // Grab new sensor data if available
+    currentMode->run();      // Run the high level processing for the current flight mode
+    actuators.writeServos(); // Write servo outputs to the actuators object
 
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     printDebug();
 #endif
 }
 
-// Update flight mode based on radio mode switch position
 void Xpilot::updateFlightMode(void)
 {
     Control::MODEPOS modePos = radio.getRxModePos();
