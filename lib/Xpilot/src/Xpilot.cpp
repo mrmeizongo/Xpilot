@@ -103,7 +103,7 @@ static void printIO(void)
 {
     Serial.print("\t\t");
     Serial.print("Flight Mode: ");
-    Serial.println(xpilot.getCurrentFlightModeName());
+    Serial.println(xpilot.getCurrentFlightMode()->modeName4());
     Serial.print("Input PWM");
     Serial.print("\t\t\t\t");
     Serial.println("Output PWM");
