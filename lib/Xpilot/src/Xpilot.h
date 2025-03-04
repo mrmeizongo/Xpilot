@@ -47,7 +47,7 @@ public:
     void loop(void);
 
     void updateFlightMode(void);
-    const Mode *getCurrentFlightMode(void) { return currentMode; }
+    const Mode *getFlightMode(void) { return currentMode; }
 
 private:
     RateMode rateMode;
