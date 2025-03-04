@@ -49,7 +49,7 @@ public:
     Mode() {};
     virtual const char *modeName4(void) const = 0;                   // Returns string representation of the flight mode. 4 characters max
     virtual Control::MODEPOS modeSwitchPos(void) const = 0;          // Return mode switch position for this mode
-    virtual void enter(void) {}                                      // Preliminary setup
+    virtual void enter(void) {}                                      // Preliminary setup on mode enter
     virtual void process(void) = 0;                                  // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                                      // High level processing specific to this mode
     virtual void exit(void) {}                                       // Perform any clean up before switching to another mode
