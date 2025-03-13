@@ -62,7 +62,7 @@ protected:
     static int16_t SRVout[Actuators::Channel::NUM_CHANNELS];             // Servo output array
     static void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
     static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
-    virtual void yawController(void) {}                                  // Yaw control for for heading-hold-like functionality
+    virtual void yawController(void) {}                                  // Yaw control for heading-hold-like functionality
     virtual void controlFailsafe(void) = 0;                              // Placeholder for failsafe implementation
 
     // PID controllers
