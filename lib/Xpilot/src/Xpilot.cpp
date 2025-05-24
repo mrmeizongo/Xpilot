@@ -63,6 +63,7 @@ void Xpilot::loop(void)
 void Xpilot::updateFlightMode(void)
 {
     Control::MODEPOS modePos = radio.getRxModePos();
+    // Nothing has changed, simply return
     if (modePos == currentMode->modeSwitchPos())
         return;
 
