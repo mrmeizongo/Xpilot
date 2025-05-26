@@ -11,13 +11,12 @@ PIDF Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX};
 
 /*
  * Mixer for airplane type
- * Only tested with a full plane i.e. ailerons, elevator and rudder
+ * Only tested with a full plane(traditional & V-tail) i.e. ailerons, elevator and rudder
  * Proceed with caution. Perform thorough pre-flight checks and reverse servo direction as needed.
  *
- * Default
- * For V-Tail - If servos are mounted on top, with face (sticker side) of servo facing the same direction
+ * Default for V-Tail
  *
- *                 Rudder Left
+ *                 Rudder Right
  *
  *                                ^
  *                 _       _      |
@@ -31,7 +30,7 @@ PIDF Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX};
  */
 void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw)
 {
-#if defined(FULL_PLANE)
+#if defined(FULL_PLANE_TRADITIONAL)
     SRVout[Actuators::Channel::AILERON1] = roll;
     SRVout[Actuators::Channel::AILERON2] = roll;
     SRVout[Actuators::Channel::ELEVATOR] = pitch;

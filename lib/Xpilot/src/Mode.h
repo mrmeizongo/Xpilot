@@ -48,12 +48,14 @@ class Mode
 public:
     Mode() {};
     virtual const char *modeName4(void) const = 0;                   // Returns string representation of the flight mode. 4 characters max
-    virtual Control::MODEPOS modeSwitchPos(void) const = 0;          // Return mode switch position for this mode
     virtual void enter(void) {}                                      // Preliminary setup on mode enter
     virtual void process(void) = 0;                                  // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                                      // High level processing specific to this mode
     virtual void exit(void) {}                                       // Perform any clean up before switching to another mode
     static void setServoOut(void) { actuators.setServoOut(SRVout); } // Write servo outputs to the actuators object
+
+    void setModeSwitchPosition(Control::MODEPOS modePos) { modeSwitchPosition = modePos; } // Set the mode switch position
+    Control::MODEPOS getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
     static int16_t rollOut;                                              // Roll output
@@ -64,6 +66,8 @@ protected:
     static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
     virtual void yawController(void) {}                                  // Yaw control for heading-hold-like functionality
     virtual void controlFailsafe(void) = 0;                              // Placeholder for failsafe implementation
+
+    Control::MODEPOS modeSwitchPosition; // Mode's switch position
 
     // PID controllers
     static PIDF rollPIDF;
@@ -76,7 +80,6 @@ class PassthroughMode : public Mode
 {
 public:
     const char *modeName4(void) const override { return "PASS"; }
-    Control::MODEPOS modeSwitchPos(void) const override { return Control::MODEPOS::LOW_POS; }
     void process(void) override;
     void run(void) override;
 
@@ -89,7 +92,6 @@ class RateMode : public Mode
 {
 public:
     const char *modeName4(void) const override { return "RATE"; }
-    Control::MODEPOS modeSwitchPos(void) const override { return Control::MODEPOS::MID_POS; }
     void enter(void) override;
     void process(void) override;
     void run(void) override;
@@ -104,7 +106,6 @@ class StabilizeMode : public Mode
 {
 public:
     const char *modeName4(void) const override { return "STAB"; }
-    Control::MODEPOS modeSwitchPos(void) const override { return Control::MODEPOS::HIGH_POS; }
     void enter(void) override;
     void process(void) override;
     void run(void) override;
