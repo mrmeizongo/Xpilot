@@ -46,13 +46,13 @@ void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw
     SRVout[Actuators::Channel::ELEVATOR] = yaw + pitch;
     SRVout[Actuators::Channel::RUDDER] = yaw - pitch;
 #elif defined(FLYING_WING_W_RUDDER)
-    SRVout[Actuators::Channel::AILERON1] = roll - pitch;
-    SRVout[Actuators::Channel::AILERON2] = roll + pitch;
+    SRVout[Actuators::Channel::AILERON1] = roll + pitch;
+    SRVout[Actuators::Channel::AILERON2] = roll - pitch;
     SRVout[Actuators::Channel::ELEVATOR] = 0;
     SRVout[Actuators::Channel::RUDDER] = yaw;
 #elif defined(FLYING_WING_NO_RUDDER)
-    SRVout[Actuators::Channel::AILERON1] = roll - pitch;
-    SRVout[Actuators::Channel::AILERON2] = roll + pitch;
+    SRVout[Actuators::Channel::AILERON1] = roll + pitch;
+    SRVout[Actuators::Channel::AILERON2] = roll - pitch;
     SRVout[Actuators::Channel::ELEVATOR] = 0;
     SRVout[Actuators::Channel::RUDDER] = 0;
 #elif defined(RUDDER_ELEVATOR_ONLY_PLANE)
