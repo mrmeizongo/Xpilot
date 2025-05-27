@@ -54,7 +54,7 @@ public:
     virtual void exit(void) {}                                       // Perform any clean up before switching to another mode
     static void setServoOut(void) { actuators.setServoOut(SRVout); } // Write servo outputs to the actuators object
 
-    void setModeSwitchPosition(Control::MODEPOS modePos) { modeSwitchPosition = modePos; } // Set the mode switch position
+    void setModeSwitchPosition(Control::MODEPOS modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
     Control::MODEPOS getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
