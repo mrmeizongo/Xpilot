@@ -42,7 +42,7 @@ public:
     Xpilot(const Xpilot &) = delete;            // Prevent this class from being copyable
     Xpilot &operator=(const Xpilot &) = delete; // Prevent this class from being assignable
 
-    // Only functions called from the Arduino setup and loop functions
+    // Only functions called from the setup and loop functions
     void setup(void);
     void loop(void);
 
