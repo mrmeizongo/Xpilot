@@ -6,6 +6,7 @@ void RateMode::enter(void)
     // Reset PIDF controllers
     Mode::rollPIDF.resetPIDF();
     Mode::pitchPIDF.resetPIDF();
+    Mode::yawPIDF.resetPIDF();
 }
 
 void RateMode::process(void)
