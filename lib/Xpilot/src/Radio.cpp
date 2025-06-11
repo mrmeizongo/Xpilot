@@ -39,11 +39,11 @@ void Radio::processInput(void)
         if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
         {
             if (modePulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                rx.modePos = Control::MODEPOS::HIGH_POS;
+                rx.modePos = Control::THREE_POS_SW::HIGH_POS;
             else if (modePulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                rx.modePos = Control::MODEPOS::LOW_POS;
+                rx.modePos = Control::THREE_POS_SW::LOW_POS;
             else
-                rx.modePos = Control::MODEPOS::MID_POS;
+                rx.modePos = Control::THREE_POS_SW::MID_POS;
         }
         if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
             rx.rollPWM = aileronPulses;

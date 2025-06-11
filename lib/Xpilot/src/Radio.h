@@ -44,7 +44,7 @@ Flight stabilization software
  */
 struct Control
 {
-    enum MODEPOS : uint8_t
+    enum THREE_POS_SW : uint8_t
     {
         LOW_POS = 0U,
         MID_POS,
@@ -53,9 +53,9 @@ struct Control
     uint16_t rollPWM;
     uint16_t pitchPWM;
     uint16_t yawPWM;
-    MODEPOS modePos;
+    THREE_POS_SW modePos;
 
-    Control(MODEPOS _modePos)
+    Control(THREE_POS_SW _modePos)
         : rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
           modePos{_modePos} {}
 };
@@ -71,10 +71,10 @@ public:
     int16_t getRxRollPWM(void) { return rx.rollPWM; }
     int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
     int16_t getRxYawPWM(void) { return rx.yawPWM; }
-    Control::MODEPOS getRxModePos(void) { return rx.modePos; }
+    Control::THREE_POS_SW getRxModePos(void) { return rx.modePos; }
 
 private:
-    Control rx{Control::MODEPOS::MID_POS}; // RATE mode by default
+    Control rx{Control::THREE_POS_SW::MID_POS}; // RATE mode by default
     bool failsafe;
 };
 

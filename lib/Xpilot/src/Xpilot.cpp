@@ -22,9 +22,9 @@ static void printLoopRate(void) __attribute__((unused));
 Xpilot::Xpilot(void)
 {
     // Specify the mode switch position for each mode
-    passthroughMode.setModeSwitchPosition(Control::MODEPOS::HIGH_POS);
-    rateMode.setModeSwitchPosition(Control::MODEPOS::MID_POS);
-    stabilizeMode.setModeSwitchPosition(Control::MODEPOS::LOW_POS);
+    passthroughMode.setModeSwitchPosition(Control::THREE_POS_SW::HIGH_POS);
+    rateMode.setModeSwitchPosition(Control::THREE_POS_SW::MID_POS);
+    stabilizeMode.setModeSwitchPosition(Control::THREE_POS_SW::LOW_POS);
 }
 
 void Xpilot::setup(void)
@@ -66,7 +66,7 @@ void Xpilot::loop(void)
 
 void Xpilot::updateFlightMode(void)
 {
-    Control::MODEPOS modePos = radio.getRxModePos();
+    Control::THREE_POS_SW modePos = radio.getRxModePos();
     // Nothing has changed, simply return
     if (modePos == currentMode->getModeSwitchPosition())
         return;

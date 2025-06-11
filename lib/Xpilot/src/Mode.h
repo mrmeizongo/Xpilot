@@ -47,16 +47,16 @@ class Mode
 {
 public:
     Mode() {};
-    Mode(const Control::MODEPOS modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
-    virtual const char *modeName4(void) const = 0;                           // Returns string representation of the flight mode. 4 characters max
-    virtual void enter(void) {}                                              // Preliminary setup on mode enter
-    virtual void process(void) = 0;                                          // Convert user input to mode specific targets, should be called first in the run function
-    virtual void run(void) = 0;                                              // High level processing specific to this mode
-    virtual void exit(void) {}                                               // Perform any clean up before switching to another mode
-    static void setServoOut(void) { actuators.setServoOut(SRVout); }         // Write servo outputs to the actuators object
+    Mode(const Control::THREE_POS_SW modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
+    virtual const char *modeName4(void) const = 0;                                // Returns string representation of the flight mode. 4 characters max
+    virtual void enter(void) {}                                                   // Preliminary setup on mode enter
+    virtual void process(void) = 0;                                               // Convert user input to mode specific targets, should be called first in the run function
+    virtual void run(void) = 0;                                                   // High level processing specific to this mode
+    virtual void exit(void) {}                                                    // Perform any clean up before switching to another mode
+    static void setServoOut(void) { actuators.setServoOut(SRVout); }              // Write servo outputs to the actuators object
 
-    void setModeSwitchPosition(Control::MODEPOS modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
-    Control::MODEPOS getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
+    void setModeSwitchPosition(Control::THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
+    Control::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
     static int16_t rollOut;                                              // Roll output
@@ -68,7 +68,7 @@ protected:
     virtual void yawController(void) {}                                  // Yaw control for heading-hold-like functionality
     virtual void controlFailsafe(void) = 0;                              // Failsafe implementation
 
-    Control::MODEPOS modeSwitchPosition; // Mode's switch position
+    Control::THREE_POS_SW modeSwitchPosition; // Mode's switch position
 
     // PID controllers
     static PIDF rollPIDF;
