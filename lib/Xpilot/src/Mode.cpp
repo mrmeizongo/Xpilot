@@ -1,6 +1,7 @@
 #include "Mode.h"
 
-// Static variable definitions
+// ISO C++ forbids in-class initialization of non-const static members
+// We define them here instead
 int16_t Mode::rollOut = 0;
 int16_t Mode::pitchOut = 0;
 int16_t Mode::yawOut = 0;
