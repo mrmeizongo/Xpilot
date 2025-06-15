@@ -36,6 +36,14 @@ Flight stabilization software
 #include <stdint.h>
 #include <PlaneConfig.h>
 
+// 3-position switch
+enum class THREE_POS_SW : uint8_t
+{
+    LOW_POS = 0U,
+    MID_POS,
+    HIGH_POS
+};
+
 /*
  * Control struct
  * Holds the radio input values
@@ -44,12 +52,6 @@ Flight stabilization software
  */
 struct Control
 {
-    enum class THREE_POS_SW : uint8_t
-    {
-        LOW_POS = 0U,
-        MID_POS,
-        HIGH_POS
-    };
     uint16_t rollPWM;
     uint16_t pitchPWM;
     uint16_t yawPWM;
@@ -71,10 +73,10 @@ public:
     int16_t getRxRollPWM(void) { return rx.rollPWM; }
     int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
     int16_t getRxYawPWM(void) { return rx.yawPWM; }
-    Control::THREE_POS_SW getRxModePos(void) { return rx.modePos; }
+    THREE_POS_SW getRxModePos(void) { return rx.modePos; }
 
 private:
-    Control rx{Control::THREE_POS_SW::MID_POS}; // RATE mode by default
+    Control rx{THREE_POS_SW::MID_POS}; // RATE mode by default
     bool failsafe;
 };
 
