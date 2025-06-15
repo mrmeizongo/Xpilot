@@ -44,7 +44,7 @@ Flight stabilization software
  */
 struct Control
 {
-    enum THREE_POS_SW : uint8_t
+    enum class THREE_POS_SW : uint8_t
     {
         LOW_POS = 0U,
         MID_POS,
