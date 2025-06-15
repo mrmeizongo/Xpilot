@@ -18,12 +18,8 @@ void PassthroughMode::run(void)
 #if defined(RUDDER_MIX_IN_PASS)
     Mode::rudderMixer();
 #endif
-    Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);
-    Mode::SRVout[Actuators::Channel::AILERON1] = constrain(Mode::SRVout[Actuators::Channel::AILERON1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-    Mode::SRVout[Actuators::Channel::AILERON2] = constrain(Mode::SRVout[Actuators::Channel::AILERON2], -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-    Mode::SRVout[Actuators::Channel::ELEVATOR] = constrain(Mode::SRVout[Actuators::Channel::ELEVATOR], -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-    Mode::SRVout[Actuators::Channel::RUDDER] = constrain(Mode::SRVout[Actuators::Channel::RUDDER], -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
 
+    Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);
     Mode::SRVout[Actuators::Channel::AILERON1] = map(Mode::SRVout[Actuators::Channel::AILERON1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::AILERON2] = map(Mode::SRVout[Actuators::Channel::AILERON2], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::ELEVATOR] = map(Mode::SRVout[Actuators::Channel::ELEVATOR], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
@@ -33,7 +29,7 @@ void PassthroughMode::run(void)
 
 void PassthroughMode::controlFailsafe(void)
 {
-    Mode::rollOut = SERVO_MID_PWM;
-    Mode::pitchOut = SERVO_MID_PWM;
-    Mode::yawOut = SERVO_MID_PWM;
+    Mode::rollOut = 0;
+    Mode::pitchOut = 0;
+    Mode::yawOut = 0;
 }

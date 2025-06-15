@@ -76,3 +76,12 @@ void Mode::rudderMixer(void)
 #endif
 #endif
 }
+
+void Mode::setServoOut(void)
+{
+    SRVout[Actuators::Channel::AILERON1] = constrain(SRVout[Actuators::Channel::AILERON1], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    SRVout[Actuators::Channel::AILERON2] = constrain(SRVout[Actuators::Channel::AILERON2], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    SRVout[Actuators::Channel::ELEVATOR] = constrain(SRVout[Actuators::Channel::ELEVATOR], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    SRVout[Actuators::Channel::RUDDER] = constrain(SRVout[Actuators::Channel::RUDDER], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    actuators.setServoOut(SRVout);
+}

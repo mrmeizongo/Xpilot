@@ -53,7 +53,7 @@ public:
     virtual void process(void) = 0;                                      // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                                          // High level processing specific to this mode
     virtual void exit(void) {}                                           // Perform any clean up before switching to another mode
-    static void setServoOut(void) { actuators.setServoOut(SRVout); }     // Write servo outputs to the actuators object
+    static void setServoOut(void);                                       // Constrain and write servo outputs to the actuators object
 
     void setModeSwitchPosition(THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
     THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
