@@ -44,13 +44,13 @@
 #define AILPIN_INT 18
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
-#define MODEPIN_INT 21
+#define AUXPIN_INT 21
 
 // Input pins
 #define AILPIN_INPUT 2
 #define ELEVPIN_INPUT 3
 #define RUDDPIN_INPUT 4
-#define MODEPIN_INPUT 5
+#define AUXPIN_INPUT 5
 
 // Output pins
 #define AILPIN1_OUTPUT 8

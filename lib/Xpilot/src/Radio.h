@@ -55,11 +55,11 @@ struct Control
     uint16_t rollPWM;
     uint16_t pitchPWM;
     uint16_t yawPWM;
-    THREE_POS_SW modePos;
+    THREE_POS_SW auxSwitchPos;
 
-    Control(THREE_POS_SW _modePos)
+    Control(THREE_POS_SW _auxSwitchPos)
         : rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
-          modePos{_modePos} {}
+          auxSwitchPos{_auxSwitchPos} {}
 };
 
 class Radio
@@ -73,7 +73,7 @@ public:
     int16_t getRxRollPWM(void) { return rx.rollPWM; }
     int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
     int16_t getRxYawPWM(void) { return rx.yawPWM; }
-    THREE_POS_SW getRxModePos(void) { return rx.modePos; }
+    THREE_POS_SW getRxAuxPos(void) { return rx.auxSwitchPos; }
 
 private:
     Control rx{THREE_POS_SW::MID_POS}; // RATE mode by default

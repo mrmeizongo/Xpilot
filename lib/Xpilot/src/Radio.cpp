@@ -7,7 +7,7 @@
 volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
 volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
 volatile static unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
-volatile static unsigned long modeCurrentTime, modeStartTime, modePulses = 0;
+volatile static unsigned long auxCurrentTime, auxStartTime, auxPulses = 0;
 // -------------------------
 
 Radio::Radio(void)
@@ -26,9 +26,9 @@ void Radio::init(void)
     // Rudder setup
     pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
-    // Mode setup
-    pinMode(MODEPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(MODEPIN_INT, CHANGE);
+    // Auxiliary switch setup
+    pinMode(AUXPIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AUXPIN_INT, CHANGE);
 }
 
 void Radio::processInput(void)
@@ -36,14 +36,14 @@ void Radio::processInput(void)
     ATOMIC_BLOCK(ATOMIC_FORCEON)
     {
         // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
-        if (modePulses >= INPUT_MIN_PWM && modePulses <= INPUT_MAX_PWM)
+        if (auxPulses >= INPUT_MIN_PWM && auxPulses <= INPUT_MAX_PWM)
         {
-            if (modePulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                rx.modePos = THREE_POS_SW::HIGH_POS;
-            else if (modePulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                rx.modePos = THREE_POS_SW::LOW_POS;
+            if (auxPulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
+                rx.auxSwitchPos = THREE_POS_SW::HIGH_POS;
+            else if (auxPulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
+                rx.auxSwitchPos = THREE_POS_SW::LOW_POS;
             else
-                rx.modePos = THREE_POS_SW::MID_POS;
+                rx.auxSwitchPos = THREE_POS_SW::MID_POS;
         }
         if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
             rx.rollPWM = aileronPulses;
@@ -91,11 +91,11 @@ void PinChangeInterruptEvent(RUDDPIN_INT)(void)
     rudderStartTime = rudderCurrentTime;
 }
 
-void PinChangeInterruptEvent(MODEPIN_INT)(void)
+void PinChangeInterruptEvent(AUXPIN_INT)(void)
 {
-    modeCurrentTime = micros();
-    modePulses = modeCurrentTime - modeStartTime;
-    modeStartTime = modeCurrentTime;
+    auxCurrentTime = micros();
+    auxPulses = auxCurrentTime - auxStartTime;
+    auxStartTime = auxCurrentTime;
 }
 //  ----------------------------
 
