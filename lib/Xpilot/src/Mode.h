@@ -39,8 +39,8 @@ Flight stabilization software
 #include "PIDF.h"
 
 // Helper define to transform radio values to mode dependent resolutions
-#define SETINPUT(rawValue, deadBand, inLowRange, inMidRange, inHighRange, outLowRange, outMidRange, outHighRange) \
-    (abs((rawValue) - (inMidRange)) <= (deadBand) ? (outMidRange) : map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange)))
+#define GETINPUT(rawValue, deadBand, outLowRange, outHighRange) \
+    (abs((rawValue) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : map((rawValue), (INPUT_MIN_PWM), (INPUT_MAX_PWM), (outLowRange), (outHighRange)))
 
 // Abstract flight mode class
 class Mode

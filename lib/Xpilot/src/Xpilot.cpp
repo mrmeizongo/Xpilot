@@ -66,17 +66,17 @@ void Xpilot::loop(void)
 
 void Xpilot::updateFlightMode(void)
 {
-    THREE_POS_SW modePos = radio.getRxAuxPos();
+    THREE_POS_SW auxPos = radio.getRxAuxPos();
     // Nothing has changed, simply return
-    if (modePos == currentMode->getModeSwitchPosition())
+    if (auxPos == currentMode->getModeSwitchPosition())
         return;
 
     // Process new mode if mode switch position has changed
-    if (modePos == passthroughMode.getModeSwitchPosition())
+    if (auxPos == passthroughMode.getModeSwitchPosition())
         currentMode = &passthroughMode;
-    else if (modePos == stabilizeMode.getModeSwitchPosition())
+    else if (auxPos == stabilizeMode.getModeSwitchPosition())
         currentMode = &stabilizeMode;
-    else if (modePos == rateMode.getModeSwitchPosition())
+    else if (auxPos == rateMode.getModeSwitchPosition())
         currentMode = &rateMode;
 
     previousMode->exit();
