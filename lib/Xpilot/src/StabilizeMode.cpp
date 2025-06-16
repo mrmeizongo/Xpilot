@@ -14,8 +14,8 @@ void StabilizeMode::process(void)
     if (!radio.inFailsafe())
     {
         Mode::rollOut = GETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
-        Mode::pitchOut = GETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
-        Mode::yawOut = GETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+        Mode::pitchOut = GETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
+        Mode::yawOut = GETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
     }
     else
         controlFailsafe();
