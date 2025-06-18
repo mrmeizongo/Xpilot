@@ -46,7 +46,6 @@ public:
     void setup(void);
     void loop(void);
 
-    void updateFlightMode(void);
     Mode *getFlightMode(void) const { return currentMode; }
 
 private:
@@ -57,6 +56,8 @@ private:
     // This is the state of the flight stabilization system
     Mode *currentMode = &rateMode;
     Mode *previousMode = &rateMode;
+
+    void updateFlightMode(void);
 };
 
 extern Xpilot xpilot;
