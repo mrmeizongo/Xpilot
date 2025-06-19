@@ -186,6 +186,19 @@ Flight stabilization software
 // #define USE_HEADING_HOLD // Uncomment to enable heading-hold-like functionality when yaw centered
 // ------------------------------------------------------------------------------------------------------
 
+// Flight mode config
+
+/*
+ * Uncomment to switch to the respective mode when failsafe is active
+ * This is useful for switching to a more stable mode when failsafe is detected
+ * It is recommended to switch to stabilize mode when failsafe is active
+ */
+// #define FAIL_SAFE_TO_PASSTHROUGH
+// #define FAIL_SAFE_TO_RATE
+#define FAIL_SAFE_TO_STABILIZE
+
+// ------------------------------------------------------------------------------------------------------
+
 // Debug config
 
 /*

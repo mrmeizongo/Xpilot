@@ -47,6 +47,7 @@ public:
     void loop(void);
 
     Mode *getFlightMode(void) const { return currentMode; }
+    bool failsafeActive = false; // Indicates if the radio is in failsafe mode
 
 private:
     RateMode rateMode;
