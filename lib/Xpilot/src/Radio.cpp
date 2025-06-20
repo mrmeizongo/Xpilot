@@ -51,9 +51,15 @@ void Radio::processInput(void)
             rx.pitchPWM = elevatorPulses;
         if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
             rx.yawPWM = rudderPulses;
-    }
 
+        FailSafeLogic(); // Check for failsafe conditions
+    }
+}
+
+void Radio::FailSafeLogic()
+{
     // Big brain failsafe logic
+    // Implement yours here
     failsafe = false;
 }
 

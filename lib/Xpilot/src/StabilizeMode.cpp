@@ -58,7 +58,7 @@ void StabilizeMode::yawController(void)
 
 void StabilizeMode::controlFailsafe(void)
 {
-    Mode::rollOut = 0;
+    Mode::rollOut = -5;
     Mode::pitchOut = 0;
     Mode::yawOut = 0;
 }

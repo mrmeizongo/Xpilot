@@ -82,7 +82,7 @@ void Xpilot::updateFlightMode(void)
 #elif defined(FAIL_SAFE_TO_PASSTHROUGH)
         currentMode = &passthroughMode;
 #endif
-        failSafeActive = radioFailSafe; // Set failsafe active flag
+        failSafeActive = true; // Set failsafe active flag
     }
     else
     {
@@ -99,7 +99,7 @@ void Xpilot::updateFlightMode(void)
         else if (auxPos == rateMode.getModeSwitchPosition())
             currentMode = &rateMode;
 
-        failSafeActive = !radioFailSafe; // Reset failsafe active flag
+        failSafeActive = false; // Reset failsafe active flag
     }
 
     previousMode->exit();
