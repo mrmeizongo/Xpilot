@@ -47,6 +47,7 @@ class Mode
 {
 public:
     Mode() {};
+    virtual ~Mode() = default;                                           // Virtual destructor for proper cleanup of derived classes
     Mode(const THREE_POS_SW modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
     virtual const char *modeName4(void) const = 0;                       // Returns string representation of the flight mode. 4 characters max
     virtual void enter(void) {}                                          // Preliminary setup on mode enter

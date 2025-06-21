@@ -59,7 +59,6 @@ void Radio::processInput(void)
 void Radio::FailSafeLogic()
 {
     // Big brain failsafe logic
-    // Implement yours here
     failsafe = false;
 }
 
