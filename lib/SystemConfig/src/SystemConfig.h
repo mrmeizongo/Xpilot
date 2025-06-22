@@ -1,5 +1,5 @@
-#ifndef _BOARD_CONFIG_H
-#define _BOARD_CONFIG_H
+#ifndef _SYSTEM_CONFIG_H
+#define _SYSTEM_CONFIG_H
 // ATmega328p pin definitions
 
 /*
@@ -63,4 +63,4 @@
 #define INPUT_REFRESH_RATE_US 20000U // Input refresh rate in microseconds (20ms)
 #define ONEHZ_LOOP_US 1000000U       // 1Hz loop rate in microseconds
 // ------------------------------------------------------------------------------------------------------
-#endif // _BOARD_CONFIG_H
+#endif // _SYSTEM_CONFIG_H
