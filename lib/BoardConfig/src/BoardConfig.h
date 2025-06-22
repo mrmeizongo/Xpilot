@@ -57,5 +57,10 @@
 #define AILPIN2_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
+
+// System variables
+#define BAUD_RATE 9600               // Serial baud rate
+#define INPUT_REFRESH_RATE_US 20000U // Input refresh rate in microseconds (20ms)
+#define ONEHZ_LOOP_US 1000000U       // 1Hz loop rate in microseconds
 // ------------------------------------------------------------------------------------------------------
 #endif // _BOARD_CONFIG_H

@@ -1,12 +1,10 @@
 #include <Arduino.h>
 #include <PlaneConfig.h>
+#include <BoardConfig.h>
 #include "Xpilot.h"
 #include "Radio.h"
 #include "Actuators.h"
 #include "IMU.h"
-
-#define INPUT_REFRESH_RATE_US 20000U
-#define ONEHZ_LOOP_US 1000000U
 
 // Timer variables
 static unsigned long nowUs, inputLastUs = 0;
@@ -30,7 +28,7 @@ Xpilot::Xpilot(void)
 void Xpilot::setup(void)
 {
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
-    Serial.begin(115200);
+    Serial.begin(BAUD_RATE);
     while (!Serial)
         ; // Wait for Serial port to open
 #endif
