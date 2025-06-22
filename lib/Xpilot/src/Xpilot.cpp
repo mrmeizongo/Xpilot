@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <PlaneConfig.h>
-#include <BoardConfig.h>
+#include <SystemConfig.h>
 #include "Xpilot.h"
 #include "Radio.h"
 #include "Actuators.h"

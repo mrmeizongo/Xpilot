@@ -51,7 +51,7 @@ Connect MPU6050 to Arduino Nano as shown below
 | SCL |  A5   |
 | SDA |  A4   |
 
-Connect receiver to Arduino Nano as shown below. This can be changed in [BoardConfig.h](lib/BoardConfig/src/BoardConfig.h). However changing the input pin numbers will require some modification to the PinChangeInterrupt library.
+Connect receiver to Arduino Nano as shown below. This can be changed in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h). However changing the input pin numbers will require some modification to the PinChangeInterrupt library.
 
 |    CHANNEL    | PIN |
 | :-----------: | :-: |
@@ -61,7 +61,7 @@ Connect receiver to Arduino Nano as shown below. This can be changed in [BoardCo
 | AUX1/2 - Mode |  5  |
 
 Can use both aileron channel outputs to individual aileron servos or both aileron servos can be connected to one aileron channel output using a Y-cable extension. Flying wings require individual aileron channel control.
-Connect ailerons, elevator and rudder servos to Arduino Nano as shown below. This can be changed in [BoardConfig.h](lib/BoardConfig/src/BoardConfig.h).
+Connect ailerons, elevator and rudder servos to Arduino Nano as shown below. This can be changed in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h).
 
 | CHANNEL  | PIN |
 | :------: | :-: |

@@ -1,4 +1,4 @@
-#include <BoardConfig.h>
+#include <SystemConfig.h>
 #include <PlaneConfig.h>
 #include "Actuators.h"
 
