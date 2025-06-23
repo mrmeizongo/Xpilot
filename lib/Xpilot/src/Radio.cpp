@@ -102,6 +102,6 @@ void PinChangeInterruptEvent(AUXPIN_INT)(void)
     auxPulses = auxCurrentTime - auxStartTime;
     auxStartTime = auxCurrentTime;
 }
-//  ----------------------------
+// ----------------------------
 
 Radio radio;

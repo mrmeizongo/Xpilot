@@ -87,7 +87,10 @@ void Xpilot::updateFlightMode(void)
         THREE_POS_SW auxPos = radio.getRxAuxPos();
         // Radio mode switch position has not changed, simply return
         if (auxPos == currentMode->getModeSwitchPosition())
+        {
+            failSafeActive = false; // Reset failsafe active flag
             return;
+        }
 
         // Process new mode if mode switch position has changed
         if (auxPos == passthroughMode.getModeSwitchPosition())
