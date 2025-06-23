@@ -9,7 +9,7 @@ void PassthroughMode::process(void)
         Mode::yawOut = GETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
     }
     else
-        controlFailsafe();
+        Mode::controlFailsafe();
 }
 
 void PassthroughMode::run(void)
@@ -25,11 +25,4 @@ void PassthroughMode::run(void)
     Mode::SRVout[Actuators::Channel::ELEVATOR] = map(Mode::SRVout[Actuators::Channel::ELEVATOR], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::RUDDER] = map(Mode::SRVout[Actuators::Channel::RUDDER], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::setServoOut();
-}
-
-void PassthroughMode::controlFailsafe(void)
-{
-    Mode::rollOut = 0;
-    Mode::pitchOut = 0;
-    Mode::yawOut = 0;
 }

@@ -67,7 +67,7 @@ protected:
     static void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
     static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
     virtual void yawController(void) {}                                  // Yaw control for heading-hold-like functionality
-    virtual void controlFailsafe(void) = 0;                              // Failsafe implementation
+    virtual void controlFailsafe(void);                                  // Failsafe implementation
 
     THREE_POS_SW modeSwitchPosition; // Mode's switch position
 
@@ -84,9 +84,6 @@ public:
     const char *modeName4(void) const override { return "PASS"; }
     void process(void) override;
     void run(void) override;
-
-protected:
-    void controlFailsafe(void) override;
 };
 
 // Gyro-based rate control
@@ -98,9 +95,6 @@ public:
     void process(void) override;
     void run(void) override;
     void yawController(void) override;
-
-protected:
-    void controlFailsafe(void) override;
 };
 
 // Gyro-based rate control with wing leveling on stick release

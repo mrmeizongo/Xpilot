@@ -18,7 +18,7 @@ void RateMode::process(void)
         Mode::yawOut = GETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
     }
     else
-        controlFailsafe();
+        Mode::controlFailsafe();
 }
 
 void RateMode::run(void)
@@ -44,11 +44,4 @@ void RateMode::run(void)
 void RateMode::yawController(void)
 {
     Mode::yawPIDF.resetPIDF();
-}
-
-void RateMode::controlFailsafe(void)
-{
-    Mode::rollOut = 0;
-    Mode::pitchOut = 0;
-    Mode::yawOut = 0;
 }

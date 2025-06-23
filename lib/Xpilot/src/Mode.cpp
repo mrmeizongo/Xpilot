@@ -85,3 +85,11 @@ void Mode::setServoOut(void)
     SRVout[Actuators::Channel::RUDDER] = constrain(SRVout[Actuators::Channel::RUDDER], SERVO_MIN_PWM, SERVO_MAX_PWM);
     actuators.setServoOut(SRVout);
 }
+
+void Mode::controlFailsafe(void)
+{
+    // Default failsafe implementation
+    rollOut = 0;
+    pitchOut = 0;
+    yawOut = 0;
+}
