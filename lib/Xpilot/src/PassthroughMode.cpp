@@ -15,9 +15,6 @@ void PassthroughMode::process(void)
 void PassthroughMode::run(void)
 {
     process();
-#if defined(RUDDER_MIX_IN_PASS)
-    Mode::rudderMixer();
-#endif
 
     Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);
     Mode::SRVout[Actuators::Channel::AILERON1] = map(Mode::SRVout[Actuators::Channel::AILERON1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
