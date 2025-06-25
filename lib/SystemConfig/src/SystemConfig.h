@@ -62,5 +62,9 @@
 #define BAUD_RATE 9600               // Serial baud rate
 #define INPUT_REFRESH_RATE_US 20000U // Input refresh rate in microseconds (20ms)
 #define ONEHZ_LOOP_US 1000000U       // 1Hz loop rate in microseconds
+#define IMU_WARMUP_LOOP 1000U        // Number of IMU warmup loops before initial use
+#define MPU6050_ADDRESS 0x68         // I2C address of MPU6050
+#define I2C_CLOCK_400KHZ 400000U     // I2C clock speed in Hz
+#define CALIBRATE_MEMORY_OFFSET 0    // EEPROM offset for calibration data
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H

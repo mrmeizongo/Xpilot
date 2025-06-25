@@ -27,7 +27,7 @@ Xpilot::Xpilot(void)
 
 void Xpilot::setup(void)
 {
-#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(SELF_TEST_ACCEL_GYRO)
+#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG) || defined(SELF_TEST_ACCEL_GYRO) || defined(READ_CALIBRATION_FROM_EEPROM)
     Serial.begin(BAUD_RATE);
     while (!Serial)
         ; // Wait for Serial port to open

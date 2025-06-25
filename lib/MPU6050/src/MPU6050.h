@@ -128,9 +128,33 @@ public:
         b_ahrs = b;
     }
 
+    // Function which accumulates gyro and accelerometer data after device initialization. It calculates the average
+    // of the at-rest readings and then stores the resulting offsets into accelerometer and gyro bias variables
+    // ACCEL_FS_SEL: 2g (maximum sensitivity)
+    // GYRO_FS_SEL: 250dps (maximum sensitivity)
     void calibrateAccelGyro()
     {
-        calibrate_acc_gyro_impl();
+        set_acc_gyro_to_calibration();
+        collect_acc_gyro_data_to(acc_bias, gyro_bias);
+        delay(100);
+        if (b_verbose)
+        {
+            Serial.println("< Calibration Parameters >");
+            Serial.println("Accel bias [g]: ");
+            Serial.print(acc_bias[0]);
+            Serial.print(", ");
+            Serial.print(acc_bias[1]);
+            Serial.print(", ");
+            Serial.println(acc_bias[2]);
+            Serial.println("Gyro bias [deg/s]: ");
+            Serial.print(gyro_bias[0]);
+            Serial.print(", ");
+            Serial.print(gyro_bias[1]);
+            Serial.print(", ");
+            Serial.println(gyro_bias[2]);
+        }
+        initMPU6050();
+        delay(1000);
     }
 
     bool isConnected()
@@ -423,35 +447,6 @@ private:
         uint8_t raw_data[2];                              // x/y/z gyro register data stored here
         read_bytes(TEMP_OUT_H, 2, &raw_data[0]);          // Read the two raw data registers sequentially into data array
         return ((int16_t)raw_data[0] << 8) | raw_data[1]; // Turn the MSB and LSB into a 16-bit value
-    }
-
-    // Function which accumulates gyro and accelerometer data after device initialization. It calculates the average
-    // of the at-rest readings and then stores the resulting offsets into accelerometer and gyro bias variables
-    // ACCEL_FS_SEL: 2g (maximum sensitivity)
-    // GYRO_FS_SEL: 250dps (maximum sensitivity)
-    void calibrate_acc_gyro_impl()
-    {
-        set_acc_gyro_to_calibration();
-        collect_acc_gyro_data_to(acc_bias, gyro_bias);
-        delay(100);
-        if (b_verbose)
-        {
-            Serial.println("< Calibration Parameters >");
-            Serial.println("Accel bias [g]: ");
-            Serial.print(acc_bias[0]);
-            Serial.print(", ");
-            Serial.print(acc_bias[1]);
-            Serial.print(", ");
-            Serial.println(acc_bias[2]);
-            Serial.println("Gyro bias [deg/s]: ");
-            Serial.print(gyro_bias[0]);
-            Serial.print(", ");
-            Serial.print(gyro_bias[1]);
-            Serial.print(", ");
-            Serial.println(gyro_bias[2]);
-        }
-        initMPU6050();
-        delay(1000);
     }
 
     void set_acc_gyro_to_calibration()

@@ -1,10 +1,15 @@
 #include <Arduino.h>
 #include <PlaneConfig.h>
+#include <SystemConfig.h>
+#include <EEPROM.h>
 #include "IMU.h"
 
-#define IMU_WARMUP_LOOP 1000U
-#define MPU6050_ADDRESS 0x68
-#define I2C_CLOCK_400KHZ 400000U
+// Functions to save and restore calibration data to/from EEPROM
+static void saveToEEPROM(float accBiasX, float accBiasY, float accBiasZ,
+                         float gyroBiasX, float gyroBiasY, float gyroBiasZ, uint8_t startOffset = CALIBRATE_MEMORY_OFFSET) __attribute__((unused));
+static void restoreFromEEPROM(float &accBiasX, float &accBiasY, float &accBiasZ,
+                              float &gyroBiasX, float &gyroBiasY, float &gyroBiasZ, uint8_t startOffset = CALIBRATE_MEMORY_OFFSET) __attribute__((unused));
+static void readFromEEPROM(void) __attribute__((unused));
 
 IMU::IMU(void)
 {
@@ -52,26 +57,12 @@ void IMU::init(void)
         }
     }
 
-#if defined(SELF_TEST_ACCEL_GYRO)
-    mpu6050.verbose(true);
-    mpu6050.selftest() ? Serial.println("Self test passed.") : Serial.println("Self test failed.");
+#if defined(READ_CALIBRATION_FROM_EEPROM)
+    readFromEEPROM();
     while (true)
         ;
-#endif
-
-/*
- * After calibration, be sure to record the obtained values and enter them in the XXX_X_BIAS definitions in PlaneConfig.h
- */
-#if defined(CALIBRATE_DEBUG)
-    Serial.println("Calibrating...");
-    mpu6050.verbose(true);
-    mpu6050.calibrateAccelGyro();
-#elif defined(CALIBRATE)
-    mpu6050.verbose(false);
-    mpu6050.calibrateAccelGyro();
 #else
-    mpu6050.setAccBias(ACC_X_BIAS, ACC_Y_BIAS, ACC_Z_BIAS);
-    mpu6050.setGyroBias(GYRO_X_BIAS, GYRO_Y_BIAS, GYRO_Z_BIAS);
+    calibrate();
 #endif
 
     // Warm up the IMU before initial use
@@ -121,6 +112,101 @@ void IMU::processIMU(void)
         gyroZ = mpu6050.getGyroZ();
 #endif
     }
+}
+
+void IMU::calibrate(void)
+{
+#if defined(SELF_TEST_ACCEL_GYRO)
+    mpu6050.verbose(true);
+    mpu6050.selftest() ? Serial.println("Self test passed.") : Serial.println("Self test failed.");
+    while (true)
+        ;
+#elif defined(CALIBRATE_DEBUG)
+    Serial.println("Calibrating...");
+    mpu6050.verbose(true);
+    mpu6050.calibrateAccelGyro();
+    saveToEEPROM(mpu6050.getAccBiasX(), mpu6050.getAccBiasY(), mpu6050.getAccBiasZ(),
+                 mpu6050.getGyroBiasX(), mpu6050.getGyroBiasY(), mpu6050.getGyroBiasZ());
+    Serial.println("Calibration values saved to EEPROM.");
+    delay(1000);
+#elif defined(CALIBRATE)
+    mpu6050.verbose(false);
+    mpu6050.calibrateAccelGyro();
+    saveToEEPROM(mpu6050.getAccBiasX(), mpu6050.getAccBiasY(), mpu6050.getAccBiasZ(),
+                 mpu6050.getGyroBiasX(), mpu6050.getGyroBiasY(), mpu6050.getGyroBiasZ());
+#else
+    restoreCalibration();
+#endif
+}
+
+void IMU::restoreCalibration(void)
+{
+    float accBiasX = 0.0f, accBiasY = 0.0f, accBiasZ = 0.0f;
+    float gyroBiasX = 0.0f, gyroBiasY = 0.0f, gyroBiasZ = 0.0f;
+    restoreFromEEPROM(accBiasX, accBiasY, accBiasZ,
+                      gyroBiasX, gyroBiasY, gyroBiasZ);
+    mpu6050.setAccBias(accBiasX, accBiasY, accBiasZ);
+    mpu6050.setGyroBias(gyroBiasX, gyroBiasY, gyroBiasZ);
+}
+
+static void saveToEEPROM(float accBiasX, float accBiasY, float accBiasZ,
+                         float gyroBiasX, float gyroBiasY, float gyroBiasZ, uint8_t startOffset)
+{
+    uint8_t eeAdd = startOffset;
+    uint8_t eeSize = sizeof(float);
+    // Save the calibration values to EEPROM
+    EEPROM.put(eeAdd, accBiasX);
+    eeAdd += eeSize;
+    EEPROM.put(eeAdd, accBiasY);
+    eeAdd += eeSize;
+    EEPROM.put(eeAdd, accBiasZ);
+    eeAdd += eeSize;
+    EEPROM.put(eeAdd, gyroBiasX);
+    eeAdd += eeSize;
+    EEPROM.put(eeAdd, gyroBiasY);
+    eeAdd += eeSize;
+    EEPROM.put(eeAdd, gyroBiasZ);
+}
+
+static void restoreFromEEPROM(float &accBiasX, float &accBiasY, float &accBiasZ,
+                              float &gyroBiasX, float &gyroBiasY, float &gyroBiasZ, uint8_t startOffset)
+{
+    uint8_t eeAdd = startOffset;
+    uint8_t eeSize = sizeof(float);
+    // Restore the calibration values from EEPROM
+    EEPROM.get(eeAdd, accBiasX);
+    eeAdd += eeSize;
+    EEPROM.get(eeAdd, accBiasY);
+    eeAdd += eeSize;
+    EEPROM.get(eeAdd, accBiasZ);
+    eeAdd += eeSize;
+    EEPROM.get(eeAdd, gyroBiasX);
+    eeAdd += eeSize;
+    EEPROM.get(eeAdd, gyroBiasY);
+    eeAdd += eeSize;
+    EEPROM.get(eeAdd, gyroBiasZ);
+}
+
+static void readFromEEPROM(void)
+{
+    float accBiasX = 0.0f, accBiasY = 0.0f, accBiasZ = 0.0f;
+    float gyroBiasX = 0.0f, gyroBiasY = 0.0f, gyroBiasZ = 0.0f;
+    restoreFromEEPROM(accBiasX, accBiasY, accBiasZ,
+                      gyroBiasX, gyroBiasY, gyroBiasZ);
+
+    Serial.println("Calibration values from EEPROM:");
+    Serial.print("Accel Bias X: ");
+    Serial.println(accBiasX);
+    Serial.print("Accel Bias Y: ");
+    Serial.println(accBiasY);
+    Serial.print("Accel Bias Z: ");
+    Serial.println(accBiasZ);
+    Serial.print("Gyro Bias X: ");
+    Serial.println(gyroBiasX);
+    Serial.print("Gyro Bias Y: ");
+    Serial.println(gyroBiasY);
+    Serial.print("Gyro Bias Z: ");
+    Serial.println(gyroBiasZ);
 }
 
 IMU imu;

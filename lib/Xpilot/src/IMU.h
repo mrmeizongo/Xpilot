@@ -7,7 +7,9 @@ class IMU
 public:
     IMU(void);
     void init(void);
-    void processIMU(void);
+    void calibrate(void);          // Calibrate the IMU and store the biases in EEPROM
+    void restoreCalibration(void); // Restore the calibration values from EEPROM
+    void processIMU(void);         // Process the IMU data and update the AHRS values
 
     float getRoll(void) { return ahrs_roll; }
     float getPitch(void) { return ahrs_pitch; }

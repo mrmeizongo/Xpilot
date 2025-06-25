@@ -131,17 +131,6 @@ Flight stabilization software
 // IMU config
 
 /*
- * IMU ACCEL & GYRO biases obtained from running calibration function
- * Uncomment CALIBRATION_DEBUG to obtain these values
- */
-#define ACC_X_BIAS 0.f
-#define ACC_Y_BIAS 0.f
-#define ACC_Z_BIAS 0.f
-#define GYRO_X_BIAS 0.f
-#define GYRO_Y_BIAS 0.f
-#define GYRO_Z_BIAS 0.f
-
-/*
  * Trim values to be used to correct gyro misalignment
  */
 
@@ -210,6 +199,7 @@ Flight stabilization software
 // #define IO_DEBUG
 // #define CALIBRATE_DEBUG
 // #define CALIBRATE
+// #define READ_CALIBRATION_FROM_EEPROM
 // #define SELF_TEST_ACCEL_GYRO
 // ------------------------------------------------------------------------------------------------------
 #endif // _DEFAULT_CONFIG_H
