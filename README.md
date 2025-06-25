@@ -116,6 +116,8 @@ Even though two calibration functions are provided(recommended), the MPU6050 doe
 
 Two calibration functions are also provided(RECOMMENDED). Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in non-volatile memory. Uncommenting CALIBRATE_DEBUG does same and prints out the calibration values in the serial monitor for inspection. Ensure the airplane is held level and still throughout the calibration process.
 
+Uncomment READ_CALIBRATION_FROM_EEPROM to view stored calibration values in the serial monitor.
+
 After all debug and calibration operations are complete, be sure to uncomment and reupload Xpilot for normal operation.
 
 ## Build & Upload
