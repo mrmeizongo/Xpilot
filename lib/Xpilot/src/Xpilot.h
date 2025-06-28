@@ -47,6 +47,7 @@ public:
     void loop(void);
 
     Mode *getFlightMode(void) const { return currentMode; }
+    bool inFailsafe(void) const { return failSafeActive; }
 
 private:
     RateMode rateMode;

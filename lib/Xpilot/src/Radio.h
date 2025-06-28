@@ -78,6 +78,7 @@ public:
 private:
     Control rx{THREE_POS_SW::MID_POS}; // RATE mode by default
     bool failsafe;
+    unsigned long failsafeStartTime; // Start time for failsafe logic
     void FailSafeLogic();
 };
 

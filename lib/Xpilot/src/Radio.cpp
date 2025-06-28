@@ -29,6 +29,9 @@ void Radio::init(void)
     // Auxiliary switch setup
     pinMode(AUXPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUXPIN_INT, CHANGE);
+
+    failsafe = false;      // Initialize failsafe state
+    failsafeStartTime = 0; // Initialize failsafe start time
 }
 
 void Radio::processInput(void)
@@ -58,8 +61,24 @@ void Radio::processInput(void)
 
 void Radio::FailSafeLogic()
 {
-    // Big brain failsafe logic
-    failsafe = false;
+    // During binding, I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
+    // Yours might be different, so adjust the values accordingly
+    // The failsafe logic is dependent on the receiver's behavior when the signal is lost
+    bool isFailsafe = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
+                      (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
+                      (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
+    if (isFailsafe)
+    {
+        if (failsafeStartTime == 0)
+            failsafeStartTime = millis();                        // Start the failsafe timer
+        if (millis() - failsafeStartTime >= FAILSAFE_TIMEOUT_MS) // Trigger failsafe condition after timeout
+            failsafe = true;                                     // Failsafe condition met
+    }
+    else
+    {
+        failsafe = false;      // Reset failsafe condition
+        failsafeStartTime = 0; // Reset failsafe timer
+    }
 }
 
 /*
