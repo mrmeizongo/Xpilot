@@ -67,6 +67,6 @@
 #define I2C_CLOCK_400KHZ 400000U     // I2C clock speed in Hz
 #define CALIBRATE_MEMORY_OFFSET 0    // EEPROM offset for calibration data
 #define FAILSAFE_TIMEOUT_MS 1000U    // Failsafe timeout in milliseconds
-#define FAILSAFE_TOLERANCE 100U      // Failsafe tolerance in microseconds
+#define FAILSAFE_TOLERANCE 200U      // Failsafe tolerance in microseconds
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H
