@@ -14,20 +14,6 @@ PIDF Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX};
  * Mixer for airplane type
  * Only tested with a full plane(traditional & V-tail) i.e. ailerons, elevator and rudder
  * Proceed with caution. Perform thorough pre-flight checks and reverse servo direction as needed.
- *
- * Default for V-Tail
- *
- *                 Rudder Right
- *
- *                                ^
- *                 _       _      |
- *         <======|O|     |O|=====>
- *         |  Face| | Face| |
- *         v      |_|     |_|
- *
- *   Push surface out   Pull surface in
- *
- * For Flying Wings, reverse install elevon servos same as you would ailerons for planes
  */
 void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw)
 {
@@ -39,12 +25,12 @@ void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw
 #elif defined(FULL_PLANE_V_TAIL)
     SRVout[Actuators::Channel::AILERON1] = roll;
     SRVout[Actuators::Channel::AILERON2] = roll;
-    SRVout[Actuators::Channel::ELEVATOR] = yaw + pitch;
+    SRVout[Actuators::Channel::ELEVATOR] = pitch + yaw;
     SRVout[Actuators::Channel::RUDDER] = yaw - pitch;
 #elif defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
     SRVout[Actuators::Channel::AILERON1] = 0;
     SRVout[Actuators::Channel::AILERON2] = 0;
-    SRVout[Actuators::Channel::ELEVATOR] = yaw + pitch;
+    SRVout[Actuators::Channel::ELEVATOR] = pitch + yaw;
     SRVout[Actuators::Channel::RUDDER] = yaw - pitch;
 #elif defined(FLYING_WING_W_RUDDER)
     SRVout[Actuators::Channel::AILERON1] = roll + pitch;
