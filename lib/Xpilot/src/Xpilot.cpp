@@ -38,10 +38,7 @@ void Xpilot::setup(void)
     actuators.init(); // Initialize servos
 }
 
-/*
-    Main Xpilot execution loop
-    Read imu data, read input and process output to servos
-*/
+// Main Xpilot execution loop
 void Xpilot::loop(void)
 {
     nowUs = micros();
@@ -53,7 +50,6 @@ void Xpilot::loop(void)
     }
 
     updateFlightMode();      // Update flight mode based on radio mode switch position
-    imu.processIMU();        // Grab new sensor data if available
     currentMode->run();      // Run the high level processing for the current flight mode
     actuators.writeServos(); // Write servo outputs to the actuators object
 
