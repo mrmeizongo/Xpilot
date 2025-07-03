@@ -65,12 +65,12 @@ void Xpilot::loop(void)
 void Xpilot::updateFlightMode(void)
 {
     bool radioFailSafe = radio.inFailsafe();
-    // If failsafe is active and radio is still in fail safe mode, simply return
+    // If system failsafe has been activated and radio is still in fail safe, simply return
     if (failSafeActive && radioFailSafe)
         return;
 
-    // Switch to selected failsafe mode if radio is in failsafe
-    // Otherwise switch to the mode corresponding to the new mode switch position
+    // First time detecting radio in failsafe, activate system failsafe
+    // Set the current mode to selected failsafe mode
     if (radioFailSafe)
     {
         failSafeActive = true; // Set failsafe active flag
@@ -84,6 +84,8 @@ void Xpilot::updateFlightMode(void)
     }
     else
     {
+        // Both system and radio are not in failsafe
+        // Set current flight mode based on the radio mode switch position
         failSafeActive = false; // Reset failsafe active flag
         THREE_POS_SW auxPos = radio.getRxAuxPos();
         // Radio mode switch position has not changed, simply return
