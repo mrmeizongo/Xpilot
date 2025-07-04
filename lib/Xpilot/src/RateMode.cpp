@@ -19,8 +19,6 @@ void RateMode::process(void)
     }
     else
         Mode::controlFailsafe();
-
-    imu.processIMU(); // Grab new sensor data if available
 }
 
 void RateMode::run(void)

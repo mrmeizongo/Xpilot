@@ -49,6 +49,7 @@ void Xpilot::loop(void)
         inputLastUs = nowUs;
     }
 
+    imu.processIMU();        // Grab new sensor data if available
     updateFlightMode();      // Update flight mode based on radio mode switch position
     currentMode->run();      // Run the high level processing for the current flight mode
     actuators.writeServos(); // Write servo outputs to the actuators object

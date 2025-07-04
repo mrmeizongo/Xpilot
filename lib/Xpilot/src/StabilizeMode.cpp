@@ -19,8 +19,6 @@ void StabilizeMode::process(void)
     }
     else
         controlFailsafe();
-
-    imu.processIMU(); // Grab new sensor data if available
 }
 
 void StabilizeMode::run(void)
