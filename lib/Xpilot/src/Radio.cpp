@@ -64,9 +64,18 @@ void Radio::FailSafeLogic()
     // During binding, I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
     // Yours might be different, so adjust the values accordingly
     // The failsafe logic is dependent on the receiver's behavior when the signal is lost
-    bool isFailsafe = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
-                      (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
-                      (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
+    bool isFailsafe = false;
+#if defined(FULL_PLANE_TRADITIONAL) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
+    isFailsafe = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
+                 (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
+                 (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
+#elif defined(RUDDER_ELEVATOR_ONLY_V_TAIL) || defined(RUDDER_ELEVATOR_ONLY_PLANE)
+    isFailsafe = (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
+                 (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
+#elif defined(FLYING_WING_NO_RUDDER)
+    isFailsafe = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
+                 (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE);
+#endif
     if (isFailsafe)
     {
         if (failsafeStartTime == 0)
@@ -91,8 +100,8 @@ void Radio::FailSafeLogic()
  * The ISR simply records the time between the changes. We're only interested in pulses lasting between INPUT_MIN_PWM and INPUT_MAX_PWM
  * Due to this input capture mechanism, implementing a failsafe is largely dependent on the receiver's behavior when the signal is lost
  * Example: The Spektrum tx/rx I use will either hold the last known position when the signal is lost or default to a preset position determined at bind time
- * The failsafe implementation is left to the user
- * See plane config INPUT_MIN_PWM and INPUT_MAX_PWM
+ * I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
+ * Failsafe is triggered if the input pulse is at maximum value with a FAILSAFE_TOLERANCE for more than FAILSAFE_TIMEOUT_MS
  */
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
