@@ -43,12 +43,12 @@ Flight stabilization software
  * FLYING_WING_NO_RUDDER: Only has 2 independent ailerons. The aileron I/O is mixed with elevator I/O(elevon).
  * RUDDER_ELEVATOR_ONLY_PLANE: Only rudder and elevator. They go to their respective channels.
  * RUDDER_ELEVATOR_ONLY_V_TAIL: No ailerons. Left V-tail deflector goes to elevator ouput, right goes to rudder output.
- * AILERON_ELEVATOR_ONLY_PLANE: Only ailerons and elevator. No aileron-elevator mixing. Ailerons go to aileron channels, elevator goes to elevator channel.
+ * AILERON_ELEVATOR_ONLY: Only ailerons and elevator. No aileron-elevator mixing. Ailerons go to aileron channels, elevator goes to elevator channel.
  */
 #define FULL_PLANE_TRADITIONAL
 // #define FULL_PLANE_V_TAIL
 // #define RUDDER_ELEVATOR_ONLY_PLANE
-// #define AILERON_ELEVATOR_ONLY_PLANE
+// #define AILERON_ELEVATOR_ONLY
 // #define FLYING_WING_W_RUDDER
 // #define FLYING_WING_NO_RUDDER
 // #defined RUDDER_ELEVATOR_ONLY_V_TAIL

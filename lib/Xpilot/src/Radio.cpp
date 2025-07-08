@@ -72,7 +72,7 @@ void Radio::FailSafeLogic()
 #elif defined(RUDDER_ELEVATOR_ONLY_V_TAIL) || defined(RUDDER_ELEVATOR_ONLY_PLANE)
     isFailsafe = (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
                  (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
-#elif defined(FLYING_WING_NO_RUDDER) || defined(AILERON_ELEVATOR_ONLY_PLANE)
+#elif defined(FLYING_WING_NO_RUDDER) || defined(AILERON_ELEVATOR_ONLY)
     isFailsafe = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
                  (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE);
 #endif

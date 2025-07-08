@@ -47,7 +47,7 @@ void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw
     SRVout[Actuators::Channel::AILERON2] = 0;
     SRVout[Actuators::Channel::ELEVATOR] = pitch;
     SRVout[Actuators::Channel::RUDDER] = yaw;
-#elif defined(AILERON_ELEVATOR_ONLY_PLANE)
+#elif defined(AILERON_ELEVATOR_ONLY)
     SRVout[Actuators::Channel::AILERON1] = roll;
     SRVout[Actuators::Channel::AILERON2] = roll;
     SRVout[Actuators::Channel::ELEVATOR] = pitch;

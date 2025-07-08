@@ -30,8 +30,8 @@ Copyright (C) 2024 Jamal Meizongo
 
 Xpilot is a flight stabilization system based on the ATMEGA328P chip in the Arduino Nano, Uno and Mini microcontrollers and MPU6050.
 It is capable of stabilizing various airplane types including the traditional airplane, V-tail and flying wing.
-It also works for various configurations of these airplanes i.e. 1 channel AIL, ELEV, and RUDD(traditional tail and V-tail),
-2 channel AIL, ELEV and RUDD(traditional tail, V-tail and flying wing) or ELEV and RUDD only(traditional tail and V-tail).
+It also works for various configurations of these airplanes i.e. 1 channel AIL, ELEV, and RUDD(traditional and V-tail),
+2 channel AIL, ELEV and RUDD(traditional tail, V-tail and flying wing), AIL and ELEV only(traditional and V-tail) or ELEV and RUDD only(traditional and V-tail).
 See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type configuration.
 
 ## Stabilization system loop
