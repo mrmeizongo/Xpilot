@@ -23,7 +23,14 @@ Xpilot::Xpilot(void)
     passthroughMode.setModeSwitchPosition(THREE_POS_SW::HIGH_POS);
     rateMode.setModeSwitchPosition(THREE_POS_SW::MID_POS);
     stabilizeMode.setModeSwitchPosition(THREE_POS_SW::LOW_POS);
-    currentMode = &rateMode;    // Set default flight mode to RATE mode
+
+#if defined(DEFAULT_TO_PASSTHROUGH_MODE)
+    currentMode = &passthroughMode;
+#elif defined(DEFAULT_TO_RATE_MODE)
+    currentMode = &rateMode;
+#elif defined(DEFAULT_TO_STABILIZE_MODE)
+    currentMode = &stabilizeMode;
+#endif
     previousMode = currentMode; // Set previous mode to current mode
 }
 
