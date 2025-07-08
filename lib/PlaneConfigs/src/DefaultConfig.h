@@ -183,9 +183,9 @@ Flight stabilization software
  * This is useful for switching to a more stable mode when failsafe is detected
  * It is recommended to switch to stabilize mode when failsafe is active
  */
-// #define FAIL_SAFE_TO_PASSTHROUGH
-// #define FAIL_SAFE_TO_RATE
-#define FAIL_SAFE_TO_STABILIZE
+// #define FAILSAFE_TO_PASSTHROUGH
+// #define FAILSAFE_TO_RATE
+#define FAILSAFE_TO_STABILIZE
 
 // ------------------------------------------------------------------------------------------------------
 

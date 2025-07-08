@@ -55,8 +55,8 @@ private:
     PassthroughMode passthroughMode;
 
     // This is the state of the flight stabilization system
-    Mode *currentMode = &rateMode;
-    Mode *previousMode = &rateMode;
+    Mode *currentMode;
+    Mode *previousMode;
 
     bool failSafeActive = false; // System failsafe active flag
     void updateFlightMode(void);

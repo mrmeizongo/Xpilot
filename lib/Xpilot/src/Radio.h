@@ -39,7 +39,8 @@ Flight stabilization software
 // 3-position switch
 enum class THREE_POS_SW : uint8_t
 {
-    LOW_POS = 0U,
+    UNDEFINED = 0U, // Undefined position, should not be used
+    LOW_POS,
     MID_POS,
     HIGH_POS
 };
@@ -57,9 +58,9 @@ struct Control
     uint16_t yawPWM;
     THREE_POS_SW auxSwitchPos;
 
-    Control(THREE_POS_SW _auxSwitchPos)
+    Control()
         : rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
-          auxSwitchPos{_auxSwitchPos} {}
+          auxSwitchPos{THREE_POS_SW::UNDEFINED} {}
 };
 
 class Radio
@@ -76,9 +77,9 @@ public:
     THREE_POS_SW getRxAuxPos(void) { return rx.auxSwitchPos; }
 
 private:
-    Control rx{THREE_POS_SW::MID_POS}; // RATE mode by default
+    Control rx;
     bool failsafe;
-    unsigned long failsafeStartTime; // Start time for failsafe logic
+    unsigned long failsafeStartTime;
     void FailSafeLogic();
 };
 

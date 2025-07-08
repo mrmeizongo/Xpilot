@@ -23,6 +23,8 @@ Xpilot::Xpilot(void)
     passthroughMode.setModeSwitchPosition(THREE_POS_SW::HIGH_POS);
     rateMode.setModeSwitchPosition(THREE_POS_SW::MID_POS);
     stabilizeMode.setModeSwitchPosition(THREE_POS_SW::LOW_POS);
+    currentMode = &rateMode;    // Set default flight mode to RATE mode
+    previousMode = currentMode; // Set previous mode to current mode
 }
 
 void Xpilot::setup(void)
@@ -71,11 +73,11 @@ void Xpilot::updateFlightMode(void)
     if (radioFailSafe)
     {
         failSafeActive = true; // Set failsafe active flag
-#if defined(FAIL_SAFE_TO_STABILIZE)
+#if defined(FAILSAFE_TO_STABILIZE)
         currentMode = &stabilizeMode;
-#elif defined(FAIL_SAFE_TO_RATE)
+#elif defined(FAILSAFE_TO_RATE)
         currentMode = &rateMode;
-#elif defined(FAIL_SAFE_TO_PASSTHROUGH)
+#elif defined(FAILSAFE_TO_PASSTHROUGH)
         currentMode = &passthroughMode;
 #endif
     }
@@ -86,7 +88,7 @@ void Xpilot::updateFlightMode(void)
         failSafeActive = false; // Reset failsafe active flag
         THREE_POS_SW auxPos = radio.getRxAuxPos();
         // Radio mode switch position has not changed, simply return
-        if (auxPos == currentMode->getModeSwitchPosition())
+        if (auxPos == currentMode->getModeSwitchPosition() || auxPos == THREE_POS_SW::UNDEFINED)
             return;
 
         // Process new mode if mode switch position has changed
