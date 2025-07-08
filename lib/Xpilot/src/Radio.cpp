@@ -48,8 +48,6 @@ void Radio::processInput(void)
             else
                 rx.auxSwitchPos = THREE_POS_SW::MID_POS;
         }
-        else
-            rx.auxSwitchPos = THREE_POS_SW::UNDEFINED; // If the auxiliary switch is not in range, set it to undefined position
 
         if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
             rx.rollPWM = aileronPulses;
