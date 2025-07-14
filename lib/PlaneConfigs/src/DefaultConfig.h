@@ -80,8 +80,9 @@ Flight stabilization software
 /*
  * 3-position digital switch PWM separator
  * Used to separate the 3 flight modes input threshold
+ * ((INPUT_MAX_PWM - INPUT_MIN_PWM) / 3)
  */
-#define INPUT_SEPARATOR 200
+#define INPUT_SEPARATOR 333
 
 // To correct transmitter stick drift
 #define ROLL_INPUT_DEADBAND 20
