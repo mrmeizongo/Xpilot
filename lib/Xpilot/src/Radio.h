@@ -56,11 +56,21 @@ struct Control
     uint16_t rollPWM;
     uint16_t pitchPWM;
     uint16_t yawPWM;
-    THREE_POS_SW auxSwitchPos;
+    THREE_POS_SW aux1SwitchPos;
+#if defined(USE_AUX2)
+    THREE_POS_SW aux2SwitchPos;
+#endif
 
-    Control()
-        : rollPWM{INPUT_MID_PWM}, pitchPWM{INPUT_MID_PWM}, yawPWM{INPUT_MID_PWM},
-          auxSwitchPos{THREE_POS_SW::UNDEFINED} {}
+    Control(void)
+    {
+        rollPWM = INPUT_MID_PWM;
+        pitchPWM = INPUT_MID_PWM;
+        yawPWM = INPUT_MID_PWM;
+        aux1SwitchPos = THREE_POS_SW::UNDEFINED;
+#if defined(USE_AUX2)
+        aux2SwitchPos = THREE_POS_SW::UNDEFINED;
+#endif
+    }
 };
 
 class Radio
@@ -74,7 +84,10 @@ public:
     int16_t getRxRollPWM(void) { return rx.rollPWM; }
     int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
     int16_t getRxYawPWM(void) { return rx.yawPWM; }
-    THREE_POS_SW getRxAuxPos(void) { return rx.auxSwitchPos; }
+    THREE_POS_SW getRxAux1Pos(void) { return rx.aux1SwitchPos; }
+#if defined(USE_AUX2)
+    THREE_POS_SW getRxAux2Pos(void) { return rx.aux2SwitchPos; }
+#endif
 
 private:
     Control rx;

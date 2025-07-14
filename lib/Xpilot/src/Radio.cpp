@@ -7,7 +7,10 @@
 volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
 volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
 volatile static unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
-volatile static unsigned long auxCurrentTime, auxStartTime, auxPulses = 0;
+volatile static unsigned long aux1CurrentTime, aux1StartTime, aux1Pulses = 0;
+#if defined(USE_AUX2)
+volatile static unsigned long aux2CurrentTime, aux2StartTime, aux2Pulses = 0;
+#endif
 // -------------------------
 
 Radio::Radio(void)
@@ -26,9 +29,14 @@ void Radio::init(void)
     // Rudder setup
     pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
-    // Auxiliary switch setup
-    pinMode(AUXPIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AUXPIN_INT, CHANGE);
+    // Auxiliary switch 1 setup
+    pinMode(AUXPIN1_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AUXPIN1_INT, CHANGE);
+#if defined(USE_AUX2)
+    // Auxiliary switch 2 setup
+    pinMode(AUXPIN2_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AUXPIN2_INT, CHANGE);
+#endif
 
     failsafe = false;      // Initialize failsafe state
     failsafeStartTime = 0; // Initialize failsafe start time
@@ -39,15 +47,26 @@ void Radio::processInput(void)
     ATOMIC_BLOCK(ATOMIC_FORCEON)
     {
         // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
-        if (auxPulses >= INPUT_MIN_PWM && auxPulses <= INPUT_MAX_PWM)
+        if (aux1Pulses >= INPUT_MIN_PWM && aux1Pulses <= INPUT_MAX_PWM)
         {
-            if (auxPulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                rx.auxSwitchPos = THREE_POS_SW::HIGH_POS;
-            else if (auxPulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                rx.auxSwitchPos = THREE_POS_SW::LOW_POS;
+            if (aux1Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
+                rx.aux1SwitchPos = THREE_POS_SW::HIGH_POS;
+            else if (aux1Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
+                rx.aux1SwitchPos = THREE_POS_SW::LOW_POS;
             else
-                rx.auxSwitchPos = THREE_POS_SW::MID_POS;
+                rx.aux1SwitchPos = THREE_POS_SW::MID_POS;
         }
+#if defined(USE_AUX2)
+        if (aux2Pulses >= INPUT_MIN_PWM && aux2Pulses <= INPUT_MAX_PWM)
+        {
+            if (aux2Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
+                rx.aux2SwitchPos = THREE_POS_SW::HIGH_POS;
+            else if (aux2Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
+                rx.aux2SwitchPos = THREE_POS_SW::LOW_POS;
+            else
+                rx.aux2SwitchPos = THREE_POS_SW::MID_POS;
+        }
+#endif
 
         if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
             rx.rollPWM = aileronPulses;
@@ -125,12 +144,21 @@ void PinChangeInterruptEvent(RUDDPIN_INT)(void)
     rudderStartTime = rudderCurrentTime;
 }
 
-void PinChangeInterruptEvent(AUXPIN_INT)(void)
+void PinChangeInterruptEvent(AUXPIN1_INT)(void)
 {
-    auxCurrentTime = micros();
-    auxPulses = auxCurrentTime - auxStartTime;
-    auxStartTime = auxCurrentTime;
+    aux1CurrentTime = micros();
+    aux1Pulses = aux1CurrentTime - aux1StartTime;
+    aux1StartTime = aux1CurrentTime;
 }
+
+#if defined(USE_AUX2)
+void PinChangeInterruptEvent(AUXPIN2_INT)(void)
+{
+    aux2CurrentTime = micros();
+    aux2Pulses = aux2CurrentTime - aux2StartTime;
+    aux2StartTime = aux2CurrentTime;
+}
+#endif
 // ----------------------------
 
 Radio radio;

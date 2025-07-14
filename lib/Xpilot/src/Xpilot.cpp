@@ -93,7 +93,7 @@ void Xpilot::updateFlightMode(void)
         // Both system and radio are not in failsafe
         // Set current flight mode based on the radio mode switch position
         failSafeActive = false; // Reset failsafe active flag
-        THREE_POS_SW auxPos = radio.getRxAuxPos();
+        THREE_POS_SW auxPos = radio.getRxAux1Pos();
         // Radio mode switch position has not changed, simply return
         if (auxPos == currentMode->getModeSwitchPosition() || auxPos == THREE_POS_SW::UNDEFINED)
             return;
