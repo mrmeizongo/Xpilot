@@ -70,7 +70,7 @@ Flight stabilization software
 
 /*
  * Transmitter PWM range in micro seconds
- * Refer to your transmitter manual to determine the incoming PWM range
+ * Refer to your transmitter manual to determine the outgoing PWM range
  * These values are conservative and should work for most transmitters
  */
 #define INPUT_MIN_PWM 1000
