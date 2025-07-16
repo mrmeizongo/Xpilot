@@ -1,7 +1,7 @@
 #ifndef _SYSTEM_CONFIG_H
 #define _SYSTEM_CONFIG_H
 
-#define SYSTEM_CONFIG_VERSION "2.0.0"
+#define SYSTEM_CONFIG_VERSION "2.1.0"
 
 // ATmega328p pin definitions
 /*
@@ -48,6 +48,7 @@
 #define RUDDPIN_INT 20
 #define AUXPIN1_INT 21
 #define AUXPIN2_INT 22
+#define AUXPIN3_INT 23
 
 // Input pins
 #define AILPIN_INPUT 2
@@ -55,12 +56,14 @@
 #define RUDDPIN_INPUT 4
 #define AUXPIN1_INPUT 5
 #define AUXPIN2_INPUT 6
+#define AUXPIN3_INPUT 7
 
 // Output pins
 #define AILPIN1_OUTPUT 8
 #define AILPIN2_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
+#define AUXPIN_OUTPUT 12
 
 // System variables
 #define BAUD_RATE 9600              // Serial baud rate

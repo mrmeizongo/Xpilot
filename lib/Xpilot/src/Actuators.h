@@ -43,10 +43,11 @@ public:
     // MAX_SERVOS for the Arduino Nano is 12 servos because it has 1 16 bit timer
     enum Channel : uint8_t
     {
-        AILERON1 = 0U,
-        AILERON2,
-        ELEVATOR,
-        RUDDER,
+        CH1 = 0U,
+        CH2,
+        CH3,
+        CH4,
+        CH5,
         NUM_CHANNELS
     };
 

@@ -11,6 +11,9 @@ volatile static unsigned long aux1CurrentTime, aux1StartTime, aux1Pulses = 0;
 #if defined(USE_AUX2)
 volatile static unsigned long aux2CurrentTime, aux2StartTime, aux2Pulses = 0;
 #endif
+#if defined(USE_AUX3)
+volatile static unsigned long aux3CurrentTime, aux3StartTime, aux3Pulses = 0;
+#endif
 // -------------------------
 
 Radio::Radio(void)
@@ -36,6 +39,11 @@ void Radio::init(void)
     // Auxiliary switch 2 setup
     pinMode(AUXPIN2_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUXPIN2_INT, CHANGE);
+#endif
+#if defined(USE_AUX3)
+    // Auxiliary switch 3 setup
+    pinMode(AUXPIN3_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AUXPIN3_INT, CHANGE);
 #endif
 
     failsafe = false;      // Initialize failsafe state
@@ -65,6 +73,17 @@ void Radio::processInput(void)
                 rx.aux2SwitchPos = THREE_POS_SW::LOW_POS;
             else
                 rx.aux2SwitchPos = THREE_POS_SW::MID_POS;
+        }
+#endif
+#if defined(USE_AUX3)
+        if (aux3Pulses >= INPUT_MIN_PWM && aux3Pulses <= INPUT_MAX_PWM)
+        {
+            if (aux3Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
+                rx.aux3SwitchPos = THREE_POS_SW::HIGH_POS;
+            else if (aux3Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
+                rx.aux3SwitchPos = THREE_POS_SW::LOW_POS;
+            else
+                rx.aux3SwitchPos = THREE_POS_SW::MID_POS;
         }
 #endif
 
@@ -157,6 +176,15 @@ void PinChangeInterruptEvent(AUXPIN2_INT)(void)
     aux2CurrentTime = micros();
     aux2Pulses = aux2CurrentTime - aux2StartTime;
     aux2StartTime = aux2CurrentTime;
+}
+#endif
+
+#if defined(USE_AUX3)
+void PinChangeInterruptEvent(AUXPIN3_INT)(void)
+{
+    aux3CurrentTime = micros();
+    aux3Pulses = aux3CurrentTime - aux3StartTime;
+    aux3StartTime = aux3CurrentTime;
 }
 #endif
 // ----------------------------

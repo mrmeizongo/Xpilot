@@ -9,18 +9,20 @@ Actuators::Actuators(void)
 void Actuators::init(void)
 {
     // Set up output servos
-    controlServo[AILERON1].attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    controlServo[AILERON2].attach(AILPIN2_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    controlServo[ELEVATOR].attach(ELEVPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    controlServo[RUDDER].attach(RUDDPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[CH1].attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[CH2].attach(AILPIN2_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[CH3].attach(ELEVPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[CH4].attach(RUDDPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[CH5].attach(AUXPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 }
 
 void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
 {
-    channelOut[AILERON1] = SRVout[AILERON1];
-    channelOut[AILERON2] = SRVout[AILERON2];
-    channelOut[ELEVATOR] = SRVout[ELEVATOR];
-    channelOut[RUDDER] = SRVout[RUDDER];
+    channelOut[CH1] = SRVout[CH1];
+    channelOut[CH2] = SRVout[CH2];
+    channelOut[CH3] = SRVout[CH3];
+    channelOut[CH4] = SRVout[CH4];
+    channelOut[CH5] = SRVout[CH5];
 }
 
 void Actuators::setServoOut(Actuators::Channel ch, int16_t value)
@@ -41,10 +43,11 @@ int16_t Actuators::getServoOut(Actuators::Channel ch)
 
 void Actuators::writeServos(void)
 {
-    controlServo[AILERON1].writeMicroseconds(channelOut[AILERON1]);
-    controlServo[AILERON2].writeMicroseconds(channelOut[AILERON2]);
-    controlServo[ELEVATOR].writeMicroseconds(channelOut[ELEVATOR]);
-    controlServo[RUDDER].writeMicroseconds(channelOut[RUDDER]);
+    controlServo[CH1].writeMicroseconds(channelOut[CH1]);
+    controlServo[CH2].writeMicroseconds(channelOut[CH2]);
+    controlServo[CH3].writeMicroseconds(channelOut[CH3]);
+    controlServo[CH4].writeMicroseconds(channelOut[CH4]);
+    controlServo[CH5].writeMicroseconds(channelOut[CH5]);
 }
 
 Actuators actuators;

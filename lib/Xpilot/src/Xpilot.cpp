@@ -148,25 +148,36 @@ static void printIO(void)
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1 PWM: ");
-    Serial.println(actuators.getServoOut(Actuators::Channel::AILERON1));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
 
     Serial.print("Aileron 2 PWM: ");
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 2 PWM: ");
-    Serial.println(actuators.getServoOut(Actuators::Channel::AILERON2));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
 
     Serial.print("Elevator PWM: ");
     Serial.print(radio.getRxPitchPWM());
     Serial.print("\t\t\t");
     Serial.print("Elevator PWM: ");
-    Serial.println(actuators.getServoOut(Actuators::Channel::ELEVATOR));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
 
     Serial.print("Rudder PWM: ");
     Serial.print(radio.getRxYawPWM());
     Serial.print("\t\t\t");
     Serial.print("Rudder PWM: ");
-    Serial.println(actuators.getServoOut(Actuators::Channel::RUDDER));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
+
+#if defined(USE_AUX2)
+    Serial.print("Aux2 PWM: ");
+    Serial.println((int16_t)radio.getRxAux2Pos());
+#endif
+
+#if defined(USE_AUX3)
+    Serial.print("Aux3 PWM: ");
+    Serial.println((int16_t)radio.getRxAux3Pos());
+#endif
+
     Serial.println();
 }
 
@@ -187,15 +198,14 @@ static void printIMU(void)
 static void printLoopRate(void)
 {
     unsigned long loopUs = micros() - nowUs;
-    unsigned long loopMs = loopUs / 1000;
-    loopMs = loopMs <= 0 ? 1 : loopMs;
+    loopUs = loopUs <= 0 ? 1 : loopUs;
     Serial.print(">");
     Serial.print("Loop time: ");
-    Serial.print(loopMs);
-    Serial.print("ms");
+    Serial.print(loopUs);
+    Serial.print("us");
     Serial.print(", ");
     Serial.print("Loop rate: ");
-    Serial.print(1000 / loopMs);
+    Serial.print(1000000 / loopUs);
     Serial.print("Hz");
     Serial.println();
 }

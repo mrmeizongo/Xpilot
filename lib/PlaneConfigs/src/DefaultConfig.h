@@ -103,8 +103,12 @@ Flight stabilization software
 #define MAX_PITCH_ANGLE_DEGS 45
 
 // Uncomment to use the second auxiliary switch.
-// If using aux2, provide implementation for functionality. Where you put this implementation is up to you.
+// If using aux2 input, provide implementation for functionality. Where you put this implementation is up to you.
 // #define USE_AUX2
+
+// Uncomment to use the third auxiliary switch.
+// If using aux3 input, provide implementation for functionality. Where you put this implementation is up to you.
+// #define USE_AUX3
 // ------------------------------------------------------------------------------------------------------
 
 // PID config
