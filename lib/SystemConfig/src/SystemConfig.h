@@ -1,5 +1,6 @@
 #ifndef _SYSTEM_CONFIG_H
 #define _SYSTEM_CONFIG_H
+#include <PlaneConfig.h>
 
 #define SYSTEM_CONFIG_VERSION "2.1.0"
 
@@ -9,7 +10,7 @@
  * All input pins use pin change interrupts
  * Depending on airplane type selected, input interrupt pins must be defined
  * Best to keep these unchanged unless absolutely necessary
- * Changing any XXXXPIN_INT or XXXXPIN_INPUT value require modifications to PinChangeInterrupt library
+ * Changing any XXXXPIN_INT or XXXXPIN_INPUT value requires modifications to PinChangeInterruptSettings.h
  *
  * | PCINT |  Uno/Nano/Mini  |
  * | ----- | --------------- |
@@ -47,16 +48,24 @@
 #define ELEVPIN_INPUT 3
 #define RUDDPIN_INPUT 4
 #define AUX1PIN_INPUT 5
+#if defined(USE_AUX2)
 #define AUX2PIN_INPUT 6
+#endif
+#if defined(USE_AUX3)
 #define AUX3PIN_INPUT 7
+#endif
 
 // Interrupt pins
 #define AILPIN_INT 18
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
 #define AUX1PIN_INT 21
+#if defined(USE_AUX2)
 #define AUX2PIN_INT 22
+#endif
+#if defined(USE_AUX3)
 #define AUX3PIN_INT 23
+#endif
 
 // Output pins
 #define AIL1PIN_OUTPUT 8

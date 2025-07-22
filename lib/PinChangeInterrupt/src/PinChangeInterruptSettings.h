@@ -20,6 +20,7 @@ THE SOFTWARE.
 
 // include guard
 #pragma once
+#include <SystemConfig.h>
 
 //================================================================================
 // General Settings
@@ -65,8 +66,12 @@ That is done by the macros. */
 #define PCINT_ENABLE_PCINT19
 #define PCINT_ENABLE_PCINT20
 #define PCINT_ENABLE_PCINT21
-// #define PCINT_ENABLE_PCINT22
-// #define PCINT_ENABLE_PCINT23
+#if defined(USE_AUX2)
+#define PCINT_ENABLE_PCINT22
+#endif
+#if defined(USE_AUX3)
+#define PCINT_ENABLE_PCINT23
+#endif
 // #define PCINT_ENABLE_PCINT24
 // #define PCINT_ENABLE_PCINT25
 // #define PCINT_ENABLE_PCINT26
