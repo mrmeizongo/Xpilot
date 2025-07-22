@@ -105,10 +105,12 @@ Flight stabilization software
 // Using either AUX2 or AUX3 will require activation of the pin in PinChangeInterruptSettings.h
 // Uncomment to use the second auxiliary switch.
 // If using aux2 input, provide implementation for functionality.
+// aux2 input is tied to pin D6
 // #define USE_AUX2
 
 // Uncomment to use the second auxiliary switch.
 // If using aux3 input, provide implementation for functionality.
+// aux2 input is tied to pin D7
 // #define USE_AUX3
 // ------------------------------------------------------------------------------------------------------
 
