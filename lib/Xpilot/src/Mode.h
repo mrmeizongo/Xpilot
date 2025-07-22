@@ -33,7 +33,7 @@ Flight stabilization software
 #define _MODE_H
 
 #include <Arduino.h>
-#include "PlaneConfig.h"
+#include <PlaneConfig.h>
 #include "Radio.h"
 #include "Actuators.h"
 #include "PIDF.h"
