@@ -8,12 +8,7 @@ volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulse
 volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
 volatile static unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
 volatile static unsigned long aux1CurrentTime, aux1StartTime, aux1Pulses = 0;
-#if defined(USE_AUX2)
 volatile static unsigned long aux2CurrentTime, aux2StartTime, aux2Pulses = 0;
-#endif
-#if defined(USE_AUX3)
-volatile static unsigned long aux3CurrentTime, aux3StartTime, aux3Pulses = 0;
-#endif
 // -------------------------
 
 Radio::Radio(void)
@@ -35,19 +30,12 @@ void Radio::init(void)
     // Auxiliary switch 1 setup
     pinMode(AUXPIN1_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUXPIN1_INT, CHANGE);
-#if defined(USE_AUX2)
     // Auxiliary switch 2 setup
     pinMode(AUXPIN2_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUXPIN2_INT, CHANGE);
-#endif
-#if defined(USE_AUX3)
-    // Auxiliary switch 3 setup
-    pinMode(AUXPIN3_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AUXPIN3_INT, CHANGE);
-#endif
 
-    failsafe = false;      // Initialize failsafe state
-    failsafeStartTime = 0; // Initialize failsafe start time
+    failsafe = false;        // Initialize failsafe state
+    failsafeStartTimeMs = 0; // Initialize failsafe start time
 }
 
 void Radio::processInput(void)
@@ -64,6 +52,7 @@ void Radio::processInput(void)
             else
                 rx.aux1SwitchPos = THREE_POS_SW::MID_POS;
         }
+
 #if defined(USE_AUX2)
         if (aux2Pulses >= INPUT_MIN_PWM && aux2Pulses <= INPUT_MAX_PWM)
         {
@@ -73,17 +62,6 @@ void Radio::processInput(void)
                 rx.aux2SwitchPos = THREE_POS_SW::LOW_POS;
             else
                 rx.aux2SwitchPos = THREE_POS_SW::MID_POS;
-        }
-#endif
-#if defined(USE_AUX3)
-        if (aux3Pulses >= INPUT_MIN_PWM && aux3Pulses <= INPUT_MAX_PWM)
-        {
-            if (aux3Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                rx.aux3SwitchPos = THREE_POS_SW::HIGH_POS;
-            else if (aux3Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                rx.aux3SwitchPos = THREE_POS_SW::LOW_POS;
-            else
-                rx.aux3SwitchPos = THREE_POS_SW::MID_POS;
         }
 #endif
 
@@ -104,28 +82,20 @@ void Radio::FailSafeLogic()
     // Yours might be different, so adjust the values accordingly
     // The failsafe logic is dependent on the receiver's behavior when the signal is lost
     bool isFailsafe = false;
-#if defined(FULL_PLANE_TRADITIONAL) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
     isFailsafe = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
                  (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
                  (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
-#elif defined(RUDDER_ELEVATOR_ONLY_V_TAIL) || defined(RUDDER_ELEVATOR_ONLY_PLANE)
-    isFailsafe = (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
-                 (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
-#elif defined(FLYING_WING_NO_RUDDER) || defined(AILERON_ELEVATOR_ONLY)
-    isFailsafe = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
-                 (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE);
-#endif
     if (isFailsafe)
     {
-        if (failsafeStartTime == 0)
-            failsafeStartTime = millis();                        // Start the failsafe timer
-        if (millis() - failsafeStartTime >= FAILSAFE_TIMEOUT_MS) // Trigger failsafe condition after timeout
-            failsafe = true;                                     // Failsafe condition met
+        if (failsafeStartTimeMs == 0)
+            failsafeStartTimeMs = millis();                        // Start the failsafe timer
+        if (millis() - failsafeStartTimeMs >= FAILSAFE_TIMEOUT_MS) // Trigger failsafe condition after timeout
+            failsafe = true;                                       // Failsafe condition met
     }
     else
     {
-        failsafe = false;      // Reset failsafe condition
-        failsafeStartTime = 0; // Reset failsafe timer
+        failsafe = false;        // Reset failsafe condition
+        failsafeStartTimeMs = 0; // Reset failsafe timer
     }
 }
 
@@ -176,15 +146,6 @@ void PinChangeInterruptEvent(AUXPIN2_INT)(void)
     aux2CurrentTime = micros();
     aux2Pulses = aux2CurrentTime - aux2StartTime;
     aux2StartTime = aux2CurrentTime;
-}
-#endif
-
-#if defined(USE_AUX3)
-void PinChangeInterruptEvent(AUXPIN3_INT)(void)
-{
-    aux3CurrentTime = micros();
-    aux3Pulses = aux3CurrentTime - aux3StartTime;
-    aux3StartTime = aux3CurrentTime;
 }
 #endif
 // ----------------------------

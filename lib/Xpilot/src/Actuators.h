@@ -47,7 +47,6 @@ public:
         CH2,
         CH3,
         CH4,
-        CH5,
         NUM_CHANNELS
     };
 

@@ -60,9 +60,6 @@ struct Control
 #if defined(USE_AUX2)
     THREE_POS_SW aux2SwitchPos;
 #endif
-#if defined(USE_AUX3)
-    THREE_POS_SW aux3SwitchPos;
-#endif
 
     Control(void)
     {
@@ -72,9 +69,6 @@ struct Control
         aux1SwitchPos = THREE_POS_SW::UNDEFINED;
 #if defined(USE_AUX2)
         aux2SwitchPos = THREE_POS_SW::UNDEFINED;
-#endif
-#if defined(USE_AUX3)
-        aux3SwitchPos = THREE_POS_SW::UNDEFINED;
 #endif
     }
 };
@@ -94,14 +88,11 @@ public:
 #if defined(USE_AUX2)
     THREE_POS_SW getRxAux2Pos(void) { return rx.aux2SwitchPos; }
 #endif
-#if defined(USE_AUX3)
-    THREE_POS_SW getRxAux3Pos(void) { return rx.aux3SwitchPos; }
-#endif
 
 private:
     Control rx;
     bool failsafe;
-    unsigned long failsafeStartTime;
+    unsigned long failsafeStartTimeMs;
     void FailSafeLogic();
 };
 
