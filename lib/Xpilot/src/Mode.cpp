@@ -5,9 +5,6 @@
 int16_t Mode::rollOut = 0;
 int16_t Mode::pitchOut = 0;
 int16_t Mode::yawOut = 0;
-#if defined(USE_AUX2)
-THREE_POS_SW Mode::auxOut = THREE_POS_SW::UNDEFINED;
-#endif
 int16_t Mode::SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};
 PIDF Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX};
 PIDF Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX};
