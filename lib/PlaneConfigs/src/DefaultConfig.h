@@ -105,6 +105,10 @@ Flight stabilization software
 // Uncomment to use the second auxiliary switch.
 // If using aux2 input, provide implementation for functionality.
 // #define USE_AUX2
+
+// Uncomment to use the second auxiliary switch.
+// If using aux3 input, provide implementation for functionality.
+// #define USE_AUX3
 // ------------------------------------------------------------------------------------------------------
 
 // PID config
