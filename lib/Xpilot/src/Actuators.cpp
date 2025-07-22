@@ -9,8 +9,8 @@ Actuators::Actuators(void)
 void Actuators::init(void)
 {
     // Set up output servos
-    controlServo[CH1].attach(AILPIN1_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    controlServo[CH2].attach(AILPIN2_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[CH1].attach(AIL1PIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    controlServo[CH2].attach(AIL2PIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     controlServo[CH3].attach(ELEVPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     controlServo[CH4].attach(RUDDPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 }

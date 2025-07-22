@@ -33,17 +33,17 @@ void Radio::init(void)
     pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
     // Auxiliary switch 1 setup
-    pinMode(AUXPIN1_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AUXPIN1_INT, CHANGE);
+    pinMode(AUX1PIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AUX1PIN_INT, CHANGE);
 #if defined(USE_AUX2)
     // Auxiliary switch 2 setup
-    pinMode(AUXPIN2_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AUXPIN2_INT, CHANGE);
+    pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
 #endif
 #if defined(USE_AUX3)
     // Auxiliary switch 3 setup
-    pinMode(AUXPIN2_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AUXPIN2_INT, CHANGE);
+    pinMode(AUX3PIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AUX3PIN_INT, CHANGE);
 #endif
 
     failsafe = false;        // Initialize failsafe state
@@ -157,7 +157,7 @@ void PinChangeInterruptEvent(RUDDPIN_INT)(void)
     rudderStartTime = rudderCurrentTime;
 }
 
-void PinChangeInterruptEvent(AUXPIN1_INT)(void)
+void PinChangeInterruptEvent(AUX1PIN_INT)(void)
 {
     aux1CurrentTime = micros();
     aux1Pulses = aux1CurrentTime - aux1StartTime;
@@ -165,7 +165,7 @@ void PinChangeInterruptEvent(AUXPIN1_INT)(void)
 }
 
 #if defined(USE_AUX2)
-void PinChangeInterruptEvent(AUXPIN2_INT)(void)
+void PinChangeInterruptEvent(AUX2PIN_INT)(void)
 {
     aux2CurrentTime = micros();
     aux2Pulses = aux2CurrentTime - aux2StartTime;
@@ -174,7 +174,7 @@ void PinChangeInterruptEvent(AUXPIN2_INT)(void)
 #endif
 
 #if defined(USE_AUX3)
-void PinChangeInterruptEvent(AUXPIN3_INT)(void)
+void PinChangeInterruptEvent(AUX3PIN_INT)(void)
 {
     aux3CurrentTime = micros();
     aux3Pulses = aux3CurrentTime - aux3StartTime;

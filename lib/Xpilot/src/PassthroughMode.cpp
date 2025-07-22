@@ -7,9 +7,6 @@ void PassthroughMode::process(void)
         Mode::rollOut = GETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
         Mode::pitchOut = GETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
         Mode::yawOut = GETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-#if defined(USE_AUX2)
-        Mode::auxOut = radio.getRxAux2Pos();
-#endif
     }
     else
         Mode::controlFailsafe();

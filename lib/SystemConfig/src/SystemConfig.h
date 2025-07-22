@@ -8,9 +8,8 @@
  * ISR vectors
  * All input pins use pin change interrupts
  * Depending on airplane type selected, input interrupt pins must be defined
- * Change these values to match your selected input pins
  * Best to keep these unchanged unless absolutely necessary
- * Changing any XXXXPIN_INT or XXXXPIN_INPUT value require modifications made to PinChangeInterrupt library
+ * Changing any XXXXPIN_INT or XXXXPIN_INPUT value require modifications to PinChangeInterrupt library
  *
  * | PCINT |  Uno/Nano/Mini  |
  * | ----- | --------------- |
@@ -43,24 +42,25 @@
  * | ----- | --------------- |
  */
 
-#define AILPIN_INT 18
-#define ELEVPIN_INT 19
-#define RUDDPIN_INT 20
-#define AUXPIN1_INT 21
-#define AUXPIN2_INT 22
-#define AUXPIN3_INT 23
-
 // Input pins
 #define AILPIN_INPUT 2
 #define ELEVPIN_INPUT 3
 #define RUDDPIN_INPUT 4
-#define AUXPIN1_INPUT 5
-#define AUXPIN2_INPUT 6
-#define AUXPIN3_INPUT 7
+#define AUX1PIN_INPUT 5
+#define AUX2PIN_INPUT 6
+#define AUX3PIN_INPUT 7
+
+// Interrupt pins
+#define AILPIN_INT 18
+#define ELEVPIN_INT 19
+#define RUDDPIN_INT 20
+#define AUX1PIN_INT 21
+#define AUX2PIN_INT 22
+#define AUX3PIN_INT 23
 
 // Output pins
-#define AILPIN1_OUTPUT 8
-#define AILPIN2_OUTPUT 9
+#define AIL1PIN_OUTPUT 8
+#define AIL2PIN_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
 #define AUXPIN_OUTPUT 12
