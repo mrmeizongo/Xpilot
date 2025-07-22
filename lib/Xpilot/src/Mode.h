@@ -60,9 +60,10 @@ public:
     THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
-    static int16_t rollOut;  // Roll output
-    static int16_t pitchOut; // Pitch output
-    static int16_t yawOut;   // Yaw output
+    static int16_t rollOut;          // Roll output
+    static int16_t pitchOut;         // Pitch output
+    static int16_t yawOut;           // Yaw output
+    THREE_POS_SW modeSwitchPosition; // Mode switch position for this mode
 #if defined(USE_AUX2)
     static THREE_POS_SW auxOut; // Aux output
 #endif
@@ -71,8 +72,6 @@ protected:
     static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
     virtual void yawController(void) {}                                  // Yaw control for heading-hold-like functionality
     virtual void controlFailsafe(void);                                  // Failsafe implementation
-
-    THREE_POS_SW modeSwitchPosition; // Mode's switch position
 
     // PID controllers
     static PIDF rollPIDF;
