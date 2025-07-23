@@ -34,6 +34,7 @@ Flight stabilization software
 #define _ACTUATORS_H
 #include <Servo.h>
 #include <inttypes.h>
+#include <PlaneConfig.h>
 
 class Actuators
 {
@@ -47,6 +48,9 @@ public:
         CH2,
         CH3,
         CH4,
+#if defined(USE_AUXOUT)
+        CH5, // Auxiliary output channel
+#endif
         NUM_CHANNELS
     };
 

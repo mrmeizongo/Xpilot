@@ -1,5 +1,4 @@
 #include <SystemConfig.h>
-#include <PlaneConfig.h>
 #include "Actuators.h"
 
 Actuators::Actuators(void)
@@ -13,6 +12,9 @@ void Actuators::init(void)
     controlServo[CH2].attach(AIL2PIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     controlServo[CH3].attach(ELEVPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     controlServo[CH4].attach(RUDDPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+#if defined(USE_AUXOUT)
+    controlServo[CH5].attach(AUXPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+#endif
 }
 
 void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
@@ -21,6 +23,9 @@ void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
     channelOut[CH2] = SRVout[CH2];
     channelOut[CH3] = SRVout[CH3];
     channelOut[CH4] = SRVout[CH4];
+#if defined(USE_AUXOUT)
+    channelOut[CH5] = SRVout[CH5];
+#endif
 }
 
 void Actuators::setServoOut(Actuators::Channel ch, int16_t value)
@@ -45,6 +50,9 @@ void Actuators::writeServos(void)
     controlServo[CH2].writeMicroseconds(channelOut[CH2]);
     controlServo[CH3].writeMicroseconds(channelOut[CH3]);
     controlServo[CH4].writeMicroseconds(channelOut[CH4]);
+#if defined(USE_AUXOUT)
+    controlServo[CH5].writeMicroseconds(channelOut[CH5]);
+#endif
 }
 
 Actuators actuators;
