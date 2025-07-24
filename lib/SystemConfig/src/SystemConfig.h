@@ -72,7 +72,9 @@
 #define AIL2PIN_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
+#if defined(USE_AUXOUT)
 #define AUXPIN_OUTPUT 12
+#endif
 
 // System variables
 #define BAUD_RATE 9600              // Serial baud rate
