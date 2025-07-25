@@ -114,7 +114,19 @@ void Radio::FailSafeLogic()
         if (failsafeStartTimeMs == 0)
             failsafeStartTimeMs = millis();                        // Start the failsafe timer
         if (millis() - failsafeStartTimeMs >= FAILSAFE_TIMEOUT_MS) // Trigger failsafe condition after timeout
-            failsafe = true;                                       // Failsafe condition met
+        {
+            failsafe = true;
+            rx.rollPWM = INPUT_MID_PWM;
+            rx.pitchPWM = INPUT_MID_PWM;
+            rx.yawPWM = INPUT_MID_PWM;
+            rx.aux1SwitchPos = THREE_POS_SW::UNDEFINED;
+#if defined(USE_AUX2)
+            rx.aux2SwitchPos = THREE_POS_SW::UNDEFINED;
+#endif
+#if defined(USE_AUX3)
+            rx.aux3SwitchPos = THREE_POS_SW::UNDEFINED;
+#endif
+        }
     }
     else
     {

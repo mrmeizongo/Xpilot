@@ -55,6 +55,9 @@ public:
     virtual void run(void) = 0;                                          // High level processing specific to this mode
     virtual void exit(void) {}                                           // Perform any clean up before switching to another mode
     static void setServoOut(void);                                       // Constrain and write servo outputs to the actuators object
+#if defined(USE_FLAPERONS)
+    static void flaperons(void); // Flaperon control, should be called in the run function of the flight mode
+#endif
 
     void setModeSwitchPosition(THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
     THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode

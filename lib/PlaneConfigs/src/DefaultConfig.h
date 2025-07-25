@@ -114,6 +114,24 @@ Flight stabilization software
 // #define USE_AUX3
 // ------------------------------------------------------------------------------------------------------
 
+// Plane config
+
+// Uncomment to use flaperons
+// Flaperons are ailerons that can be used as flaps
+// #define USE_FLAPERONS
+
+#if defined(USE_FLAPERONS)
+// Flaperon position is a % of the flaperon range (0.0f - 1.0f)
+#define FLAPERON_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM)
+#define FLAPERON_POSITION_1 (FLAPERON_RANGE * 0.5f)
+#define FLAPERON_POSITION_2 (FLAPERON_RANGE)
+#endif
+
+#if defined(USE_FLAPERONS) && !defined(USE_AUX2) && !defined(USE_AUX3)
+#error Flaperons require at least one auxiliary switche to be defined!
+#endif
+// ------------------------------------------------------------------------------------------------------
+
 // PID config
 
 // PID output limits

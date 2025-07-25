@@ -68,6 +68,29 @@ void Mode::rudderMixer(void)
 #endif
 }
 
+#if defined(USE_FLAPERONS)
+void Mode::flaperons(void)
+{
+    uint16_t flaperonVal;
+    switch (radio.getRxAux2Pos())
+    {
+    case THREE_POS_SW::UNDEFINED:
+    case THREE_POS_SW::HIGH_POS:
+    default:
+        return; // No flaperon output in high position
+    case THREE_POS_SW::MID_POS:
+        flaperonVal = FLAPERON_POSITION_1;
+        break;
+    case THREE_POS_SW::LOW_POS:
+        flaperonVal = FLAPERON_POSITION_2;
+        break;
+    }
+
+    SRVout[Actuators::Channel::CH1] += flaperonVal;
+    SRVout[Actuators::Channel::CH2] -= flaperonVal;
+}
+#endif
+
 void Mode::setServoOut(void)
 {
     SRVout[Actuators::Channel::CH1] = constrain(SRVout[Actuators::Channel::CH1], SERVO_MIN_PWM, SERVO_MAX_PWM);
