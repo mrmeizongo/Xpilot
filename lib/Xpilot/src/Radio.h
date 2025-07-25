@@ -57,7 +57,7 @@ struct Control
     uint16_t pitchPWM;
     uint16_t yawPWM;
     THREE_POS_SW aux1SwitchPos;
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
     THREE_POS_SW aux2SwitchPos;
 #endif
 #if defined(USE_AUX3)
@@ -70,7 +70,7 @@ struct Control
         pitchPWM = INPUT_MID_PWM;
         yawPWM = INPUT_MID_PWM;
         aux1SwitchPos = THREE_POS_SW::UNDEFINED;
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
         aux2SwitchPos = THREE_POS_SW::UNDEFINED;
 #endif
 #if defined(USE_AUX3)
@@ -91,7 +91,7 @@ public:
     int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
     int16_t getRxYawPWM(void) { return rx.yawPWM; }
     THREE_POS_SW getRxAux1Pos(void) { return rx.aux1SwitchPos; }
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
     THREE_POS_SW getRxAux2Pos(void) { return rx.aux2SwitchPos; }
 #endif
 #if defined(USE_AUX3)

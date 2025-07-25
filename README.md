@@ -37,7 +37,7 @@ See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type co
 ## Stabilization system loop
 
 The atmega328p chip is capable of running the entire stabilization loop in ~3ms.
-This gives us an update frequency of ~333Hz which is good enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
+This gives us an update frequency of ~300Hz which is good enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
 Due to the limitations of the ATMEGA328P chip, do not expect this to outperform the capabilities of more established flight control/stabilization softwares running on more capable and faster microchips. Pull requests are welcome.
 
 ## Setup
@@ -60,7 +60,9 @@ Connect receiver to Arduino Nano as shown below. This can be changed in [SystemC
 |    Rudder     |  4  |
 | AUX1/2 - Mode |  5  |
 
-Can use both aileron channel outputs to individual aileron servos or both aileron servos can be connected to one aileron channel output using a Y-cable extension. Flying wings require individual aileron channel control.
+Can use both aileron channel outputs to individual aileron servos or both aileron servos can be connected to one aileron channel output using a Y-cable extension.  
+If ailerons are wired independently, they can be used as flaperons by activating USE_FLAPERONS in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)
+Flying wings require individual aileron channel control.  
 Connect ailerons, elevator and rudder servos to Arduino Nano as shown below. This can be changed in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h).
 
 | CHANNEL  | PIN |

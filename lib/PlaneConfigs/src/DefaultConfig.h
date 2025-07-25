@@ -102,12 +102,7 @@ Flight stabilization software
 #define MAX_ROLL_ANGLE_DEGS 60
 #define MAX_PITCH_ANGLE_DEGS 45
 
-// Using either AUX2 or AUX3 will require activation of the pin in PinChangeInterruptSettings.h
-// Uncomment to use the second auxiliary switch.
-// If using aux2 input, provide implementation for functionality.
-// aux2 input is tied to pin D6
-// #define USE_AUX2
-
+// Using either AUX3 will require activation of the pin in PinChangeInterruptSettings.h
 // Uncomment to use the second auxiliary switch.
 // If using aux3 input, provide implementation for functionality.
 // aux2 input is tied to pin D7
@@ -125,10 +120,6 @@ Flight stabilization software
 #define FLAPERON_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM)
 #define FLAPERON_POSITION_1 (FLAPERON_RANGE * 0.5f)
 #define FLAPERON_POSITION_2 (FLAPERON_RANGE)
-#endif
-
-#if defined(USE_FLAPERONS) && !defined(USE_AUX2) && !defined(USE_AUX3)
-#error Flaperons require at least one auxiliary switche to be defined!
 #endif
 // ------------------------------------------------------------------------------------------------------
 

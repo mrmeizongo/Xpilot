@@ -8,7 +8,7 @@ volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulse
 volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
 volatile static unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
 volatile static unsigned long aux1CurrentTime, aux1StartTime, aux1Pulses = 0;
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
 volatile static unsigned long aux2CurrentTime, aux2StartTime, aux2Pulses = 0;
 #endif
 #if defined(USE_AUX3)
@@ -35,7 +35,7 @@ void Radio::init(void)
     // Auxiliary switch 1 setup
     pinMode(AUX1PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX1PIN_INT, CHANGE);
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
     // Auxiliary switch 2 setup
     pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
@@ -65,7 +65,7 @@ void Radio::processInput(void)
                 rx.aux1SwitchPos = THREE_POS_SW::MID_POS;
         }
 
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
         if (aux2Pulses >= INPUT_MIN_PWM && aux2Pulses <= INPUT_MAX_PWM)
         {
             if (aux2Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
@@ -120,7 +120,7 @@ void Radio::FailSafeLogic()
             rx.pitchPWM = INPUT_MID_PWM;
             rx.yawPWM = INPUT_MID_PWM;
             rx.aux1SwitchPos = THREE_POS_SW::UNDEFINED;
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
             rx.aux2SwitchPos = THREE_POS_SW::UNDEFINED;
 #endif
 #if defined(USE_AUX3)
@@ -176,7 +176,7 @@ void PinChangeInterruptEvent(AUX1PIN_INT)(void)
     aux1StartTime = aux1CurrentTime;
 }
 
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
 void PinChangeInterruptEvent(AUX2PIN_INT)(void)
 {
     aux2CurrentTime = micros();

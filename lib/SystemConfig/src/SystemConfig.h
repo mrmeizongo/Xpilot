@@ -48,7 +48,7 @@
 #define ELEVPIN_INPUT 3
 #define RUDDPIN_INPUT 4
 #define AUX1PIN_INPUT 5
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
 #define AUX2PIN_INPUT 6
 #endif
 #if defined(USE_AUX3)
@@ -60,7 +60,7 @@
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
 #define AUX1PIN_INT 21
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
 #define AUX2PIN_INT 22
 #endif
 #if defined(USE_AUX3)
