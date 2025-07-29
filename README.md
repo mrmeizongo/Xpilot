@@ -28,15 +28,15 @@ Copyright (C) 2024 Jamal Meizongo
 
 ### Developed using PlatformIO on vscode
 
-Xpilot is a flight stabilization system based on the ATMEGA328P chip in the Arduino Nano, Uno and Mini microcontrollers and MPU6050.
-It is capable of stabilizing various airplane types including the traditional airplane, V-tail and flying wing.
-It also works for various configurations of these airplanes i.e. 1 channel AIL, ELEV, and RUDD(traditional and V-tail),
-2 channel AIL, ELEV and RUDD(traditional tail, V-tail and flying wing), AIL and ELEV only(traditional and V-tail) or ELEV and RUDD only(traditional and V-tail).
+Xpilot is a flight stabilization system based on the ATMEGA328P chip in the Arduino Nano, Uno and Mini microcontrollers and MPU6050.  
+It is capable of stabilizing various airplane types including the traditional airplane, V-tail and flying wing.  
+It also works for various configurations of these airplanes i.e. 1 channel AIL, ELEV, and RUDD(traditional and V-tail),  
+2 channel AIL, ELEV and RUDD(traditional tail, V-tail and flying wing), AIL and ELEV only(traditional and V-tail) or ELEV and RUDD only(traditional and V-tail).  
 See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type configuration.
 
 ## Stabilization system loop
 
-The atmega328p chip is capable of running the entire stabilization loop in ~3ms.
+The atmega328p chip is capable of running the entire stabilization loop in ~3ms.  
 This gives us an update frequency of ~300Hz which is good enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
 Due to the limitations of the ATMEGA328P chip, do not expect this to outperform the capabilities of more established flight control/stabilization softwares running on more capable and faster microchips. Pull requests are welcome.
 
@@ -53,26 +53,28 @@ Connect MPU6050 to Arduino Nano as shown below
 
 Connect receiver to Arduino Nano as shown below. This can be changed in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h). However changing the input pin numbers will require some modification to the PinChangeInterrupt library.
 
-|    CHANNEL    | PIN |
-| :-----------: | :-: |
-|    Aileron    |  2  |
-|   Elevator    |  3  |
-|    Rudder     |  4  |
-| AUX1/2 - Mode |  5  |
+|                                          CHANNEL                                          | PIN |
+| :---------------------------------------------------------------------------------------: | :-: |
+|                                          Aileron                                          |  2  |
+|                                         Elevator                                          |  3  |
+|                                          Rudder                                           |  4  |
+|                                        AUX1 - Mode                                        |  5  |
+| AUX2 - FLAPERON (if activated in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)) |  6  |
 
 Can use both aileron channel outputs to individual aileron servos or both aileron servos can be connected to one aileron channel output using a Y-cable extension.  
 If ailerons are wired independently, they can be used as flaperons by activating USE_FLAPERONS in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)
 Flying wings require individual aileron channel control.  
 Connect ailerons, elevator and rudder servos to Arduino Nano as shown below. This can be changed in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h).
 
-| CHANNEL  | PIN |
-| :------: | :-: |
-| Aileron1 |  8  |
-| Aileron2 |  9  |
-| Elevator | 10  |
-|  Rudder  | 11  |
+|  CHANNEL  | PIN |
+| :-------: | :-: |
+| Aileron1  |  8  |
+| Aileron2  |  9  |
+| Elevator  | 10  |
+|  Rudder   | 11  |
+| Auxiliary | 12  |
 
-Set up a 3-position switch on the transmitter to act as the Mode switch.
+Set up a 3-position switch on the transmitter to act as the Mode switch.  
 When properly setup, mode switch states is shown below.
 
 | AUX Switch Position |    Mode     |
@@ -83,11 +85,13 @@ When properly setup, mode switch states is shown below.
 
 After setup, enable IO_DEBUG in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) to verify proper operation.
 
-DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.
-However, the Nano, MPU6050 and servos can be powered from the same external 5VDC power source(ESC BEC). Make use of a 1-female/2-male Y cable splitter to power the Xpilot board and receiver.
+## Info
+
+DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.  
+However, the Nano, MPU6050 and servos can be powered from the same external 5VDC power source(ESC BEC). Make use of a 1-female/2-male Y cable splitter to power the Xpilot board and receiver.  
 It is a good idea to add a 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
 
-These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.
+These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.  
 Ensure all components share a common ground. The Nano and MPU6050 do not require decoupling capacitors as the breakout boards come with their own voltage regulators and decoupling capacitors.
 
 ![Schematics](assets/img/Schematics.png)
@@ -96,7 +100,8 @@ Ensure all components share a common ground. The Nano and MPU6050 do not require
 
 There are 3 flight modes; 1 = passthrough/manual, 2 = rate, and 3 - stabilize.
 
-Rate mode is the most popular among inexperienced flyers and is also the default mode of operation if mode switch is not configured. Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h).
+Rate mode is the most popular among inexperienced flyers. If mode switch is not configured, any of the 3 modes can be used as the default mode. See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h).  
+Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). Default roll-rudder mixing value is 30%.
 
 |      Flight mode       |                                     Description                                     |
 | :--------------------: | :---------------------------------------------------------------------------------: |
@@ -116,9 +121,8 @@ Rate/Expo should NOT be used for Rate(2)/Stabilize(3) flight modes. You can howe
 
 Even though two calibration functions are provided(recommended), the MPU6050 does not really need to be calibrated as long as it passes the self test function. Uncomment SELF_TEST_ACCEL_GYRO in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) to enable. Be sure to comment it when done. Uncomment IMU_DEBUG in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. This might require several attempts. Aim for a +/- .5 value when plane is placed on a level surface and held still.
 
-Two calibration functions are also provided(RECOMMENDED). Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in non-volatile memory. Uncommenting CALIBRATE_DEBUG does same and prints out the calibration values in the serial monitor for inspection. Ensure the airplane is held level and still throughout the calibration process.
-
-Uncomment READ_CALIBRATION_FROM_EEPROM to view stored calibration values in the serial monitor.
+Two calibration functions are also provided(RECOMMENDED). Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in flash memory. Uncommenting CALIBRATE_DEBUG does same and prints out the calibration values in the serial monitor for inspection. Ensure the airplane is held level and still throughout the calibration process.
+At any time, you can view the calibrated values on the serial monitor by uncommenting READ_CALIBRATION_FROM_EEPROM in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)
 
 After all debug and calibration operations are complete, be sure to uncomment and reupload Xpilot for normal operation.
 
@@ -128,8 +132,7 @@ To build and upload the project to the microcontroller, download [vscode](https:
 
 ## Preflight
 
-Be sure to go through the entirety of [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) and perform any required modifications and preflight checks before flight.  
-May your landings be beautiful! ❤️
+Be sure to go through [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) and perform any required modifications and preflight checks before flight.
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
 
