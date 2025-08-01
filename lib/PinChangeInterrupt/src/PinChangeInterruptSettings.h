@@ -66,7 +66,7 @@ That is done by the macros. */
 #define PCINT_ENABLE_PCINT19
 #define PCINT_ENABLE_PCINT20
 #define PCINT_ENABLE_PCINT21
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
 #define PCINT_ENABLE_PCINT22
 #endif
 #if defined(USE_AUX3)

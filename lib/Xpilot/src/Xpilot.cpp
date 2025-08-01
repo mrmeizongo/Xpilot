@@ -168,7 +168,7 @@ static void printIO(void)
     Serial.print("Rudder PWM: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
 
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
     Serial.print("Aux2 Position: ");
     Serial.println((int16_t)radio.getRxAux2Pos());
 #endif
