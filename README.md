@@ -37,7 +37,7 @@ See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type co
 ## Stabilization system loop
 
 The atmega328p chip is capable of running the entire stabilization loop in ~3ms.  
-This gives us an update frequency of ~300Hz which is good enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
+This gives us an update frequency of ~333Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
 Due to the limitations of the ATMEGA328P chip, do not expect this to outperform the capabilities of more established flight control/stabilization softwares running on more capable and faster microchips. Pull requests are welcome.
 
 ## Setup
@@ -89,7 +89,7 @@ After setup, enable IO_DEBUG in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultCo
 ## Info
 
 DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.  
-However, the Nano, MPU6050 and servos can be powered from the same external 5VDC power source(ESC BEC). Make use of a 1-female/2-male Y cable splitter to power the Xpilot board and receiver.  
+However, the Nano, MPU6050 and servos can be powered from the same external 5VDC high current power source(such as ESC BEC). Make use of a 1-female/2-male Y cable splitter to power the Xpilot board and receiver.  
 It is a good idea to add a 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
 
 These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.  
