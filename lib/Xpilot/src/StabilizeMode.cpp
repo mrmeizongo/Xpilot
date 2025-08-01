@@ -67,4 +67,5 @@ void StabilizeMode::controlFailsafe(void)
     Mode::rollOut = 5; // 5 degree roll to the right
     Mode::pitchOut = 0;
     Mode::yawOut = 0;
+    Mode::flaperonOut = 0;
 }
