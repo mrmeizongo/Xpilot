@@ -7,6 +7,9 @@ void PassthroughMode::process(void)
         Mode::rollOut = GETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
         Mode::pitchOut = GETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
         Mode::yawOut = GETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+#if defined(USE_FLAPERONS)
+        Mode::flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), SERVO_MID_PWM, SERVO_MAX_PWM, 0, FLAPERON_RANGE);
+#endif
     }
     else
         Mode::controlFailsafe();
@@ -22,7 +25,7 @@ void PassthroughMode::run(void)
     Mode::SRVout[Actuators::Channel::CH3] = map(Mode::SRVout[Actuators::Channel::CH3], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH4] = map(Mode::SRVout[Actuators::Channel::CH4], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
 #if defined(USE_FLAPERONS)
-    Mode::flaperons();
+    Mode::setFlaperons();
 #endif
     Mode::setServoOut();
 }

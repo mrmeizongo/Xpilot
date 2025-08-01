@@ -116,10 +116,7 @@ Flight stabilization software
 // #define USE_FLAPERONS
 
 #if defined(USE_FLAPERONS)
-// Flaperon position is a % of the flaperon range (0.0f - 1.0f)
 #define FLAPERON_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM)
-#define FLAPERON_POSITION_1 (FLAPERON_RANGE * 0.5f)
-#define FLAPERON_POSITION_2 (FLAPERON_RANGE)
 #endif
 // ------------------------------------------------------------------------------------------------------
 

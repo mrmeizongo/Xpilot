@@ -53,13 +53,14 @@ Connect MPU6050 to Arduino Nano as shown below
 
 Connect receiver to Arduino Nano as shown below. This can be changed in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h). However changing the input pin numbers will require some modification to the PinChangeInterrupt library.
 
-|                                          CHANNEL                                          | PIN |
-| :---------------------------------------------------------------------------------------: | :-: |
-|                                          Aileron                                          |  2  |
-|                                         Elevator                                          |  3  |
-|                                          Rudder                                           |  4  |
-|                                        AUX1 - Mode                                        |  5  |
-| AUX2 - FLAPERON (if activated in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)) |  6  |
+|                                            CHANNEL                                            | PIN |
+| :-------------------------------------------------------------------------------------------: | :-: |
+|                                            Aileron                                            |  2  |
+|                                           Elevator                                            |  3  |
+|                                            Rudder                                             |  4  |
+|                                          AUX1 - Mode                                          |  5  |
+|   AUX2 - FLAPERON (if activated in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h))   |  6  |
+| AUX3 - User defined (if activated in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)) |  7  |
 
 Can use both aileron channel outputs to individual aileron servos or both aileron servos can be connected to one aileron channel output using a Y-cable extension.  
 If ailerons are wired independently, they can be used as flaperons by activating USE_FLAPERONS in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)

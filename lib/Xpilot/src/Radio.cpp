@@ -57,6 +57,7 @@ void Radio::processInput(void)
         // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
         if (aux1Pulses >= INPUT_MIN_PWM && aux1Pulses <= INPUT_MAX_PWM)
         {
+            rx.aux1PWM = aux1Pulses;
             if (aux1Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
                 rx.aux1SwitchPos = THREE_POS_SW::HIGH_POS;
             else if (aux1Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
@@ -68,6 +69,7 @@ void Radio::processInput(void)
 #if defined(USE_FLAPERONS)
         if (aux2Pulses >= INPUT_MIN_PWM && aux2Pulses <= INPUT_MAX_PWM)
         {
+            rx.aux2PWM = aux2Pulses;
             if (aux2Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
                 rx.aux2SwitchPos = THREE_POS_SW::HIGH_POS;
             else if (aux2Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
@@ -80,6 +82,7 @@ void Radio::processInput(void)
 #if defined(USE_AUX3)
         if (aux3Pulses >= INPUT_MIN_PWM && aux3Pulses <= INPUT_MAX_PWM)
         {
+            rx.aux3PWM = aux3Pulses;
             if (aux3Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
                 rx.aux3SwitchPos = THREE_POS_SW::HIGH_POS;
             else if (aux3Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
@@ -114,19 +117,7 @@ void Radio::FailSafeLogic()
         if (failsafeStartTimeMs == 0)
             failsafeStartTimeMs = millis();                        // Start the failsafe timer
         if (millis() - failsafeStartTimeMs >= FAILSAFE_TIMEOUT_MS) // Trigger failsafe condition after timeout
-        {
             failsafe = true;
-            rx.rollPWM = INPUT_MID_PWM;
-            rx.pitchPWM = INPUT_MID_PWM;
-            rx.yawPWM = INPUT_MID_PWM;
-            rx.aux1SwitchPos = THREE_POS_SW::UNDEFINED;
-#if defined(USE_FLAPERONS)
-            rx.aux2SwitchPos = THREE_POS_SW::UNDEFINED;
-#endif
-#if defined(USE_AUX3)
-            rx.aux3SwitchPos = THREE_POS_SW::UNDEFINED;
-#endif
-        }
     }
     else
     {

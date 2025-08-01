@@ -16,6 +16,9 @@ void StabilizeMode::process(void)
         Mode::rollOut = GETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS);
         Mode::pitchOut = GETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS);
         Mode::yawOut = GETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
+#if defined(USE_FLAPERONS)
+        Mode::flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), SERVO_MID_PWM, SERVO_MAX_PWM, 0, FLAPERON_RANGE);
+#endif
     }
     else
         controlFailsafe();
@@ -44,7 +47,7 @@ void StabilizeMode::run(void)
     Mode::SRVout[Actuators::Channel::CH3] = map(Mode::SRVout[Actuators::Channel::CH3], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH4] = map(Mode::SRVout[Actuators::Channel::CH4], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 #if defined(USE_FLAPERONS)
-    Mode::flaperons();
+    Mode::setFlaperons();
 #endif
     Mode::setServoOut();
 }

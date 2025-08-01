@@ -56,11 +56,14 @@ struct Control
     uint16_t rollPWM;
     uint16_t pitchPWM;
     uint16_t yawPWM;
+    uint16_t aux1PWM;
     THREE_POS_SW aux1SwitchPos;
 #if defined(USE_FLAPERONS)
+    uint16_t aux2PWM;
     THREE_POS_SW aux2SwitchPos;
 #endif
 #if defined(USE_AUX3)
+    uint16_t aux3PWM;
     THREE_POS_SW aux3SwitchPos;
 #endif
 
@@ -69,11 +72,14 @@ struct Control
         rollPWM = INPUT_MID_PWM;
         pitchPWM = INPUT_MID_PWM;
         yawPWM = INPUT_MID_PWM;
+        aux1PWM = INPUT_MID_PWM;
         aux1SwitchPos = THREE_POS_SW::UNDEFINED;
 #if defined(USE_FLAPERONS)
+        aux2PWM = INPUT_MID_PWM;
         aux2SwitchPos = THREE_POS_SW::UNDEFINED;
 #endif
 #if defined(USE_AUX3)
+        aux3PWM = INPUT_MID_PWM;
         aux3SwitchPos = THREE_POS_SW::UNDEFINED;
 #endif
     }
@@ -90,11 +96,14 @@ public:
     int16_t getRxRollPWM(void) { return rx.rollPWM; }
     int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
     int16_t getRxYawPWM(void) { return rx.yawPWM; }
+    int16_t getRxAux1PWM(void) { return rx.aux1PWM; }
     THREE_POS_SW getRxAux1Pos(void) { return rx.aux1SwitchPos; }
 #if defined(USE_FLAPERONS)
+    int16_t getRxAux2PWM(void) { return rx.aux2PWM; }
     THREE_POS_SW getRxAux2Pos(void) { return rx.aux2SwitchPos; }
 #endif
 #if defined(USE_AUX3)
+    int16_t getRxAux3PWM(void) { return rx.aux3PWM; }
     THREE_POS_SW getRxAux3Pos(void) { return rx.aux3SwitchPos; }
 #endif
 

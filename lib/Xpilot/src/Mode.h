@@ -39,8 +39,11 @@ Flight stabilization software
 #include "PIDF.h"
 
 // Helper define to transform radio values to mode dependent resolutions
+#define GETRAWINPUT(rawValue, inLowRange, inHighRange, outLowRange, outHighRange) \
+    map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange))
+
 #define GETINPUT(rawValue, deadBand, outLowRange, outHighRange) \
-    (abs((rawValue) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : map((rawValue), (INPUT_MIN_PWM), (INPUT_MAX_PWM), (outLowRange), (outHighRange)))
+    (abs((rawValue) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (GETRAWINPUT((rawValue), (SERVO_MIN_PWM), (SERVO_MAX_PWM), (outLowRange), (outHighRange))))
 
 // Abstract flight mode class
 class Mode
@@ -55,9 +58,6 @@ public:
     virtual void run(void) = 0;                                          // High level processing specific to this mode
     virtual void exit(void) {}                                           // Perform any clean up before switching to another mode
     static void setServoOut(void);                                       // Constrain and write servo outputs to the actuators object
-#if defined(USE_FLAPERONS)
-    static void flaperons(void); // Flaperon control, should be called in the run function of the flight mode
-#endif
 
     void setModeSwitchPosition(THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
     THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
@@ -72,6 +72,10 @@ protected:
     static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
     virtual void yawController(void) {}                                  // Yaw control for heading-hold-like functionality
     virtual void controlFailsafe(void);                                  // Failsafe implementation
+#if defined(USE_FLAPERONS)
+    static uint16_t flaperonOut;    // Flaperon position value, used in flaperon control
+    static void setFlaperons(void); // Flaperon control, should be called in the run function of the flight mode
+#endif
 
     // PID controllers
     static PIDF rollPIDF;

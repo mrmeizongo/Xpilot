@@ -9,6 +9,9 @@ int16_t Mode::SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};
 PIDF Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX};
 PIDF Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX};
 PIDF Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX};
+#if defined(USE_FLAPERONS)
+uint16_t Mode::flaperonOut = 0;
+#endif
 
 /*
  * Mixer for airplane type
@@ -69,25 +72,10 @@ void Mode::rudderMixer(void)
 }
 
 #if defined(USE_FLAPERONS)
-void Mode::flaperons(void)
+void Mode::setFlaperons(void)
 {
-    uint16_t flaperonVal;
-    switch (radio.getRxAux2Pos())
-    {
-    case THREE_POS_SW::UNDEFINED:
-    case THREE_POS_SW::HIGH_POS:
-    default:
-        return; // No flaperon output in high position
-    case THREE_POS_SW::MID_POS:
-        flaperonVal = FLAPERON_POSITION_1;
-        break;
-    case THREE_POS_SW::LOW_POS:
-        flaperonVal = FLAPERON_POSITION_2;
-        break;
-    }
-
-    SRVout[Actuators::Channel::CH1] += flaperonVal;
-    SRVout[Actuators::Channel::CH2] -= flaperonVal;
+    SRVout[Actuators::Channel::CH1] += flaperonOut;
+    SRVout[Actuators::Channel::CH2] -= flaperonOut;
 }
 #endif
 
@@ -106,4 +94,5 @@ void Mode::controlFailsafe(void)
     rollOut = 0;
     pitchOut = 0;
     yawOut = 0;
+    flaperonOut = 0;
 }
