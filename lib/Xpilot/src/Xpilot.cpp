@@ -169,11 +169,17 @@ static void printIO(void)
     Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
 
 #if defined(USE_FLAPERONS)
-    Serial.print("Aux2 Position: ");
+    Serial.print("Flaperon PWM: ");
+    Serial.print(radio.getRxAux2PWM());
+    Serial.print("\t\t\t");
+    Serial.print("Flap Position: ");
     Serial.println((int16_t)radio.getRxAux2Pos());
 #endif
 
 #if defined(USE_AUX3)
+    Serial.print("Aux3 PWM: ");
+    Serial.print(radio.getRxAux3PWM());
+    Serial.print("\t\t\t");
     Serial.print("Aux3 Position: ");
     Serial.println((int16_t)radio.getRxAux3Pos());
 #endif
