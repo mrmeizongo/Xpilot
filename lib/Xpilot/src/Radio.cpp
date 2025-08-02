@@ -103,20 +103,23 @@ void Radio::processInput(void)
     }
 }
 
+// During binding, I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
+// Yours might be different, so adjust the values accordingly
+// The failsafe logic is dependent on the receiver's behavior when the signal is lost
 void Radio::FailSafeLogic()
 {
-    // During binding, I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
-    // Yours might be different, so adjust the values accordingly
-    // The failsafe logic is dependent on the receiver's behavior when the signal is lost
-    bool isFailsafe = false;
-    isFailsafe = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
-                 (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
-                 (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
-    if (isFailsafe)
+    bool receiverLost = false;
+    receiverLost = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
+                   (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
+                   (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
+
+    if (receiverLost)
     {
+        if (failsafe)
+            return;
         if (failsafeStartTimeMs == 0)
-            failsafeStartTimeMs = millis();                        // Start the failsafe timer
-        if (millis() - failsafeStartTimeMs >= FAILSAFE_TIMEOUT_MS) // Trigger failsafe condition after timeout
+            failsafeStartTimeMs = millis();
+        if (millis() - failsafeStartTimeMs >= FAILSAFE_TIMEOUT_MS)
             failsafe = true;
     }
     else
