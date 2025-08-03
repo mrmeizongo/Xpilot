@@ -113,10 +113,11 @@ Flight stabilization software
 
 // Uncomment to use flaperons
 // Flaperons are ailerons that can be used as flaps
-// #define USE_FLAPERONS
+#define USE_FLAPERONS
 
 #if defined(USE_FLAPERONS)
-#define FLAPERON_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM)
+#define FLAPERON_PC 1.0f // Percentage of flap deflection compared to aileron deflection(0.0f - 1.0f)
+#define FLAPERON_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM) * (FLAPERON_PC)
 #endif
 // ------------------------------------------------------------------------------------------------------
 
