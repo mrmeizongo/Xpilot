@@ -34,6 +34,7 @@ Flight stabilization software
 
 #include <Arduino.h>
 #include <PlaneConfig.h>
+#include <LowpassFilter.h>
 #include <PIDF.h>
 #include "Radio.h"
 #include "Actuators.h"

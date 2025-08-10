@@ -1,5 +1,10 @@
 #include "Mode.h"
 
+static LowPassFilter<float> rollLPF{PT_LPF_FREQ, FilterType::SECOND_ORDER};
+static LowPassFilter<float> pitchLPF{PT_LPF_FREQ, FilterType::SECOND_ORDER};
+static LowPassFilter<float> yawLPF{PT_LPF_FREQ, FilterType::SECOND_ORDER};
+static unsigned long previousTime = 0;
+
 void PassthroughMode::process(void)
 {
     if (!radio.inFailsafe())
@@ -18,8 +23,16 @@ void PassthroughMode::process(void)
 void PassthroughMode::run(void)
 {
     process();
+    unsigned long currentTime = millis();
+    unsigned long dt = currentTime - previousTime;
+    dt = (float)dt * 0.001f; // Convert to seconds
+    previousTime = currentTime;
 
-    Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);
+    int16_t roll = rollLPF.Process(Mode::rollOut, dt);
+    int16_t pitch = pitchLPF.Process(Mode::pitchOut, dt);
+    int16_t yaw = yawLPF.Process(Mode::yawOut, dt);
+
+    Mode::planeMixer(roll, pitch, yaw);
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH3] = map(Mode::SRVout[Actuators::Channel::CH3], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
