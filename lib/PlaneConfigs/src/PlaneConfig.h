@@ -35,7 +35,7 @@ Flight stabilization software
 
 /*
  * Use conditional compilation based on airplane definitions in PlaneSelector
- * Exmample
+ * Example
  * #if defined(USE_GLIDER) || defined(USE_CUB) || defined(USE_ACRO)
  * #error Only one airplane need to be defined at a time
  * #endif

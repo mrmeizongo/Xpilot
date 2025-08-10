@@ -119,6 +119,9 @@ Flight stabilization software
 #define FLAPERON_PC 1.0f // Percentage of flap deflection compared to aileron deflection(0.0f - 1.0f)
 #define FLAPERON_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM) * (FLAPERON_PC)
 #endif
+
+#define AUTO_LPF_FREQ 20 // Auto low-pass filter frequency in Hz
+#define PT_LPF_FREQ 10   // Passthrough mode low-pass filter frequency in Hz
 // ------------------------------------------------------------------------------------------------------
 
 // PID config
