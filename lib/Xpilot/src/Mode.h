@@ -34,9 +34,9 @@ Flight stabilization software
 
 #include <Arduino.h>
 #include <PlaneConfig.h>
+#include <PIDF.h>
 #include "Radio.h"
 #include "Actuators.h"
-#include "PIDF.h"
 
 // Helper define to transform radio values to mode dependent resolutions
 #define GETRAWINPUT(rawValue, inLowRange, inHighRange, outLowRange, outHighRange) \
