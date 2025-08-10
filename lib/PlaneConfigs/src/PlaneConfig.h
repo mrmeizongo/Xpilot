@@ -53,11 +53,13 @@ Flight stabilization software
  * #include "DefaultConfig.h"
  * #endif
  */
-
-/*
- * NOTE
- * If you intend to modify and use only the default settings in DefaultConfig.h you can leave this file as is
- */
+#if defined(USE_RAVEN)
+#include "Raven.h"
+#elif defined(USE_SAM_1000)
+#include "Sam1000.h"
+#undef USE_SAM_1000
+#else
 #include "DefaultConfig.h"
+#endif
 
 #endif // PLANE_CONFIG_H

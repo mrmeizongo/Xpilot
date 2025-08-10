@@ -40,4 +40,7 @@ Flight stabilization software
  * #define USE_ACRO
  */
 
+#define USE_RAVEN
+// #define USE_SAM_1000
+
 #endif //_PLANE_SELECTOR_H
