@@ -3,5 +3,3 @@
 .vscode/
 lib/PlaneConfigs/src/*
 !lib/PlaneConfigs/src/DefaultConfig.h
-!lib/PlaneConfigs/src/PlaneConfig.h
-!lib/PlaneConfigs/src/PlaneSelector.h
