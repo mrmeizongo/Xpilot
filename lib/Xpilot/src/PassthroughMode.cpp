@@ -25,12 +25,12 @@ void PassthroughMode::run(void)
     process();
     unsigned long currentTime = millis();
     unsigned long dt = currentTime - previousTime;
-    dt = (float)dt * 0.001f; // Convert to seconds
+    float deltaTime = (float)dt * 0.001f;
     previousTime = currentTime;
 
-    int16_t roll = rollLPF.Process(Mode::rollOut, dt);
-    int16_t pitch = pitchLPF.Process(Mode::pitchOut, dt);
-    int16_t yaw = yawLPF.Process(Mode::yawOut, dt);
+    int16_t roll = rollLPF.Process(Mode::rollOut, deltaTime);
+    int16_t pitch = pitchLPF.Process(Mode::pitchOut, deltaTime);
+    int16_t yaw = yawLPF.Process(Mode::yawOut, deltaTime);
 
     Mode::planeMixer(roll, pitch, yaw);
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);

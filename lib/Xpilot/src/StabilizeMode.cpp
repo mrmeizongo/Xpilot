@@ -35,7 +35,7 @@ void StabilizeMode::run(void)
     float pitchDemand = Mode::pitchOut - imu.getPitch();
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-    yawController();
+    // yawController();
 
     int16_t roll = Mode::rollPIDF.Compute(rollDemand, imu.getGyroX());
     int16_t pitch = Mode::pitchPIDF.Compute(pitchDemand, imu.getGyroY());
