@@ -1,3 +1,6 @@
 [submodule "lib/LowpassFilter"]
 	path = lib/LowpassFilter
 	url = https://github.com/mrmeizongo/LowpassFilter.git
+[submodule "lib/PIDF"]
+	path = lib/PIDF
+	url = https://github.com/mrmeizongo/PIDF.git
