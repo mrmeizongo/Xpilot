@@ -88,6 +88,7 @@ class PassthroughMode : public Mode
 {
 public:
     const char *modeName4(void) const override { return "PASS"; }
+    void enter(void) override;
     void process(void) override;
     void run(void) override;
 };

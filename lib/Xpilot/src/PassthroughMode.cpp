@@ -6,6 +6,14 @@ static SecondOrderLPF<int16_t> pitchLPF{PT_LPF_FREQ};
 static SecondOrderLPF<int16_t> yawLPF{PT_LPF_FREQ};
 static unsigned long previousTime = 0;
 
+void PassthroughMode::enter(void)
+{
+    // Reset LPF states
+    rollLPF.Reset();
+    pitchLPF.Reset();
+    yawLPF.Reset();
+}
+
 void PassthroughMode::process(void)
 {
     if (!radio.inFailsafe())
