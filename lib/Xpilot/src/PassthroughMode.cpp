@@ -1,9 +1,9 @@
 #include "Mode.h"
 #include <LowpassFilter.h>
 
-static SecondOrderLPF<int16_t> rollLPF{PT_LPF_FREQ};
-static SecondOrderLPF<int16_t> pitchLPF{PT_LPF_FREQ};
-static SecondOrderLPF<int16_t> yawLPF{PT_LPF_FREQ};
+static FirstOrderLPF<int16_t> rollLPF{PT_LPF_FREQ};
+static FirstOrderLPF<int16_t> pitchLPF{PT_LPF_FREQ};
+static FirstOrderLPF<int16_t> yawLPF{PT_LPF_FREQ};
 static unsigned long previousTime = 0;
 
 void PassthroughMode::enter(void)
