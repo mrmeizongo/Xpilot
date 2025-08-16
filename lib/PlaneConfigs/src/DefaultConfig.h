@@ -122,7 +122,7 @@ Flight stabilization software
 
 #define AUTO_LPF_FREQ 20 // Auto low-pass filter frequency in Hz
 
-#define USE_FILTER_IN_PT // Filter all inputs in passthrough mode
+#define USE_FILTER_IN_PT // Uncomment to disable input filtering in passthrough mode
 #if defined(USE_FILTER_IN_PT)
 #define PT_LPF_FREQ 6 // Passthrough mode low-pass filter frequency in Hz
 #define LPF_DT 0.001f // Passthrough mode low-pass filter delta time in seconds
