@@ -1,16 +1,20 @@
 #include "Mode.h"
 #include <LowpassFilter.h>
 
+#if defined(USE_FILTER_IN_PT)
 static FirstOrderLPF<int16_t> rollLPF{PT_LPF_FREQ};
 static FirstOrderLPF<int16_t> pitchLPF{PT_LPF_FREQ};
 static FirstOrderLPF<int16_t> yawLPF{PT_LPF_FREQ};
+#endif
 
 void PassthroughMode::enter(void)
 {
+#if defined(USE_FILTER_IN_PT)
     // Reset LPF states
     rollLPF.Reset();
     pitchLPF.Reset();
     yawLPF.Reset();
+#endif
 }
 
 void PassthroughMode::process(void)
@@ -32,9 +36,18 @@ void PassthroughMode::run(void)
 {
     process();
 
-    int16_t roll = rollLPF.Process(Mode::rollOut, LPF_DT);
-    int16_t pitch = pitchLPF.Process(Mode::pitchOut, LPF_DT);
-    int16_t yaw = yawLPF.Process(Mode::yawOut, LPF_DT);
+    int16_t roll;
+    int16_t pitch;
+    int16_t yaw;
+#if defined(USE_FILTER_IN_PT)
+    roll = rollLPF.Process(Mode::rollOut, LPF_DT);
+    pitch = pitchLPF.Process(Mode::pitchOut, LPF_DT);
+    yaw = yawLPF.Process(Mode::yawOut, LPF_DT);
+#else
+    roll = Mode::rollOut;
+    pitch = Mode::pitchOut;
+    yaw = Mode::yawOut;
+#endif
 
     Mode::planeMixer(roll, pitch, yaw);
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
