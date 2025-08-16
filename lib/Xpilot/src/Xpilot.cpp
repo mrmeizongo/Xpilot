@@ -215,6 +215,4 @@ static void printLoopRate(void)
     Serial.print("Hz");
     Serial.println();
 }
-
-Xpilot xpilot;
 // ---------------------------
