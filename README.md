@@ -102,7 +102,7 @@ Ensure all components share a common ground. The Nano and MPU6050 do not require
 There are 3 flight modes; 1 = passthrough/manual, 2 = rate, and 3 - stabilize.
 
 Rate mode is the most popular among inexperienced flyers. If mode switch is not configured, any of the 3 modes can be used as the default mode. See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h).  
-Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). Default roll-rudder mixing value is 30%.
+Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). Default aileron-rudder mixing value is 30%.
 
 |      Flight mode       |                                     Description                                     |
 | :--------------------: | :---------------------------------------------------------------------------------: |
