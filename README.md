@@ -1,4 +1,6 @@
-![XPilot Logo](assets/img/logo.jpg)
+<p align="center">
+  <img src="assets/img/logo.jpg" />
+</p>
 
 # Xpilot
 
@@ -95,7 +97,9 @@ It is a good idea to add a 0.47uF decoupling capacitors close to the individual 
 These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.  
 Ensure all components share a common ground. The Nano and MPU6050 do not require decoupling capacitors as the breakout boards come with their own voltage regulators and decoupling capacitors.
 
-![Schematics](assets/img/Schematics.png)
+<p align="center">
+  <img src="assets/img/Schematics.png" />
+</p>
 
 ## Flight modes
 
