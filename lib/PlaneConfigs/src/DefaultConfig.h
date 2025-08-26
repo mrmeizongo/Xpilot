@@ -101,12 +101,6 @@ Flight stabilization software
 // Max allowable angle in stabilize mode (angles)
 #define MAX_ROLL_ANGLE_DEGS 60
 #define MAX_PITCH_ANGLE_DEGS 45
-
-// Using either AUX3 will require activation of the pin in PinChangeInterruptSettings.h
-// Uncomment to use the second auxiliary switch.
-// If using aux3 input, provide implementation for functionality.
-// aux2 input is tied to pin D7
-// #define USE_AUX3
 // ------------------------------------------------------------------------------------------------------
 
 // Plane config
@@ -127,6 +121,14 @@ Flight stabilization software
 #define PT_LPF_FREQ 6 // Passthrough mode low-pass filter frequency in Hz
 #define LPF_DT 0.001f // Passthrough mode low-pass filter delta time in seconds
 #endif
+
+// Uncomment to enable auxiliary output channel
+// #define USE_AUXOUT
+
+// Uncomment to use the second auxiliary switch.
+// If using aux3 input, provide implementation for functionality.
+// aux3 input is tied to pin D7
+// #define USE_AUX3
 // ------------------------------------------------------------------------------------------------------
 
 // PID config
@@ -171,9 +173,9 @@ Flight stabilization software
 // Uncomment or comment to set and unset respectively
 // This depends on the mount direction of the MPU6050 on the circuit board
 // Based on the aircraft coordinate system (Right-Hand, X-Forward, Z-Down)
-// + on right roll(right wing down, left wing up), - on left roll(right wing up, left wing down)
-// + on pitch up(nose up, tail down), - on down pitch down(nose down, tail up)
-// + on right yaw(nose right, tail left), - on left yaw(nose left, tail right)
+// + on right roll, - on left roll
+// + on pitch up, - on down pitch down
+// + on right yaw, - on left yaw
 
 // Uncomment to reverse stabilization output
 // #define REVERSE_ROLL_STABILIZE
