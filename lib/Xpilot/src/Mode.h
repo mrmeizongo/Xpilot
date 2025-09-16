@@ -42,7 +42,7 @@ Flight stabilization software
 #define GETRAWINPUT(rawValue, inLowRange, inHighRange, outLowRange, outHighRange) \
     map((rawValue), (inLowRange), (inHighRange), (outLowRange), (outHighRange))
 
-#define GETINPUT(rawValue, deadBand, outLowRange, outHighRange) \
+#define GETFILTEREDINPUT(rawValue, deadBand, outLowRange, outHighRange) \
     (abs((rawValue) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (GETRAWINPUT((rawValue), (SERVO_MIN_PWM), (SERVO_MAX_PWM), (outLowRange), (outHighRange))))
 
 // Abstract flight mode class

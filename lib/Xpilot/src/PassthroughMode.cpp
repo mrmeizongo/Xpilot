@@ -21,9 +21,9 @@ void PassthroughMode::process(void)
 {
     if (!radio.inFailsafe())
     {
-        Mode::rollOut = GETINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-        Mode::pitchOut = GETINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-        Mode::yawOut = GETINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+        Mode::rollOut = GETFILTEREDINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+        Mode::pitchOut = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+        Mode::yawOut = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
 #if defined(USE_FLAPERONS)
         Mode::flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), SERVO_MID_PWM, SERVO_MAX_PWM, 0, FLAPERON_RANGE);
 #endif
@@ -36,9 +36,7 @@ void PassthroughMode::run(void)
 {
     process();
 
-    int16_t roll;
-    int16_t pitch;
-    int16_t yaw;
+    int16_t roll, pitch, yaw;
 #if defined(USE_FILTER_IN_PT)
     roll = rollLPF.Process(Mode::rollOut, LPF_DT);
     pitch = pitchLPF.Process(Mode::pitchOut, LPF_DT);
