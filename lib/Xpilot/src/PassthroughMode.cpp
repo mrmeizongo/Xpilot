@@ -36,18 +36,15 @@ void PassthroughMode::run(void)
 {
     process();
 
-    int16_t roll, pitch, yaw;
 #if defined(USE_FILTER_IN_PT)
-    roll = rollLPF.Process(Mode::rollOut, LPF_DT);
-    pitch = pitchLPF.Process(Mode::pitchOut, LPF_DT);
-    yaw = yawLPF.Process(Mode::yawOut, LPF_DT);
+    int16_t roll = rollLPF.Process(Mode::rollOut, LPF_DT);
+    int16_t pitch = pitchLPF.Process(Mode::pitchOut, LPF_DT);
+    int16_t yaw = yawLPF.Process(Mode::yawOut, LPF_DT);
+    Mode::planeMixer(roll, pitch, yaw);
 #else
-    roll = Mode::rollOut;
-    pitch = Mode::pitchOut;
-    yaw = Mode::yawOut;
+    Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);
 #endif
 
-    Mode::planeMixer(roll, pitch, yaw);
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH3] = map(Mode::SRVout[Actuators::Channel::CH3], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
