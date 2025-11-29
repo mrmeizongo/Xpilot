@@ -17,6 +17,7 @@ uint16_t Mode::flaperonOut = 0;
  * Mixer for airplane type
  * Only tested with a full plane(traditional & V-tail) i.e. ailerons, elevator and rudder
  * Proceed with caution. Perform thorough pre-flight checks and reverse servo direction as needed.
+ * Mixing is only performed for the 4 primary channels(aileron left, aileron right, elevator, rudder)
  */
 void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw)
 {
@@ -65,6 +66,12 @@ void Mode::setServoOut(void)
     SRVout[Actuators::Channel::CH2] = constrain(SRVout[Actuators::Channel::CH2], SERVO_MIN_PWM, SERVO_MAX_PWM);
     SRVout[Actuators::Channel::CH3] = constrain(SRVout[Actuators::Channel::CH3], SERVO_MIN_PWM, SERVO_MAX_PWM);
     SRVout[Actuators::Channel::CH4] = constrain(SRVout[Actuators::Channel::CH4], SERVO_MIN_PWM, SERVO_MAX_PWM);
+#if defined(USE_AUXOUT1)
+    SRVout[Actuators::Channel::CH5] = constrain(SRVout[Actuators::Channel::CH5], SERVO_MIN_PWM, SERVO_MAX_PWM);
+#endif
+#if defined(USE_AUXOUT2)
+    SRVout[Actuators::Channel::CH6] = constrain(SRVout[Actuators::Channel::CH6], SERVO_MIN_PWM, SERVO_MAX_PWM);
+#endif
     actuators.setServoOut(SRVout);
 }
 

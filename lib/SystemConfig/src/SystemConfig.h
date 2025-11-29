@@ -72,8 +72,11 @@
 #define AIL2PIN_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
-#if defined(USE_AUXOUT)
-#define AUXPIN_OUTPUT 12
+#if defined(USE_AUXOUT1)
+#define AUX1PIN_OUTPUT 12
+#endif
+#if defined(USE_AUXOUT2)
+#define AUX2PIN_OUTPUT 13
 #endif
 
 // System variables

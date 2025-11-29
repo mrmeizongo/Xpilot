@@ -122,8 +122,11 @@ Flight stabilization software
 #define LPF_DT 0.001f // Passthrough mode low-pass filter delta time in seconds
 #endif
 
-// Uncomment to enable auxiliary output channel
-// #define USE_AUXOUT
+// Uncomment to enable auxiliary output channel 1
+// #define USE_AUXOUT1
+
+// Uncomment to enable auxiliary output channel 2
+// #define USE_AUXOUT2
 
 // Uncomment to use the second auxiliary switch.
 // If using aux3 input, provide implementation for functionality.
