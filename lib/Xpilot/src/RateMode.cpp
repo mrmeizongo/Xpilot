@@ -17,7 +17,7 @@ void RateMode::process(void)
         Mode::pitchOut = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
         Mode::yawOut = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
 #if defined(USE_FLAPERONS)
-        Mode::flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), SERVO_MID_PWM, SERVO_MAX_PWM, 0, FLAPERON_RANGE);
+        Mode::flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), 0, FLAPERON_RANGE);
 #endif
     }
     else

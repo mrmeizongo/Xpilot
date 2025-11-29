@@ -20,41 +20,21 @@ uint16_t Mode::flaperonOut = 0;
  */
 void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw)
 {
-#if defined(FULL_PLANE_TRADITIONAL)
+#if defined(FULL_PLANE_TRADITIONAL) || defined(RUDDER_ELEVATOR_ONLY_PLANE) || defined(AILERON_ELEVATOR_ONLY)
     SRVout[Actuators::Channel::CH1] = roll;
     SRVout[Actuators::Channel::CH2] = roll;
     SRVout[Actuators::Channel::CH3] = pitch;
     SRVout[Actuators::Channel::CH4] = yaw;
-#elif defined(FULL_PLANE_V_TAIL)
+#elif defined(FULL_PLANE_V_TAIL) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
     SRVout[Actuators::Channel::CH1] = roll;
     SRVout[Actuators::Channel::CH2] = roll;
     SRVout[Actuators::Channel::CH3] = pitch + yaw;
     SRVout[Actuators::Channel::CH4] = yaw - pitch;
-#elif defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
-    SRVout[Actuators::Channel::CH1] = 0;
-    SRVout[Actuators::Channel::CH2] = 0;
-    SRVout[Actuators::Channel::CH3] = pitch + yaw;
-    SRVout[Actuators::Channel::CH4] = yaw - pitch;
-#elif defined(FLYING_WING_W_RUDDER)
+#elif defined(FLYING_WING_W_RUDDER) || defined(FLYING_WING_NO_RUDDER)
     SRVout[Actuators::Channel::CH1] = roll + pitch;
     SRVout[Actuators::Channel::CH2] = roll - pitch;
-    SRVout[Actuators::Channel::CH3] = 0;
-    SRVout[Actuators::Channel::CH4] = yaw;
-#elif defined(FLYING_WING_NO_RUDDER)
-    SRVout[Actuators::Channel::CH1] = roll + pitch;
-    SRVout[Actuators::Channel::CH2] = roll - pitch;
-    SRVout[Actuators::Channel::CH3] = 0;
-    SRVout[Actuators::Channel::CH4] = 0;
-#elif defined(RUDDER_ELEVATOR_ONLY_PLANE)
-    SRVout[Actuators::Channel::CH1] = 0;
-    SRVout[Actuators::Channel::CH2] = 0;
     SRVout[Actuators::Channel::CH3] = pitch;
     SRVout[Actuators::Channel::CH4] = yaw;
-#elif defined(AILERON_ELEVATOR_ONLY)
-    SRVout[Actuators::Channel::CH1] = roll;
-    SRVout[Actuators::Channel::CH2] = roll;
-    SRVout[Actuators::Channel::CH3] = pitch;
-    SRVout[Actuators::Channel::CH4] = 0;
 #else
 #error No airplane type selected!
 #endif
