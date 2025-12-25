@@ -60,8 +60,9 @@ public:
     Actuators(void);
     void init(void);
     void writeServos(void);
-    void setServoOut(const int16_t (&SRVout)[NUM_CHANNELS]);
+    void writeServos(const int16_t (&SRVout)[NUM_CHANNELS]);
     void setServoOut(Channel, int16_t);
+    void setServoOut(const int16_t (&SRVout)[NUM_CHANNELS]);
     int16_t getServoOut(Channel);
 
 private:

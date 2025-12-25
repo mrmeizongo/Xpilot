@@ -72,7 +72,7 @@ void Mode::setServoOut(void)
 #if defined(USE_AUXOUT2)
     SRVout[Actuators::Channel::CH6] = constrain(SRVout[Actuators::Channel::CH6], SERVO_MIN_PWM, SERVO_MAX_PWM);
 #endif
-    actuators.setServoOut(SRVout);
+    actuators.writeServos(SRVout); // Write servo outputs to the actuators object
 }
 
 void Mode::controlFailsafe(void)
