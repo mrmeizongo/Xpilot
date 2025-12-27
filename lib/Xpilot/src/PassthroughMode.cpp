@@ -25,7 +25,7 @@ void PassthroughMode::process(void)
         Mode::pitchOut = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
         Mode::yawOut = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
 #if defined(USE_FLAPERONS)
-        Mode::flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), 0, FLAPERON_RANGE);
+        Mode::flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), 0, FLAPERON_MAX_RANGE);
 #endif
     }
     else

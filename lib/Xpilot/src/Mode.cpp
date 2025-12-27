@@ -82,6 +82,6 @@ void Mode::controlFailsafe(void)
     pitchOut = 0;
     yawOut = 0;
 #if defined(USE_FLAPERONS)
-    flaperonOut = FLAPERON_RANGE; // set flaperons to landing position
+    flaperonOut = FLAPERON_MAX_RANGE; // set flaperons to landing position
 #endif
 }
