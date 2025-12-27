@@ -60,8 +60,8 @@ Flight stabilization software
 /*
  * Servo PWM range in micro seconds
  * Refer to your servo datasheet to determine the control PWM range
- * These values are conservative and should work for most servos
- * Most standard servo testers use 800us - 2200us as the control range
+ * The most popular standard servo testers use 800us - 2200us as the control range
+ * Values below 544us and above 2400us are ignored
  */
 #define SERVO_MIN_PWM 800
 #define SERVO_MID_PWM 1500
