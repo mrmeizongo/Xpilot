@@ -104,11 +104,10 @@ void Radio::processInput(void)
 }
 
 // During binding, I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
-// Yours might be different, so adjust the values accordingly
-// The failsafe logic is dependent on the receiver's behavior when the signal is lost
+// Failsafe logic is user/system peculiar, adjust the values accordingly
 void Radio::FailSafeLogic()
 {
-    bool receiverLost = false;
+    static bool receiverLost = false;
     receiverLost = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
                    (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
                    (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
