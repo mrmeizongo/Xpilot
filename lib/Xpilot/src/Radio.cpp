@@ -46,8 +46,7 @@ void Radio::init(void)
     attachPinChangeInterrupt(AUX3PIN_INT, CHANGE);
 #endif
 
-    failsafe = false;        // Initialize failsafe state
-    failsafeStartTimeMs = 0; // Initialize failsafe start time
+    failSafe = false;
 }
 
 void Radio::processInput(void)
@@ -57,75 +56,65 @@ void Radio::processInput(void)
         // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
         if (aux1Pulses >= INPUT_MIN_PWM && aux1Pulses <= INPUT_MAX_PWM)
         {
-            rx.aux1PWM = aux1Pulses;
+            currentRx.aux1PWM = aux1Pulses;
             if (aux1Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                rx.aux1SwitchPos = THREE_POS_SW::HIGH_POS;
+                currentRx.aux1SwitchPos = THREE_POS_SW::HIGH_POS;
             else if (aux1Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                rx.aux1SwitchPos = THREE_POS_SW::LOW_POS;
+                currentRx.aux1SwitchPos = THREE_POS_SW::LOW_POS;
             else
-                rx.aux1SwitchPos = THREE_POS_SW::MID_POS;
+                currentRx.aux1SwitchPos = THREE_POS_SW::MID_POS;
         }
 
 #if defined(USE_FLAPERONS)
         if (aux2Pulses >= INPUT_MIN_PWM && aux2Pulses <= INPUT_MAX_PWM)
         {
-            rx.aux2PWM = aux2Pulses;
+            currentRx.aux2PWM = aux2Pulses;
             if (aux2Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                rx.aux2SwitchPos = THREE_POS_SW::HIGH_POS;
+                currentRx.aux2SwitchPos = THREE_POS_SW::HIGH_POS;
             else if (aux2Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                rx.aux2SwitchPos = THREE_POS_SW::LOW_POS;
+                currentRx.aux2SwitchPos = THREE_POS_SW::LOW_POS;
             else
-                rx.aux2SwitchPos = THREE_POS_SW::MID_POS;
+                currentRx.aux2SwitchPos = THREE_POS_SW::MID_POS;
         }
 #endif
 
 #if defined(USE_AUX3)
         if (aux3Pulses >= INPUT_MIN_PWM && aux3Pulses <= INPUT_MAX_PWM)
         {
-            rx.aux3PWM = aux3Pulses;
+            currentRx.aux3PWM = aux3Pulses;
             if (aux3Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                rx.aux3SwitchPos = THREE_POS_SW::HIGH_POS;
+                currentRx.aux3SwitchPos = THREE_POS_SW::HIGH_POS;
             else if (aux3Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                rx.aux3SwitchPos = THREE_POS_SW::LOW_POS;
+                currentRx.aux3SwitchPos = THREE_POS_SW::LOW_POS;
             else
-                rx.aux3SwitchPos = THREE_POS_SW::MID_POS;
+                currentRx.aux3SwitchPos = THREE_POS_SW::MID_POS;
         }
 #endif
 
         if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
-            rx.rollPWM = aileronPulses;
+            currentRx.rollPWM = aileronPulses;
         if (elevatorPulses >= INPUT_MIN_PWM && elevatorPulses <= INPUT_MAX_PWM)
-            rx.pitchPWM = elevatorPulses;
+            currentRx.pitchPWM = elevatorPulses;
         if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
-            rx.yawPWM = rudderPulses;
-
-        FailSafeLogic(); // Check for failsafe conditions
+            currentRx.yawPWM = rudderPulses;
     }
+
+    FailSafe();
 }
 
 // During binding, I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
-// Failsafe logic is user/system peculiar, adjust the values accordingly
-void Radio::FailSafeLogic()
+// Failsafe logic is highly user/system peculiar, adjust test logic accordingly
+void Radio::FailSafe()
 {
-    static bool receiverLost = false;
-    receiverLost = (abs(INPUT_MAX_PWM - rx.rollPWM) <= FAILSAFE_TOLERANCE) &&
-                   (abs(INPUT_MAX_PWM - rx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
-                   (abs(INPUT_MAX_PWM - rx.yawPWM) <= FAILSAFE_TOLERANCE);
+    // Check transmitter failsafe position i.e. max for roll, pitch and yaw
+    bool signalLost = (abs(INPUT_MAX_PWM - currentRx.rollPWM) <= FAILSAFE_TOLERANCE) &&
+                      (abs(INPUT_MAX_PWM - currentRx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
+                      (abs(INPUT_MAX_PWM - currentRx.yawPWM) <= FAILSAFE_TOLERANCE);
 
-    if (receiverLost)
-    {
-        if (failsafe)
-            return;
-        if (failsafeStartTimeMs == 0)
-            failsafeStartTimeMs = millis();
-        if (millis() - failsafeStartTimeMs >= FAILSAFE_TIMEOUT_MS)
-            failsafe = true;
-    }
+    if (signalLost)
+        failSafe = true;
     else
-    {
-        failsafe = false;        // Reset failsafe condition
-        failsafeStartTimeMs = 0; // Reset failsafe timer
-    }
+        failSafe = false; // Reset failsafe condition
 }
 
 /*

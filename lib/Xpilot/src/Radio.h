@@ -91,27 +91,26 @@ public:
     Radio(void);
     void init(void);
     void processInput(void);
-    bool inFailsafe(void) { return failsafe; }
+    bool inFailsafe(void) { return failSafe; }
 
-    int16_t getRxRollPWM(void) { return rx.rollPWM; }
-    int16_t getRxPitchPWM(void) { return rx.pitchPWM; }
-    int16_t getRxYawPWM(void) { return rx.yawPWM; }
-    int16_t getRxAux1PWM(void) { return rx.aux1PWM; }
-    THREE_POS_SW getRxAux1Pos(void) { return rx.aux1SwitchPos; }
+    int16_t getRxRollPWM(void) { return currentRx.rollPWM; }
+    int16_t getRxPitchPWM(void) { return currentRx.pitchPWM; }
+    int16_t getRxYawPWM(void) { return currentRx.yawPWM; }
+    int16_t getRxAux1PWM(void) { return currentRx.aux1PWM; }
+    THREE_POS_SW getRxAux1Pos(void) { return currentRx.aux1SwitchPos; }
 #if defined(USE_FLAPERONS)
-    int16_t getRxAux2PWM(void) { return rx.aux2PWM; }
-    THREE_POS_SW getRxAux2Pos(void) { return rx.aux2SwitchPos; }
+    int16_t getRxAux2PWM(void) { return currentRx.aux2PWM; }
+    THREE_POS_SW getRxAux2Pos(void) { return currentRx.aux2SwitchPos; }
 #endif
 #if defined(USE_AUX3)
-    int16_t getRxAux3PWM(void) { return rx.aux3PWM; }
-    THREE_POS_SW getRxAux3Pos(void) { return rx.aux3SwitchPos; }
+    int16_t getRxAux3PWM(void) { return currentRx.aux3PWM; }
+    THREE_POS_SW getRxAux3Pos(void) { return currentRx.aux3SwitchPos; }
 #endif
 
 private:
-    Control rx;
-    bool failsafe;
-    unsigned long failsafeStartTimeMs;
-    void FailSafeLogic();
+    Control currentRx;
+    bool failSafe;
+    void FailSafe();
 };
 
 extern Radio radio;
