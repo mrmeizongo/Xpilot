@@ -75,9 +75,6 @@
 #if defined(USE_AUXOUT1)
 #define AUX1PIN_OUTPUT 12
 #endif
-#if defined(USE_AUXOUT2)
-#define AUX2PIN_OUTPUT 13
-#endif
 
 // System variables
 #define BAUD_RATE 9600              // Serial baud rate

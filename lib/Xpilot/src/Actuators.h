@@ -51,9 +51,6 @@ public:
 #if defined(USE_AUXOUT1)
         CH5, // Auxiliary output channel 1
 #endif
-#if defined(USE_AUXOUT2)
-        CH6, // Auxiliary output channel 2
-#endif
         NUM_CHANNELS
     };
 

@@ -15,9 +15,6 @@ void Actuators::init(void)
 #if defined(USE_AUXOUT1)
     controlServo[CH5].attach(AUX1PIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 #endif
-#if defined(USE_AUXOUT2)
-    controlServo[CH6].attach(AUX2PIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-#endif
 }
 
 void Actuators::setServoOut(Actuators::Channel ch, int16_t value)
@@ -36,9 +33,6 @@ void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
     channelOut[CH4] = SRVout[CH4];
 #if defined(USE_AUXOUT1)
     channelOut[CH5] = SRVout[CH5];
-#endif
-#if defined(USE_AUXOUT2)
-    channelOut[CH6] = SRVout[CH6];
 #endif
 }
 
@@ -59,9 +53,6 @@ void Actuators::writeServos(void)
 #if defined(USE_AUXOUT1)
     controlServo[CH5].writeMicroseconds(channelOut[CH5]);
 #endif
-#if defined(USE_AUXOUT2)
-    controlServo[CH6].writeMicroseconds(channelOut[CH6]);
-#endif
 }
 
 void Actuators::writeServos(const int16_t (&SRVout)[NUM_CHANNELS])
@@ -72,9 +63,6 @@ void Actuators::writeServos(const int16_t (&SRVout)[NUM_CHANNELS])
     controlServo[CH4].writeMicroseconds(SRVout[CH4]);
 #if defined(USE_AUXOUT1)
     controlServo[CH5].writeMicroseconds(SRVout[CH5]);
-#endif
-#if defined(USE_AUXOUT2)
-    controlServo[CH6].writeMicroseconds(SRVout[CH6]);
 #endif
 }
 
