@@ -190,6 +190,9 @@ Flight stabilization software
 // #define REVERSE_ROLL_GYRO
 // #define REVERSE_PITCH_GYRO
 // #define REVERSE_YAW_GYRO
+
+// #define CALIBRATE    // Uncomment to calibrate the IMU on startup. Recommended for first time use. Place airplane on level surface and keep it still during calibration. Comment and reflash when done.
+// #define SELF_TEST_ACCEL_GYRO // Uncomment to perform a self-test calibration of the accel&gyro on startup.
 // ------------------------------------------------------------------------------------------------------
 
 // Rudder config
@@ -239,8 +242,6 @@ Flight stabilization software
 // #define IMU_DEBUG
 // #define IO_DEBUG
 // #define CALIBRATE_DEBUG
-// #define CALIBRATE
-// #define READ_CALIBRATION_FROM_EEPROM
-// #define SELF_TEST_ACCEL_GYRO
+// #define READ_CALIBRATION_FROM_EEPROM // Uncomment to use calibrated values from EEPROM on startup.
 // ------------------------------------------------------------------------------------------------------
 #endif // _DEFAULT_CONFIG_H
