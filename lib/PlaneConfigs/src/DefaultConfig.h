@@ -225,9 +225,9 @@ Flight stabilization software
 #define FAILSAFE_TO_STABILIZE
 
 // Uncomment to set the default flight mode when the system is powered on
+// #define DEFAULT_TO_PASSTHROUGH_MODE
 #define DEFAULT_TO_RATE_MODE
 // #define DEFAULT_TO_STABILIZE_MODE
-// #define DEFAULT_TO_PASSTHROUGH_MODE
 
 // ------------------------------------------------------------------------------------------------------
 
