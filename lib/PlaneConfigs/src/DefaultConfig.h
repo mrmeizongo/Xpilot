@@ -236,7 +236,6 @@ Flight stabilization software
 /*
  * Uncomment to enable the respective debugging
  * It is wise to enable only one debug at a time to avoid chaos on serial bus
- * Use 9600 baudrate
  */
 // #define LOOP_DEBUG
 // #define IMU_DEBUG
