@@ -174,11 +174,8 @@ public:
         return (c & 0x40) == 0x40;
     }
 
-    bool update()
+    void update()
     {
-        if (!(has_connected && (read_byte(INT_STATUS) & 0x01)))
-            return false;
-
         update_accel_gyro();
         // update_temperature();
 
@@ -207,7 +204,6 @@ public:
         }
 
         update_rpy(q[0], q[1], q[2], q[3]);
-        return true;
     }
 
     float getRoll() const { return rpy[0]; }
@@ -355,11 +351,10 @@ private:
         write_byte(ACCEL_CONFIG, c);                  // Write new ACCEL_CONFIG register value
 
         // Configure Interrupts and Bypass Enable
-        // Set interrupt pin active high, push-pull, hold interrupt pin level HIGH until interrupt cleared,
+        // Set interrupt pin active high, push-pull, interrupt pin emits a 50us long pulse,
         // clear INT_STATUS on any read operation, and disable I2C_BYPASS_EN so additional chips
         // cannot join the I2C bus.
-        // If additional chips will be added to the I2C bus, set to 0x22 so all can be controlled by the Arduino as master
-        write_byte(INT_PIN_CFG, 0x30);
+        write_byte(INT_PIN_CFG, 0x10);
         write_byte(INT_ENABLE, 0x01); // Enable data ready (bit 0) interrupt
         delay(100);
     }

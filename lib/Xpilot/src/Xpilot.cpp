@@ -58,9 +58,9 @@ void Xpilot::loop(void)
         inputLastUs = nowUs;
     }
 
-    imu.processIMU();   // Grab new sensor data if available
-    updateFlightMode(); // Update flight mode based on radio mode switch position
-    currentMode->run(); // Run the high level processing for the current flight mode
+    imu.getLatestReadings(); // Update IMU readings and AHRS values
+    updateFlightMode();      // Update flight mode based on radio mode switch position
+    currentMode->run();      // Run the high level processing for the current flight mode
 
 #if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     printDebug();

@@ -54,6 +54,7 @@
 #if defined(USE_AUX3)
 #define AUX3PIN_INPUT 7
 #endif
+#define IMUPIN_INPUT 13
 
 // Interrupt pins
 #define AILPIN_INT 18
@@ -66,6 +67,7 @@
 #if defined(USE_AUX3)
 #define AUX3PIN_INT 23
 #endif
+#define IMUPIN_INT 5
 
 // Output pins
 #define AIL1PIN_OUTPUT 8
@@ -80,7 +82,6 @@
 #define BAUD_RATE 9600              // Serial baud rate
 #define INPUT_REFRESH_RATE_US 2000U // Radio input refresh rate in microseconds (22ms)
 #define ONEHZ_LOOP_US 1000000U      // 1Hz loop rate in microseconds
-#define IMU_WARMUP_LOOP 1000U       // Number of IMU warmup loops before initial use
 #define MPU6050_ADDRESS 0x68        // I2C address of MPU6050
 #define I2C_CLOCK_400KHZ 400000U    // I2C clock speed in Hz
 #define CALIBRATE_MEMORY_OFFSET 0   // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep

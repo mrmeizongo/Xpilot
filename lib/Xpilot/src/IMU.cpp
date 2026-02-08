@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <PlaneConfig.h>
 #include <SystemConfig.h>
+#include <PinChangeInterrupt.h>
 #include <EEPROM.h>
 #include "IMU.h"
 
@@ -11,8 +12,16 @@ static void restoreFromEEPROM(float &accBiasX, float &accBiasY, float &accBiasZ,
                               float &gyroBiasX, float &gyroBiasY, float &gyroBiasZ, uint8_t startOffset = CALIBRATE_MEMORY_OFFSET) __attribute__((unused));
 static void readFromEEPROM(void) __attribute__((unused));
 
+volatile static bool imuDataReady = false;
+
 IMU::IMU(void)
 {
+    ahrs_pitch = 0.f;
+    ahrs_roll = 0.f;
+    ahrs_yaw = 0.f;
+    gyroX = 0.f;
+    gyroY = 0.f;
+    gyroZ = 0.f;
 }
 
 void IMU::init(void)
@@ -65,17 +74,15 @@ void IMU::init(void)
     calibrate();
 #endif
 
-    // Warm up the IMU before initial use
-    for (uint16_t i = 0; i < IMU_WARMUP_LOOP; i++)
-    {
-        processIMU();
-    }
+    pinMode(IMUPIN_INPUT, INPUT);
+    attachPinChangeInterrupt(IMUPIN_INT, RISING);
 }
 
-void IMU::processIMU(void)
+void IMU::getLatestReadings(void)
 {
-    if (mpu6050.update())
+    if (imuDataReady)
     {
+        mpu6050.update();
 #if defined(REVERSE_ROLL_STABILIZE)
         ahrs_roll = -(mpu6050.getRoll() + IMU_ROLL_TRIM);
 #else
@@ -111,6 +118,8 @@ void IMU::processIMU(void)
 #else
         gyroZ = mpu6050.getGyroZ();
 #endif
+
+        imuDataReady = false;
     }
 }
 
@@ -207,6 +216,11 @@ static void readFromEEPROM(void)
     Serial.println(gyroBiasY);
     Serial.print("Gyro Bias Z: ");
     Serial.println(gyroBiasZ);
+}
+
+void PinChangeInterruptEvent(IMUPIN_INT)(void)
+{
+    imuDataReady = true;
 }
 
 IMU imu;
