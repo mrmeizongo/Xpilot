@@ -39,8 +39,8 @@ See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type co
 ## Stabilization system loop
 
 The atmega328p chip is capable of running the entire stabilization loop in ~3ms.  
-This gives us an update frequency of ~333Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
-Due to the limitations of the ATMEGA328P chip, do not expect this to outperform the capabilities of more established flight control/stabilization softwares running on more capable and faster microchips. Pull requests are welcome.
+This gives us an update frequency of ~275Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
+Do not expect this to outperform the capabilities of more established flight control/stabilization softwares. Pull requests are welcome.
 
 ## Setup
 
@@ -148,7 +148,7 @@ If you like this project and want to support me create more open source projects
 
 ## Disclaimer:
 
-Do not expect this software to out perform other more established flight controller projects such as ArduPilot, inav, betaFlight etc. This code shall be considered as highly experimental and is not designed or written to any safety critical, or mission critical standards. It is given/shared for free with the knowledge and understanding that this open source flight controller software is only for small hobby based electrically powered model aircraft, or other small hobby radio controlled vehicles. It is intended to be used or modified to suit your needs for small models and is NOT to be used on any manned vehicles. The author(s) shall not be held responsible or accountable for any damage, injury or loss that may be inflicted or incurred as a result of the use or misuse of this code. Use and modify at your own risk and use within accordance of your country's laws and/or regulations.
+Do not expect this software to out perform other more established flight controller projects such as ArduPilot, inav, betaFlight etc. This code shall be considered as highly experimental and is not designed or written to any safety critical, or mission critical standards. It is given/shared for free with the knowledge and understanding that this open source flight stabilization software is only for small hobby based electrically powered model aircraft, or other small hobby radio controlled vehicles. It is intended to be used or modified to suit your needs for small models and is NOT to be used on any manned vehicles. The author(s) shall not be held responsible or accountable for any damage, injury or loss that may be inflicted or incurred as a result of the use or misuse of this code. Use and modify at your own risk and use within accordance of your country's laws and/or regulations.
 
 By using this, or any part of this software you agree to [this license agreement.](https://github.com/mrmeizongo/Xpilot/blob/main/LICENSE)
 
