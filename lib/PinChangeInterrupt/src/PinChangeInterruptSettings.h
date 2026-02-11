@@ -39,8 +39,8 @@ That is done by the macros. */
 
 #ifndef PCINT_ENABLE_MANUAL
 
-#define PCINT_ENABLE_PORT0
-//  #define PCINT_ENABLE_PORT1
+// #define PCINT_ENABLE_PORT0
+//   #define PCINT_ENABLE_PORT1
 #define PCINT_ENABLE_PORT2
 // #define PCINT_ENABLE_PORT3
 
@@ -49,7 +49,7 @@ That is done by the macros. */
 // #define PCINT_ENABLE_PCINT2
 // #define PCINT_ENABLE_PCINT3
 // #define PCINT_ENABLE_PCINT4
-#define PCINT_ENABLE_PCINT5
+// #define PCINT_ENABLE_PCINT5
 // #define PCINT_ENABLE_PCINT6
 // #define PCINT_ENABLE_PCINT7
 // #define PCINT_ENABLE_PCINT8
@@ -92,7 +92,7 @@ That is done by the macros. */
 #define PCINT_ALINKAGE
 
 // force compile all enabled port ISRs (with .a linkage)
-#define PCINT_COMPILE_ENABLED_ISR
+// #define PCINT_COMPILE_ENABLED_ISR
 
 #endif
 

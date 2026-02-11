@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <PlaneConfig.h>
 #include <SystemConfig.h>
-#include <PinChangeInterrupt.h>
 #include <EEPROM.h>
 #include "IMU.h"
 
@@ -12,16 +11,14 @@ static void restoreFromEEPROM(float &accBiasX, float &accBiasY, float &accBiasZ,
                               float &gyroBiasX, float &gyroBiasY, float &gyroBiasZ, uint8_t startOffset = CALIBRATE_MEMORY_OFFSET) __attribute__((unused));
 static void readFromEEPROM(void) __attribute__((unused));
 
-volatile static bool imuDataReady = false;
-
 IMU::IMU(void)
 {
-    ahrs_pitch = 0.f;
-    ahrs_roll = 0.f;
-    ahrs_yaw = 0.f;
-    gyroX = 0.f;
-    gyroY = 0.f;
-    gyroZ = 0.f;
+    rpy[0] = 0.f;
+    rpy[1] = 0.f;
+    rpy[2] = 0.f;
+    g[0] = 0.f;
+    g[1] = 0.f;
+    g[2] = 0.f;
 }
 
 void IMU::init(void)
@@ -45,7 +42,7 @@ void IMU::init(void)
      *                                                          };                          };
      * See MPU6050 library for more details
      */
-    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE::SMPL_1000HZ, ACCEL_GYRO_DLPF_CFG::DLPF_44HZx42HZ);
+    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE::SMPL_250HZ, ACCEL_GYRO_DLPF_CFG::DLPF_21HZx20HZ);
 
     // Initialize MPU
     if (!mpu6050.setup(MPU6050_ADDRESS, setting))
@@ -66,54 +63,29 @@ void IMU::init(void)
 #else
     calibrate();
 #endif
-
-    pinMode(IMUPIN_INPUT, INPUT);
-    attachPinChangeInterrupt(IMUPIN_INT, RISING);
 }
 
 void IMU::getLatestReadings(void)
 {
-    if (imuDataReady)
-    {
-        mpu6050.update();
-#if defined(REVERSE_ROLL_STABILIZE)
-        ahrs_roll = -(mpu6050.getRoll() + IMU_ROLL_TRIM);
-#else
-        ahrs_roll = mpu6050.getRoll() + IMU_ROLL_TRIM;
+    mpu6050.update(rpy, g);
+#if defined(REVERSE_ROLL)
+    rpy[0] = -rpy[0];
 #endif
-
-#if defined(REVERSE_PITCH_STABILIZE)
-        ahrs_pitch = -(mpu6050.getPitch() + IMU_PITCH_TRIM);
-#else
-        ahrs_pitch = mpu6050.getPitch() + IMU_PITCH_TRIM;
+#if defined(REVERSE_PITCH)
+    rpy[1] = -rpy[1];
 #endif
-
-#if defined(REVERSE_YAW_STABILIZE)
-        ahrs_yaw = -(mpu6050.getYaw() + IMU_YAW_TRIM);
-#else
-        ahrs_yaw = mpu6050.getYaw() + IMU_YAW_TRIM;
+#if defined(REVERSE_YAW)
+    rpy[2] = -rpy[2];
 #endif
-
-#if defined(REVERSE_ROLL_GYRO)
-        gyroX = -(mpu6050.getGyroX());
-#else
-        gyroX = mpu6050.getGyroX();
+#if defined(REVERSE_X_GYRO)
+    g[0] = -g[0];
 #endif
-
-#if defined(REVERSE_PITCH_GYRO)
-        gyroY = -(mpu6050.getGyroY());
-#else
-        gyroY = mpu6050.getGyroY();
+#if defined(REVERSE_Y_GYRO)
+    g[1] = -g[1];
 #endif
-
-#if defined(REVERSE_YAW_GYRO)
-        gyroZ = -(mpu6050.getGyroZ());
-#else
-        gyroZ = mpu6050.getGyroZ();
+#if defined(REVERSE_Z_GYRO)
+    g[2] = -g[2];
 #endif
-
-        imuDataReady = false;
-    }
 }
 
 void IMU::calibrate(void)
@@ -209,11 +181,6 @@ static void readFromEEPROM(void)
     Serial.println(gyroBiasY);
     Serial.print("Gyro Bias Z: ");
     Serial.println(gyroBiasZ);
-}
-
-void PinChangeInterruptEvent(IMUPIN_INT)(void)
-{
-    imuDataReady = true;
 }
 
 IMU imu;

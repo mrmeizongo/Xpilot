@@ -163,14 +163,6 @@ Flight stabilization software
 
 // IMU config
 
-/*
- * Trim values to be used to correct gyro misalignment
- */
-
-#define IMU_ROLL_TRIM 0.f
-#define IMU_PITCH_TRIM 0.f
-#define IMU_YAW_TRIM 0.f
-
 // Uncomment or comment to set and unset respectively
 // This depends on the mount direction of the MPU6050 on the circuit board
 // Based on the aircraft coordinate system (Right-Hand, X-Forward, Z-Down)
@@ -179,14 +171,14 @@ Flight stabilization software
 // + on right yaw, - on left yaw
 
 // Uncomment to reverse stabilization output
-// #define REVERSE_ROLL_STABILIZE
-// #define REVERSE_PITCH_STABILIZE
-// #define REVERSE_YAW_STABILIZE    // Not required
+// #define REVERSE_ROLL
+// #define REVERSE_PITCH
+// #define REVERSE_YAW    // Not required
 
 // Uncomment to reverse gyro output
-// #define REVERSE_ROLL_GYRO
-// #define REVERSE_PITCH_GYRO
-// #define REVERSE_YAW_GYRO
+// #define REVERSE_X_GYRO
+// #define REVERSE_Y_GYRO
+// #define REVERSE_Z_GYRO
 
 // #define CALIBRATE    // Uncomment to calibrate the IMU on startup. Recommended for first time use. Place airplane on level surface and keep it still during calibration. Comment and reflash when done.
 // #define SELF_TEST_ACCEL_GYRO // Uncomment to perform a self-test calibration of the accel&gyro on startup.

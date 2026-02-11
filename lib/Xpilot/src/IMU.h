@@ -11,13 +11,13 @@ public:
     void restoreCalibration(void); // Restore the calibration values from EEPROM
     void getLatestReadings(void);  // Process the IMU data and update the AHRS values
 
-    float getRoll(void) { return ahrs_roll; }
-    float getPitch(void) { return ahrs_pitch; }
-    float getYaw(void) { return ahrs_yaw; }
+    float getRoll(void) { return rpy[0]; }
+    float getPitch(void) { return rpy[1]; }
+    float getYaw(void) { return rpy[2]; }
 
-    float getGyroX(void) { return gyroX; }
-    float getGyroY(void) { return gyroY; }
-    float getGyroZ(void) { return gyroZ; }
+    float getGyroX(void) { return g[0]; }
+    float getGyroY(void) { return g[1]; }
+    float getGyroZ(void) { return g[2]; }
 
 private:
     /*
@@ -25,8 +25,8 @@ private:
      */
     MPU6050 mpu6050;
 
-    float ahrs_pitch, ahrs_roll, ahrs_yaw; // Airplane coordinate system values
-    float gyroX, gyroY, gyroZ;             // Angular velocity about the respective axis
+    float rpy[3]; // Airplane coordinate system values
+    float g[3];   // Angular velocity about the respective axis - xyz
 };
 
 extern IMU imu;

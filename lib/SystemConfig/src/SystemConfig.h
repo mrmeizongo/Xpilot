@@ -2,7 +2,7 @@
 #define _SYSTEM_CONFIG_H
 #include <PlaneConfig.h>
 
-#define SYSTEM_CONFIG_VERSION "2.1.0"
+#define SYSTEM_CONFIG_VERSION "2.1.1"
 
 // ATmega328p pin definitions
 /*
@@ -54,7 +54,6 @@
 #if defined(USE_AUX3)
 #define AUX3PIN_INPUT 7
 #endif
-#define IMUPIN_INPUT 13
 
 // Interrupt pins
 #define AILPIN_INT 18
@@ -67,7 +66,6 @@
 #if defined(USE_AUX3)
 #define AUX3PIN_INT 23
 #endif
-#define IMUPIN_INT 5
 
 // Output pins
 #define AIL1PIN_OUTPUT 8
@@ -79,13 +77,14 @@
 #endif
 
 // System variables
-#define BAUD_RATE 9600              // Serial baud rate
-#define INPUT_REFRESH_RATE_US 2000U // Radio input refresh rate in microseconds (22ms)
-#define ONEHZ_LOOP_US 1000000U      // 1Hz loop rate in microseconds
-#define MPU6050_ADDRESS 0x68        // I2C address of MPU6050
-#define I2C_CLOCK_400KHZ 400000U    // I2C clock speed in Hz
-#define CALIBRATE_MEMORY_OFFSET 0   // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep
-#define FAILSAFE_TIMEOUT_MS 1000U   // Failsafe timeout in milliseconds
-#define FAILSAFE_TOLERANCE 200U     // Failsafe tolerance in microseconds
+#define BAUD_RATE 9600               // Serial baud rate
+#define INPUT_REFRESH_RATE_US 20000U // Radio input refresh rate in microseconds (50HZ)
+#define IMU_REFRESH_RATE_US 4000     // IMU refresh rate in microseconds (250Hz)
+#define ONEHZ_LOOP_US 1000000U       // 1Hz loop rate in microseconds
+#define MPU6050_ADDRESS 0x68         // I2C address of MPU6050
+#define I2C_CLOCK_400KHZ 400000U     // I2C clock speed in Hz
+#define I2C_CLOCK_100KHZ 100000U     // I2C clock speed in Hz
+#define CALIBRATE_MEMORY_OFFSET 0    // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep
+#define FAILSAFE_TOLERANCE 200U      // Failsafe tolerance in microseconds
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H

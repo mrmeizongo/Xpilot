@@ -38,8 +38,8 @@ See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type co
 
 ## Stabilization system loop
 
-The atmega328p chip is capable of running the entire stabilization loop in ~3ms.  
-This gives us an update frequency of ~275Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
+The atmega328p chip is capable of running the entire stabilization loop in ~3.5ms.  
+This gives us an update frequency of ~285Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
 Do not expect this to outperform the capabilities of more established flight control/stabilization softwares. Pull requests are welcome.
 
 ## Setup
@@ -124,9 +124,8 @@ Throttle is always under manual control. Signal wire for throttle goes directly 
 
 Rate/Expo should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode.
 
-Even though two calibration functions are provided(recommended), the MPU6050 does not really need to be calibrated as long as it passes the self test function. Uncomment SELF_TEST_ACCEL_GYRO in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) to enable. Be sure to comment it when done. Uncomment IMU_DEBUG in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) and place the plane on a level surface to view the reported(roll, pitch, and yaw) sensor values. Adjust IMU_XXX_TRIM(pitch and roll) values to bring reported values to as close to zero as possible. This might require several attempts. Aim for a +/- .5 value when plane is placed on a level surface and held still.
+Two calibration functions are provided. Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in flash memory. Uncommenting CALIBRATE_DEBUG does same and prints out the calibration values in the serial monitor for inspection. Ensure the airplane is on a level surface and held still throughout the calibration process.
 
-Two calibration functions are also provided(RECOMMENDED). Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in flash memory. Uncommenting CALIBRATE_DEBUG does same and prints out the calibration values in the serial monitor for inspection. Ensure the airplane is held level and still throughout the calibration process.
 At any time, you can view the calibrated values on the serial monitor by uncommenting READ_CALIBRATION_FROM_EEPROM in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)
 
 After all debug and calibration operations are complete, be sure to uncomment and reupload Xpilot for normal operation.

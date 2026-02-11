@@ -92,6 +92,8 @@ public:
 
         if (isConnected())
         {
+            if (b_verbose)
+                Serial.println("MPU6050 connected successfully. Initializing...");
             initMPU6050();
             has_connected = true;
         }
@@ -109,11 +111,11 @@ public:
         byte c = read_byte(PWR_MGMT_1); // read the value, change sleep bit to match b, write byte back to register
         if (b)
         {
-            c = c | 0x40; // sets the sleep bit
+            c |= 0x40; // sets the sleep bit
         }
         else
         {
-            c = c & 0xBF; // mask 1011111 keeps all the previous bits
+            c &= 0xBF; // mask 1011111 keeps all the previous bits
         }
         write_byte(PWR_MGMT_1, c);
     }
@@ -174,7 +176,7 @@ public:
         return (c & 0x40) == 0x40;
     }
 
-    void update()
+    void update(float _rpy[3], float _g[3])
     {
         update_accel_gyro();
         // update_temperature();
@@ -204,6 +206,12 @@ public:
         }
 
         update_rpy(q[0], q[1], q[2], q[3]);
+        _rpy[0] = rpy[0];
+        _rpy[1] = rpy[1];
+        _rpy[2] = rpy[2];
+        _g[0] = g[0];
+        _g[1] = g[1];
+        _g[2] = g[2];
     }
 
     float getRoll() const { return rpy[0]; }
@@ -221,7 +229,7 @@ public:
 
     float getAcc(const uint8_t i) const { return (i < 3) ? a[i] : 0.f; }
     float getGyro(const uint8_t i) const { return (i < 3) ? g[i] : 0.f; }
-    float getLinearAcc(const uint8_t i) const { return (i < 3) ? lin_acc[i] : 0.f; }
+    // float getLinearAcc(const uint8_t i) const { return (i < 3) ? lin_acc[i] : 0.f; }
 
     float getAccX() const { return a[0]; }
     float getAccY() const { return a[1]; }
@@ -229,9 +237,9 @@ public:
     float getGyroX() const { return g[0]; }
     float getGyroY() const { return g[1]; }
     float getGyroZ() const { return g[2]; }
-    float getLinearAccX() const { return lin_acc[0]; }
-    float getLinearAccY() const { return lin_acc[1]; }
-    float getLinearAccZ() const { return lin_acc[2]; }
+    // float getLinearAccX() const { return lin_acc[0]; }
+    // float getLinearAccY() const { return lin_acc[1]; }
+    // float getLinearAccZ() const { return lin_acc[2]; }
 
     float getAccBias(const uint8_t i) const { return (i < 3) ? acc_bias[i] : 0.f; }
     float getGyroBias(const uint8_t i) const { return (i < 3) ? gyro_bias[i] : 0.f; }
@@ -294,7 +302,7 @@ private:
     float g[3]{0.f, 0.f, 0.f};
     float q[4] = {1.0f, 0.0f, 0.0f, 0.0f}; // vector to hold quaternion
     float rpy[3]{0.f, 0.f, 0.f};
-    float lin_acc[3]{0.f, 0.f, 0.f}; // linear acceleration (acceleration with gravity component subtracted)
+    // float lin_acc[3]{0.f, 0.f, 0.f}; // linear acceleration (acceleration with gravity component subtracted)
     QuaternionFilter quat_filter;
     size_t n_filter_iter{1};
 
@@ -337,25 +345,25 @@ private:
 
         // Set gyroscope full scale range
         // Range selects FS_SEL and GFS_SEL are 0 - 3, so 2-bit values are left-shifted into positions 4:3
-        uint8_t c = read_byte(GYRO_CONFIG);          // get current GYRO_CONFIG register value
-        c = c & ~0xE0;                               // Clear self-test bits [7:5]
-        c = c & ~0x18;                               // Clear GYRO_FS_SEL bits [4:3]
-        c = c | (uint8_t(setting.gyro_fs_sel) << 3); // Set full scale range for the gyro
-        write_byte(GYRO_CONFIG, c);                  // Write new GYRO_CONFIG value to register
+        uint8_t c = read_byte(GYRO_CONFIG);       // get current GYRO_CONFIG register value
+        c &= ~0xE0;                               // Clear self-test bits [7:5]
+        c &= ~0x18;                               // Clear GYRO_FS_SEL bits [4:3]
+        c |= (uint8_t(setting.gyro_fs_sel) << 3); // Set full scale range for the gyro
+        write_byte(GYRO_CONFIG, c);               // Write new GYRO_CONFIG value to register
 
         // Set accelerometer full-scale range configuration
-        c = read_byte(ACCEL_CONFIG);                  // get current ACCEL_CONFIG register value
-        c = c & ~0xE0;                                // Clear self-test bits [7:5]
-        c = c & ~0x18;                                // Clear ACCEL_FS_SEL bits [4:3]
-        c = c | (uint8_t(setting.accel_fs_sel) << 3); // Set full scale range for the accelerometer
-        write_byte(ACCEL_CONFIG, c);                  // Write new ACCEL_CONFIG register value
+        c = read_byte(ACCEL_CONFIG);               // get current ACCEL_CONFIG register value
+        c &= ~0xE0;                                // Clear self-test bits [7:5]
+        c &= ~0x18;                                // Clear ACCEL_FS_SEL bits [4:3]
+        c |= (uint8_t(setting.accel_fs_sel) << 3); // Set full scale range for the accelerometer
+        write_byte(ACCEL_CONFIG, c);               // Write new ACCEL_CONFIG register value
 
         // Configure Interrupts and Bypass Enable
         // Set interrupt pin active high, push-pull, interrupt pin emits a 50us long pulse,
         // clear INT_STATUS on any read operation, and disable I2C_BYPASS_EN so additional chips
         // cannot join the I2C bus.
         write_byte(INT_PIN_CFG, 0x10);
-        write_byte(INT_ENABLE, 0x01); // Enable data ready (bit 0) interrupt
+        write_byte(INT_ENABLE, 0x00); // Disable data ready (bit 0) interrupt
         delay(100);
     }
 
@@ -388,7 +396,7 @@ private:
         // Limit pitch to +/-90 degrees range
         if (rpy[1] >= +90.f)
             rpy[1] -= 180.f;
-        else if (rpy[1] < -90.f)
+        else if (rpy[1] <= -90.f)
             rpy[1] += 180.f;
 
         // Limit yaw to +/-180 degrees range
@@ -398,9 +406,9 @@ private:
             rpy[2] += 360.f;
 
         // Convert to linear acceleration
-        lin_acc[0] = a[0] + (2 * ((qw * qy) + (qx * qz)));
-        lin_acc[1] = a[1] + (2 * ((qy * qz) - (qw * qx)));
-        lin_acc[2] = a[2] - ((qw * qw) - (qx * qx) - (qy * qy) - (qz * qz));
+        // lin_acc[0] = a[0] + (2 * ((qw * qy) + (qx * qz)));
+        // lin_acc[1] = a[1] + (2 * ((qy * qz) - (qw * qx)));
+        // lin_acc[2] = a[2] - ((qw * qw) - (qx * qx) - (qy * qy) - (qz * qz));
     }
 
     void update_accel_gyro()
