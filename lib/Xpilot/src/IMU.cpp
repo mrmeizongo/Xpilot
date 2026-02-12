@@ -31,14 +31,14 @@ void IMU::init(void)
      * Accel sensitivity            Gyro sensitivity            FIFO sample rate            Accel & Gyro DLPF config
      * enum class ACCEL_FS_SEL      enum class GYRO_FS_SEL      enum class SAMPLE_RATE      enum class ACCEL_GYRO_DLPF_CFG
      * {                            {                           {                           {
-     *      A2G = 0,                    G250DPS = 0,                SMPL_1000HZ = 0,            DLPF_260HZx256HZ = 0,
+     *      A2G = 0,                    G250DPS = 0,                SMPL_8KHZ = 0,            DLPF_260HZx256HZ = 0,
      *      A4G,                        G500DPS,                    SMPL_500HZ,                 DLPF_184HZx188HZ,
      *      A8G,                        G1000DPS,                   SMPL_333HZ,                 DLPF_94HZx98HZ,
      *      A16G                        G2000DPS                    SMPL_250HZ,                 DLPF_44HZx42HZ,
      * };                           };                              SMPL_200HZ,                 DLPF_21HZx20HZ,
      *                                                              SMPL_167HZ,                 DLPF_10HZx10HZ,
      *                                                              SMPL_143HZ,                 DLPF_5HZx5HZ,
-     *                                                              SMPL_125HZ                  DLPF_RESERVED
+     *                                                              SMPL_1KHZ                  DLPF_RESERVED
      *                                                          };                          };
      * See MPU6050 library for more details
      */
