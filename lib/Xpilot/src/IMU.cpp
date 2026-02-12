@@ -28,21 +28,21 @@ void IMU::init(void)
     /*
      * Settings options are;
      *
-     * Accel sensitivity            Gyro sensitivity            FIFO sample rate            Accel & Gyro DLPF config
-     * enum class ACCEL_FS_SEL      enum class GYRO_FS_SEL      enum class SAMPLE_RATE      enum class ACCEL_GYRO_DLPF_CFG
-     * {                            {                           {                           {
-     *      A2G = 0,                    G250DPS = 0,                SMPL_8KHZ = 0,            DLPF_260HZx256HZ = 0,
-     *      A4G,                        G500DPS,                    SMPL_500HZ,                 DLPF_184HZx188HZ,
-     *      A8G,                        G1000DPS,                   SMPL_333HZ,                 DLPF_94HZx98HZ,
-     *      A16G                        G2000DPS                    SMPL_250HZ,                 DLPF_44HZx42HZ,
-     * };                           };                              SMPL_200HZ,                 DLPF_21HZx20HZ,
-     *                                                              SMPL_167HZ,                 DLPF_10HZx10HZ,
-     *                                                              SMPL_143HZ,                 DLPF_5HZx5HZ,
-     *                                                              SMPL_1KHZ                  DLPF_RESERVED
-     *                                                          };                          };
+     * Accel sensitivity            Gyro sensitivity            FIFO sample rate                Accel & Gyro DLPF config
+     * enum class ACCEL_FS_SEL      enum class GYRO_FS_SEL      enum class SAMPLE_RATE_DIV      enum class ACCEL_GYRO_DLPF_CFG
+     * {                            {                           {                               {
+     *      A2G = 0,                    G250DPS = 0,                SMPL_8KHZ = 0,                  DLPF_260HZx256HZ = 0,
+     *      A4G,                        G500DPS,                    SMPL_500HZ,                     DLPF_184HZx188HZ,
+     *      A8G,                        G1000DPS,                   SMPL_333HZ,                     DLPF_94HZx98HZ,
+     *      A16G                        G2000DPS                    SMPL_250HZ,                     DLPF_44HZx42HZ,
+     * };                           };                              SMPL_200HZ,                     DLPF_21HZx20HZ,
+     *                                                              SMPL_167HZ,                     DLPF_10HZx10HZ,
+     *                                                              SMPL_143HZ,                     DLPF_5HZx5HZ,
+     *                                                              SMPL_1KHZ                       DLPF_RESERVED
+     *                                                          };                              };
      * See MPU6050 library for more details
      */
-    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE::SMPL_250HZ, ACCEL_GYRO_DLPF_CFG::DLPF_21HZx20HZ);
+    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE_DIV::SMPL_250HZ, ACCEL_GYRO_DLPF_CFG::DLPF_21HZx20HZ);
 
     // Initialize MPU
     if (!mpu6050.setup(MPU6050_ADDRESS, setting))

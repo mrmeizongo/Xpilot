@@ -28,7 +28,7 @@ enum class GYRO_FS_SEL : uint8_t
 // Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV)
 // Gyroscope Output Rate = 8kHz when DLPF is disabled (DLPF_CFG = 0 or 7), and 1kHz when DLPF is enabled (DLPF_CFG = 1 through 6)
 // If ACCEL_GYRO_DLPF_CFG is set to DLPF_260HZx256HZ or DLPF_RESERVED, gyro output and Sample Rate is 8kHz, accelerometer is still 1kHz
-enum class SAMPLE_RATE : uint8_t
+enum class SAMPLE_RATE_DIV : uint8_t
 {
     SMPL_8KHZ = 0,
     SMPL_500HZ,
@@ -57,14 +57,14 @@ struct MPU6050Setting
 {
     ACCEL_FS_SEL accel_fs_sel;
     GYRO_FS_SEL gyro_fs_sel;
-    SAMPLE_RATE sample_rate;
+    SAMPLE_RATE_DIV sample_rate;
     ACCEL_GYRO_DLPF_CFG accel_gyro_dlpf_cfg;
 
     MPU6050Setting(void)
         : accel_fs_sel{ACCEL_FS_SEL::A2G}, gyro_fs_sel{GYRO_FS_SEL::G250DPS},
-          sample_rate{SAMPLE_RATE::SMPL_8KHZ}, accel_gyro_dlpf_cfg{ACCEL_GYRO_DLPF_CFG::DLPF_260HZx256HZ} {}
+          sample_rate{SAMPLE_RATE_DIV::SMPL_8KHZ}, accel_gyro_dlpf_cfg{ACCEL_GYRO_DLPF_CFG::DLPF_260HZx256HZ} {}
 
-    MPU6050Setting(ACCEL_FS_SEL _accel_fs_sel, GYRO_FS_SEL _gyro_fs_sel, SAMPLE_RATE _sample_rate, ACCEL_GYRO_DLPF_CFG _accel_gyro_dlpf_cfg)
+    MPU6050Setting(ACCEL_FS_SEL _accel_fs_sel, GYRO_FS_SEL _gyro_fs_sel, SAMPLE_RATE_DIV _sample_rate, ACCEL_GYRO_DLPF_CFG _accel_gyro_dlpf_cfg)
         : accel_fs_sel{_accel_fs_sel}, gyro_fs_sel{_gyro_fs_sel},
           sample_rate{_sample_rate}, accel_gyro_dlpf_cfg{_accel_gyro_dlpf_cfg} {}
 };
