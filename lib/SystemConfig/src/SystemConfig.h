@@ -78,8 +78,8 @@
 
 // System variables
 #define BAUD_RATE 9600               // Serial baud rate
-#define INPUT_REFRESH_RATE_US 20000U // Radio input refresh rate in microseconds (50HZ)
-#define IMU_REFRESH_RATE_US 4000     // IMU refresh rate in microseconds (250Hz)
+#define INPUT_REFRESH_RATE_US 20000U // Radio input refresh rate in microseconds (50HZ). Typical transmitter PWM refresh rate
+#define IMU_REFRESH_RATE_US 4000     // IMU refresh rate in microseconds (250Hz). Selected from IMU SAMPLE_RATE_DIV config. See IMU.cpp for details
 #define ONEHZ_LOOP_US 1000000U       // 1Hz loop rate in microseconds
 #define MPU6050_ADDRESS 0x68         // I2C address of MPU6050
 #define I2C_CLOCK_400KHZ 400000U     // I2C clock speed in Hz
