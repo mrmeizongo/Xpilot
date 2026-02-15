@@ -52,9 +52,6 @@ void PassthroughMode::run(void)
 #if defined(USE_AUXOUT1)
     Mode::SRVout[Actuators::Channel::CH5] = map(Mode::SRVout[Actuators::Channel::CH5], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
 #endif
-#if defined(USE_AUXOUT2)
-    Mode::SRVout[Actuators::Channel::CH6] = map(Mode::SRVout[Actuators::Channel::CH6], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-#endif
 #if defined(USE_FLAPERONS)
     Mode::setFlaperons();
 #endif

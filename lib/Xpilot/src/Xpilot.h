@@ -58,7 +58,7 @@ private:
     Mode *currentMode;
     Mode *previousMode;
 
-    bool failSafeActive = false; // System failsafe active flag
+    bool failSafeActive; // System failsafe active flag
     void updateFlightMode(void);
 };
 

@@ -4,6 +4,24 @@
 #include <SystemConfig.h>
 #include "Radio.h"
 
+// Helper macro to set PWM values and switch positions based on pulse lengths
+#define SET_SWITCH_POS(controlPWM, controlSwitch, pulse)   \
+    if (pulse >= INPUT_MIN_PWM && pulse <= INPUT_MAX_PWM)  \
+    {                                                      \
+        controlPWM = pulse;                                \
+        if (pulse >= INPUT_MAX_PWM - INPUT_SEPARATOR)      \
+            controlSwitch = THREE_POS_SW::HIGH_POS;        \
+        else if (pulse <= INPUT_MIN_PWM + INPUT_SEPARATOR) \
+            controlSwitch = THREE_POS_SW::LOW_POS;         \
+        else                                               \
+            controlSwitch = THREE_POS_SW::MID_POS;         \
+    }
+
+// Helper macro to set PWM values based on pulse lengths
+#define SET_PWM(controlPWM, pulse)                        \
+    if (pulse >= INPUT_MIN_PWM && pulse <= INPUT_MAX_PWM) \
+        controlPWM = pulse;
+
 volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
 volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
 volatile static unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
@@ -53,57 +71,26 @@ void Radio::processInput(void)
 {
     ATOMIC_BLOCK(ATOMIC_FORCEON)
     {
-        // Record the length of the pulse if it is within tx/rx range (pulse is in uS)
-        if (aux1Pulses >= INPUT_MIN_PWM && aux1Pulses <= INPUT_MAX_PWM)
-        {
-            currentRx.aux1PWM = aux1Pulses;
-            if (aux1Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                currentRx.aux1SwitchPos = THREE_POS_SW::HIGH_POS;
-            else if (aux1Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                currentRx.aux1SwitchPos = THREE_POS_SW::LOW_POS;
-            else
-                currentRx.aux1SwitchPos = THREE_POS_SW::MID_POS;
-        }
+        SET_SWITCH_POS(currentRx.aux1PWM, currentRx.aux1SwitchPos, aux1Pulses);
 
 #if defined(USE_FLAPERONS)
-        if (aux2Pulses >= INPUT_MIN_PWM && aux2Pulses <= INPUT_MAX_PWM)
-        {
-            currentRx.aux2PWM = aux2Pulses;
-            if (aux2Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                currentRx.aux2SwitchPos = THREE_POS_SW::HIGH_POS;
-            else if (aux2Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                currentRx.aux2SwitchPos = THREE_POS_SW::LOW_POS;
-            else
-                currentRx.aux2SwitchPos = THREE_POS_SW::MID_POS;
-        }
+        SET_SWITCH_POS(currentRx.aux2PWM, currentRx.aux2SwitchPos, aux2Pulses);
 #endif
 
 #if defined(USE_AUX3)
-        if (aux3Pulses >= INPUT_MIN_PWM && aux3Pulses <= INPUT_MAX_PWM)
-        {
-            currentRx.aux3PWM = aux3Pulses;
-            if (aux3Pulses >= INPUT_MAX_PWM - INPUT_SEPARATOR)
-                currentRx.aux3SwitchPos = THREE_POS_SW::HIGH_POS;
-            else if (aux3Pulses <= INPUT_MIN_PWM + INPUT_SEPARATOR)
-                currentRx.aux3SwitchPos = THREE_POS_SW::LOW_POS;
-            else
-                currentRx.aux3SwitchPos = THREE_POS_SW::MID_POS;
-        }
+        SET_SWITCH_POS(currentRx.aux3PWM, currentRx.aux3SwitchPos, aux3Pulses);
 #endif
 
-        if (aileronPulses >= INPUT_MIN_PWM && aileronPulses <= INPUT_MAX_PWM)
-            currentRx.rollPWM = aileronPulses;
-        if (elevatorPulses >= INPUT_MIN_PWM && elevatorPulses <= INPUT_MAX_PWM)
-            currentRx.pitchPWM = elevatorPulses;
-        if (rudderPulses >= INPUT_MIN_PWM && rudderPulses <= INPUT_MAX_PWM)
-            currentRx.yawPWM = rudderPulses;
+        SET_PWM(currentRx.rollPWM, aileronPulses);
+        SET_PWM(currentRx.pitchPWM, elevatorPulses);
+        SET_PWM(currentRx.yawPWM, rudderPulses);
     }
 
     FailSafe();
 }
 
 // During binding, I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
-// Failsafe logic is highly user/system peculiar, adjust test logic accordingly
+// Failsafe logic is highly user/system peculiar, modify test logic accordingly
 void Radio::FailSafe()
 {
     // Check transmitter failsafe position i.e. max for roll, pitch and yaw
