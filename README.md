@@ -38,8 +38,8 @@ See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type co
 
 ## Stabilization system loop
 
-The atmega328p chip is capable of running the entire stabilization loop in ~3.5ms.  
-This gives us an update frequency of ~285Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
+The atmega328p chip is capable of running the entire stabilization loop in ~3.6ms.  
+This gives us an update frequency of ~275Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
 Do not expect this to outperform the capabilities of more established flight control/stabilization softwares. Pull requests are welcome.
 
 ## Setup

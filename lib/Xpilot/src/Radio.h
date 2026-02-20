@@ -36,6 +36,24 @@ Flight stabilization software
 #include <stdint.h>
 #include <PlaneConfig.h>
 
+// Helper macro to set PWM values and switch positions based on pulse lengths
+#define SET_SWITCH_POS(controlPWM, controlSwitch, pulse)   \
+    if (pulse >= INPUT_MIN_PWM && pulse <= INPUT_MAX_PWM)  \
+    {                                                      \
+        controlPWM = pulse;                                \
+        if (pulse >= INPUT_MAX_PWM - INPUT_SEPARATOR)      \
+            controlSwitch = THREE_POS_SW::HIGH_POS;        \
+        else if (pulse <= INPUT_MIN_PWM + INPUT_SEPARATOR) \
+            controlSwitch = THREE_POS_SW::LOW_POS;         \
+        else                                               \
+            controlSwitch = THREE_POS_SW::MID_POS;         \
+    }
+
+// Helper macro to set PWM values based on pulse lengths
+#define SET_PWM(controlPWM, pulse)                        \
+    if (pulse >= INPUT_MIN_PWM && pulse <= INPUT_MAX_PWM) \
+        controlPWM = pulse;
+
 // 3-position switch
 enum class THREE_POS_SW : uint8_t
 {

@@ -179,8 +179,11 @@ public:
         return (c & 0x40) == 0x40;
     }
 
-    void update(float _rpy[3], float _g[3])
+    bool update(float _rpy[3], float _g[3])
     {
+        if (!(has_connected && (read_byte(INT_STATUS) & 0x01)))
+            return false;
+
         update_accel_gyro();
         // update_temperature();
 
@@ -215,6 +218,8 @@ public:
         _g[0] = g[0];
         _g[1] = g[1];
         _g[2] = g[2];
+
+        return true;
     }
 
     float getRoll() const { return rpy[0]; }
@@ -361,12 +366,9 @@ private:
         c |= (uint8_t(setting.accel_fs_sel) << 3); // Set full scale range for the accelerometer
         write_byte(ACCEL_CONFIG, c);               // Write new ACCEL_CONFIG register value
 
-        // Configure Interrupts and Bypass Enable
-        // Set interrupt pin active high, push-pull, interrupt pin emits a 50us long pulse,
-        // clear INT_STATUS on any read operation, and disable I2C_BYPASS_EN so additional chips
-        // cannot join the I2C bus.
-        write_byte(INT_PIN_CFG, 0x10);
-        write_byte(INT_ENABLE, 0x00); // Disable data ready (bit 0) interrupt
+        // Configure Interrupts
+        write_byte(INT_PIN_CFG, 0x30);
+        write_byte(INT_ENABLE, 0x00);
         delay(100);
     }
 

@@ -77,14 +77,13 @@
 #endif
 
 // System variables
-#define BAUD_RATE 9600               // Serial baud rate
-#define INPUT_REFRESH_RATE_US 20000U // Radio input refresh rate in microseconds (50HZ). Typical transmitter PWM refresh rate
-#define IMU_REFRESH_RATE_US 4000     // IMU refresh rate in microseconds (250Hz). Selected from IMU SAMPLE_RATE_DIV config. See IMU.cpp for details
-#define ONEHZ_LOOP_US 1000000U       // 1Hz loop rate in microseconds
-#define MPU6050_ADDRESS 0x68         // I2C address of MPU6050
-#define I2C_CLOCK_400KHZ 400000U     // I2C clock speed in Hz
-#define I2C_CLOCK_100KHZ 100000U     // I2C clock speed in Hz
-#define CALIBRATE_MEMORY_OFFSET 0    // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep
-#define FAILSAFE_TOLERANCE 200U      // Failsafe tolerance in microseconds
+#define BAUD_RATE 9600              // Serial baud rate
+#define INPUT_REFRESH_RATE_US 20000 // Radio input refresh rate in microseconds (50HZ). Typical transmitter PWM refresh rate
+#define ONEHZ_LOOP_US 1000000       // 1Hz loop rate in microseconds
+#define MPU6050_ADDRESS 0x68        // I2C address of MPU6050
+#define I2C_CLOCK_400KHZ 400000     // I2C clock speed in Hz
+#define I2C_CLOCK_100KHZ 100000     // I2C clock speed in Hz
+#define CALIBRATE_MEMORY_OFFSET 0   // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep
+#define FAILSAFE_TOLERANCE 200      // Failsafe tolerance in microseconds
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H

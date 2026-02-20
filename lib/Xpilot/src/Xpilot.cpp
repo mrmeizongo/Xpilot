@@ -7,7 +7,7 @@
 #include "IMU.h"
 
 // Timer variables
-static unsigned long nowUs = 0, inputLastUs = 0, imuLastUs = 0;
+static unsigned long nowUs = 0, inputLastUs = 0;
 // -------------------------
 
 // Debug helper functions
@@ -60,13 +60,7 @@ void Xpilot::loop(void)
         inputLastUs = nowUs;
     }
 
-    // Update IMU readings and AHRS values
-    if (nowUs - imuLastUs >= IMU_REFRESH_RATE_US)
-    {
-        imu.getLatestReadings();
-        imuLastUs = nowUs;
-    }
-
+    imu.getLatestReadings();
     updateFlightMode(); // Update flight mode based on radio mode switch position
     currentMode->run(); // Run the high level processing for the current flight mode
 

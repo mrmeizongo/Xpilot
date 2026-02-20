@@ -40,7 +40,7 @@ That is done by the macros. */
 #ifndef PCINT_ENABLE_MANUAL
 
 // #define PCINT_ENABLE_PORT0
-//   #define PCINT_ENABLE_PORT1
+// #define PCINT_ENABLE_PORT1
 #define PCINT_ENABLE_PORT2
 // #define PCINT_ENABLE_PORT3
 

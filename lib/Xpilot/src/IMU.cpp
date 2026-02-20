@@ -11,14 +11,12 @@ static void restoreFromEEPROM(float &accBiasX, float &accBiasY, float &accBiasZ,
                               float &gyroBiasX, float &gyroBiasY, float &gyroBiasZ, uint8_t startOffset = CALIBRATE_MEMORY_OFFSET) __attribute__((unused));
 static void readFromEEPROM(void) __attribute__((unused));
 
+volatile static bool dataReady = false;
+
 IMU::IMU(void)
 {
-    rpy[0] = 0.f;
-    rpy[1] = 0.f;
-    rpy[2] = 0.f;
-    g[0] = 0.f;
-    g[1] = 0.f;
-    g[2] = 0.f;
+    rpy[0] = rpy[1] = rpy[2] = 0.f;
+    g[0] = g[1] = g[2] = 0.f;
 }
 
 void IMU::init(void)
@@ -42,7 +40,7 @@ void IMU::init(void)
      *                                                          };                              };
      * See MPU6050 library for more details
      */
-    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE_DIV::SMPL_250HZ, ACCEL_GYRO_DLPF_CFG::DLPF_21HZx20HZ);
+    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE_DIV::SMPL_500HZ, ACCEL_GYRO_DLPF_CFG::DLPF_21HZx20HZ);
 
     // Initialize MPU
     if (!mpu6050.setup(MPU6050_ADDRESS, setting))
@@ -67,25 +65,27 @@ void IMU::init(void)
 
 void IMU::getLatestReadings(void)
 {
-    mpu6050.update(rpy, g);
+    if (mpu6050.update(rpy, g))
+    {
 #if defined(REVERSE_ROLL)
-    rpy[0] = -rpy[0];
+        rpy[0] = -rpy[0];
 #endif
 #if defined(REVERSE_PITCH)
-    rpy[1] = -rpy[1];
+        rpy[1] = -rpy[1];
 #endif
 #if defined(REVERSE_YAW)
-    rpy[2] = -rpy[2];
+        rpy[2] = -rpy[2];
 #endif
 #if defined(REVERSE_X_GYRO)
-    g[0] = -g[0];
+        g[0] = -g[0];
 #endif
 #if defined(REVERSE_Y_GYRO)
-    g[1] = -g[1];
+        g[1] = -g[1];
 #endif
 #if defined(REVERSE_Z_GYRO)
-    g[2] = -g[2];
+        g[2] = -g[2];
 #endif
+    }
 }
 
 void IMU::calibrate(void)
