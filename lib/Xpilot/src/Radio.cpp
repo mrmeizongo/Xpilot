@@ -4,15 +4,15 @@
 #include <SystemConfig.h>
 #include "Radio.h"
 
-volatile static unsigned long aileronCurrentTime, aileronStartTime, aileronPulses = 0;
-volatile static unsigned long elevatorCurrentTime, elevatorStartTime, elevatorPulses = 0;
-volatile static unsigned long rudderCurrentTime, rudderStartTime, rudderPulses = 0;
-volatile static unsigned long aux1CurrentTime, aux1StartTime, aux1Pulses = 0;
+volatile static unsigned long aileronCurrentTime = 0, aileronStartTime = 0, aileronPulses = 0;
+volatile static unsigned long elevatorCurrentTime = 0, elevatorStartTime = 0, elevatorPulses = 0;
+volatile static unsigned long rudderCurrentTime = 0, rudderStartTime = 0, rudderPulses = 0;
+volatile static unsigned long aux1CurrentTime = 0, aux1StartTime = 0, aux1Pulses = 0;
 #if defined(USE_FLAPERONS)
-volatile static unsigned long aux2CurrentTime, aux2StartTime, aux2Pulses = 0;
+volatile static unsigned long aux2CurrentTime = 0, aux2StartTime = 0, aux2Pulses = 0;
 #endif
 #if defined(USE_AUX3)
-volatile static unsigned long aux3CurrentTime, aux3StartTime, aux3Pulses = 0;
+volatile static unsigned long aux3CurrentTime = 0, aux3StartTime = 0, aux3Pulses = 0;
 #endif
 // -------------------------
 
