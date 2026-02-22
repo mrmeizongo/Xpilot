@@ -72,6 +72,13 @@ void Mode::setServoOut(void)
     actuators.writeServos(SRVout); // Write servo outputs to the actuators object
 }
 
+void Mode::resetControllers(void)
+{
+    rollPIDF.resetPIDF();
+    pitchPIDF.resetPIDF();
+    yawPIDF.resetPIDF();
+}
+
 void Mode::controlFailsafe(void)
 {
     // Default failsafe implementation

@@ -10,10 +10,7 @@ static FirstOrderLPF<int16_t> yawLPF{PT_LPF_FREQ};
 void PassthroughMode::enter(void)
 {
 #if defined(USE_FILTER_IN_PT)
-    // Reset LPF states
-    rollLPF.Reset();
-    pitchLPF.Reset();
-    yawLPF.Reset();
+    Mode::resetControllers();
 #endif
 }
 

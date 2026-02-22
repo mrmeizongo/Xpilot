@@ -3,10 +3,7 @@
 
 void RateMode::enter(void)
 {
-    // Reset PIDF controllers
-    Mode::rollPIDF.resetPIDF();
-    Mode::pitchPIDF.resetPIDF();
-    Mode::yawPIDF.resetPIDF();
+    Mode::resetControllers();
 }
 
 void RateMode::process(void)
