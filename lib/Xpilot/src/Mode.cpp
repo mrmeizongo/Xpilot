@@ -74,9 +74,9 @@ void Mode::setServoOut(void)
 
 void Mode::resetControllers(void)
 {
-    rollPIDF.resetPIDF();
-    pitchPIDF.resetPIDF();
-    yawPIDF.resetPIDF();
+    rollPIDF.reset();
+    pitchPIDF.reset();
+    yawPIDF.reset();
 }
 
 void Mode::controlFailsafe(void)
