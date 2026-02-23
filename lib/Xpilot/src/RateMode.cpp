@@ -49,5 +49,5 @@ void RateMode::run(void)
 
 void RateMode::yawController(void)
 {
-    Mode::yawPIDF.resetPIDF();
+    Mode::yawPIDF.reset();
 }

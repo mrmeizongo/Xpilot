@@ -58,7 +58,7 @@ void StabilizeMode::yawController(void)
     if (yawOut != 0)
         Mode::yawPIDF.resetPIDF();
 #else
-    Mode::yawPIDF.resetPIDF();
+    Mode::yawPIDF.reset();
 #endif
 }
 
