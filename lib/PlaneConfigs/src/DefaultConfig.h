@@ -198,8 +198,6 @@ Flight stabilization software
 
 // Amount of aileron input to be mixed with rudder to coordinate turns (1/4 - 1/3 of aileron input is recommended)
 #define RUDDER_MIXING 0.3333f
-
-// #define USE_HEADING_HOLD // Uncomment to enable heading-hold-like functionality when yaw centered
 // ------------------------------------------------------------------------------------------------------
 
 // Flight mode config

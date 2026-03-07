@@ -71,7 +71,6 @@ protected:
     static void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
     static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
     static void resetControllers(void);                                  // Reset controllers when switching modes to prevent integral windup and derivative kick
-    virtual void yawController(void) {}                                  // Yaw control for heading-hold-like functionality
     virtual void controlFailsafe(void);                                  // Failsafe implementation
 #if defined(USE_FLAPERONS)
     static uint16_t flaperonOut;    // Flaperon position value, used in flaperon control
@@ -102,7 +101,6 @@ public:
     void enter(void) override;
     void process(void) override;
     void run(void) override;
-    void yawController(void) override;
 };
 
 // Gyro-based rate control with wing leveling on stick release
@@ -113,7 +111,6 @@ public:
     void enter(void) override;
     void process(void) override;
     void run(void) override;
-    void yawController(void) override;
 
 protected:
     void controlFailsafe(void) override;

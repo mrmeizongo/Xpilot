@@ -28,7 +28,6 @@ void RateMode::run(void)
     Mode::rudderMixer();
 #endif
 
-    // yawController();
     int16_t roll = Mode::rollPIDF.Compute(Mode::rollOut, imu.getGyroX());
     int16_t pitch = Mode::pitchPIDF.Compute(Mode::pitchOut, imu.getGyroY());
     int16_t yaw = Mode::yawPIDF.Compute(Mode::yawOut, imu.getGyroZ());
@@ -45,9 +44,4 @@ void RateMode::run(void)
     Mode::setFlaperons();
 #endif
     Mode::setServoOut();
-}
-
-void RateMode::yawController(void)
-{
-    Mode::yawPIDF.reset();
 }

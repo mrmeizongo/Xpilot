@@ -12,6 +12,7 @@ PIDF Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX, AUTO_LPF_FR
 #if defined(USE_FLAPERONS)
 uint16_t Mode::flaperonOut = 0;
 #endif
+// --------------------------------------------------------------------------------------
 
 /*
  * Mixer for airplane type
@@ -55,8 +56,8 @@ void Mode::rudderMixer(void)
 #if defined(USE_FLAPERONS)
 void Mode::setFlaperons(void)
 {
-    SRVout[Actuators::Channel::CH1] += flaperonOut;
-    SRVout[Actuators::Channel::CH2] -= flaperonOut;
+    SRVout[Actuators::Channel::CH1] -= flaperonOut;
+    SRVout[Actuators::Channel::CH2] += flaperonOut;
 }
 #endif
 

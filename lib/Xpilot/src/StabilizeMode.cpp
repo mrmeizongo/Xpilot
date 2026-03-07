@@ -32,7 +32,6 @@ void StabilizeMode::run(void)
     float pitchDemand = Mode::pitchOut - imu.getPitch();
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-    // yawController();
 
     int16_t roll = Mode::rollPIDF.Compute(rollDemand, imu.getGyroX());
     int16_t pitch = Mode::pitchPIDF.Compute(pitchDemand, imu.getGyroY());
@@ -50,16 +49,6 @@ void StabilizeMode::run(void)
     Mode::setFlaperons();
 #endif
     Mode::setServoOut();
-}
-
-void StabilizeMode::yawController(void)
-{
-#if defined(USE_HEADING_HOLD)
-    if (yawOut != 0)
-        Mode::yawPIDF.resetPIDF();
-#else
-    Mode::yawPIDF.reset();
-#endif
 }
 
 void StabilizeMode::controlFailsafe(void)

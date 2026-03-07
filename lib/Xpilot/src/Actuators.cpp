@@ -46,13 +46,7 @@ int16_t Actuators::getServoOut(Actuators::Channel ch)
 
 void Actuators::writeServos(void)
 {
-    controlServo[CH1].writeMicroseconds(channelOut[CH1]);
-    controlServo[CH2].writeMicroseconds(channelOut[CH2]);
-    controlServo[CH3].writeMicroseconds(channelOut[CH3]);
-    controlServo[CH4].writeMicroseconds(channelOut[CH4]);
-#if defined(USE_AUXOUT1)
-    controlServo[CH5].writeMicroseconds(channelOut[CH5]);
-#endif
+    writeServos(channelOut);
 }
 
 void Actuators::writeServos(const int16_t (&SRVout)[NUM_CHANNELS])
