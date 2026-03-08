@@ -61,7 +61,7 @@ void Mode::setFlaperons(void)
 }
 #endif
 
-void Mode::setServoOut(void)
+void Mode::servoOut(void)
 {
     SRVout[Actuators::Channel::CH1] = constrain(SRVout[Actuators::Channel::CH1], SERVO_MIN_PWM, SERVO_MAX_PWM);
     SRVout[Actuators::Channel::CH2] = constrain(SRVout[Actuators::Channel::CH2], SERVO_MIN_PWM, SERVO_MAX_PWM);
