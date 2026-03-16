@@ -57,7 +57,14 @@ public:
     virtual void process(void) = 0;                                      // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                                          // High level processing specific to this mode
     virtual void exit(void) {}                                           // Perform any clean up before switching to another mode
-    static void servoOut(void);                                          // Constrain and write servo outputs to the actuators object
+
+    static int16_t getRoll(void) { return rollOut; }   // Get roll output for debugging purposes
+    static int16_t getPitch(void) { return pitchOut; } // Get pitch output for debugging purposes
+    static int16_t getYaw(void) { return yawOut; }     // Get yaw output for debugging purposes
+#if defined(USE_FLAPERONS)
+    static int16_t getFlaperon(void) { return flaperonOut; } // Get flaperon output for debugging purposes
+#endif
+    static void servoOut(void); // Constrain and write servo outputs to the actuators object
 
     void setModeSwitchPosition(THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
     THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode

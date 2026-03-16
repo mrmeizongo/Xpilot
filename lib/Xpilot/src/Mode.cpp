@@ -56,8 +56,8 @@ void Mode::rudderMixer(void)
 #if defined(USE_FLAPERONS)
 void Mode::setFlaperons(void)
 {
-    SRVout[Actuators::Channel::CH1] -= flaperonOut;
-    SRVout[Actuators::Channel::CH2] += flaperonOut;
+    SRVout[Actuators::Channel::CH1] += flaperonOut;
+    SRVout[Actuators::Channel::CH2] -= flaperonOut;
 }
 #endif
 

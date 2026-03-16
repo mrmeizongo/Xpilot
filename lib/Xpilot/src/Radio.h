@@ -42,9 +42,9 @@ Flight stabilization software
     {                                                           \
         /* Subtracting 4us to account for latency */            \
         controlPWM = pulse - 4;                                 \
-        if (controlPWM >= SERVO_MAX_PWM - INPUT_SEPARATOR)      \
+        if (controlPWM >= INPUT_MAX_PWM - INPUT_SEPARATOR)      \
             controlSwitch = THREE_POS_SW::HIGH_POS;             \
-        else if (controlPWM <= SERVO_MIN_PWM + INPUT_SEPARATOR) \
+        else if (controlPWM <= INPUT_MIN_PWM + INPUT_SEPARATOR) \
             controlSwitch = THREE_POS_SW::LOW_POS;              \
         else                                                    \
             controlSwitch = THREE_POS_SW::MID_POS;              \

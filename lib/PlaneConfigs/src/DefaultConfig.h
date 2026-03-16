@@ -113,7 +113,6 @@ Flight stabilization software
 #if defined(USE_FLAPERONS)
 #define FLAPERON_PC 1.0f // Percentage of flap deflection compared to aileron deflection(0.0f - 1.0f)
 #define FLAPERON_MAX_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM) * (FLAPERON_PC)
-#define FLAPERON_INPUT_SEPARATOR ((FLAPERON_MAX_RANGE) / 3)
 #endif
 
 #define AUTO_LPF_FREQ 10 // Auto low-pass filter frequency in Hz

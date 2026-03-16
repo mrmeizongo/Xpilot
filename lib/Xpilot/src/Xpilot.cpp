@@ -141,37 +141,54 @@ static void printIO(void)
     Serial.print("\t\t");
     Serial.print("Failsafe: ");
     Serial.println(xpilot.inFailsafe() ? "Active" : "Inactive");
-    Serial.print("Input PWM");
+    Serial.print("Radio Input PWM");
+    Serial.print("\t\t\t\t");
+    Serial.print("Mode Input");
     Serial.print("\t\t\t\t");
     Serial.println("Output PWM");
 
-    Serial.print("Aileron 1 PWM: ");
+    Serial.print("Aileron 1: ");
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
-    Serial.print("Aileron 1 PWM: ");
+    Serial.print("Aileron 1: ");
+    Serial.print(xpilot.getRoll());
+    Serial.print("\t\t\t");
+    Serial.print("Aileron 1: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
 
-    Serial.print("Aileron 2 PWM: ");
+    Serial.print("Aileron 2: ");
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
-    Serial.print("Aileron 2 PWM: ");
+    Serial.print("Aileron 2: ");
+    Serial.print(xpilot.getRoll());
+    Serial.print("\t\t\t");
+    Serial.print("Aileron 2: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
 
-    Serial.print("Elevator PWM: ");
+    Serial.print("Elevator: ");
     Serial.print(radio.getRxPitchPWM());
     Serial.print("\t\t\t");
-    Serial.print("Elevator PWM: ");
+    Serial.print("Elevator: ");
+    Serial.print(xpilot.getPitch());
+    Serial.print("\t\t\t");
+    Serial.print("Elevator: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
 
-    Serial.print("Rudder PWM: ");
+    Serial.print("Rudder: ");
     Serial.print(radio.getRxYawPWM());
     Serial.print("\t\t\t");
-    Serial.print("Rudder PWM: ");
+    Serial.print("Rudder: ");
+    Serial.print(xpilot.getYaw());
+    Serial.print("\t\t\t");
+    Serial.print("Rudder: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
 
 #if defined(USE_FLAPERONS)
-    Serial.print("Flaperon PWM: ");
+    Serial.print("Flaperon: ");
     Serial.print(radio.getRxAux2PWM());
+    Serial.print("\t\t\t");
+    Serial.print("Flaperon: ");
+    Serial.print(xpilot.getFlaperon());
     Serial.print("\t\t\t");
     Serial.print("Flap Position: ");
     Serial.println((int16_t)radio.getRxAux2Pos());

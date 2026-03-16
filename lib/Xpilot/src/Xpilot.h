@@ -34,6 +34,7 @@ Flight stabilization software
 #ifndef _XPILOT_H
 #define _XPILOT_H
 #include "Mode.h"
+#include <PlaneConfig.h>
 
 class Xpilot
 {
@@ -45,6 +46,13 @@ public:
     // Only functions called from the setup and loop functions
     void setup(void);
     void loop(void);
+
+    int16_t getRoll(void) const { return currentMode->getRoll(); }   // Get roll output for debugging purposes
+    int16_t getPitch(void) const { return currentMode->getPitch(); } // Get pitch output for debugging purposes
+    int16_t getYaw(void) const { return currentMode->getYaw(); }     // Get yaw output for debugging purposes
+#if defined(USE_FLAPERONS)
+    int16_t getFlaperon(void) const { return currentMode->getFlaperon(); } // Get flaperon output for debugging purposes
+#endif
 
     Mode *getFlightMode(void) const { return currentMode; }
     bool inFailsafe(void) const { return failSafeActive; }
