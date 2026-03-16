@@ -41,7 +41,7 @@ int16_t Actuators::getServoOut(Actuators::Channel ch)
     if (ch < 0 || ch >= NUM_CHANNELS)
         return -1;
 
-    return channelOut[ch];
+    return controlServo[ch].readMicroseconds();
 }
 
 void Actuators::writeServos(void)
