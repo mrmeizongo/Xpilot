@@ -52,14 +52,14 @@ void Radio::processInput(void)
 {
     ATOMIC_BLOCK(ATOMIC_FORCEON)
     {
-        SET_SWITCH_POS(currentRx.aux1PWM, currentRx.aux1SwitchPos, aux1Pulses, SERVO_MIN_PWM, SERVO_MAX_PWM, INPUT_SEPARATOR);
+        SET_SWITCH_POS(currentRx.aux1PWM, currentRx.aux1SwitchPos, aux1Pulses);
 
 #if defined(USE_FLAPERONS)
-        SET_SWITCH_POS(currentRx.aux2PWM, currentRx.aux2SwitchPos, aux2Pulses, SERVO_MIN_PWM, FLAPERON_MAX_RANGE, INPUT_SEPARATOR);
+        SET_SWITCH_POS(currentRx.aux2PWM, currentRx.aux2SwitchPos, aux2Pulses);
 #endif
 
 #if defined(USE_AUX3)
-        SET_SWITCH_POS(currentRx.aux3PWM, currentRx.aux3SwitchPos, aux3Pulses, SERVO_MIN_PWM, SERVO_MAX_PWM, INPUT_SEPARATOR);
+        SET_SWITCH_POS(currentRx.aux3PWM, currentRx.aux3SwitchPos, aux3Pulses);
 #endif
 
         SET_PWM(currentRx.rollPWM, aileronPulses);
