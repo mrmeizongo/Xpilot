@@ -5,9 +5,9 @@ Actuators::Actuators(void)
 {
 }
 
+// Set up output servos
 void Actuators::init(void)
 {
-    // Set up output servos
     controlServo[CH1].attach(AIL1PIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     controlServo[CH2].attach(AIL2PIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     controlServo[CH3].attach(ELEVPIN_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
@@ -17,6 +17,7 @@ void Actuators::init(void)
 #endif
 }
 
+// Set individual servo output values in microseconds
 void Actuators::setServoOut(Actuators::Channel ch, int16_t value)
 {
     if (ch < 0 || ch >= NUM_CHANNELS)
@@ -25,6 +26,7 @@ void Actuators::setServoOut(Actuators::Channel ch, int16_t value)
     channelOut[ch] = value;
 }
 
+// Set all servo output values at once using an array
 void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
 {
     channelOut[CH1] = SRVout[CH1];
@@ -36,6 +38,7 @@ void Actuators::setServoOut(const int16_t (&SRVout)[NUM_CHANNELS])
 #endif
 }
 
+// Get individual servo output value in microseconds
 int16_t Actuators::getServoOut(Actuators::Channel ch)
 {
     if (ch < 0 || ch >= NUM_CHANNELS)
@@ -44,11 +47,13 @@ int16_t Actuators::getServoOut(Actuators::Channel ch)
     return controlServo[ch].readMicroseconds();
 }
 
+// Write current servo output values to the servos
 void Actuators::writeServos(void)
 {
     writeServos(channelOut);
 }
 
+// Write all servo output values at once using an array
 void Actuators::writeServos(const int16_t (&SRVout)[NUM_CHANNELS])
 {
     controlServo[CH1].writeMicroseconds(SRVout[CH1]);
