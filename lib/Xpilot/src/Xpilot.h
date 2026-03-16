@@ -42,17 +42,21 @@ public:
     Xpilot(void);
     Xpilot(const Xpilot &) = delete;            // Prevent this class from being copyable
     Xpilot &operator=(const Xpilot &) = delete; // Prevent this class from being assignable
+    // --------------------------------------------------------------------
 
     // Only functions called from the setup and loop functions
     void setup(void);
     void loop(void);
+    // --------------------------------------------------------------------
 
-    int16_t getRoll(void) const { return currentMode->getRoll(); }   // Get roll output for debugging purposes
-    int16_t getPitch(void) const { return currentMode->getPitch(); } // Get pitch output for debugging purposes
-    int16_t getYaw(void) const { return currentMode->getYaw(); }     // Get yaw output for debugging purposes
+    // Debug functions to get outputs for testing and tuning purposes.
+    int16_t getRoll(void) const { return currentMode->getRoll(); }
+    int16_t getPitch(void) const { return currentMode->getPitch(); }
+    int16_t getYaw(void) const { return currentMode->getYaw(); }
 #if defined(USE_FLAPERONS)
-    int16_t getFlaperon(void) const { return currentMode->getFlaperon(); } // Get flaperon output for debugging purposes
+    int16_t getFlaperon(void) const { return currentMode->getFlaperon(); }
 #endif
+    // --------------------------------------------------------------------
 
     Mode *getFlightMode(void) const { return currentMode; }
     bool inFailsafe(void) const { return failSafeActive; }
@@ -65,6 +69,7 @@ private:
     // This is the state of the flight stabilization system
     Mode *currentMode;
     Mode *previousMode;
+    // --------------------------------------------------------------------
 
     bool failSafeActive; // System failsafe active flag
     void updateFlightMode(void);

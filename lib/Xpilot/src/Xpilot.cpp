@@ -135,16 +135,17 @@ static void printDebug(void)
 
 static void printIO(void)
 {
-    Serial.print("\t\t");
+    Serial.print("\t\t\t\t");
     Serial.print("Flight Mode: ");
     Serial.println(xpilot.getFlightMode()->modeName4());
-    Serial.print("\t\t");
+    Serial.print("\t\t\t\t");
     Serial.print("Failsafe: ");
     Serial.println(xpilot.inFailsafe() ? "Active" : "Inactive");
+    Serial.println();
     Serial.print("Radio Input PWM");
-    Serial.print("\t\t\t\t");
+    Serial.print("\t\t\t");
     Serial.print("Mode Input");
-    Serial.print("\t\t\t\t");
+    Serial.print("\t\t\t");
     Serial.println("Output PWM");
 
     Serial.print("Aileron 1: ");

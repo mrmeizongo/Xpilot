@@ -56,8 +56,13 @@ void Mode::rudderMixer(void)
 #if defined(USE_FLAPERONS)
 void Mode::setFlaperons(void)
 {
-    SRVout[Actuators::Channel::CH1] += flaperonOut;
-    SRVout[Actuators::Channel::CH2] -= flaperonOut;
+    SRVout[Actuators::Channel::CH1] -= flaperonOut;
+    SRVout[Actuators::Channel::CH2] += flaperonOut;
+}
+
+void Mode::flaperonInput(void)
+{
+    flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), INPUT_MID_PWM, INPUT_MIN_PWM, 0, FLAPERON_MAX_RANGE);
 }
 #endif
 

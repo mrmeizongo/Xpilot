@@ -39,11 +39,11 @@ Flight stabilization software
 #include "Actuators.h"
 
 // Helper define to transform radio values to mode dependent resolutions
-#define GETRAWINPUT(rawVal, minOut, maxOut) \
-    map((rawVal), (INPUT_MIN_PWM), (INPUT_MAX_PWM), (minOut), (maxOut))
+#define GETRAWINPUT(rawVal, minIn, maxIn, minOut, maxOut) \
+    map((rawVal), (minIn), (maxIn), (minOut), (maxOut))
 
 #define GETFILTEREDINPUT(rawVal, deadBand, minOut, maxOut) \
-    (abs((rawVal) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (GETRAWINPUT((rawVal), (minOut), (maxOut))))
+    (abs((rawVal) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (GETRAWINPUT((rawVal), (INPUT_MIN_PWM), (INPUT_MAX_PWM), (minOut), (maxOut))))
 
 // Abstract flight mode class
 class Mode
@@ -63,6 +63,7 @@ public:
     static int16_t getYaw(void) { return yawOut; }     // Get yaw output for debugging purposes
 #if defined(USE_FLAPERONS)
     static int16_t getFlaperon(void) { return flaperonOut; } // Get flaperon output for debugging purposes
+    static void flaperonInput(void);
 #endif
     static void servoOut(void); // Constrain and write servo outputs to the actuators object
 
