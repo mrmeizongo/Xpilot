@@ -16,17 +16,18 @@ void PassthroughMode::enter(void)
 
 void PassthroughMode::process(void)
 {
-    if (!radio.inFailsafe())
+    if (radio.inFailsafe())
     {
-        Mode::rollOut = GETFILTEREDINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-        Mode::pitchOut = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-        Mode::yawOut = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-#if defined(USE_FLAPERONS)
-        flaperonInput();
-#endif
-    }
-    else
         Mode::controlFailsafe();
+        return;
+    }
+
+    Mode::rollOut = GETFILTEREDINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+    Mode::pitchOut = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+    Mode::yawOut = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+#if defined(USE_FLAPERONS)
+    flaperonInput();
+#endif
 }
 
 void PassthroughMode::run(void)
