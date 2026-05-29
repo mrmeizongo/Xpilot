@@ -11,8 +11,6 @@ static void restoreFromEEPROM(float &accBiasX, float &accBiasY, float &accBiasZ,
                               float &gyroBiasX, float &gyroBiasY, float &gyroBiasZ, uint8_t startOffset = CALIBRATE_MEMORY_OFFSET) __attribute__((unused));
 static void readFromEEPROM(void) __attribute__((unused));
 
-volatile static bool dataReady = false;
-
 IMU::IMU(void)
 {
     rpy[0] = rpy[1] = rpy[2] = 0.f;
