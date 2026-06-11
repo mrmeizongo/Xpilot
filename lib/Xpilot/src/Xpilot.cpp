@@ -23,8 +23,7 @@ Xpilot::Xpilot(void)
 
 void Xpilot::setup(void)
 {
-#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || \
-    defined(CALIBRATE_DEBUG) || defined(SELF_TEST_ACCEL_GYRO) || defined(READ_CALIBRATION_FROM_EEPROM)
+#if defined(DEBUG)
     Serial.begin(BAUD_RATE);
     while (!Serial)
         ; // Wait for Serial port to open
@@ -65,7 +64,7 @@ void Xpilot::loop(void)
     updateFlightMode(); // Update flight mode based on radio mode switch position
     currentMode->run(); // Run the high level processing for the current flight mode
 
-#if defined(IO_DEBUG) || defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+#if defined(DEBUG)
     printDebug();
 #endif
 }

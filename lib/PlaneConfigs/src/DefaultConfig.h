@@ -229,5 +229,8 @@ Flight stabilization software
 // #define IO_DEBUG
 // #define CALIBRATE_DEBUG
 // #define READ_CALIBRATION_FROM_EEPROM // Uncomment to use calibrated values from EEPROM on startup.
+#if defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) || defined(CALIBRATE_DEBUG) || defined(READ_CALIBRATION_FROM_EEPROM)
+#define DEBUG
+#endif
 // ------------------------------------------------------------------------------------------------------
 #endif // _DEFAULT_CONFIG_H
