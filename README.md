@@ -38,9 +38,8 @@ See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type co
 
 ## Stabilization system loop
 
-The atmega328p chip is capable of running the entire stabilization loop in ~3.6ms.  
-This gives us an update frequency of ~275Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
-Do not expect this to outperform the capabilities of more established flight control/stabilization softwares. Pull requests are welcome.
+The atmega328p chip is capable of running the entire stabilization loop in ~3ms.  
+This gives us an update frequency of ~333Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
 
 ## Setup
 
@@ -78,7 +77,6 @@ Connect ailerons, elevator and rudder servos to Arduino Nano as shown below. Thi
 | Auxiliary | 12  |
 
 Set up a 3-position switch on the transmitter to act as the Mode switch.  
-When properly setup, mode switch states is shown below.
 
 | AUX Switch Position |    Mode     |
 | :-----------------: | :---------: |
@@ -86,13 +84,7 @@ When properly setup, mode switch states is shown below.
 |          1          |    Rate     |
 |          2          |  Stabilize  |
 
-After setup, enable IO_DEBUG in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) to verify proper operation.
-
 ## Info
-
-DO NOT power the servos using the 5v power output from the Arduino Nano as this might harm the microcontroller.  
-However, the Nano, MPU6050 and servos can be powered from the same external 5VDC high current power source(such as ESC BEC). Make use of a 1-female/2-male Y cable splitter to power the Xpilot board and receiver.  
-It is a good idea to add a 0.47uF decoupling capacitors close to the individual servos for a stable power supply.
 
 These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.  
 Ensure all components share a common ground. The Nano and MPU6050 do not require decoupling capacitors as the breakout boards come with their own voltage regulators and decoupling capacitors.
@@ -103,7 +95,7 @@ Ensure all components share a common ground. The Nano and MPU6050 do not require
 
 ## Flight modes
 
-There are 3 flight modes; 1 = passthrough/manual, 2 = rate, and 3 - stabilize.
+There are 3 flight modes; 1 = passthrough/manual, 2 = rate, and 3 = stabilize.
 
 Rate mode is the most popular among inexperienced flyers. If mode switch is not configured, any of the 3 modes can be used as the default mode. See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h).  
 Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). Default aileron-rudder mixing value is 30%.
