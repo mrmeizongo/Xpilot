@@ -41,12 +41,12 @@ void Xpilot::setup(void)
 #elif defined(DEFAULT_TO_STABILIZE_MODE)
     currentMode = &stabilizeMode;
 #endif
-    previousMode = currentMode; // Set previous mode to current mode
+    previousMode = currentMode;
     failSafeActive = false;
 
-    imu.init();       // Initialize IMU
-    radio.init();     // Initialize radio
-    actuators.init(); // Initialize servos
+    imu.init();
+    radio.init();
+    actuators.init();
 }
 
 // Main Xpilot execution loop
@@ -72,11 +72,11 @@ void Xpilot::loop(void)
 void Xpilot::updateFlightMode(void)
 {
     bool radioFailSafe = radio.inFailsafe();
-    // If system failsafe has been activated and radio is still in fail safe, simply return
+    // If system failsafe has been activated and radio is still in fail safe
     if (failSafeActive && radioFailSafe)
         return;
 
-    // First time detecting radio in failsafe, activate system failsafe
+    // First time detecting radio in failsafe
     // Set the current mode to selected failsafe mode
     if (radioFailSafe)
     {
@@ -95,7 +95,7 @@ void Xpilot::updateFlightMode(void)
         // Set current flight mode based on the radio mode switch position
         failSafeActive = false; // Reset failsafe active flag
         THREE_POS_SW radioModeSwitchPos = radio.getRxAux1Pos();
-        // Radio mode switch position has not changed, simply return
+        // Radio mode switch position has not changed
         if (radioModeSwitchPos == currentMode->getModeSwitchPosition())
             return;
 
@@ -107,7 +107,7 @@ void Xpilot::updateFlightMode(void)
         else if (radioModeSwitchPos == rateMode.getModeSwitchPosition())
             currentMode = &rateMode;
     }
-
+    // Failsafe detected or mode switch position has changed, perform mode transition
     previousMode->exit();
     currentMode->enter();
     previousMode = currentMode;
