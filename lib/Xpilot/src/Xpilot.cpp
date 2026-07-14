@@ -107,6 +107,7 @@ void Xpilot::updateFlightMode(void)
         else if (radioModeSwitchPos == rateMode.getModeSwitchPosition())
             currentMode = &rateMode;
     }
+
     // Failsafe detected or mode switch position has changed, perform mode transition
     previousMode->exit();
     currentMode->enter();
