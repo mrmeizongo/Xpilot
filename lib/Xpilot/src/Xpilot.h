@@ -33,8 +33,8 @@ Flight stabilization software
 
 #ifndef _XPILOT_H
 #define _XPILOT_H
-#include "Mode.h"
 #include <PlaneConfig.h>
+#include "Mode.h"
 
 class Xpilot
 {
