@@ -2,9 +2,9 @@
 #include <LowpassFilter.h>
 
 #if defined(USE_FILTER_IN_PT)
-static FirstOrderLPF<int16_t> rollLPF{PT_LPF_FREQ};
-static FirstOrderLPF<int16_t> pitchLPF{PT_LPF_FREQ};
-static FirstOrderLPF<int16_t> yawLPF{PT_LPF_FREQ};
+static FirstOrderLPF<int16_t> rollLPF{PASSTHROUGH_LPF_FREQ, LPF_DT};
+static FirstOrderLPF<int16_t> pitchLPF{PASSTHROUGH_LPF_FREQ, LPF_DT};
+static FirstOrderLPF<int16_t> yawLPF{PASSTHROUGH_LPF_FREQ, LPF_DT};
 #endif
 
 void PassthroughMode::enter(void)
@@ -35,9 +35,9 @@ void PassthroughMode::run(void)
     process();
 
 #if defined(USE_FILTER_IN_PT)
-    int16_t roll = rollLPF.Process(Mode::rollOut, LPF_DT);
-    int16_t pitch = pitchLPF.Process(Mode::pitchOut, LPF_DT);
-    int16_t yaw = yawLPF.Process(Mode::yawOut, LPF_DT);
+    int16_t roll = rollLPF.Process(Mode::rollOut);
+    int16_t pitch = pitchLPF.Process(Mode::pitchOut);
+    int16_t yaw = yawLPF.Process(Mode::yawOut);
     Mode::planeMixer(roll, pitch, yaw);
 #else
     Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);

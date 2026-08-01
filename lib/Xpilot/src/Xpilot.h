@@ -49,7 +49,7 @@ public:
     static void updateFlightModeTask(void *ctx) { static_cast<Xpilot *>(ctx)->updateFlightMode(); }
     static void printIMUTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIMU(); }
     static void printIOTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIO(); }
-    static void printLoopRateTask(void *ctx) { static_cast<Xpilot *>(ctx)->printLoopRate(); }
+    static void printSchedulerRateTask(void *ctx) { static_cast<Xpilot *>(ctx)->printSchedulerRate(); }
     // --------------------------------------------------------------------
 
     // Only functions called from the setup and loop functions
@@ -60,7 +60,7 @@ public:
     // Debug functions to get outputs for testing and tuning purposes.
     void printIMU(void);
     void printIO(void);
-    void printLoopRate(void);
+    void printSchedulerRate(void);
     // --------------------------------------------------------------------
 
     Mode *getFlightMode(void) const { return currentMode; }

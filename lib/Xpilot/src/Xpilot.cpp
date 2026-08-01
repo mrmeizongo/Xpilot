@@ -57,7 +57,7 @@ void Xpilot::setup(void)
 #if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     (void)scheduler.addTask(printIMUTask, this, IMU_PRINT_RATE_HZ);
 #endif
-#if defined(TASK_RATE_DEBUG)
+#if defined(SCHEDULER_DEBUG)
     (void)scheduler.addTask(printLoopRateTask, this, TASK_PRINT_RATE_HZ);
 #endif
     scheduler.init();
@@ -201,7 +201,7 @@ void Xpilot::printIMU(void)
     Serial.println();
 }
 
-void Xpilot::printLoopRate(void)
+void Xpilot::printSchedulerRate(void)
 {
     Serial.println(">");
 
