@@ -72,6 +72,10 @@ void Xpilot::sysInit(void)
     imu.init();
     radio.init();
     actuators.init();
+
+#if defined(DEBUG)
+    Serial.println("System initialized.");
+#endif
 }
 
 void Xpilot::updateFlightMode(void)
