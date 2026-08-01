@@ -59,7 +59,11 @@ public:
     virtual void exit(void) {}                                           // Perform any clean up before switching to another mode
     static void runTask(void *ctx)                                       // Trampoline function for the scheduler to call the run function
     {
-        static_cast<Mode *>(ctx)->run();
+        Mode **modePointer = static_cast<Mode **>(ctx);
+        if (*modePointer != nullptr)
+        {
+            (*modePointer)->run();
+        }
     }
 
     static int16_t getRoll(void) { return rollOut; }   // Get roll output for debugging purposes

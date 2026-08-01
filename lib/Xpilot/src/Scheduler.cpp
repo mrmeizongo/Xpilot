@@ -61,6 +61,9 @@ Scheduler::Scheduler()
         tasks_[i].stats.overrunCount = 0;
         tasks_[i].stats.lastRuntimeUs = 0;
         tasks_[i].stats.maxRuntimeUs = 0;
+        tasks_[i].stats.lastLoopRateUpdateUs = 0;
+        tasks_[i].stats.loopRateHz = 0;
+        tasks_[i].stats.loopCounter = 0;
     }
 }
 
