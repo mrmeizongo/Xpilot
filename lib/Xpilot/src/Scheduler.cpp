@@ -146,11 +146,11 @@ int8_t Scheduler::addTask(
                                                 : static_cast<uint32_t>(startDelayMs);
 
             task.nextRunTick = ticks() + initialDelayMs;
+            numTasks_++;
 
             return static_cast<int8_t>(i);
         }
     }
-    numTasks_++;
 
     return INVALID_TASK_ID;
 }
