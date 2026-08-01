@@ -68,6 +68,7 @@ public:
      * Adds a periodic task.
      *
      * @param callback      Function to execute.
+     * @param context       Context pointer passed to the callback.
      * @param frequencyHz   Task frequency in Hertz.
      * @param startDelayMs  A value of 0 schedules the first run after one period.
      *
