@@ -34,6 +34,7 @@ Flight stabilization software
 #ifndef _XPILOT_H
 #define _XPILOT_H
 #include <PlaneConfig.h>
+#include "Scheduler.h"
 #include "Mode.h"
 
 class Xpilot
@@ -44,18 +45,22 @@ public:
     Xpilot &operator=(const Xpilot &) = delete; // Prevent this class from being assignable
     // --------------------------------------------------------------------
 
+    // Trampoline functions for the scheduler to call
+    static void updateFlightModeTask(void *ctx) { static_cast<Xpilot *>(ctx)->updateFlightMode(); }
+    static void printIMUTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIMU(); }
+    static void printIOTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIO(); }
+    static void printLoopRateTask(void *ctx) { static_cast<Xpilot *>(ctx)->printLoopRate(); }
+    // --------------------------------------------------------------------
+
     // Only functions called from the setup and loop functions
     void setup(void);
     void loop(void);
     // --------------------------------------------------------------------
 
     // Debug functions to get outputs for testing and tuning purposes.
-    int16_t getRoll(void) const { return currentMode->getRoll(); }
-    int16_t getPitch(void) const { return currentMode->getPitch(); }
-    int16_t getYaw(void) const { return currentMode->getYaw(); }
-#if defined(USE_FLAPERONS)
-    int16_t getFlaperon(void) const { return currentMode->getFlaperon(); }
-#endif
+    void printIMU(void);
+    void printIO(void);
+    void printLoopRate(void);
     // --------------------------------------------------------------------
 
     Mode *getFlightMode(void) const { return currentMode; }
@@ -69,6 +74,9 @@ private:
     // This is the state of the flight stabilization system
     Mode *currentMode;
     Mode *previousMode;
+    // --------------------------------------------------------------------
+
+    Scheduler scheduler; // Scheduler object to manage periodic tasks
     // --------------------------------------------------------------------
 
     bool failSafeActive; // System failsafe active flag

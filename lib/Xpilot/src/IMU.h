@@ -7,9 +7,13 @@ class IMU
 public:
     IMU(void);
     void init(void);
-    void calibrate(void);          // Calibrate the IMU and store the biases in EEPROM
-    void restoreCalibration(void); // Restore the calibration values from EEPROM
-    void getLatestReadings(void);  // Process the IMU data and update the AHRS values
+    void calibrate(void);                        // Calibrate the IMU and store the biases in EEPROM
+    void restoreCalibration(void);               // Restore the calibration values from EEPROM
+    void getLatestReadings(void);                // Process the IMU data and update the AHRS values
+    static void getLatestReadingsTask(void *ctx) // Trampoline function for the scheduler to call the getLatestReadings function
+    {
+        static_cast<IMU *>(ctx)->getLatestReadings();
+    }
 
     float getRoll(void) { return rpy[0]; }
     float getPitch(void) { return rpy[1]; }

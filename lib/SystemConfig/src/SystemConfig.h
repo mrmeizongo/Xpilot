@@ -77,13 +77,20 @@
 #endif
 
 // System variables
-#define BAUD_RATE 9600              // Serial baud rate
-#define INPUT_REFRESH_RATE_US 20000 // Radio input refresh rate in microseconds (50HZ). Typical transmitter PWM refresh rate
-#define ONEHZ_LOOP_US 1000000       // 1Hz loop rate in microseconds
-#define MPU6050_ADDRESS 0x68        // I2C address of MPU6050
-#define I2C_CLOCK_400KHZ 400000     // I2C clock speed in Hz
-#define I2C_CLOCK_100KHZ 100000     // I2C clock speed in Hz
-#define CALIBRATE_MEMORY_OFFSET 0   // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep
-#define FAILSAFE_TOLERANCE 200      // Failsafe tolerance in microseconds
+#define BAUD_RATE 9600                 // Serial baud rate
+#define ONEHZ_LOOP_US 1000000          // 1Hz loop rate in microseconds
+#define MPU6050_ADDRESS 0x68           // I2C address of MPU6050
+#define I2C_CLOCK_400KHZ 400000        // I2C clock speed in Hz
+#define I2C_CLOCK_100KHZ 100000        // I2C clock speed in Hz
+#define CALIBRATE_MEMORY_OFFSET 0      // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep
+#define FAILSAFE_TOLERANCE 200         // Failsafe tolerance in microseconds
+#define CONTROL_LOOP_RATE_HZ 250       // Control loop period in hz
+#define FLIGHT_MODE_UPDATE_RATE_HZ 100 // Flight mode update period in hz
+#define RADIO_INPUT_PROCESS_RATE_HZ 50 // Radio input period in hz
+#define IMU_UPDATE_RATE_HZ 250         // IMU update period in hz
+#define FLIGHT_MODE_RUN_RATE_HZ 50     // Flight mode run period in hz
+#define IMU_RATE_PRINT_HZ 250          // IMU debug print period in hz
+#define TASK_RATE_PRINT_HZ 1           // Task rate debug print period in hz
+#define IO_RATE_PRINT_HZ 1             // IO debug print period in hz
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H

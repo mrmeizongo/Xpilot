@@ -54,7 +54,6 @@ Scheduler::Scheduler()
         tasks_[i].context = nullptr;
         tasks_[i].nextRunTick = 0;
         tasks_[i].periodMs = 0;
-        tasks_[i].occupied = false;
         tasks_[i].enabled = false;
 
         tasks_[i].stats.runCount = 0;
@@ -65,7 +64,7 @@ Scheduler::Scheduler()
     }
 }
 
-bool Scheduler::init()
+void Scheduler::init()
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
@@ -96,17 +95,24 @@ bool Scheduler::init()
         // Enable Timer2 compare-match A interrupt.
         TIMSK2 |= _BV(OCIE2A);
     }
-
-    return true;
 }
 
 int8_t Scheduler::addTask(
     TaskCallback callback,
     void *context,
-    uint16_t periodMs,
+    uint16_t frequencyHz,
     uint16_t startDelayMs)
 {
-    if (callback == nullptr || periodMs == 0)
+    if (callback == nullptr || frequencyHz == 0 || frequencyHz > 1000)
+    {
+        return INVALID_TASK_ID;
+    }
+
+    const uint32_t periodMs =
+        static_cast<uint32_t>(
+            (1000UL + (frequencyHz / 3UL)) / frequencyHz);
+
+    if (periodMs == 0)
     {
         return INVALID_TASK_ID;
     }
@@ -115,12 +121,12 @@ int8_t Scheduler::addTask(
     {
         Task &task = tasks_[i];
 
-        if (!task.occupied)
+        if (!task.enabled)
         {
             task.callback = callback;
             task.context = context;
+            task.frequencyHz = frequencyHz;
             task.periodMs = periodMs;
-            task.occupied = true;
             task.enabled = true;
 
             task.stats.runCount = 0;
@@ -129,10 +135,13 @@ int8_t Scheduler::addTask(
             task.stats.lastRuntimeUs = 0;
             task.stats.maxRuntimeUs = 0;
 
-            const uint16_t initialDelay =
-                (startDelayMs == 0) ? periodMs : startDelayMs;
+            // startDelayMs == 0, means run after one period, otherwise run after startDelayMs
+            // This allows system initialization to complete before the first task execution.
+            const uint32_t initialDelayMs = (startDelayMs == 0)
+                                                ? static_cast<uint32_t>(periodMs)
+                                                : static_cast<uint32_t>(startDelayMs);
 
-            task.nextRunTick = ticks() + initialDelay;
+            task.nextRunTick = ticks() + initialDelayMs;
 
             return static_cast<int8_t>(i);
         }
@@ -141,14 +150,13 @@ int8_t Scheduler::addTask(
     return INVALID_TASK_ID;
 }
 
-void Scheduler::runPending()
+void Scheduler::runTasks()
 {
     for (uint8_t i = 0; i < MAX_TASKS; ++i)
     {
         Task &task = tasks_[i];
 
-        if (!task.occupied ||
-            !task.enabled ||
+        if (!task.enabled ||
             task.callback == nullptr)
         {
             continue;
@@ -156,6 +164,7 @@ void Scheduler::runPending()
 
         const uint32_t currentTick = ticks();
 
+        // Skip tasks not due to run.
         if (!deadlineReached(currentTick, task.nextRunTick))
         {
             continue;
@@ -188,68 +197,35 @@ void Scheduler::runPending()
 
         task.callback(task.context);
 
-        const uint32_t runtimeUs = micros() - startTimeUs;
+        const uint32_t taskPeriodTakenUs = micros() - startTimeUs;
 
         task.stats.runCount++;
-        task.stats.lastRuntimeUs = runtimeUs;
+        task.stats.loopCounter++;
 
-        if (runtimeUs > task.stats.maxRuntimeUs)
+        const uint32_t currentTimeUs = micros();
+
+        if ((currentTimeUs - task.stats.lastLoopRateUpdateUs) >= 1000000UL)
         {
-            task.stats.maxRuntimeUs = runtimeUs;
+            task.stats.loopRateHz = task.stats.loopCounter;
+            task.stats.loopCounter = 0;
+            task.stats.lastLoopRateUpdateUs = currentTimeUs;
+        }
+        task.stats.lastRuntimeUs = taskPeriodTakenUs;
+
+        if (taskPeriodTakenUs > task.stats.maxRuntimeUs)
+        {
+            task.stats.maxRuntimeUs = taskPeriodTakenUs;
         }
 
+        // Convert time task took to run to milliseconds and compare it to the alloted time
         const uint32_t availableTimeUs =
             static_cast<uint32_t>(task.periodMs) * 1000UL;
 
-        if (runtimeUs > availableTimeUs)
+        if (taskPeriodTakenUs > availableTimeUs)
         {
             task.stats.overrunCount++;
         }
     }
-}
-
-bool Scheduler::setEnabled(int8_t taskId, bool enabled)
-{
-    if (!isValidTask(taskId))
-    {
-        return false;
-    }
-
-    Task &task = tasks_[taskId];
-
-    if (enabled && !task.enabled)
-    {
-        task.nextRunTick = ticks() + task.periodMs;
-    }
-
-    task.enabled = enabled;
-
-    return true;
-}
-
-bool Scheduler::setPeriod(int8_t taskId, uint16_t periodMs)
-{
-    if (!isValidTask(taskId) || periodMs == 0)
-    {
-        return false;
-    }
-
-    Task &task = tasks_[taskId];
-
-    task.periodMs = periodMs;
-    task.nextRunTick = ticks() + periodMs;
-
-    return true;
-}
-
-bool Scheduler::isEnabled(int8_t taskId) const
-{
-    if (!isValidTask(taskId))
-    {
-        return false;
-    }
-
-    return tasks_[taskId].enabled;
 }
 
 bool Scheduler::getStats(
@@ -262,24 +238,6 @@ bool Scheduler::getStats(
     }
 
     stats = tasks_[taskId].stats;
-
-    return true;
-}
-
-bool Scheduler::resetStats(int8_t taskId)
-{
-    if (!isValidTask(taskId))
-    {
-        return false;
-    }
-
-    TaskStats &stats = tasks_[taskId].stats;
-
-    stats.runCount = 0;
-    stats.missedPeriods = 0;
-    stats.overrunCount = 0;
-    stats.lastRuntimeUs = 0;
-    stats.maxRuntimeUs = 0;
 
     return true;
 }
@@ -325,7 +283,7 @@ bool Scheduler::isValidTask(int8_t taskId) const
         return false;
     }
 
-    return tasks_[taskId].occupied;
+    return tasks_[taskId].enabled;
 }
 
 ISR(TIMER2_COMPA_vect)

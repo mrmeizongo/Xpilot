@@ -224,13 +224,12 @@ Flight stabilization software
  * Uncomment to enable the respective debugging
  * It is wise to enable only one debug at a time to avoid chaos on serial bus
  */
-// #define LOOP_DEBUG
+// #define TASK_RATE_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
 // #define CALIBRATE_DEBUG
-// #define READ_CALIBRATION_FROM_EEPROM // Uncomment to use calibrated values from EEPROM on startup.
-#if defined(LOOP_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) || defined(CALIBRATE_DEBUG) || defined(READ_CALIBRATION_FROM_EEPROM)
-#define DEBUG
-#endif
+// #define CALIBRATE
+// #define READ_CALIBRATION_FROM_EEPROM
+// #define SELF_TEST_ACCEL_GYRO
 // ------------------------------------------------------------------------------------------------------
 #endif // _DEFAULT_CONFIG_H

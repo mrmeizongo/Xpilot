@@ -110,6 +110,10 @@ public:
     Radio(void);
     void init(void);
     void processInput(void);
+    static void processInputTask(void *ctx) // Trampoline function for the scheduler to call the processInput function
+    {
+        static_cast<Radio *>(ctx)->processInput();
+    }
     bool inFailsafe(void) { return failSafe; }
 
     int16_t getRxRollPWM(void) { return currentRx.rollPWM; }

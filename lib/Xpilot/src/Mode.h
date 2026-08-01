@@ -57,6 +57,10 @@ public:
     virtual void process(void) = 0;                                      // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                                          // High level processing specific to this mode
     virtual void exit(void) {}                                           // Perform any clean up before switching to another mode
+    static void runTask(void *ctx)                                       // Trampoline function for the scheduler to call the run function
+    {
+        static_cast<Mode *>(ctx)->run();
+    }
 
     static int16_t getRoll(void) { return rollOut; }   // Get roll output for debugging purposes
     static int16_t getPitch(void) { return pitchOut; } // Get pitch output for debugging purposes

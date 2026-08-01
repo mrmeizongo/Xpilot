@@ -6,16 +6,10 @@
 #include "Actuators.h"
 #include "IMU.h"
 
-// Timer variables
-static unsigned long nowUs = 0, inputLastUs = 0;
-// -------------------------
-
-// Debug helper functions
-static void printDebug(void) __attribute__((unused));
-static void printIO(void) __attribute__((unused));
-static void printIMU(void) __attribute__((unused));
-static void printLoopRate(void) __attribute__((unused));
-// -------------------------
+static uint8_t imuTaskId;
+static uint8_t radioTaskId;
+static uint8_t flightModeUpdateTaskId;
+static uint8_t flightModeRunTaskId;
 
 Xpilot::Xpilot(void)
 {
@@ -47,26 +41,28 @@ void Xpilot::setup(void)
     imu.init();
     radio.init();
     actuators.init();
+    scheduler.init();
+
+    imuTaskId = scheduler.addTask(imu.getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
+    radioTaskId = scheduler.addTask(radio.processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
+    flightModeUpdateTaskId = scheduler.addTask(updateFlightModeTask, this, FLIGHT_MODE_UPDATE_RATE_HZ);
+    flightModeRunTaskId = scheduler.addTask(currentMode->runTask, currentMode, FLIGHT_MODE_RUN_RATE_HZ);
+
+#if defined(IO_DEBUG)
+    (void)scheduler.addTask(printIOTask, this, IO_RATE_PRINT_HZ);
+#endif
+#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+    (void)scheduler.addTask(printIMUTask, this, IMU_RATE_PRINT_HZ);
+#endif
+#if defined(TASK_RATE_DEBUG)
+    (void)scheduler.addTask(printLoopRateTask, this, TASK_RATE_PRINT_HZ);
+#endif
 }
 
 // Main Xpilot execution loop
 void Xpilot::loop(void)
 {
-    nowUs = micros();
-    // Process radio input
-    if (nowUs - inputLastUs >= INPUT_REFRESH_RATE_US)
-    {
-        radio.processInput();
-        inputLastUs = nowUs;
-    }
-
-    imu.getLatestReadings();
-    updateFlightMode(); // Update flight mode based on radio mode switch position
-    currentMode->run(); // Run the high level processing for the current flight mode
-
-#if defined(DEBUG)
-    printDebug();
-#endif
+    scheduler.runTasks();
 }
 
 void Xpilot::updateFlightMode(void)
@@ -114,27 +110,7 @@ void Xpilot::updateFlightMode(void)
     previousMode = currentMode;
 }
 
-// Debug helper functions
-static void printDebug(void)
-{
-#if defined(IO_DEBUG)
-    static unsigned long debugLastUs = 0;
-    if (nowUs - debugLastUs >= ONEHZ_LOOP_US)
-    {
-        printIO();
-        debugLastUs = nowUs;
-    }
-#endif
-
-#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
-    printIMU();
-#endif
-#if defined(LOOP_DEBUG)
-    printLoopRate();
-#endif
-}
-
-static void printIO(void)
+void Xpilot::printIO(void)
 {
     Serial.print("\t\t\t\t");
     Serial.print("Flight Mode: ");
@@ -153,7 +129,7 @@ static void printIO(void)
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
-    Serial.print(xpilot.getRoll());
+    Serial.print(currentMode->getRoll());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
@@ -162,7 +138,7 @@ static void printIO(void)
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
-    Serial.print(xpilot.getRoll());
+    Serial.print(currentMode->getRoll());
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
@@ -171,7 +147,7 @@ static void printIO(void)
     Serial.print(radio.getRxPitchPWM());
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
-    Serial.print(xpilot.getPitch());
+    Serial.print(currentMode->getPitch());
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
@@ -180,7 +156,7 @@ static void printIO(void)
     Serial.print(radio.getRxYawPWM());
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
-    Serial.print(xpilot.getYaw());
+    Serial.print(currentMode->getYaw());
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
@@ -190,7 +166,7 @@ static void printIO(void)
     Serial.print(radio.getRxAux2PWM());
     Serial.print("\t\t\t");
     Serial.print("Flaperon: ");
-    Serial.print(xpilot.getFlaperon());
+    Serial.print(currentMode->getFlaperon());
     Serial.print("\t\t\t");
     Serial.print("Flap Position: ");
     Serial.println((int16_t)radio.getRxAux2Pos());
@@ -207,9 +183,9 @@ static void printIO(void)
     Serial.println();
 }
 
-static void printIMU(void)
+void Xpilot::printIMU(void)
 {
-    Serial.print(">");
+    Serial.println(">");
     Serial.print("Roll: ");
     Serial.print(imu.getRoll());
     Serial.print(", ");
@@ -221,18 +197,35 @@ static void printIMU(void)
     Serial.println();
 }
 
-static void printLoopRate(void)
+void Xpilot::printLoopRate(void)
 {
-    unsigned long loopUs = micros() - nowUs;
-    loopUs = loopUs <= 0 ? 1 : loopUs;
-    Serial.print(">");
-    Serial.print("Loop time: ");
-    Serial.print(loopUs);
-    Serial.print("us");
-    Serial.print(", ");
-    Serial.print("Loop rate: ");
-    Serial.print(1000000 / loopUs);
-    Serial.print("Hz");
+    Serial.println(">");
+
+    Scheduler::TaskStats taskStats;
+    if (scheduler.getStats(imuTaskId, taskStats))
+    {
+        Serial.print("IMU Loop Rate:\t\t\t");
+        Serial.print(taskStats.loopRateHz);
+        Serial.println();
+    }
+    if (scheduler.getStats(radioTaskId, taskStats))
+    {
+        Serial.print("Radio Loop Rate:\t\t");
+        Serial.print(taskStats.loopRateHz);
+        Serial.println();
+    }
+    if (scheduler.getStats(flightModeUpdateTaskId, taskStats))
+    {
+        Serial.print("Mode Update Loop Rate:\t\t");
+        Serial.print(taskStats.loopRateHz);
+        Serial.println();
+    }
+    if (scheduler.getStats(flightModeRunTaskId, taskStats))
+    {
+        Serial.print("Mode Run Loop Rate:\t\t");
+        Serial.print(taskStats.loopRateHz);
+        Serial.println();
+    }
     Serial.println();
 }
 // ---------------------------

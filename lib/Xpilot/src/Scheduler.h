@@ -44,6 +44,10 @@ public:
         uint32_t overrunCount;
         uint32_t lastRuntimeUs;
         uint32_t maxRuntimeUs;
+        uint32_t lastLoopRateUpdateUs;
+
+        uint16_t loopRateHz;
+        uint16_t loopCounter;
     };
 
     Scheduler();
@@ -54,22 +58,21 @@ public:
      * Timer2 is reserved by the scheduler after this call.
      * This conflicts with Arduino tone() and any other library using Timer2.
      */
-    bool init();
+    void init();
 
     /**
      * Adds a periodic task.
      *
      * @param callback      Function to execute.
-     * @param periodMs      Task period in milliseconds.
-     * @param startDelayMs  Delay before first execution.
-     *                      A value of 0 schedules the first run after one period.
+     * @param frequencyHz   Task frequency in Hertz.
+     * @param startDelayMs  A value of 0 schedules the first run after one period.
      *
      * @return Task ID from 0 to MAX_TASKS - 1, or INVALID_TASK_ID on failure.
      */
     int8_t addTask(
         TaskCallback callback,
         void *context,
-        uint16_t periodMs,
+        uint16_t frequencyHz,
         uint16_t startDelayMs = 0);
 
     /**
@@ -77,27 +80,9 @@ public:
      *
      * Call this continuously from Arduino loop().
      */
-    void runPending();
-
-    /**
-     * Enables or disables a task.
-     *
-     * Re-enabling a task schedules it to run one complete period later.
-     */
-    bool setEnabled(int8_t taskId, bool enabled);
-
-    /**
-     * Changes a task's execution period.
-     *
-     * The next execution is scheduled relative to the current time.
-     */
-    bool setPeriod(int8_t taskId, uint16_t periodMs);
-
-    bool isEnabled(int8_t taskId) const;
+    void runTasks();
 
     bool getStats(int8_t taskId, TaskStats &stats) const;
-
-    bool resetStats(int8_t taskId);
 
     /**
      * Returns milliseconds elapsed since begin().
@@ -118,9 +103,9 @@ private:
         void *context;
 
         uint32_t nextRunTick;
-        uint16_t periodMs;
+        uint16_t frequencyHz;
+        uint32_t periodMs;
 
-        bool occupied;
         bool enabled;
 
         TaskStats stats;
