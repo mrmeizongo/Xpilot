@@ -6,10 +6,12 @@
 #include "Actuators.h"
 #include "IMU.h"
 
+// Task handlers for the scheduler to manage periodic tasks
 static uint8_t imuTaskId;
 static uint8_t radioTaskId;
 static uint8_t flightModeUpdateTaskId;
 static uint8_t flightModeRunTaskId;
+static uint8_t writeServoTaskId;
 
 Xpilot::Xpilot(void)
 {
@@ -48,6 +50,7 @@ void Xpilot::setup(void)
     radioTaskId = scheduler.addTask(radio.processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
     flightModeUpdateTaskId = scheduler.addTask(updateFlightModeTask, this, FLIGHT_MODE_UPDATE_RATE_HZ);
     flightModeRunTaskId = scheduler.addTask(currentMode->runTask, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
+    writeServoTaskId = scheduler.addTask(Mode::servoOut, nullptr, WRITE_SERVO_RATE_HZ);
 #if defined(IO_DEBUG)
     (void)scheduler.addTask(printIOTask, this, IO_PRINT_RATE_HZ);
 #endif
@@ -224,6 +227,12 @@ void Xpilot::printLoopRate(void)
     if (scheduler.getStats(flightModeRunTaskId, taskStats))
     {
         Serial.print("Mode Run Loop Rate:\t\t");
+        Serial.print(taskStats.loopRateHz);
+        Serial.println();
+    }
+    if (scheduler.getStats(writeServoTaskId, taskStats))
+    {
+        Serial.print("Write Servo Loop Rate:\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }

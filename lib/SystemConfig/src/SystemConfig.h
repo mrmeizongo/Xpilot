@@ -88,7 +88,8 @@
 #define FLIGHT_MODE_UPDATE_RATE_HZ 50           // Flight mode update period in hz
 #define RADIO_INPUT_PROCESS_RATE_HZ 50          // Radio input period in hz
 #define IMU_UPDATE_RATE_HZ CONTROL_LOOP_RATE_HZ // IMU update period in hz
-#define FLIGHT_MODE_RUN_RATE_HZ 50              // Flight mode run period in hz
+#define FLIGHT_MODE_RUN_RATE_HZ 100             // Flight mode run period in hz
+#define WRITE_SERVO_RATE_HZ 50                  // Write servo output period in hz
 #define IMU_PRINT_RATE_HZ 250                   // IMU debug print period in hz
 #define TASK_PRINT_RATE_HZ 1                    // Task rate debug print period in hz
 #define IO_PRINT_RATE_HZ 1                      // IO debug print period in hz

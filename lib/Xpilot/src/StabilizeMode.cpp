@@ -49,7 +49,6 @@ void StabilizeMode::run(void)
 #if defined(USE_FLAPERONS)
     Mode::setFlaperons();
 #endif
-    Mode::servoOut();
 }
 
 void StabilizeMode::controlFailsafe(void)
