@@ -222,7 +222,8 @@ Flight stabilization software
 
 /*
  * Uncomment to enable the respective debugging
- * It is wise to enable only one debug at a time to avoid chaos on serial bus
+ * CAUTION:
+ * Only uncomment one debug option at a time
  */
 // #define TASK_RATE_DEBUG
 // #define IMU_DEBUG

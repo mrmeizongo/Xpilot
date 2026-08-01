@@ -65,6 +65,7 @@ Scheduler::Scheduler()
         tasks_[i].stats.loopRateHz = 0;
         tasks_[i].stats.loopCounter = 0;
     }
+    numTasks_ = 0;
 }
 
 void Scheduler::init()
@@ -149,13 +150,14 @@ int8_t Scheduler::addTask(
             return static_cast<int8_t>(i);
         }
     }
+    numTasks_++;
 
     return INVALID_TASK_ID;
 }
 
 void Scheduler::runTasks()
 {
-    for (uint8_t i = 0; i < MAX_TASKS; ++i)
+    for (uint8_t i = 0; i < numTasks_; ++i)
     {
         Task &task = tasks_[i];
 

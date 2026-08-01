@@ -38,7 +38,7 @@ public:
      * This is an arbitrary limit.
      * The more tasks you add, the more memory is used and the longer it takes to run all tasks.
      */
-    static constexpr uint8_t MAX_TASKS = 8;
+    static constexpr uint8_t MAX_TASKS = 10;
     static constexpr int8_t INVALID_TASK_ID = -1;
 
     struct TaskStats
@@ -117,6 +117,7 @@ private:
     };
 
     Task tasks_[MAX_TASKS];
+    uint8_t numTasks_;
 
     static volatile uint32_t tickCount;
 
