@@ -81,7 +81,6 @@
 #define ONEHZ_LOOP_US 1000000     // 1Hz loop rate in microseconds
 #define MPU6050_ADDRESS 0x68      // I2C address of MPU6050
 #define I2C_CLOCK_400KHZ 400000   // I2C clock speed in Hz
-#define I2C_CLOCK_100KHZ 100000   // I2C clock speed in Hz
 #define CALIBRATE_MEMORY_OFFSET 0 // EEPROM offset for calibration data.
 #define FAILSAFE_TOLERANCE 200    // Failsafe tolerance in microseconds
 
