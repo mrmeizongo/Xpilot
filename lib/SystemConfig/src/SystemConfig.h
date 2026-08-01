@@ -83,9 +83,9 @@
 #define I2C_CLOCK_400KHZ 400000   // I2C clock speed in Hz
 #define I2C_CLOCK_100KHZ 100000   // I2C clock speed in Hz
 #define CALIBRATE_MEMORY_OFFSET 0 // EEPROM offset for calibration data.
+#define FAILSAFE_TOLERANCE 200    // Failsafe tolerance in microseconds
 
-// Task control config
-#define FAILSAFE_TOLERANCE 200                                    // Failsafe tolerance in microseconds
+// Task scheduler control config
 #define CONTROL_LOOP_RATE_HZ 250                                  // Control loop period in hz
 #define FLIGHT_MODE_UPDATE_RATE_HZ 60                             // Flight mode update period in hz
 #define RADIO_INPUT_PROCESS_RATE_HZ 50                            // Radio input period in hz
