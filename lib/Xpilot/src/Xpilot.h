@@ -45,7 +45,7 @@ public:
     Xpilot &operator=(const Xpilot &) = delete; // Prevent this class from being assignable
     // --------------------------------------------------------------------
 
-    // Trampoline functions for the scheduler to call
+    // Trampoline functions for the scheduler
     static void updateFlightModeTask(void *ctx) { static_cast<Xpilot *>(ctx)->updateFlightMode(); }
     static void printIMUTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIMU(); }
     static void printIOTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIO(); }
