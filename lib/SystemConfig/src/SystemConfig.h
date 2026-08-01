@@ -76,13 +76,15 @@
 #define AUX1PIN_OUTPUT 12
 #endif
 
-// System variables
-#define BAUD_RATE 9600                                            // Serial baud rate
-#define ONEHZ_LOOP_US 1000000                                     // 1Hz loop rate in microseconds
-#define MPU6050_ADDRESS 0x68                                      // I2C address of MPU6050
-#define I2C_CLOCK_400KHZ 400000                                   // I2C clock speed in Hz
-#define I2C_CLOCK_100KHZ 100000                                   // I2C clock speed in Hz
-#define CALIBRATE_MEMORY_OFFSET 0                                 // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep
+// System config
+#define BAUD_RATE 9600            // Serial baud rate
+#define ONEHZ_LOOP_US 1000000     // 1Hz loop rate in microseconds
+#define MPU6050_ADDRESS 0x68      // I2C address of MPU6050
+#define I2C_CLOCK_400KHZ 400000   // I2C clock speed in Hz
+#define I2C_CLOCK_100KHZ 100000   // I2C clock speed in Hz
+#define CALIBRATE_MEMORY_OFFSET 0 // EEPROM offset for calibration data.
+
+// Task control config
 #define FAILSAFE_TOLERANCE 200                                    // Failsafe tolerance in microseconds
 #define CONTROL_LOOP_RATE_HZ 250                                  // Control loop period in hz
 #define FLIGHT_MODE_UPDATE_RATE_HZ 60                             // Flight mode update period in hz
