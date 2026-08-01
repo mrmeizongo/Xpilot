@@ -19,7 +19,7 @@ Xpilot::Xpilot(void)
 
 void Xpilot::setup(void)
 {
-    sys_init();
+    sysInit();
 
     // Initialize the scheduler and add system tasks
     imuTaskId = scheduler.addTask(imu.getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
@@ -45,7 +45,7 @@ void Xpilot::loop(void)
     scheduler.runTasks();
 }
 
-void Xpilot::sys_init(void)
+void Xpilot::sysInit(void)
 {
 #if defined(DEBUG)
     Serial.begin(BAUD_RATE);

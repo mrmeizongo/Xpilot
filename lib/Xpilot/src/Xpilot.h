@@ -79,7 +79,7 @@ private:
     Scheduler scheduler; // Scheduler object to manage periodic tasks
     // --------------------------------------------------------------------
 
-    void sys_init(void); // Initialize system components
+    void sysInit(void); // Initialize system components
     // --------------------------------------------------------------------
 
     bool failSafeActive; // System failsafe active flag
