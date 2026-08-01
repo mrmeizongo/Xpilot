@@ -202,12 +202,12 @@ void Scheduler::runTasks()
 
         task.callback(task.context);
 
-        const uint32_t taskPeriodTakenUs = micros() - startTimeUs;
+        const uint32_t currentTimeUs = micros();
+
+        const uint32_t taskPeriodTakenUs = currentTimeUs - startTimeUs;
 
         task.stats.runCount++;
         task.stats.loopCounter++;
-
-        const uint32_t currentTimeUs = micros();
 
         if ((currentTimeUs - task.stats.lastLoopRateUpdateUs) >= 1000000UL)
         {
@@ -283,7 +283,7 @@ bool Scheduler::deadlineReached(
 
 bool Scheduler::isValidTask(int8_t taskId) const
 {
-    if (taskId < 0 || taskId >= MAX_TASKS)
+    if (taskId < 0 || taskId >= numTasks_)
     {
         return false;
     }
