@@ -80,6 +80,7 @@ private:
     // --------------------------------------------------------------------
 
     void sys_init(void); // Initialize system components
+    // --------------------------------------------------------------------
 
     bool failSafeActive; // System failsafe active flag
     void updateFlightMode(void);
