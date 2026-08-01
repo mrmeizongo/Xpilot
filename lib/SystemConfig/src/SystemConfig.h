@@ -85,7 +85,7 @@
 #define CALIBRATE_MEMORY_OFFSET 0               // EEPROM offset for calibration data. Change only if you have data in EEPROM that you want to keep
 #define FAILSAFE_TOLERANCE 200                  // Failsafe tolerance in microseconds
 #define CONTROL_LOOP_RATE_HZ 250                // Control loop period in hz
-#define FLIGHT_MODE_UPDATE_RATE_HZ 50           // Flight mode update period in hz
+#define FLIGHT_MODE_UPDATE_RATE_HZ 60           // Flight mode update period in hz
 #define RADIO_INPUT_PROCESS_RATE_HZ 50          // Radio input period in hz
 #define IMU_UPDATE_RATE_HZ CONTROL_LOOP_RATE_HZ // IMU update period in hz
 #define FLIGHT_MODE_RUN_RATE_HZ 100             // Flight mode run period in hz
