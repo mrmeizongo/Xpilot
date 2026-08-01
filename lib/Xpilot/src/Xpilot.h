@@ -52,7 +52,7 @@ public:
     static void printSchedulerRateTask(void *ctx) { static_cast<Xpilot *>(ctx)->printSchedulerRate(); }
     // --------------------------------------------------------------------
 
-    // Only functions called from the setup and loop functions
+    // Only functions called from the main setup and loop functions
     void setup(void);
     void loop(void);
     // --------------------------------------------------------------------
