@@ -38,21 +38,11 @@ See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type co
 
 ## Stabilization system loop
 
-The atmega328p chip is capable of running the entire stabilization loop in ~3ms.  
-This gives us an update frequency of ~333Hz which is more than enough to provide a smooth and responsive control system for slow flying RC planes such as trainers, gliders and some mild acrobatic planes.  
+The main loop and IMU runs at 250Hz.
+This is sufficient for the flight characteristics of the UAV this software was designed for(i.e. slow-to-mild acrobatic).
 
 ## Setup
-
-Connect MPU6050 to Arduino Nano as shown below
-
-| PIN | VALUE |
-| :-: | :---: |
-| VIN |  5v   |
-| GND |  GND  |
-| SCL |  A5   |
-| SDA |  A4   |
-
-Connect receiver to Arduino Nano as shown below. This can be changed in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h). However changing the input pin numbers will require some modification to the PinChangeInterrupt library.
+### Input
 
 |                                            CHANNEL                                            | PIN |
 | :-------------------------------------------------------------------------------------------: | :-: |
@@ -63,10 +53,7 @@ Connect receiver to Arduino Nano as shown below. This can be changed in [SystemC
 |   AUX2 - FLAPERON (if activated in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h))   |  6  |
 | AUX3 - User defined (if activated in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)) |  7  |
 
-Can use both aileron channel outputs to individual aileron servos or both aileron servos can be connected to one aileron channel output using a Y-cable extension.  
-If ailerons are wired independently, they can be used as flaperons by activating USE_FLAPERONS in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)
-Flying wings require individual aileron channel control.  
-Connect ailerons, elevator and rudder servos to Arduino Nano as shown below. This can be changed in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h).
+### Output
 
 |  CHANNEL  | PIN |
 | :-------: | :-: |
@@ -76,7 +63,7 @@ Connect ailerons, elevator and rudder servos to Arduino Nano as shown below. Thi
 |  Rudder   | 11  |
 | Auxiliary | 12  |
 
-Set up a 3-position switch on the transmitter to act as the Mode switch.  
+### Mode switch
 
 | AUX Switch Position |    Mode     |
 | :-----------------: | :---------: |
@@ -86,8 +73,7 @@ Set up a 3-position switch on the transmitter to act as the Mode switch.
 
 ## Info
 
-These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.  
-Ensure all components share a common ground. The Nano and MPU6050 do not require decoupling capacitors as the breakout boards come with their own voltage regulators and decoupling capacitors.
+These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.
 
 <p align="center">
   <img src="assets/img/Schematics.png" />
@@ -112,11 +98,13 @@ See [README.md](lib/PlaneConfigs/README.md) for instructions on how to set up co
 
 ## NOTICE
 
-Throttle is always under manual control. Signal wire for throttle goes directly to ESC for motor control.
+Throttle is always under manual control.
 
 Rate/Expo should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode.
 
-Two calibration functions are provided. Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in flash memory. Uncommenting CALIBRATE_DEBUG does same and prints out the calibration values in the serial monitor for inspection. Ensure the airplane is on a level surface and held still throughout the calibration process.
+Two calibration functions are provided; CALIBRATE and CALIBRATE_DEBUG.  
+Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in flash memory.  
+Uncommenting CALIBRATE_DEBUG does same and prints out the calibration values in the serial monitor for inspection. Ensure the airplane is on a level surface and held still throughout the calibration process.
 
 At any time, you can view the calibrated values on the serial monitor by uncommenting READ_CALIBRATION_FROM_EEPROM in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)
 
