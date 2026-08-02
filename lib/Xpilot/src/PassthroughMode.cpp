@@ -1,13 +1,6 @@
 #include "Mode.h"
 #include <LowpassFilter.h>
 
-void PassthroughMode::enter(void)
-{
-#if defined(USE_FILTER_IN_PT)
-    Mode::resetControllers();
-#endif
-}
-
 void PassthroughMode::process(void)
 {
     if (radio.inFailsafe())
