@@ -23,19 +23,19 @@ void Xpilot::setup(void)
 
     // Initialize the scheduler and add system tasks
     // The order tasks are added determines priority, with the highest priority first.
-    imuTaskId = scheduler.addTask(IMU::getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
-    radioTaskId = scheduler.addTask(Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
-    flightModeRunTaskId = scheduler.addTask(Mode::runTask, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
-    writeServoTaskId = scheduler.addTask(Mode::servoOut, nullptr, WRITE_SERVO_RATE_HZ);
-    flightModeUpdateTaskId = scheduler.addTask(Xpilot::updateFlightModeTask, this, FLIGHT_MODE_UPDATE_RATE_HZ);
+    imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
+    radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
+    flightModeRunTaskId = scheduler.addTask(&Mode::runTask, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
+    writeServoTaskId = scheduler.addTask(&Mode::servoOut, nullptr, WRITE_SERVO_RATE_HZ);
+    flightModeUpdateTaskId = scheduler.addTask(&Xpilot::updateFlightModeTask, this, FLIGHT_MODE_UPDATE_RATE_HZ);
 #if defined(IO_DEBUG)
-    (void)scheduler.addTask(Xpilot::printIOTask, this, IO_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printIOTask, this, IO_PRINT_RATE_HZ);
 #endif
 #if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
-    (void)scheduler.addTask(Xpilot::printIMUTask, this, IMU_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printIMUTask, this, IMU_PRINT_RATE_HZ);
 #endif
 #if defined(SCHEDULER_DEBUG)
-    (void)scheduler.addTask(Xpilot::printSchedulerRateTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_RATE_HZ);
 #endif
     scheduler.init();
 }
