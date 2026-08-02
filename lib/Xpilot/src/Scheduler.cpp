@@ -164,8 +164,7 @@ void Scheduler::runTasks()
     {
         Task &task = tasks_[i];
 
-        if (!task.enabled ||
-            task.callback == nullptr)
+        if (!isEnabled(i))
         {
             continue;
         }
@@ -274,6 +273,9 @@ bool Scheduler::resetStats(int8_t taskId)
     stats.overrunCount = 0;
     stats.lastRuntimeUs = 0;
     stats.maxRuntimeUs = 0;
+    stats.lastLoopRateUpdateUs = 0;
+    stats.loopRateHz = 0;
+    stats.loopCounter = 0;
 
     return true;
 }
@@ -314,12 +316,12 @@ bool Scheduler::deadlineReached(
 
 bool Scheduler::isValidTask(int8_t taskId) const
 {
-    if (taskId < 0 || taskId >= numTasks_)
+    if (taskId >= 0 && taskId <= numTasks_)
     {
-        return false;
+        return tasks_[taskId].occupied && tasks_[taskId].callback != nullptr;
     }
 
-    return tasks_[taskId].enabled;
+    return false;
 }
 
 ISR(TIMER2_COMPA_vect)
