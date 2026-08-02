@@ -119,8 +119,15 @@ void Xpilot::updateFlightMode(void)
     previousMode = currentMode;
 }
 
+static void clearTerminal()
+{
+    Serial.print("\033[2J"); // Clear screen
+    Serial.print("\033[H");  // Move cursor to home
+}
+
 void Xpilot::printIO(void)
 {
+    clearTerminal();
     Serial.print("\t\t\t\t");
     Serial.print("Flight Mode: ");
     Serial.println(xpilot.getFlightMode()->modeName4());
@@ -188,26 +195,23 @@ void Xpilot::printIO(void)
     Serial.print("Aux3 Position: ");
     Serial.println((int16_t)radio.getRxAux3Pos());
 #endif
-
-    Serial.println();
 }
 
 void Xpilot::printIMU(void)
 {
+    clearTerminal();
     Serial.println(">");
     Serial.print("Roll: ");
-    Serial.print(imu.getRoll());
-    Serial.print(", ");
+    Serial.println(static_cast<int16_t>(imu.getRoll()));
     Serial.print("Pitch: ");
-    Serial.print(imu.getPitch());
-    Serial.print(", ");
+    Serial.println(static_cast<int16_t>(imu.getPitch()));
     Serial.print("Yaw: ");
-    Serial.print(imu.getYaw());
-    Serial.println();
+    Serial.println(static_cast<int16_t>(imu.getYaw()));
 }
 
 void Xpilot::printSchedulerRate(void)
 {
+    clearTerminal();
     Serial.println(">");
 
     Scheduler::TaskStats taskStats;
@@ -241,6 +245,5 @@ void Xpilot::printSchedulerRate(void)
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
-    Serial.println();
 }
 // ---------------------------
