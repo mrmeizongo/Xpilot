@@ -72,10 +72,6 @@ void Xpilot::sysInit(void)
     imu.init();
     radio.init();
     actuators.init();
-
-#if defined(DEBUG)
-    Serial.println("System initialized.");
-#endif
 }
 
 void Xpilot::updateFlightMode(void)
@@ -221,9 +217,9 @@ void Xpilot::printSchedulerRate(void)
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
-    if (scheduler.getStats(radioTaskId, taskStats))
+    if (scheduler.getStats(flightModeRunTaskId, taskStats))
     {
-        Serial.print("Radio Loop Rate:\t\t");
+        Serial.print("Mode Run Loop Rate:\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
@@ -233,9 +229,9 @@ void Xpilot::printSchedulerRate(void)
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
-    if (scheduler.getStats(flightModeRunTaskId, taskStats))
+    if (scheduler.getStats(radioTaskId, taskStats))
     {
-        Serial.print("Mode Run Loop Rate:\t\t");
+        Serial.print("Radio Loop Rate:\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }

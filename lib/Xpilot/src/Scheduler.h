@@ -38,7 +38,7 @@ public:
      * This is an arbitrary limit.
      * The more tasks you add, the more memory is used and the longer it takes to run all tasks.
      */
-    static constexpr uint8_t MAX_TASKS = 10;
+    static constexpr uint8_t MAX_TASKS = 8;
     static constexpr int8_t INVALID_TASK_ID = -1;
 
     struct TaskStats
@@ -87,7 +87,11 @@ public:
      */
     void runTasks();
 
+    bool isEnabled(int8_t taskId) const;
+
     bool getStats(int8_t taskId, TaskStats &stats) const;
+
+    bool resetStats(int8_t taskId);
 
     /**
      * Returns milliseconds elapsed since begin().
@@ -111,6 +115,7 @@ private:
         uint16_t frequencyHz;
         uint32_t periodMs;
 
+        bool occupied;
         bool enabled;
 
         TaskStats stats;

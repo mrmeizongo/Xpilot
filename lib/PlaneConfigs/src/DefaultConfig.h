@@ -115,11 +115,8 @@ Flight stabilization software
 #define FLAPERON_MAX_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM) * (FLAPERON_PC)
 #endif
 
-#define AUTO_LPF_FREQ 10 // Auto low-pass filter frequency in Hz
-
-#define USE_FILTER_IN_PT       // Filter all inputs in passthrough mode
-#define PASSTHROUGH_LPF_FREQ 4 // Passthrough mode low-pass filter frequency in Hz. Increase/decrease for less/more responsiveness respectively
-#define LPF_DT 0.01f           // Auto low-pass filter delta time in seconds
+#define LPF_FREQ 10   // Auto low-pass filter frequency in Hz
+#define LPF_DT 0.004f // Auto low-pass filter delta time in seconds
 
 // Uncomment to enable auxiliary output channel 1
 // #define USE_AUXOUT1

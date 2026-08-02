@@ -53,7 +53,9 @@ Scheduler::Scheduler()
         tasks_[i].callback = nullptr;
         tasks_[i].context = nullptr;
         tasks_[i].nextRunTick = 0;
+        tasks_[i].frequencyHz = 0;
         tasks_[i].periodMs = 0;
+        tasks_[i].occupied = false;
         tasks_[i].enabled = false;
 
         tasks_[i].stats.runCount = 0;
@@ -125,12 +127,13 @@ int8_t Scheduler::addTask(
     {
         Task &task = tasks_[i];
 
-        if (!task.enabled)
+        if (!task.occupied)
         {
             task.callback = callback;
             task.context = context;
             task.frequencyHz = frequencyHz;
             task.periodMs = periodMs;
+            task.occupied = true;
             task.enabled = true;
 
             task.stats.runCount = 0;
@@ -233,6 +236,16 @@ void Scheduler::runTasks()
     }
 }
 
+bool Scheduler::isEnabled(int8_t taskId) const
+{
+    if (!isValidTask(taskId))
+    {
+        return false;
+    }
+
+    return tasks_[taskId].enabled;
+}
+
 bool Scheduler::getStats(
     int8_t taskId,
     TaskStats &stats) const
@@ -243,6 +256,24 @@ bool Scheduler::getStats(
     }
 
     stats = tasks_[taskId].stats;
+
+    return true;
+}
+
+bool Scheduler::resetStats(int8_t taskId)
+{
+    if (!isValidTask(taskId))
+    {
+        return false;
+    }
+
+    TaskStats &stats = tasks_[taskId].stats;
+
+    stats.runCount = 0;
+    stats.missedPeriods = 0;
+    stats.overrunCount = 0;
+    stats.lastRuntimeUs = 0;
+    stats.maxRuntimeUs = 0;
 
     return true;
 }

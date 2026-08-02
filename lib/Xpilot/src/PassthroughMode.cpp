@@ -1,12 +1,6 @@
 #include "Mode.h"
 #include <LowpassFilter.h>
 
-#if defined(USE_FILTER_IN_PT)
-static FirstOrderLPF<int16_t> rollLPF{PASSTHROUGH_LPF_FREQ, LPF_DT};
-static FirstOrderLPF<int16_t> pitchLPF{PASSTHROUGH_LPF_FREQ, LPF_DT};
-static FirstOrderLPF<int16_t> yawLPF{PASSTHROUGH_LPF_FREQ, LPF_DT};
-#endif
-
 void PassthroughMode::enter(void)
 {
 #if defined(USE_FILTER_IN_PT)
@@ -33,15 +27,7 @@ void PassthroughMode::process(void)
 void PassthroughMode::run(void)
 {
     process();
-
-#if defined(USE_FILTER_IN_PT)
-    int16_t roll = rollLPF.Process(Mode::rollOut);
-    int16_t pitch = pitchLPF.Process(Mode::pitchOut);
-    int16_t yaw = yawLPF.Process(Mode::yawOut);
-    Mode::planeMixer(roll, pitch, yaw);
-#else
     Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);
-#endif
 
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
