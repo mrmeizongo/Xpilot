@@ -2,7 +2,7 @@
 #define _SYSTEM_CONFIG_H
 #include <PlaneConfig.h>
 
-#define SYSTEM_CONFIG_VERSION "2.1.1"
+#define SYSTEM_CONFIG_VERSION "2.2.1"
 
 // ATmega328p pin definitions
 /*
