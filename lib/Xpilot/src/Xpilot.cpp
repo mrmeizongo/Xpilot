@@ -202,11 +202,11 @@ void Xpilot::printIMU(void)
     clearTerminal();
     Serial.println(">");
     Serial.print("Roll: ");
-    Serial.println(static_cast<int16_t>(imu.getRoll()));
+    Serial.println(imu.getRoll());
     Serial.print("Pitch: ");
-    Serial.println(static_cast<int16_t>(imu.getPitch()));
+    Serial.println(imu.getPitch());
     Serial.print("Yaw: ");
-    Serial.println(static_cast<int16_t>(imu.getYaw()));
+    Serial.println(imu.getYaw());
 }
 
 void Xpilot::printSchedulerRate(void)

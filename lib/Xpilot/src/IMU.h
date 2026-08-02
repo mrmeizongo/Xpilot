@@ -15,13 +15,13 @@ public:
         static_cast<IMU *>(ctx)->getLatestReadings();
     }
 
-    float getRoll(void) { return rpy[0]; }
-    float getPitch(void) { return rpy[1]; }
-    float getYaw(void) { return rpy[2]; }
+    int16_t getRoll(void) { return static_cast<int16_t>(rpy[0]); }
+    int16_t getPitch(void) { return static_cast<int16_t>(rpy[1]); }
+    int16_t getYaw(void) { return static_cast<int16_t>(rpy[2]); }
 
-    float getGyroX(void) { return g[0]; }
-    float getGyroY(void) { return g[1]; }
-    float getGyroZ(void) { return g[2]; }
+    int16_t getGyroX(void) { return static_cast<int16_t>(g[0]); }
+    int16_t getGyroY(void) { return static_cast<int16_t>(g[1]); }
+    int16_t getGyroZ(void) { return static_cast<int16_t>(g[2]); }
 
 private:
     /*

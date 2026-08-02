@@ -95,9 +95,9 @@ protected:
 #endif
 
     // PID controllers
-    static PIDF rollPIDF;
-    static PIDF pitchPIDF;
-    static PIDF yawPIDF;
+    static PIDF<int16_t> rollPIDF;
+    static PIDF<int16_t> pitchPIDF;
+    static PIDF<int16_t> yawPIDF;
 };
 
 // Manual control of flight surfaces - USE WITH CAUTION. FOR ADVANCED FLYERS ONLY!

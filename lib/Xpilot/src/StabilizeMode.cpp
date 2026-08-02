@@ -29,8 +29,8 @@ void StabilizeMode::run(void)
     Mode::rudderMixer();
 #endif
 
-    float rollDemand = Mode::rollOut - imu.getRoll();
-    float pitchDemand = Mode::pitchOut - imu.getPitch();
+    int16_t rollDemand = Mode::rollOut - imu.getRoll();
+    int16_t pitchDemand = Mode::pitchOut - imu.getPitch();
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 

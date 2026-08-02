@@ -93,6 +93,6 @@
 #define WRITE_SERVO_RATE_HZ 50                       // Write servo output period in hz
 #define IMU_PRINT_RATE_HZ 10                         // IMU debug print period in hz
 #define TASK_PRINT_RATE_HZ 1                         // Task rate debug print period in hz
-#define IO_PRINT_RATE_HZ 2                           // IO debug print period in hz
+#define IO_PRINT_RATE_HZ 1                           // IO debug print period in hz
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H
