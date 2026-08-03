@@ -14,9 +14,9 @@ void RateMode::process(void)
         return;
     }
 
-    Mode::rollOut = GETFILTEREDINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
-    Mode::pitchOut = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
-    Mode::yawOut = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
+    Mode::input_rpy[0] = GETFILTEREDINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
+    Mode::input_rpy[1] = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
+    Mode::input_rpy[2] = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_YAW_RATE_DEGS, MAX_YAW_RATE_DEGS);
 #if defined(USE_FLAPERONS)
     flaperonInput();
 #endif
@@ -29,11 +29,11 @@ void RateMode::run(void)
     Mode::rudderMixer();
 #endif
 
-    int16_t roll = Mode::rollPIDF.Compute(Mode::rollOut, imu.getGyroX());
-    int16_t pitch = Mode::pitchPIDF.Compute(Mode::pitchOut, imu.getGyroY());
-    int16_t yaw = Mode::yawPIDF.Compute(Mode::yawOut, imu.getGyroZ());
+    Mode::output_rpy[0] = Mode::rollPIDF.Compute(Mode::input_rpy[0], imu.getGyroX());
+    Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], imu.getGyroY());
+    Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], imu.getGyroZ());
 
-    Mode::planeMixer(roll, pitch, yaw);
+    Mode::planeMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH3] = map(Mode::SRVout[Actuators::Channel::CH3], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);

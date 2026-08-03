@@ -9,9 +9,9 @@ void PassthroughMode::process(void)
         return;
     }
 
-    Mode::rollOut = GETFILTEREDINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-    Mode::pitchOut = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
-    Mode::yawOut = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+    Mode::input_rpy[0] = GETFILTEREDINPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+    Mode::input_rpy[1] = GETFILTEREDINPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
+    Mode::input_rpy[2] = GETFILTEREDINPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND, -MAX_PASS_THROUGH, MAX_PASS_THROUGH);
 #if defined(USE_FLAPERONS)
     flaperonInput();
 #endif
@@ -20,7 +20,11 @@ void PassthroughMode::process(void)
 void PassthroughMode::run(void)
 {
     process();
-    Mode::planeMixer(Mode::rollOut, Mode::pitchOut, Mode::yawOut);
+
+    Mode::output_rpy[0] = Mode::input_rpy[0];
+    Mode::output_rpy[1] = Mode::input_rpy[1];
+    Mode::output_rpy[2] = Mode::input_rpy[2];
+    Mode::planeMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
 
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);

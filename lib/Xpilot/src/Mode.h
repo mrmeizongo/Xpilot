@@ -67,9 +67,13 @@ public:
     }
 
     // Debug functions to get outputs for testing and tuning purposes.
-    static int16_t getRoll(void) { return rollOut; }
-    static int16_t getPitch(void) { return pitchOut; }
-    static int16_t getYaw(void) { return yawOut; }
+    static int16_t getRollInput(void) { return input_rpy[0]; }
+    static int16_t getPitchInput(void) { return input_rpy[1]; }
+    static int16_t getYawInput(void) { return input_rpy[2]; }
+    static int16_t getRollOutput(void) { return output_rpy[0]; }
+    static int16_t getPitchOutput(void) { return output_rpy[1]; }
+    static int16_t getYawOutput(void) { return output_rpy[2]; }
+
 #if defined(USE_FLAPERONS)
     static int16_t getFlaperon(void) { return flaperonOut; }
     static void flaperonInput(void);
@@ -80,9 +84,8 @@ public:
     THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
-    static int16_t rollOut;                                              // Roll output
-    static int16_t pitchOut;                                             // Pitch output
-    static int16_t yawOut;                                               // Yaw output
+    static int16_t input_rpy[3];                                         // Mode dependent transformed input roll, pitch and yaw
+    static int16_t output_rpy[3];                                        // Mode dependent processed output for roll, pitch, yaw
     THREE_POS_SW modeSwitchPosition;                                     // Mode switch position for this mode
     static int16_t SRVout[Actuators::Channel::NUM_CHANNELS];             // Servo output array
     static void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types

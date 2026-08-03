@@ -129,10 +129,10 @@ static void clearTerminal()
 void Xpilot::printIO(void)
 {
     clearTerminal();
-    Serial.print("\t\t\t\t");
+    Serial.print("\t\t\t\t\t\t");
     Serial.print("Flight Mode: ");
     Serial.println(xpilot.getFlightMode()->modeName4());
-    Serial.print("\t\t\t\t");
+    Serial.print("\t\t\t\t\t\t");
     Serial.print("Failsafe: ");
     Serial.println(xpilot.inFailsafe() ? "Active" : "Inactive");
     Serial.println();
@@ -140,13 +140,18 @@ void Xpilot::printIO(void)
     Serial.print("\t\t\t");
     Serial.print("Mode Input");
     Serial.print("\t\t\t");
-    Serial.println("Output PWM");
+    Serial.print("Mode Output");
+    Serial.print("\t\t\t");
+    Serial.println("Servo Output PWM");
 
     Serial.print("Aileron 1: ");
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
-    Serial.print(currentMode->getRoll());
+    Serial.print(currentMode->getRollInput());
+    Serial.print("\t\t\t");
+    Serial.print("Aileron 1: ");
+    Serial.print(currentMode->getRollOutput());
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
@@ -155,7 +160,10 @@ void Xpilot::printIO(void)
     Serial.print(radio.getRxRollPWM());
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
-    Serial.print(currentMode->getRoll());
+    Serial.print(currentMode->getRollInput());
+    Serial.print("\t\t\t");
+    Serial.print("Aileron 2: ");
+    Serial.print(currentMode->getRollOutput());
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
@@ -164,7 +172,10 @@ void Xpilot::printIO(void)
     Serial.print(radio.getRxPitchPWM());
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
-    Serial.print(currentMode->getPitch());
+    Serial.print(currentMode->getPitchInput());
+    Serial.print("\t\t\t");
+    Serial.print("Elevator: ");
+    Serial.print(currentMode->getPitchOutput());
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
@@ -173,7 +184,10 @@ void Xpilot::printIO(void)
     Serial.print(radio.getRxYawPWM());
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
-    Serial.print(currentMode->getYaw());
+    Serial.print(currentMode->getYawInput());
+    Serial.print("\t\t\t");
+    Serial.print("Rudder: ");
+    Serial.print(currentMode->getYawOutput());
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH4));

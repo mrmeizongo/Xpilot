@@ -2,9 +2,8 @@
 
 // ISO C++ forbids in-class initialization of non-const static members
 // We define them here instead
-int16_t Mode::rollOut = 0;
-int16_t Mode::pitchOut = 0;
-int16_t Mode::yawOut = 0;
+int16_t Mode::input_rpy[3]{0, 0, 0};
+int16_t Mode::output_rpy[3]{0, 0, 0};
 int16_t Mode::SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};
 PIDF<int16_t> Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX, LPF_DT, LPF_FREQ};
 PIDF<int16_t> Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX, LPF_DT, LPF_FREQ};
@@ -46,9 +45,9 @@ void Mode::rudderMixer(void)
 {
 #if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
 #if defined(REVERSE_RUDDER_MIX)
-    yawOut = yawOut - (rollOut * RUDDER_MIXING);
+    input_rpy[2] = input_rpy[2] - (input_rpy[0] * RUDDER_MIXING);
 #else
-    yawOut = yawOut + (rollOut * RUDDER_MIXING);
+    input_rpy[2] = input_rpy[2] + (input_rpy[0] * RUDDER_MIXING);
 #endif
 #endif
 }
@@ -88,9 +87,9 @@ void Mode::resetControllers(void)
 void Mode::controlFailsafe(void)
 {
     // Default failsafe implementation
-    rollOut = 0;
-    pitchOut = 0;
-    yawOut = 0;
+    input_rpy[0] = 0;
+    input_rpy[1] = 0;
+    input_rpy[2] = 0;
 #if defined(USE_FLAPERONS)
     flaperonOut = FLAPERON_MAX_RANGE; // set flaperons to landing position
 #endif
