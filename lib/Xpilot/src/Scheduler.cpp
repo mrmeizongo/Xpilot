@@ -114,9 +114,12 @@ int8_t Scheduler::addTask(
         return INVALID_TASK_ID;
     }
 
+    /*
+     * For rates that do not divide evenly into 1000
+     * the period is rounded up to the nearest millisecond.
+     */
     const uint32_t periodMs =
-        static_cast<uint32_t>(
-            (1000UL + (frequencyHz / 3UL)) / frequencyHz);
+        static_cast<uint32_t>((1000UL + (frequencyHz / 2U)) / frequencyHz);
 
     if (periodMs == 0)
     {
