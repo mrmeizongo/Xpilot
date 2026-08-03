@@ -38,12 +38,12 @@ Flight stabilization software
 #include "Radio.h"
 #include "Actuators.h"
 
-// Helper define to transform radio values to mode dependent resolutions
-#define GETRAWINPUT(rawVal, minIn, maxIn, minOut, maxOut) \
-    map((rawVal), (minIn), (maxIn), (minOut), (maxOut))
+// Normalize input to a -1:1 range
+#define NORM_INPUT(rawVal) \
+    (2 * ((float)((rawVal) - (INPUT_MIN_PWM)) / (float)(INPUT_MAX_PWM - INPUT_MIN_PWM)) - 1)
 
-#define GETFILTEREDINPUT(rawVal, deadBand, minOut, maxOut) \
-    (abs((rawVal) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (GETRAWINPUT((rawVal), (INPUT_MIN_PWM), (INPUT_MAX_PWM), (minOut), (maxOut))))
+#define FILTERED_NORM_INPUT(rawVal, deadBand) \
+    (abs((rawVal) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (NORM_INPUT((rawVal))))
 
 // Abstract flight mode class
 class Mode
