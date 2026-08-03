@@ -34,7 +34,7 @@ void Xpilot::setup(void)
 #if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
     (void)scheduler.addTask(&Xpilot::printIMUTask, this, IMU_PRINT_RATE_HZ);
 #endif
-#if defined(SCHEDULER_DEBUG)
+#if defined(SCHEDULER_RATE_DEBUG)
     (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_RATE_HZ);
 #endif
     scheduler.init();

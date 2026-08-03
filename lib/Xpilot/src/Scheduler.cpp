@@ -109,7 +109,7 @@ int8_t Scheduler::addTask(
     uint16_t frequencyHz,
     uint16_t startDelayMs)
 {
-    if (callback == nullptr || frequencyHz == 0 || frequencyHz > 1000)
+    if (callback == nullptr || frequencyHz <= 0 || frequencyHz > 1000)
     {
         return INVALID_TASK_ID;
     }
@@ -141,6 +141,9 @@ int8_t Scheduler::addTask(
             task.stats.overrunCount = 0;
             task.stats.lastRuntimeUs = 0;
             task.stats.maxRuntimeUs = 0;
+            task.stats.lastLoopRateUpdateUs = 0;
+            task.stats.loopRateHz = 0;
+            task.stats.loopCounter = 0;
 
             // startDelayMs == 0, means run after one period, otherwise run after startDelayMs
             // This allows system initialization to complete before the first task execution.

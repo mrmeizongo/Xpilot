@@ -49,7 +49,6 @@ public:
         uint32_t lastRuntimeUs;
         uint32_t maxRuntimeUs;
         uint32_t lastLoopRateUpdateUs;
-
         uint16_t loopRateHz;
         uint16_t loopCounter;
     };
