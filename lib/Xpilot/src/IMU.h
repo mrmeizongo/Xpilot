@@ -23,6 +23,8 @@ public:
     int16_t getGyroY(void) { return static_cast<int16_t>(g[1]); }
     int16_t getGyroZ(void) { return static_cast<int16_t>(g[2]); }
 
+    bool consumeNewData(void);
+
 private:
     /*
      * Inertial measurement unit
@@ -31,6 +33,8 @@ private:
 
     float rpy[3]; // Airplane coordinate system values
     float g[3];   // Angular velocity about the respective axis - xyz
+
+    bool dataReady; // Flag to indicate if new data is available
 };
 
 extern IMU imu;

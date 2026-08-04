@@ -63,27 +63,40 @@ void IMU::init(void)
 
 void IMU::getLatestReadings(void)
 {
-    if (mpu6050.update(rpy, g))
+    if (!mpu6050.update(rpy, g))
     {
+        return;
+    }
+
 #if defined(REVERSE_ROLL)
-        rpy[0] = -rpy[0];
+    rpy[0] = -rpy[0];
 #endif
 #if defined(REVERSE_PITCH)
-        rpy[1] = -rpy[1];
+    rpy[1] = -rpy[1];
 #endif
 #if defined(REVERSE_YAW)
-        rpy[2] = -rpy[2];
+    rpy[2] = -rpy[2];
 #endif
 #if defined(REVERSE_X_GYRO)
-        g[0] = -g[0];
+    g[0] = -g[0];
 #endif
 #if defined(REVERSE_Y_GYRO)
-        g[1] = -g[1];
+    g[1] = -g[1];
 #endif
 #if defined(REVERSE_Z_GYRO)
-        g[2] = -g[2];
+    g[2] = -g[2];
 #endif
+    dataReady = true;
+}
+
+bool IMU::consumeNewData(void)
+{
+    if (dataReady)
+    {
+        dataReady = false;
+        return true;
     }
+    return false;
 }
 
 void IMU::calibrate(void)
