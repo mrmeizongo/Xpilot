@@ -22,7 +22,7 @@ void Xpilot::setup(void)
     sysInit();
 
     /*
-     *Initialize the scheduler and add system tasks
+     * Initialize the scheduler and add system tasks
      * The order tasks are added determines priority, with the highest priority first.
      */
     imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
