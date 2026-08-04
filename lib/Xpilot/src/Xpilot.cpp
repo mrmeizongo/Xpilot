@@ -21,8 +21,10 @@ void Xpilot::setup(void)
 {
     sysInit();
 
-    // Initialize the scheduler and add system tasks
-    // The order tasks are added determines priority, with the highest priority first.
+    /*
+     *Initialize the scheduler and add system tasks
+     * The order tasks are added determines priority, with the highest priority first.
+     */
     imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
     radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
     flightModeRunTaskId = scheduler.addTask(&Mode::runTask, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
@@ -83,7 +85,6 @@ void Xpilot::updateFlightMode(void)
         return;
 
     // First time detecting radio in failsafe
-    // Set the current mode to selected failsafe mode
     if (radioFailSafe)
     {
         failSafeActive = true; // Set failsafe active flag
@@ -98,7 +99,6 @@ void Xpilot::updateFlightMode(void)
     else
     {
         // Both system and radio are not in failsafe
-        // Set current flight mode based on the radio mode switch position
         failSafeActive = false; // Reset failsafe active flag
         THREE_POS_SW radioModeSwitchPos = radio.getRxAux1Pos();
         // Radio mode switch position has not changed
