@@ -38,7 +38,7 @@ void IMU::init(void)
      *                                                          };                              };
      * See MPU6050 library for more details
      */
-    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE_DIV::SMPL_500HZ, ACCEL_GYRO_DLPF_CFG::DLPF_21HZx20HZ);
+    MPU6050Setting setting = MPU6050Setting(ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE_DIV::SMPL_500HZ, ACCEL_GYRO_DLPF_CFG::DLPF_44HZx42HZ);
 
     // Initialize MPU
     if (!mpu6050.setup(MPU6050_ADDRESS, setting))
