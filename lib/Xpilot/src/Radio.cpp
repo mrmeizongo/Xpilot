@@ -50,7 +50,7 @@ void Radio::init(void)
 
 void Radio::processInput(void)
 {
-    ATOMIC_BLOCK(ATOMIC_FORCEON)
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
         SET_SWITCH_POS(currentRx.aux1PWM, currentRx.aux1SwitchPos, aux1Pulses);
 
