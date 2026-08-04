@@ -23,7 +23,7 @@ public:
     int16_t getGyroY(void) { return static_cast<int16_t>(g[1]); }
     int16_t getGyroZ(void) { return static_cast<int16_t>(g[2]); }
 
-    bool consumeNewData(void);
+    bool consumeNewData(void); // Call before calling the individual getter functions
 
 private:
     /*
