@@ -1,6 +1,10 @@
 #include "Mode.h"
 #include <LowpassFilter.h>
 
+static FirstOrderLPF<int16_t> rollFilter(PT_FILTER, LPF_DT);
+static FirstOrderLPF<int16_t> pitchFilter(PT_FILTER, LPF_DT);
+static FirstOrderLPF<int16_t> yawFilter(PT_FILTER, LPF_DT);
+
 void PassthroughMode::process(void)
 {
     if (radio.inFailsafe())
@@ -21,9 +25,9 @@ void PassthroughMode::run(void)
 {
     process();
 
-    Mode::output_rpy[0] = Mode::input_rpy[0];
-    Mode::output_rpy[1] = Mode::input_rpy[1];
-    Mode::output_rpy[2] = Mode::input_rpy[2];
+    Mode::output_rpy[0] = rollFilter.Process(Mode::input_rpy[0]);
+    Mode::output_rpy[1] = pitchFilter.Process(Mode::input_rpy[1]);
+    Mode::output_rpy[2] = yawFilter.Process(Mode::input_rpy[2]);
     Mode::planeMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
 
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
