@@ -1,17 +1,18 @@
 #include <Arduino.h>
-#include <PlaneConfig.h>
-#include <SystemConfig.h>
+#include "PlaneConfig.h"
+#include "SystemConfig.h"
 #include "Xpilot.h"
 #include "Radio.h"
 #include "Actuators.h"
 #include "IMU.h"
+#include "Debug.h"
 
 // Task handlers for the scheduler to manage periodic tasks
-static uint8_t imuTaskId;
-static uint8_t radioTaskId;
-static uint8_t flightModeUpdateTaskId;
-static uint8_t flightModeRunTaskId;
-static uint8_t writeServoTaskId;
+uint8_t Xpilot::imuTaskId = 0;
+uint8_t Xpilot::radioTaskId = 0;
+uint8_t Xpilot::flightModeUpdateTaskId = 0;
+uint8_t Xpilot::flightModeRunTaskId = 0;
+uint8_t Xpilot::writeServoTaskId = 0;
 
 Xpilot::Xpilot(void)
 {
@@ -38,6 +39,21 @@ void Xpilot::setup(void)
 #endif
 #if defined(SCHEDULER_RATE_DEBUG)
     (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_RATE_HZ);
+#endif
+#if defined(PRINT_IMU_TASK_STAT)
+    (void)scheduler.addTask(&Xpilot::printIMUTaskStatTask, this, TASK_PRINT_RATE_HZ);
+#endif
+#if defined(PRINT_RADIO_TASK_STAT)
+    (void)scheduler.addTask(&Xpilot::printRadioTaskStatTask, this, TASK_PRINT_RATE_HZ);
+#endif
+#if defined(PRINT_FM_RUN_TASK_STAT)
+    (void)scheduler.addTask(&Xpilot::printFlightModeRunTaskStatTask, this, TASK_PRINT_RATE_HZ);
+#endif
+#if defined(PRINT_FM_UPDATE_TASK_STAT)
+    (void)scheduler.addTask(&Xpilot::printFlightModeUpdateTaskStatTask, this, TASK_PRINT_RATE_HZ);
+#endif
+#if defined(PRINT_SERVO_TASK_STAT)
+    (void)scheduler.addTask(&Xpilot::printServoTaskStatTask, this, TASK_PRINT_RATE_HZ);
 #endif
     scheduler.init();
 }
@@ -70,6 +86,7 @@ void Xpilot::sysInit(void)
 #endif
     previousMode = currentMode;
     failSafeActive = false;
+    imuFaultActive = false;
 
     // Initialize systems
     imu.init();
@@ -79,13 +96,16 @@ void Xpilot::sysInit(void)
 
 void Xpilot::updateFlightMode(void)
 {
-    bool radioFailSafe = radio.inFailsafe();
-    // If system failsafe has been activated and radio is still in fail safe
-    if (failSafeActive && radioFailSafe)
+    bool radioInFailSafe = radio.inFailsafe();
+    /*
+     * If system failsafe has been activated and transmitter is still in fail safe,
+     * or there is an active imu fault, prevent flight mode switching until cleared
+     */
+    if ((failSafeActive && radioInFailSafe) || imuFaultActive)
         return;
 
     // First time detecting radio in failsafe
-    if (radioFailSafe)
+    if (radioInFailSafe)
     {
         failSafeActive = true; // Set failsafe active flag
 #if defined(FAILSAFE_TO_STABILIZE)
@@ -95,6 +115,24 @@ void Xpilot::updateFlightMode(void)
 #elif defined(FAILSAFE_TO_PASSTHROUGH)
         currentMode = &passthroughMode;
 #endif
+    }
+    else if (currentMode->getFaultState())
+    {
+        /*
+         * If imu faulted and stopped returning ahrs values, default to passthrough until reset
+         * if already in a non-imu assisted mode, simply set imu fault active
+         * This will prevent user from switching flight modes until system reset is performed
+         */
+        if (currentMode->imuAssisted() && !imuFaultActive)
+        {
+            currentMode = &passthroughMode;
+            imuFaultActive = true;
+        }
+        else if (!imuFaultActive)
+        {
+            imuFaultActive = true;
+            return;
+        }
     }
     else
     {
@@ -114,151 +152,9 @@ void Xpilot::updateFlightMode(void)
             currentMode = &rateMode;
     }
 
-    // Failsafe detected or mode switch position has changed, perform mode transition
+    // Failsafe detected, mode switch position has changed, or imu has faulted perform mode transition
     previousMode->exit();
     currentMode->enter();
     previousMode = currentMode;
-}
-
-static void clearTerminal()
-{
-    Serial.print("\033[2J"); // Clear screen
-    Serial.print("\033[H");  // Move cursor to home
-}
-
-void Xpilot::printIO(void)
-{
-    clearTerminal();
-    Serial.print("\t\t\t\t\t\t");
-    Serial.print("Flight Mode: ");
-    Serial.println(xpilot.getFlightMode()->modeName4());
-    Serial.print("\t\t\t\t\t\t");
-    Serial.print("Failsafe: ");
-    Serial.println(xpilot.inFailsafe() ? "Active" : "Inactive");
-    Serial.println();
-    Serial.print("Radio Input PWM");
-    Serial.print("\t\t\t");
-    Serial.print("Mode Input");
-    Serial.print("\t\t\t");
-    Serial.print("Mode Output");
-    Serial.print("\t\t\t");
-    Serial.println("Servo Output PWM");
-
-    Serial.print("Aileron 1: ");
-    Serial.print(radio.getRxRollPWM());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 1: ");
-    Serial.print(currentMode->getRollInput());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 1: ");
-    Serial.print(currentMode->getRollOutput());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 1: ");
-    Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
-
-    Serial.print("Aileron 2: ");
-    Serial.print(radio.getRxRollPWM());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 2: ");
-    Serial.print(currentMode->getRollInput());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 2: ");
-    Serial.print(currentMode->getRollOutput());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 2: ");
-    Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
-
-    Serial.print("Elevator: ");
-    Serial.print(radio.getRxPitchPWM());
-    Serial.print("\t\t\t");
-    Serial.print("Elevator: ");
-    Serial.print(currentMode->getPitchInput());
-    Serial.print("\t\t\t");
-    Serial.print("Elevator: ");
-    Serial.print(currentMode->getPitchOutput());
-    Serial.print("\t\t\t");
-    Serial.print("Elevator: ");
-    Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
-
-    Serial.print("Rudder: ");
-    Serial.print(radio.getRxYawPWM());
-    Serial.print("\t\t\t");
-    Serial.print("Rudder: ");
-    Serial.print(currentMode->getYawInput());
-    Serial.print("\t\t\t");
-    Serial.print("Rudder: ");
-    Serial.print(currentMode->getYawOutput());
-    Serial.print("\t\t\t");
-    Serial.print("Rudder: ");
-    Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
-
-#if defined(USE_FLAPERONS)
-    Serial.print("Flaperon: ");
-    Serial.print(radio.getRxAux2PWM());
-    Serial.print("\t\t\t");
-    Serial.print("Flaperon: ");
-    Serial.print(currentMode->getFlaperon());
-    Serial.print("\t\t\t");
-    Serial.print("Flap Position: ");
-    Serial.println((int16_t)radio.getRxAux2Pos());
-#endif
-
-#if defined(USE_AUX3)
-    Serial.print("Aux3 PWM: ");
-    Serial.print(radio.getRxAux3PWM());
-    Serial.print("\t\t\t");
-    Serial.print("Aux3 Position: ");
-    Serial.println((int16_t)radio.getRxAux3Pos());
-#endif
-}
-
-void Xpilot::printIMU(void)
-{
-    clearTerminal();
-    Serial.println(">");
-    Serial.print("Roll: ");
-    Serial.println(imu.getRoll());
-    Serial.print("Pitch: ");
-    Serial.println(imu.getPitch());
-    Serial.print("Yaw: ");
-    Serial.println(imu.getYaw());
-}
-
-void Xpilot::printSchedulerRate(void)
-{
-    clearTerminal();
-    Serial.println(">");
-
-    Scheduler::TaskStats taskStats;
-    if (scheduler.getStats(imuTaskId, taskStats))
-    {
-        Serial.print("IMU Loop Rate:\t\t\t");
-        Serial.print(taskStats.loopRateHz);
-        Serial.println();
-    }
-    if (scheduler.getStats(flightModeRunTaskId, taskStats))
-    {
-        Serial.print("Mode Run Loop Rate:\t\t");
-        Serial.print(taskStats.loopRateHz);
-        Serial.println();
-    }
-    if (scheduler.getStats(flightModeUpdateTaskId, taskStats))
-    {
-        Serial.print("Mode Update Loop Rate:\t\t");
-        Serial.print(taskStats.loopRateHz);
-        Serial.println();
-    }
-    if (scheduler.getStats(radioTaskId, taskStats))
-    {
-        Serial.print("Radio Loop Rate:\t\t");
-        Serial.print(taskStats.loopRateHz);
-        Serial.println();
-    }
-    if (scheduler.getStats(writeServoTaskId, taskStats))
-    {
-        Serial.print("Write Servo Loop Rate:\t\t");
-        Serial.print(taskStats.loopRateHz);
-        Serial.println();
-    }
 }
 // ---------------------------

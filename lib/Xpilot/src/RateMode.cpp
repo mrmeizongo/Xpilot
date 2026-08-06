@@ -24,15 +24,15 @@ void RateMode::process(void)
 
 void RateMode::run(void)
 {
+    if (!Mode::imuDataHealthy())
+    {
+        return;
+    }
+
     process();
 #if defined(RUDDER_MIX_IN_RATE)
     Mode::rudderMixer();
 #endif
-
-    if (!imu.consumeNewData())
-    {
-        return;
-    }
 
     Mode::output_rpy[0] = Mode::rollPIDF.Compute(Mode::input_rpy[0], imu.getGyroX());
     Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], imu.getGyroY());

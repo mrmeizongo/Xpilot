@@ -34,7 +34,7 @@ Flight stabilization software
 #define _ACTUATORS_H
 #include <Servo.h>
 #include <inttypes.h>
-#include <PlaneConfig.h>
+#include "PlaneConfig.h"
 
 class Actuators
 {

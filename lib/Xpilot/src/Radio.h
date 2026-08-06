@@ -34,7 +34,7 @@ Flight stabilization software
 #define _RADIO_H
 
 #include <stdint.h>
-#include <PlaneConfig.h>
+#include "PlaneConfig.h"
 
 // Helper macro to set PWM values and switch positions based on pulse lengths
 #define SET_SWITCH_POS(controlPWM, controlSwitch, pulse)        \

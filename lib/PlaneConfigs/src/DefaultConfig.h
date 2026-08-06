@@ -220,12 +220,17 @@ Flight stabilization software
  * CAUTION:
  * Only uncomment one debug option at a time
  */
-// #define TASK_RATE_DEBUG
+// #define SCHEDULER_RATE_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
 // #define CALIBRATE_DEBUG
 // #define CALIBRATE
 // #define READ_CALIBRATION_FROM_EEPROM
 // #define SELF_TEST_ACCEL_GYRO
+// #define PRINT_IMU_TASK_STAT
+// #define PRINT_RADIO_TASK_STAT
+// #define PRINT_FM_RUN_TASK_STAT
+// #define PRINT_FM_UPDATE_TASK_STAT
+// #define PRINT_SERVO_TASK_STAT
 // ------------------------------------------------------------------------------------------------------
 #endif // _DEFAULT_CONFIG_H

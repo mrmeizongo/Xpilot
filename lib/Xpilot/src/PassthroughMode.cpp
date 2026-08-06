@@ -1,5 +1,5 @@
 #include "Mode.h"
-#include <LowpassFilter.h>
+#include "LowpassFilter.h"
 
 static FirstOrderLPF<int16_t> rollFilter(PT_FILTER, LPF_DT);
 static FirstOrderLPF<int16_t> pitchFilter(PT_FILTER, LPF_DT);

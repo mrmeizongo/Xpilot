@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include <PlaneConfig.h>
-#include <SystemConfig.h>
 #include <EEPROM.h>
+#include "PlaneConfig.h"
+#include "SystemConfig.h"
 #include "IMU.h"
 
 // Functions to save and restore calibration data to/from EEPROM

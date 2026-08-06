@@ -26,7 +26,6 @@ Flight stabilization software
 */
 
 #include "Scheduler.h"
-
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <util/atomic.h>

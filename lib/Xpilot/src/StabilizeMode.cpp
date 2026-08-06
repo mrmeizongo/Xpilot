@@ -24,15 +24,15 @@ void StabilizeMode::process(void)
 
 void StabilizeMode::run(void)
 {
+    if (!Mode::imuDataHealthy())
+    {
+        return;
+    }
+
     process();
 #if defined(RUDDER_MIX_IN_STABILIZE)
     Mode::rudderMixer();
 #endif
-
-    if (!imu.consumeNewData())
-    {
-        return;
-    }
 
     int16_t rollDemand = Mode::input_rpy[0] - imu.getRoll();
     int16_t pitchDemand = Mode::input_rpy[1] - imu.getPitch();

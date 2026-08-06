@@ -1,4 +1,5 @@
 #include "Mode.h"
+#include "IMU.h"
 
 // ISO C++ forbids in-class initialization of non-const static members
 // We define them here instead
@@ -8,6 +9,8 @@ int16_t Mode::SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};
 PIDF<int16_t> Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX, LPF_DT, LPF_FREQ};
 PIDF<int16_t> Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX, LPF_DT, LPF_FREQ};
 PIDF<int16_t> Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX, LPF_DT, LPF_FREQ};
+uint8_t Mode::missedImuInstances = 0;
+bool Mode::imuFault = false;
 #if defined(USE_FLAPERONS)
 uint16_t Mode::flaperonOut = 0;
 #endif
@@ -64,6 +67,25 @@ void Mode::flaperonInput(void)
     flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), INPUT_MID_PWM, INPUT_MIN_PWM, 0, FLAPERON_MAX_RANGE);
 }
 #endif
+
+bool Mode::imuDataHealthy(void)
+{
+    if (!imu.consumeNewData())
+    {
+        /*
+         * This could be a sign of a faulty imu sensor
+         * Threshold is 2 full loops gone without sensor values
+         * It does not reset until a full system reboot is performed
+         */
+        if (++missedImuInstances == MISSED_IMU_VAL_THRESH * 2)
+        {
+            imuFault = true;
+        }
+        return false;
+    }
+
+    return true;
+}
 
 void Mode::servoOut(void *)
 {

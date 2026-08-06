@@ -50,6 +50,11 @@ public:
     static void printIMUTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIMU(); }
     static void printIOTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIO(); }
     static void printSchedulerRateTask(void *ctx) { static_cast<Xpilot *>(ctx)->printSchedulerRate(); }
+    static void printIMUTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIMUTaskStats(); }
+    static void printRadioTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printRadioTaskStats(); }
+    static void printFlightModeRunTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeRunTaskStats(); }
+    static void printFlightModeUpdateTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeUpdateTaskStats(); }
+    static void printServoTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printServoTaskStats(); }
     // --------------------------------------------------------------------
 
     // Only functions called from the main setup and loop functions
@@ -61,6 +66,11 @@ public:
     void printIMU(void);
     void printIO(void);
     void printSchedulerRate(void);
+    void printIMUTaskStats(void);
+    void printRadioTaskStats(void);
+    void printFlightModeRunTaskStats(void);
+    void printFlightModeUpdateTaskStats(void);
+    void printServoTaskStats(void);
     // --------------------------------------------------------------------
 
     Mode *getFlightMode(void) const { return currentMode; }
@@ -83,7 +93,17 @@ private:
     // --------------------------------------------------------------------
 
     bool failSafeActive; // System failsafe active flag
+    bool imuFaultActive; // Imu fault
     void updateFlightMode(void);
+    // --------------------------------------------------------------------
+
+    // Task handlers for the scheduler to manage periodic tasks
+    static uint8_t imuTaskId;
+    static uint8_t radioTaskId;
+    static uint8_t flightModeUpdateTaskId;
+    static uint8_t flightModeRunTaskId;
+    static uint8_t writeServoTaskId;
+    // --------------------------------------------------------------------
 };
 
 extern Xpilot xpilot;

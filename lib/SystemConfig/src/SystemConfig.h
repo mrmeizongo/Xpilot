@@ -1,6 +1,6 @@
 #ifndef _SYSTEM_CONFIG_H
 #define _SYSTEM_CONFIG_H
-#include <PlaneConfig.h>
+#include "PlaneConfig.h"
 
 #define SYSTEM_CONFIG_VERSION "2.2.1"
 
@@ -91,8 +91,8 @@
 #define FLIGHT_MODE_UPDATE_RATE_HZ 25                // Flight mode update period in hz
 #define RADIO_INPUT_PROCESS_RATE_HZ 50               // Radio input period in hz
 #define WRITE_SERVO_RATE_HZ 50                       // Write servo output period in hz
-#define IMU_PRINT_RATE_HZ 4                          // IMU debug print period in hz
-#define TASK_PRINT_RATE_HZ 4                         // Task rate debug print period in hz
-#define IO_PRINT_RATE_HZ 4                           // IO debug print period in hz
+#define IMU_PRINT_RATE_HZ 1                          // IMU debug print period in hz
+#define TASK_PRINT_RATE_HZ 1                         // Task rate debug print period in hz
+#define IO_PRINT_RATE_HZ 1                           // IO debug print period in hz
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H
