@@ -22,7 +22,7 @@ uint16_t Mode::flaperonOut = 0;
  * Proceed with caution. Perform thorough pre-flight checks and reverse servo direction as needed.
  * Mixing is only performed for the 4 primary channels(aileron left, aileron right, elevator, rudder)
  */
-void Mode::planeMixer(const int16_t roll, const int16_t pitch, const int16_t yaw)
+void Mode::controlMixer(const int16_t roll, const int16_t pitch, const int16_t yaw)
 {
 #if defined(FULL_PLANE_TRADITIONAL) || defined(RUDDER_ELEVATOR_ONLY_PLANE) || defined(AILERON_ELEVATOR_ONLY)
     SRVout[Actuators::Channel::CH1] = roll;

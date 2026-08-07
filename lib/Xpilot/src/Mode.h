@@ -94,7 +94,7 @@ protected:
     static int16_t SRVout[Actuators::Channel::NUM_CHANNELS];             // Servo output array
     static uint8_t missedImuInstances;                                   // If the current mode goes 2 loops without ahrs sensor values, switch to passthrough mode
     static bool imuFault;                                                // if true, imu is in a faulted state
-    static void planeMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
+    static void controlMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
     static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
     static void resetControllers(void);                                  // Reset controllers when switching modes to prevent integral windup and derivative kick
     virtual void controlFailsafe(void);                                  // Failsafe implementation

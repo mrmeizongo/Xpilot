@@ -43,7 +43,7 @@ void StabilizeMode::run(void)
     Mode::output_rpy[1] = Mode::pitchPIDF.Compute(pitchDemand, imu.getGyroY());
     Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], imu.getGyroZ());
 
-    Mode::planeMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
+    Mode::controlMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH3] = map(Mode::SRVout[Actuators::Channel::CH3], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);

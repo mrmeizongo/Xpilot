@@ -28,7 +28,7 @@ void PassthroughMode::run(void)
     Mode::output_rpy[0] = rollFilter.Process(Mode::input_rpy[0]);
     Mode::output_rpy[1] = pitchFilter.Process(Mode::input_rpy[1]);
     Mode::output_rpy[2] = yawFilter.Process(Mode::input_rpy[2]);
-    Mode::planeMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
+    Mode::controlMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
 
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
