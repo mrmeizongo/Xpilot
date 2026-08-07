@@ -6,9 +6,9 @@
 int16_t Mode::input_rpy[3]{0, 0, 0};
 int16_t Mode::output_rpy[3]{0, 0, 0};
 int16_t Mode::SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};
-PIDF<int16_t> Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX, LPF_DT, LPF_FREQ};
-PIDF<int16_t> Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX, LPF_DT, LPF_FREQ};
-PIDF<int16_t> Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX, LPF_DT, LPF_FREQ};
+PIDF<int16_t> Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX, LPF_DT, AUTO_LPF_FREQ};
+PIDF<int16_t> Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX, LPF_DT, AUTO_LPF_FREQ};
+PIDF<int16_t> Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX, LPF_DT, AUTO_LPF_FREQ};
 uint8_t Mode::missedImuInstances = 0;
 bool Mode::imuFault = false;
 #if defined(USE_FLAPERONS)

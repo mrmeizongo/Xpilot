@@ -1,9 +1,9 @@
 #include "Mode.h"
 #include "LowpassFilter.h"
 
-static FirstOrderLPF<int16_t> rollFilter(PT_FILTER, LPF_DT);
-static FirstOrderLPF<int16_t> pitchFilter(PT_FILTER, LPF_DT);
-static FirstOrderLPF<int16_t> yawFilter(PT_FILTER, LPF_DT);
+static FirstOrderLPF<int16_t> rollFilter(PT_LPF_FREQ, LPF_DT);
+static FirstOrderLPF<int16_t> pitchFilter(PT_LPF_FREQ, LPF_DT);
+static FirstOrderLPF<int16_t> yawFilter(PT_LPF_FREQ, LPF_DT);
 
 void PassthroughMode::process(void)
 {
