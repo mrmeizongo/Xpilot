@@ -40,7 +40,7 @@ Flight stabilization software
 class Xpilot
 {
 public:
-    Xpilot(void);
+    Xpilot(void) {}
     Xpilot(const Xpilot &) = delete;            // Prevent this class from being copyable
     Xpilot &operator=(const Xpilot &) = delete; // Prevent this class from being assignable
     // --------------------------------------------------------------------

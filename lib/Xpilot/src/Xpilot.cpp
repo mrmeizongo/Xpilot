@@ -14,10 +14,6 @@ uint8_t Xpilot::flightModeUpdateTaskId = 0;
 uint8_t Xpilot::flightModeRunTaskId = 0;
 uint8_t Xpilot::writeServoTaskId = 0;
 
-Xpilot::Xpilot(void)
-{
-}
-
 void Xpilot::setup(void)
 {
     sysInit();

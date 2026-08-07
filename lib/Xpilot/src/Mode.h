@@ -49,7 +49,7 @@ Flight stabilization software
 class Mode
 {
 public:
-    Mode() {};
+    Mode() {}
     Mode(const THREE_POS_SW modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
     virtual ~Mode() = default;                                           // Virtual destructor for proper cleanup of derived classes
     virtual const char *modeName4(void) const = 0;                       // Returns string representation of the flight mode. 4 characters max
