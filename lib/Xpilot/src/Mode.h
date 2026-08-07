@@ -138,9 +138,6 @@ public:
     void process(void) override;
     void run(void) override;
     bool imuAssisted(void) const override { return true; }
-
-protected:
-    void controlFailsafe(void) override;
 };
 
 #endif // _MODE_H

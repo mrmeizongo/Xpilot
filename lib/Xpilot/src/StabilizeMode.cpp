@@ -55,13 +55,3 @@ void StabilizeMode::run(void)
     Mode::setFlaperons();
 #endif
 }
-
-void StabilizeMode::controlFailsafe(void)
-{
-    Mode::input_rpy[0] = 5; // 5 degree roll to the right
-    Mode::input_rpy[1] = 0;
-    Mode::input_rpy[2] = 0;
-#if defined(USE_FLAPERONS)
-    Mode::flaperonOut = 0;
-#endif
-}
