@@ -219,6 +219,8 @@ void Xpilot::printFlightModeRunTaskStats(void)
         Serial.println(taskStats.loopRateHz);
         Serial.print("Loop counter: ");
         Serial.println(taskStats.loopCounter);
+        Serial.print("Missed IMU instances: ");
+        Serial.println(currentMode->getSkippedImuInstances());
     }
 }
 
