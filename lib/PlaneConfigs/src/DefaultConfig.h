@@ -108,15 +108,16 @@ Flight stabilization software
 
 // Uncomment to use flaperons
 // Flaperons are ailerons that can be used as flaps
-#define USE_FLAPERONS
+// #define USE_FLAPERONS
 
 #if defined(USE_FLAPERONS)
 #define FLAPERON_PC 1.0f // Percentage of flap deflection compared to aileron deflection(0.0f - 1.0f)
 #define FLAPERON_MAX_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM) * (FLAPERON_PC)
 #endif
 
-#define LPF_FREQ 10   // Auto low-pass filter frequency in Hz
-#define LPF_DT 0.004f // Auto low-pass filter delta time in seconds
+#define PT_LPF_FREQ 3    // Passthrough filter
+#define AUTO_LPF_FREQ 10 // Auto low-pass filter frequency in Hz
+#define LPF_DT 0.004f    // Auto low-pass filter delta time; 4ms
 
 // Uncomment to enable auxiliary output channel 1
 // #define USE_AUXOUT1
@@ -232,5 +233,12 @@ Flight stabilization software
 // #define PRINT_FM_RUN_TASK_STAT
 // #define PRINT_FM_UPDATE_TASK_STAT
 // #define PRINT_SERVO_TASK_STAT
+
+#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) \
+|| defined(CALIBRATE_DEBUG) || defined(CALIBRATE) || defined(READ_CALIBRATION_FROM_EEPROM) \
+|| defined(SELF_TEST_ACCEL_GYRO) || defined(PRINT_IMU_TASK_STAT) || defined(PRINT_RADIO_TASK_STAT) \
+|| defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) || defined(PRINT_SERVO_TASK_STAT)
+#define DEBUG
+#endif
 // ------------------------------------------------------------------------------------------------------
 #endif // _DEFAULT_CONFIG_H
