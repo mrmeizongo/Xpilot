@@ -56,7 +56,7 @@ public:
     virtual void enter(void) {}                                          // Preliminary setup on mode enter
     virtual void process(void) = 0;                                      // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                                          // High level processing specific to this mode
-    virtual void exit(void) {}                                           // Perform any clean up before switching to another mode
+    virtual void exit(void);                                             // Perform any clean up before switching to another mode
     virtual bool imuAssisted(void) const { return false; }               // Does this mode use the imu
     static void runTask(void *ctx)                                       // Trampoline function for the scheduler to call the run function
     {

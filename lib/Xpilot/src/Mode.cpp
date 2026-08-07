@@ -87,6 +87,11 @@ bool Mode::imuDataHealthy(void)
     return true;
 }
 
+void Mode::exit(void)
+{
+    missedImuInstances = 0;
+}
+
 void Mode::servoOut(void *)
 {
     SRVout[Actuators::Channel::CH1] = constrain(SRVout[Actuators::Channel::CH1], SERVO_MIN_PWM, SERVO_MAX_PWM);
