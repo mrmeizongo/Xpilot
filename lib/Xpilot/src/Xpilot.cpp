@@ -81,6 +81,7 @@ void Xpilot::sysInit(void)
     currentMode = &stabilizeMode;
 #endif
     previousMode = currentMode;
+    
     failSafeActive = false;
     imuFaultActive = false;
 
