@@ -115,7 +115,7 @@ Flight stabilization software
 #define FLAPERON_MAX_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM) * (FLAPERON_PC)
 #endif
 
-#define PT_LPF_FREQ 3    // Passthrough filter
+#define PT_LPF_FREQ 5    // Passthrough filter
 #define AUTO_LPF_FREQ 10 // Auto low-pass filter frequency in Hz
 #define LPF_DT 0.004f    // Auto low-pass filter delta time; 4ms
 
@@ -175,6 +175,8 @@ Flight stabilization software
 // #define REVERSE_X_GYRO
 // #define REVERSE_Y_GYRO
 // #define REVERSE_Z_GYRO
+
+#define MISSED_IMU_VAL_THRESH 250
 
 // #define CALIBRATE    // Uncomment to calibrate the IMU on startup. Recommended for first time use. Place airplane on level surface and keep it still during calibration. Comment and reflash when done.
 // #define SELF_TEST_ACCEL_GYRO // Uncomment to perform a self-test calibration of the accel&gyro on startup.
