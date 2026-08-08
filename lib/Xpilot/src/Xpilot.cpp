@@ -69,9 +69,9 @@ void Xpilot::sysInit(void)
 #endif
 
     // Specify the mode switch position for each mode
-    passthroughMode.setModeSwitchPosition(THREE_POS_SW::HIGH_POS);
-    rateMode.setModeSwitchPosition(THREE_POS_SW::MID_POS);
-    stabilizeMode.setModeSwitchPosition(THREE_POS_SW::LOW_POS);
+    passthroughMode.setModeSwitchPosition(Radio::THREE_POS_SW::HIGH_POS);
+    rateMode.setModeSwitchPosition(Radio::THREE_POS_SW::MID_POS);
+    stabilizeMode.setModeSwitchPosition(Radio::THREE_POS_SW::LOW_POS);
 
 #if defined(DEFAULT_TO_PASSTHROUGH_MODE)
     currentMode = &passthroughMode;
@@ -81,7 +81,7 @@ void Xpilot::sysInit(void)
     currentMode = &stabilizeMode;
 #endif
     previousMode = currentMode;
-    
+
     failSafeActive = false;
     imuFaultActive = false;
 
@@ -135,7 +135,7 @@ void Xpilot::updateFlightMode(void)
     {
         // Both system and radio are not in failsafe
         failSafeActive = false; // Reset failsafe active flag
-        THREE_POS_SW radioModeSwitchPos = radio.getRxAux1Pos();
+        Radio::THREE_POS_SW radioModeSwitchPos = radio.getRxAux1Pos();
         // Radio mode switch position has not changed
         if (radioModeSwitchPos == currentMode->getModeSwitchPosition())
             return;

@@ -1,9 +1,9 @@
 #include "Mode.h"
-#include "SlewRate.h"
+#include "SlewRateLimiter.h"
 
-static SlewRate<int16_t> rollSlew(PT_SLEW_RATE, PROCESS_DT);
-static SlewRate<int16_t> pitchSlew(PT_SLEW_RATE, PROCESS_DT);
-static SlewRate<int16_t> yawSlew(PT_SLEW_RATE, PROCESS_DT);
+static SlewRateLimiter<int16_t> rollSlew(PT_SLEW_RATE, PROCESS_DT);
+static SlewRateLimiter<int16_t> pitchSlew(PT_SLEW_RATE, PROCESS_DT);
+static SlewRateLimiter<int16_t> yawSlew(PT_SLEW_RATE, PROCESS_DT);
 
 void PassthroughMode::enter(void)
 {

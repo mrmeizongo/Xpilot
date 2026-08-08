@@ -50,15 +50,15 @@ class Mode
 {
 public:
     Mode() {}
-    Mode(const THREE_POS_SW modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
-    virtual ~Mode() = default;                                           // Virtual destructor for proper cleanup of derived classes
-    virtual const char *modeName4(void) const = 0;                       // Returns string representation of the flight mode. 4 characters max
-    virtual void enter(void) {}                                          // Preliminary setup on mode enter
-    virtual void process(void) = 0;                                      // Convert user input to mode specific targets, should be called first in the run function
-    virtual void run(void) = 0;                                          // High level processing specific to this mode
-    virtual void exit(void);                                             // Perform any clean up before switching to another mode
-    virtual bool imuAssisted(void) const { return false; }               // Does this mode use the imu
-    static void runTask(void *ctx)                                       // Trampoline function for the scheduler to call the run function
+    Mode(const Radio::THREE_POS_SW modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
+    virtual ~Mode() = default;                                                  // Virtual destructor for proper cleanup of derived classes
+    virtual const char *modeName4(void) const = 0;                              // Returns string representation of the flight mode. 4 characters max
+    virtual void enter(void) {}                                                 // Preliminary setup on mode enter
+    virtual void process(void) = 0;                                             // Convert user input to mode specific targets, should be called first in the run function
+    virtual void run(void) = 0;                                                 // High level processing specific to this mode
+    virtual void exit(void);                                                    // Perform any clean up before switching to another mode
+    virtual bool imuAssisted(void) const { return false; }                      // Does this mode use the imu
+    static void runTask(void *ctx)                                              // Trampoline function for the scheduler to call the run function
     {
         Mode **modePointer = static_cast<Mode **>(ctx);
         if (*modePointer != nullptr)
@@ -84,13 +84,13 @@ public:
     static void servoOut(void *); // Constrain and write servo outputs to the actuators object
     static bool imuDataHealthy(void);
 
-    void setModeSwitchPosition(THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
-    THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
+    void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
+    Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
     static int16_t input_rpy[3];                                           // Mode dependent transformed input roll, pitch and yaw
     static int16_t output_rpy[3];                                          // Mode dependent processed output for roll, pitch, yaw
-    THREE_POS_SW modeSwitchPosition;                                       // Mode switch position for this mode
+    Radio::THREE_POS_SW modeSwitchPosition;                                // Mode switch position for this mode
     static int16_t SRVout[Actuators::Channel::NUM_CHANNELS];               // Servo output array
     static uint8_t missedImuInstances;                                     // If the current mode goes 2 loops without ahrs sensor values, switch to passthrough mode
     static bool imuFault;                                                  // if true, imu is in a faulted state

@@ -54,58 +54,58 @@ Flight stabilization software
     if (pulse >= INPUT_MIN_PWM && pulse <= INPUT_MAX_PWM) \
         controlPWM = pulse;
 
-// 3-position switch
-enum class THREE_POS_SW : uint8_t
-{
-    UNDEFINED = 0U, // Undefined position, should not be used
-    LOW_POS,
-    MID_POS,
-    HIGH_POS
-};
-
-/*
- * Control struct
- * Holds the radio input values
- * Roll, Pitch, Yaw, Mode
- * Roll, Pitch & Yaw PWM values
- */
-struct Control
-{
-    uint16_t rollPWM;
-    uint16_t pitchPWM;
-    uint16_t yawPWM;
-    uint16_t aux1PWM;
-    THREE_POS_SW aux1SwitchPos;
-#if defined(USE_FLAPERONS)
-    uint16_t aux2PWM;
-    THREE_POS_SW aux2SwitchPos;
-#endif
-#if defined(USE_AUX3)
-    uint16_t aux3PWM;
-    THREE_POS_SW aux3SwitchPos;
-#endif
-
-    Control(void)
-    {
-        rollPWM = INPUT_MID_PWM;
-        pitchPWM = INPUT_MID_PWM;
-        yawPWM = INPUT_MID_PWM;
-        aux1PWM = INPUT_MID_PWM;
-        aux1SwitchPos = THREE_POS_SW::UNDEFINED;
-#if defined(USE_FLAPERONS)
-        aux2PWM = INPUT_MID_PWM;
-        aux2SwitchPos = THREE_POS_SW::UNDEFINED;
-#endif
-#if defined(USE_AUX3)
-        aux3PWM = INPUT_MID_PWM;
-        aux3SwitchPos = THREE_POS_SW::UNDEFINED;
-#endif
-    }
-};
-
 class Radio
 {
 public:
+    // 3-position switch
+    enum class THREE_POS_SW : uint8_t
+    {
+        UNDEFINED = 0U, // Undefined position, should not be used
+        LOW_POS,
+        MID_POS,
+        HIGH_POS
+    };
+
+    /*
+     * Control struct
+     * Holds the radio input values
+     * Roll, Pitch, Yaw, Mode
+     * Roll, Pitch & Yaw PWM values
+     */
+    struct Control
+    {
+        uint16_t rollPWM;
+        uint16_t pitchPWM;
+        uint16_t yawPWM;
+        uint16_t aux1PWM;
+        THREE_POS_SW aux1SwitchPos;
+#if defined(USE_FLAPERONS)
+        uint16_t aux2PWM;
+        THREE_POS_SW aux2SwitchPos;
+#endif
+#if defined(USE_AUX3)
+        uint16_t aux3PWM;
+        THREE_POS_SW aux3SwitchPos;
+#endif
+
+        Control(void)
+        {
+            rollPWM = INPUT_MID_PWM;
+            pitchPWM = INPUT_MID_PWM;
+            yawPWM = INPUT_MID_PWM;
+            aux1PWM = INPUT_MID_PWM;
+            aux1SwitchPos = THREE_POS_SW::UNDEFINED;
+#if defined(USE_FLAPERONS)
+            aux2PWM = INPUT_MID_PWM;
+            aux2SwitchPos = THREE_POS_SW::UNDEFINED;
+#endif
+#if defined(USE_AUX3)
+            aux3PWM = INPUT_MID_PWM;
+            aux3SwitchPos = THREE_POS_SW::UNDEFINED;
+#endif
+        }
+    };
+
     Radio(void);
     void init(void);
     void processInput(void);

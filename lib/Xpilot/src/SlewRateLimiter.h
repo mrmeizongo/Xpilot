@@ -26,10 +26,10 @@
 #define _SLEWRATE
 
 template <typename T>
-class SlewRate
+class SlewRateLimiter
 {
 public:
-    SlewRate(T ratePerSecond, float dt)
+    SlewRateLimiter(T ratePerSecond, float dt)
         : output{T{}}
     {
         maxChangeRate = ratePerSecond * dt;
