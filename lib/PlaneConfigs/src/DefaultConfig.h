@@ -115,9 +115,9 @@ Flight stabilization software
 #define FLAPERON_MAX_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM) * (FLAPERON_PC)
 #endif
 
-#define PT_LPF_FREQ 5    // Passthrough filter
-#define AUTO_LPF_FREQ 10 // Auto low-pass filter frequency in Hz
-#define LPF_DT 0.004f    // Auto low-pass filter delta time; 4ms
+#define PT_SLEW_RATE 1000
+#define AUTO_LPF_FREQ 10  // Auto low-pass filter frequency in Hz
+#define PROCESS_DT 0.004f // Auto low-pass filter delta time; 4ms
 
 // Uncomment to enable auxiliary output channel 1
 // #define USE_AUXOUT1
@@ -236,10 +236,7 @@ Flight stabilization software
 // #define PRINT_FM_UPDATE_TASK_STAT
 // #define PRINT_SERVO_TASK_STAT
 
-#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) \
-|| defined(CALIBRATE_DEBUG) || defined(CALIBRATE) || defined(READ_CALIBRATION_FROM_EEPROM) \
-|| defined(SELF_TEST_ACCEL_GYRO) || defined(PRINT_IMU_TASK_STAT) || defined(PRINT_RADIO_TASK_STAT) \
-|| defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) || defined(PRINT_SERVO_TASK_STAT)
+#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) || defined(CALIBRATE_DEBUG) || defined(CALIBRATE) || defined(READ_CALIBRATION_FROM_EEPROM) || defined(SELF_TEST_ACCEL_GYRO) || defined(PRINT_IMU_TASK_STAT) || defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) || defined(PRINT_SERVO_TASK_STAT)
 #define DEBUG
 #endif
 // ------------------------------------------------------------------------------------------------------

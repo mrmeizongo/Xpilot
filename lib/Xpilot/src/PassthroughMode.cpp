@@ -1,9 +1,16 @@
 #include "Mode.h"
-#include "LowpassFilter.h"
+#include "SlewRate.h"
 
-static FirstOrderLPF<int16_t> rollFilter(PT_LPF_FREQ, LPF_DT);
-static FirstOrderLPF<int16_t> pitchFilter(PT_LPF_FREQ, LPF_DT);
-static FirstOrderLPF<int16_t> yawFilter(PT_LPF_FREQ, LPF_DT);
+static SlewRate<int16_t> rollSlew(PT_SLEW_RATE, PROCESS_DT);
+static SlewRate<int16_t> pitchSlew(PT_SLEW_RATE, PROCESS_DT);
+static SlewRate<int16_t> yawSlew(PT_SLEW_RATE, PROCESS_DT);
+
+void PassthroughMode::enter(void)
+{
+    rollSlew.reset();
+    pitchSlew.reset();
+    yawSlew.reset();
+}
 
 void PassthroughMode::process(void)
 {
@@ -25,9 +32,9 @@ void PassthroughMode::run(void)
 {
     process();
 
-    Mode::output_rpy[0] = rollFilter.Process(Mode::input_rpy[0]);
-    Mode::output_rpy[1] = pitchFilter.Process(Mode::input_rpy[1]);
-    Mode::output_rpy[2] = yawFilter.Process(Mode::input_rpy[2]);
+    Mode::output_rpy[0] = rollSlew.update(Mode::input_rpy[0]);
+    Mode::output_rpy[1] = pitchSlew.update(Mode::input_rpy[1]);
+    Mode::output_rpy[2] = yawSlew.update(Mode::input_rpy[2]);
     Mode::controlMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
 
     Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);

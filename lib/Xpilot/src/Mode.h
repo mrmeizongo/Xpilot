@@ -88,16 +88,16 @@ public:
     THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
-    static int16_t input_rpy[3];                                         // Mode dependent transformed input roll, pitch and yaw
-    static int16_t output_rpy[3];                                        // Mode dependent processed output for roll, pitch, yaw
-    THREE_POS_SW modeSwitchPosition;                                     // Mode switch position for this mode
-    static int16_t SRVout[Actuators::Channel::NUM_CHANNELS];             // Servo output array
-    static uint8_t missedImuInstances;                                   // If the current mode goes 2 loops without ahrs sensor values, switch to passthrough mode
-    static bool imuFault;                                                // if true, imu is in a faulted state
+    static int16_t input_rpy[3];                                           // Mode dependent transformed input roll, pitch and yaw
+    static int16_t output_rpy[3];                                          // Mode dependent processed output for roll, pitch, yaw
+    THREE_POS_SW modeSwitchPosition;                                       // Mode switch position for this mode
+    static int16_t SRVout[Actuators::Channel::NUM_CHANNELS];               // Servo output array
+    static uint8_t missedImuInstances;                                     // If the current mode goes 2 loops without ahrs sensor values, switch to passthrough mode
+    static bool imuFault;                                                  // if true, imu is in a faulted state
     static void controlMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
-    static void rudderMixer(void);                                       // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
-    static void resetControllers(void);                                  // Reset controllers when switching modes to prevent integral windup and derivative kick
-    virtual void controlFailsafe(void);                                  // Failsafe implementation
+    static void rudderMixer(void);                                         // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
+    static void resetControllers(void);                                    // Reset controllers when switching modes to prevent integral windup and derivative kick
+    virtual void controlFailsafe(void);                                    // Failsafe implementation
 #if defined(USE_FLAPERONS)
     static uint16_t flaperonOut;    // Flaperon position value, used in flaperon control
     static void setFlaperons(void); // Flaperon control, should be called in the run function of the flight mode
@@ -114,6 +114,7 @@ class PassthroughMode : public Mode
 {
 public:
     const char *modeName4(void) const override { return "PASS"; }
+    void enter(void) override;
     void process(void) override;
     void run(void) override;
 };
