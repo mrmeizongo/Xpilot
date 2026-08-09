@@ -40,7 +40,7 @@ Flight stabilization software
 
 // Normalize input to a -1:1 range
 #define NORM_INPUT(rawVal) \
-    ((2 * ((float)((rawVal) - (INPUT_MIN_PWM)) / (float)(INPUT_MAX_PWM - INPUT_MIN_PWM))) - 1)
+    ((2 * (float)((rawVal) - (INPUT_MIN_PWM)) / (float)(INPUT_MAX_PWM - INPUT_MIN_PWM)) - 1)
 
 #define FILTERED_NORM_INPUT(rawVal, deadBand) \
     (abs((rawVal) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (NORM_INPUT((rawVal))))

@@ -53,7 +53,7 @@ public:
         uint16_t loopCounter;
     };
 
-    Scheduler();
+    Scheduler(void);
 
     /**
      * Configures Timer2 to generate a 1 ms scheduler tick.
@@ -61,7 +61,7 @@ public:
      * Timer2 is reserved by the scheduler after this call.
      * This conflicts with Arduino tone() and any other library using Timer2.
      */
-    void init();
+    void init(void);
 
     /**
      * Adds a periodic task.
@@ -84,7 +84,7 @@ public:
      *
      * Call this continuously from Arduino loop().
      */
-    void runTasks();
+    void runTasks(void);
 
     bool isEnabled(int8_t taskId) const;
 
@@ -95,7 +95,7 @@ public:
     /**
      * Returns milliseconds elapsed since begin().
      */
-    static uint32_t ticks();
+    static uint32_t ticks(void);
 
     /**
      * Called by the Timer2 compare-match ISR.
@@ -121,7 +121,7 @@ private:
     };
 
     Task tasks_[MAX_TASKS];
-    uint8_t numTasks_;
+    int8_t lastTask_;
 
     static volatile uint32_t tickCount;
 

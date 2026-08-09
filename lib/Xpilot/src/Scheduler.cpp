@@ -45,7 +45,7 @@ namespace
         "Timer2 compare value range 1 <= TIMER2_COMPARE_VALUE <= 255");
 }
 
-Scheduler::Scheduler()
+Scheduler::Scheduler(void)
 {
     for (uint8_t i = 0; i < MAX_TASKS; ++i)
     {
@@ -66,10 +66,10 @@ Scheduler::Scheduler()
         tasks_[i].stats.loopRateHz = 0;
         tasks_[i].stats.loopCounter = 0;
     }
-    numTasks_ = 0;
+    lastTask_ = INVALID_TASK_ID;
 }
 
-void Scheduler::init()
+void Scheduler::init(void)
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
@@ -154,7 +154,7 @@ int8_t Scheduler::addTask(
                                                 : static_cast<uint32_t>(startDelayMs);
 
             task.nextRunTick = ticks() + initialDelayMs;
-            numTasks_++;
+            lastTask_++;
 
             return static_cast<int8_t>(i);
         }
@@ -163,9 +163,9 @@ int8_t Scheduler::addTask(
     return INVALID_TASK_ID;
 }
 
-void Scheduler::runTasks()
+void Scheduler::runTasks(void)
 {
-    for (uint8_t i = 0; i < numTasks_; ++i)
+    for (uint8_t i = 0; i <= lastTask_; ++i)
     {
         Task &task = tasks_[i];
 
@@ -285,7 +285,7 @@ bool Scheduler::resetStats(int8_t taskId)
     return true;
 }
 
-uint32_t Scheduler::ticks()
+uint32_t Scheduler::ticks(void)
 {
     uint32_t tickSnapshot;
 
@@ -302,11 +302,6 @@ uint32_t Scheduler::ticks()
     return tickSnapshot;
 }
 
-void Scheduler::onTimerCompareISR()
-{
-    ++tickCount;
-}
-
 bool Scheduler::deadlineReached(
     uint32_t currentTick,
     uint32_t deadlineTick)
@@ -321,12 +316,17 @@ bool Scheduler::deadlineReached(
 
 bool Scheduler::isValidTask(int8_t taskId) const
 {
-    if (taskId >= 0 && taskId <= numTasks_)
+    if (taskId < 0 || taskId > lastTask_)
     {
-        return tasks_[taskId].occupied && tasks_[taskId].callback != nullptr;
+        return false;
     }
 
-    return false;
+    return true;
+}
+
+void Scheduler::onTimerCompareISR()
+{
+    ++tickCount;
 }
 
 ISR(TIMER2_COMPA_vect)

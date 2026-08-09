@@ -1,10 +1,10 @@
 #include <Arduino.h>
+#include "Xpilot.h"
 #include "PlaneConfig.h"
 #include "SystemConfig.h"
-#include "Xpilot.h"
+#include "IMU.h"
 #include "Radio.h"
 #include "Actuators.h"
-#include "IMU.h"
 #include "Debug.h"
 
 // Task handlers for the scheduler to manage periodic tasks
