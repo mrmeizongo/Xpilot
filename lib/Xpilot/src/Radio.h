@@ -113,11 +113,28 @@ public:
     {
         static_cast<Radio *>(ctx)->processInput();
     }
-    bool inFailsafe(void) { return failSafe; }
 
-    int16_t getRxRollPWM(void) { return currentRx.rollPWM; }
-    int16_t getRxPitchPWM(void) { return currentRx.pitchPWM; }
-    int16_t getRxYawPWM(void) { return currentRx.yawPWM; }
+    int16_t getRxRollPWM(void)
+    {
+        if (failSafeTimerStarted)
+            return INPUT_MID_PWM;
+
+        return currentRx.rollPWM;
+    }
+    int16_t getRxPitchPWM(void)
+    {
+        if (failSafeTimerStarted)
+            return INPUT_MID_PWM;
+
+        return currentRx.pitchPWM;
+    }
+    int16_t getRxYawPWM(void)
+    {
+        if (failSafeTimerStarted)
+            return INPUT_MID_PWM;
+
+        return currentRx.yawPWM;
+    }
     int16_t getRxAux1PWM(void) { return currentRx.aux1PWM; }
     THREE_POS_SW getRxAux1Pos(void) { return currentRx.aux1SwitchPos; }
 #if defined(USE_FLAPERONS)
@@ -128,10 +145,12 @@ public:
     int16_t getRxAux3PWM(void) { return currentRx.aux3PWM; }
     THREE_POS_SW getRxAux3Pos(void) { return currentRx.aux3SwitchPos; }
 #endif
+    bool inFailsafe(void) { return failSafe; }
 
 private:
     Control currentRx;
     bool failSafe;
+    bool failSafeTimerStarted;
     void FailSafe();
 };
 

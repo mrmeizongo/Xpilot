@@ -19,6 +19,7 @@ volatile static unsigned long aux3CurrentTime = 0, aux3StartTime = 0, aux3Pulses
 Radio::Radio(void)
 {
     failSafe = false;
+    failSafeTimerStarted = false;
 }
 
 void Radio::init(void)
@@ -70,19 +71,38 @@ void Radio::processInput(void)
     FailSafe();
 }
 
-// During binding, I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
-// Failsafe logic is highly user/system peculiar, modify test logic accordingly
+/**
+ * Failsafe logic is highly user/system peculiar, modify test logic accordingly
+ * Implemented failsafe assumes roll, pitch and yaw are at maximum on signal loss
+ * Failsafe is triggered after 2 seconds if signal is recovered
+ */
 void Radio::FailSafe()
 {
+    static uint32_t signalLossTimeMs = 0;
+
     // Check transmitter failsafe position i.e. max for roll, pitch and yaw
     bool signalLost = (abs(INPUT_MAX_PWM - currentRx.rollPWM) <= FAILSAFE_TOLERANCE) &&
                       (abs(INPUT_MAX_PWM - currentRx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
                       (abs(INPUT_MAX_PWM - currentRx.yawPWM) <= FAILSAFE_TOLERANCE);
 
     if (signalLost)
-        failSafe = true;
+    {
+        if (!failSafeTimerStarted)
+        {
+            signalLossTimeMs = millis();
+            failSafeTimerStarted = true;
+        }
+        else
+        {
+            failSafe = (millis() - signalLossTimeMs >= 2000) ? true : false;
+        }
+    }
     else
-        failSafe = false; // Reset failsafe condition
+    {
+        failSafe = false;             // Reset failsafe condition
+        failSafeTimerStarted = false; // Reset timer flag
+        signalLossTimeMs = 0;         // Reset timer counter
+    }
 }
 
 /*
