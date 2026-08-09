@@ -73,8 +73,8 @@ void Radio::processInput(void)
 
 /**
  * Failsafe logic is highly user/system peculiar, modify test logic accordingly
- * Implemented failsafe assumes roll, pitch and yaw are at maximum on signal loss
- * Failsafe is triggered after 2 seconds if signal is recovered
+ * The implemented failsafe assumes roll, pitch and yaw go to maximum on signal loss
+ * Failsafe is triggered after 2 seconds if signal is not recovered
  */
 void Radio::FailSafe()
 {
