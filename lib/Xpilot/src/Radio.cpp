@@ -116,7 +116,7 @@ void Radio::FailSafe()
  * Due to this input capture mechanism, implementing a failsafe is largely dependent on the receiver's behavior when the signal is lost
  * Example: The Spektrum tx/rx I use will either hold the last known position when the signal is lost or default to a preset position determined at bind time
  * I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
- * Failsafe is triggered if the input pulse is at maximum value with a FAILSAFE_TOLERANCE for more than FAILSAFE_TIMEOUT_MS
+ * Failsafe is triggered if the input pulse is at maximum value with a FAILSAFE_TOLERANCE for more than 2 seconds
  */
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
