@@ -114,31 +114,31 @@ void Xpilot::printSchedulerRate(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(imuTaskId, taskStats))
     {
-        Serial.print("IMU Loop Rate:\t\t\t");
+        Serial.print("IMU Task Loop Rate:\t\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
     if (scheduler.getStats(flightModeRunTaskId, taskStats))
     {
-        Serial.print("Mode Run Loop Rate:\t\t");
+        Serial.print("Mode Run Task Loop Rate:\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
     if (scheduler.getStats(flightModeUpdateTaskId, taskStats))
     {
-        Serial.print("Mode Update Loop Rate:\t\t");
+        Serial.print("Mode Update Task Loop Rate:\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
     if (scheduler.getStats(radioTaskId, taskStats))
     {
-        Serial.print("Radio Loop Rate:\t\t");
+        Serial.print("Radio Task Loop Rate:\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
-    if (scheduler.getStats(writeServoTaskId, taskStats))
+    if (scheduler.getStats(actuatorTaskId, taskStats))
     {
-        Serial.print("Write Servo Loop Rate:\t\t");
+        Serial.print("Actuator Task Loop Rate:\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
@@ -150,7 +150,7 @@ void Xpilot::printIMUTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(imuTaskId, taskStats))
     {
-        Serial.println("IMU Stats");
+        Serial.println("IMU Task Stats");
         Serial.print("Run count: ");
         Serial.println(taskStats.runCount);
         Serial.print("Missed periods: ");
@@ -176,7 +176,7 @@ void Xpilot::printRadioTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(radioTaskId, taskStats))
     {
-        Serial.println("Radio Stats");
+        Serial.println("Radio Task Stats");
         Serial.print("Run count: ");
         Serial.println(taskStats.runCount);
         Serial.print("Missed periods: ");
@@ -202,7 +202,7 @@ void Xpilot::printFlightModeRunTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(flightModeRunTaskId, taskStats))
     {
-        Serial.println("FM Run Stats");
+        Serial.println("FM Run Task Stats");
         Serial.print("Run count: ");
         Serial.println(taskStats.runCount);
         Serial.print("Missed periods: ");
@@ -230,7 +230,7 @@ void Xpilot::printFlightModeUpdateTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(flightModeUpdateTaskId, taskStats))
     {
-        Serial.println("FM Update Stats");
+        Serial.println("FM Update Task Stats");
         Serial.print("Run count: ");
         Serial.println(taskStats.runCount);
         Serial.print("Missed periods: ");
@@ -254,9 +254,9 @@ void Xpilot::printServoTaskStats(void)
 {
     clearTerminal();
     Scheduler::TaskStats taskStats;
-    if (scheduler.getStats(writeServoTaskId, taskStats))
+    if (scheduler.getStats(actuatorTaskId, taskStats))
     {
-        Serial.println("Servo Write Stats");
+        Serial.println("Actuator Task Stats");
         Serial.print("Run count: ");
         Serial.println(taskStats.runCount);
         Serial.print("Missed periods: ");

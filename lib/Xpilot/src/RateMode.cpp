@@ -31,13 +31,14 @@ void RateMode::run(void)
     }
 
     process();
-#if defined(RUDDER_MIX_IN_RATE)
-    Mode::rudderMixer();
-#endif
 
     Mode::output_rpy[0] = Mode::rollPIDF.Compute(Mode::input_rpy[0], imu.getGyroX());
     Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], imu.getGyroY());
     Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], imu.getGyroZ());
+
+#if defined(RUDDER_MIX_IN_RATE)
+    Mode::rudderMixer();
+#endif
 
     AirplaneMixer::Outputs outputs = airplaneMixer.mix(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
 

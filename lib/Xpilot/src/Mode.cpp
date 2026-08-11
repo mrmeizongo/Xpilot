@@ -40,9 +40,9 @@ void Mode::rudderMixer(void)
 {
 #if defined(FULL_TRADITIONAL_PLANE) || defined(FULL_V_TAIL_PLANE) || defined(FLYING_WING_W_RUDDER_PLANE)
 #if defined(REVERSE_RUDDER_MIX)
-    input_rpy[2] = input_rpy[2] - (input_rpy[0] * RUDDER_MIXING);
+    output_rpy[2] = output_rpy[2] - (output_rpy[0] * RUDDER_MIXING);
 #else
-    input_rpy[2] = input_rpy[2] + (input_rpy[0] * RUDDER_MIXING);
+    output_rpy[2] = output_rpy[2] + (output_rpy[0] * RUDDER_MIXING);
 #endif
 #endif
 }

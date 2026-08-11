@@ -31,9 +31,6 @@ void StabilizeMode::run(void)
     }
 
     process();
-#if defined(RUDDER_MIX_IN_STABILIZE)
-    Mode::rudderMixer();
-#endif
 
     int16_t rollDemand = Mode::input_rpy[0] - imu.getRoll();
     int16_t pitchDemand = Mode::input_rpy[1] - imu.getPitch();
@@ -43,6 +40,10 @@ void StabilizeMode::run(void)
     Mode::output_rpy[0] = Mode::rollPIDF.Compute(rollDemand, imu.getGyroX());
     Mode::output_rpy[1] = Mode::pitchPIDF.Compute(pitchDemand, imu.getGyroY());
     Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], imu.getGyroZ());
+
+#if defined(RUDDER_MIX_IN_STABILIZE)
+    Mode::rudderMixer();
+#endif
 
     AirplaneMixer::Outputs outputs = airplaneMixer.mix(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
 

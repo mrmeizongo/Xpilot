@@ -102,7 +102,7 @@ private:
     static uint8_t radioTaskId;
     static uint8_t flightModeUpdateTaskId;
     static uint8_t flightModeRunTaskId;
-    static uint8_t writeServoTaskId;
+    static uint8_t actuatorTaskId;
     // --------------------------------------------------------------------
 };
 
