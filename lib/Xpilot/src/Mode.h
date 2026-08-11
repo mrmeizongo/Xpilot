@@ -39,10 +39,15 @@ Flight stabilization software
 #include "Radio.h"
 #include "Actuators.h"
 
-// Normalize input to a -1:1 range
+// Map raw radio values to outputMin-outputMax
+#define GET_RAW_INPUT(rawVal, inputMin, inputMax, outputMin, outputMax) \
+    (map(rawVal, inputMin, inputMax, outputMin, outputMax))
+
+// Normalize radio value to -1:1 range
 #define NORM_INPUT(rawVal) \
     ((2 * (float)((rawVal) - (INPUT_MIN_PWM)) / (float)(INPUT_MAX_PWM - INPUT_MIN_PWM)) - 1)
 
+// Normalize a deadband corrected radio value
 #define FILTERED_NORM_INPUT(rawVal, deadBand) \
     (abs((rawVal) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (NORM_INPUT((rawVal))))
 

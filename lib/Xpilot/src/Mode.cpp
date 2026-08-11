@@ -56,7 +56,7 @@ void Mode::setFlaperons(void)
 
 void Mode::flaperonInput(void)
 {
-    flaperonOut = GETRAWINPUT(radio.getRxAux2PWM(), INPUT_MID_PWM, INPUT_MIN_PWM, 0, FLAPERON_MAX_RANGE);
+    flaperonOut = GET_RAW_INPUT(radio.getRxAux2PWM(), INPUT_MID_PWM, INPUT_MIN_PWM, 0, FLAPERON_MAX_RANGE);
 }
 #endif
 
