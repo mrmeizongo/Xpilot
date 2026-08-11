@@ -10,6 +10,7 @@ void PassthroughMode::enter(void)
     rollSlew.reset();
     pitchSlew.reset();
     yawSlew.reset();
+    Mode::airplaneMixer.setCommandLimit(MAX_PASS_THROUGH);
 }
 
 void PassthroughMode::process(void)
@@ -35,16 +36,15 @@ void PassthroughMode::run(void)
     Mode::output_rpy[0] = rollSlew.update(Mode::input_rpy[0]);
     Mode::output_rpy[1] = pitchSlew.update(Mode::input_rpy[1]);
     Mode::output_rpy[2] = yawSlew.update(Mode::input_rpy[2]);
-    Mode::controlMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
 
-    Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH3] = map(Mode::SRVout[Actuators::Channel::CH3], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH4] = map(Mode::SRVout[Actuators::Channel::CH4], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-#if defined(USE_AUXOUT1)
-    Mode::SRVout[Actuators::Channel::CH5] = map(Mode::SRVout[Actuators::Channel::CH5], -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-#endif
+    AirplaneMixer::Outputs outputs = airplaneMixer.mix(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
+
+    Mode::SRVout[Actuators::Channel::CH1] = map(outputs.leftAileron, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::CH2] = map(outputs.rightAileron, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::CH3] = map(outputs.elevator, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::CH4] = map(outputs.rudder, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
 #if defined(USE_FLAPERONS)
     Mode::setFlaperons();
 #endif
+    actuators.setServoOut(SRVout); // Set servo output
 }

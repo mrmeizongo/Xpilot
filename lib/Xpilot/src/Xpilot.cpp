@@ -25,7 +25,7 @@ void Xpilot::setup(void)
     imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
     radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
     flightModeRunTaskId = scheduler.addTask(&Mode::runTask, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
-    writeServoTaskId = scheduler.addTask(&Mode::servoOut, nullptr, WRITE_SERVO_RATE_HZ);
+    writeServoTaskId = scheduler.addTask(&Actuators::writeServosTask, &actuators, WRITE_SERVO_RATE_HZ);
     flightModeUpdateTaskId = scheduler.addTask(&Xpilot::updateFlightModeTask, this, FLIGHT_MODE_UPDATE_RATE_HZ);
 #if defined(IO_DEBUG)
     (void)scheduler.addTask(&Xpilot::printIOTask, this, IO_PRINT_RATE_HZ);

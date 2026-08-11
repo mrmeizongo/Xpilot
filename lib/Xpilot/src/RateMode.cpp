@@ -4,6 +4,7 @@
 void RateMode::enter(void)
 {
     Mode::resetControllers();
+    Mode::airplaneMixer.setCommandLimit(MAX_PID_OUTPUT);
 }
 
 void RateMode::process(void)
@@ -38,15 +39,14 @@ void RateMode::run(void)
     Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], imu.getGyroY());
     Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], imu.getGyroZ());
 
-    Mode::controlMixer(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
-    Mode::SRVout[Actuators::Channel::CH1] = map(Mode::SRVout[Actuators::Channel::CH1], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH2] = map(Mode::SRVout[Actuators::Channel::CH2], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH3] = map(Mode::SRVout[Actuators::Channel::CH3], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH4] = map(Mode::SRVout[Actuators::Channel::CH4], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-#if defined(USE_AUXOUT1)
-    Mode::SRVout[Actuators::Channel::CH5] = map(Mode::SRVout[Actuators::Channel::CH5], -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-#endif
+    AirplaneMixer::Outputs outputs = airplaneMixer.mix(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
+
+    Mode::SRVout[Actuators::Channel::CH1] = map(outputs.leftAileron, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::CH2] = map(outputs.rightAileron, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::CH3] = map(outputs.elevator, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    Mode::SRVout[Actuators::Channel::CH4] = map(outputs.rudder, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 #if defined(USE_FLAPERONS)
     Mode::setFlaperons();
 #endif
+    actuators.setServoOut(SRVout); // Set servo output
 }

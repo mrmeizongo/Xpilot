@@ -33,7 +33,7 @@ Flight stabilization software
 #ifndef _ACTUATORS_H
 #define _ACTUATORS_H
 #include <Servo.h>
-#include <inttypes.h>
+#include <stdint.h>
 #include "PlaneConfig.h"
 
 class Actuators
@@ -62,9 +62,11 @@ public:
     void setServoOut(const int16_t (&SRVout)[NUM_CHANNELS]);
     int16_t getServoOut(Channel);
 
+    static void writeServosTask(void *ctx) { static_cast<Actuators *>(ctx)->writeServos(channelOut); }
+
 private:
-    Servo controlServo[NUM_CHANNELS]; // Control servos
-    int16_t channelOut[NUM_CHANNELS]; // Servo output values
+    static Servo controlServo[NUM_CHANNELS]; // Control servos
+    static int16_t channelOut[NUM_CHANNELS]; // Servo output values
 };
 
 extern Actuators actuators;

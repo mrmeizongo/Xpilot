@@ -38,21 +38,20 @@ Flight stabilization software
  * Uncomment only one to select the type of airplane being flown.
  * If flaps will be used, they should be connected directly to the receiver.
  *
- * FULL_PLANE_TRADITIONAL: Has ailerons(1 or 2 channel), elevator and rudder.
- * FULL_PLANE_V_TAIL: Has ailerons(1 or 2 channel) and v tail deflectors. Left V-tail deflector goes to elevator ouput, right goes to rudder output.
+ * FULL_TRADITIONAL_PLANE: Has ailerons(1 or 2 channel), elevator and rudder.
+ * FULL_V_TAIL_PLANE: Has ailerons(1 or 2 channel) and v tail deflectors. Left V-tail deflector goes to elevator ouput, right goes to rudder output.
  * RUDDER_ELEVATOR_ONLY_PLANE: Only rudder and elevator. They go to their respective channels.
- * RUDDER_ELEVATOR_ONLY_V_TAIL: No ailerons. Left V-tail deflector goes to elevator ouput, right goes to rudder output.
- * AILERON_ELEVATOR_ONLY: Only ailerons and elevator. No aileron-elevator mixing. Ailerons go to aileron channels, elevator goes to elevator channel.
- * FLYING_WING_W_RUDDER: Has 2 independent ailerons and a rudder. The aileron I/O is mixed with elevator I/O(elevon). Has rudder control
- * FLYING_WING_NO_RUDDER: Only has 2 independent ailerons. The aileron I/O is mixed with elevator I/O(elevon).
+ * RUDDER_ELEVATOR_ONLY_V_TAIL_PLANE: No ailerons. Left V-tail deflector goes to elevator ouput, right goes to rudder output.
+ * AILERON_ELEVATOR_ONLY_PLANE: Only ailerons and elevator. No aileron-elevator mixing. Ailerons go to aileron channels, elevator goes to elevator channel.
+ * FLYING_WING_W_RUDDER_PLANE: Has 2 independent ailerons and a rudder. The aileron I/O is mixed with elevator I/O(elevon). Has rudder control
+ * FLYING_WING_NO_RUDDER_PLANE: Only has 2 independent ailerons. The aileron I/O is mixed with elevator I/O(elevon).
  */
-#define FULL_PLANE_TRADITIONAL
-// #define FULL_PLANE_V_TAIL
+#define FULL_TRADITIONAL_PLANE
+// #define FULL_V_TAIL_PLANE
 // #define RUDDER_ELEVATOR_ONLY_PLANE
-// #defined RUDDER_ELEVATOR_ONLY_V_TAIL
-// #define AILERON_ELEVATOR_ONLY
-// #define FLYING_WING_W_RUDDER
-// #define FLYING_WING_NO_RUDDER
+// #define AILERON_ELEVATOR_ONLY_PLANE
+// #define FLYING_WING_W_RUDDER_PLANE
+// #define FLYING_WING_NO_RUDDER_PLANE
 // ------------------------------------------------------------------------------------------------------
 
 // Servo config

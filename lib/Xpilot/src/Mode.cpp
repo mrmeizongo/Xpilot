@@ -11,34 +11,26 @@ PIDF<int16_t> Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WI
 PIDF<int16_t> Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
 uint8_t Mode::missedImuInstances = 0;
 bool Mode::imuFault = false;
+AirplaneMixer Mode::airplaneMixer{};
 #if defined(USE_FLAPERONS)
 uint16_t Mode::flaperonOut = 0;
 #endif
 // --------------------------------------------------------------------------------------
 
-/*
- * Mixer for airplane type
- * Only tested with a full plane(traditional & V-tail) i.e. ailerons, elevator and rudder
- * Proceed with caution. Perform thorough pre-flight checks and reverse servo direction as needed.
- * Mixing is only performed for the 4 primary channels(aileron left, aileron right, elevator, rudder)
- */
-void Mode::controlMixer(const int16_t roll, const int16_t pitch, const int16_t yaw)
+Mode::Mode()
 {
-#if defined(FULL_PLANE_TRADITIONAL) || defined(RUDDER_ELEVATOR_ONLY_PLANE) || defined(AILERON_ELEVATOR_ONLY)
-    SRVout[Actuators::Channel::CH1] = roll;
-    SRVout[Actuators::Channel::CH2] = roll;
-    SRVout[Actuators::Channel::CH3] = pitch;
-    SRVout[Actuators::Channel::CH4] = yaw;
-#elif defined(FULL_PLANE_V_TAIL) || defined(RUDDER_ELEVATOR_ONLY_V_TAIL)
-    SRVout[Actuators::Channel::CH1] = roll;
-    SRVout[Actuators::Channel::CH2] = roll;
-    SRVout[Actuators::Channel::CH3] = pitch + yaw;
-    SRVout[Actuators::Channel::CH4] = yaw - pitch;
-#elif defined(FLYING_WING_W_RUDDER) || defined(FLYING_WING_NO_RUDDER)
-    SRVout[Actuators::Channel::CH1] = roll + pitch;
-    SRVout[Actuators::Channel::CH2] = roll - pitch;
-    SRVout[Actuators::Channel::CH3] = pitch;
-    SRVout[Actuators::Channel::CH4] = yaw;
+#if defined(FULL_TRADITIONAL_PLANE)
+    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::CONVENTIONAL);
+#elif defined(FULL_V_TAIL_PLANE)
+    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::V_TAIL);
+#elif defined(RUDDER_ELEVATOR_ONLY_PLANE)
+    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::RUDDER_ELEVATOR);
+#elif defined(AILERON_ELEVATOR_ONLY_PLANE)
+    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::AILERON_ELEVATOR);
+#elif defined(FLYING_WING_W_RUDDER_PLANE)
+    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::FLYING_WING_RUDDER);
+#elif defined(FLYING_WING_NO_RUDDER_PLANE)
+    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::FLYING_WING_NO_RUDDER);
 #else
 #error No airplane type selected!
 #endif
@@ -46,7 +38,7 @@ void Mode::controlMixer(const int16_t roll, const int16_t pitch, const int16_t y
 
 void Mode::rudderMixer(void)
 {
-#if defined(FULL_PLANE) || defined(FULL_PLANE_V_TAIL) || defined(FLYING_WING_W_RUDDER)
+#if defined(FULL_TRADITIONAL_PLANE) || defined(FULL_V_TAIL_PLANE) || defined(FLYING_WING_W_RUDDER_PLANE)
 #if defined(REVERSE_RUDDER_MIX)
     input_rpy[2] = input_rpy[2] - (input_rpy[0] * RUDDER_MIXING);
 #else
@@ -85,23 +77,6 @@ bool Mode::imuDataHealthy(void)
     }
 
     return true;
-}
-
-void Mode::exit(void)
-{
-    missedImuInstances = 0;
-}
-
-void Mode::servoOut(void *)
-{
-    SRVout[Actuators::Channel::CH1] = constrain(SRVout[Actuators::Channel::CH1], SERVO_MIN_PWM, SERVO_MAX_PWM);
-    SRVout[Actuators::Channel::CH2] = constrain(SRVout[Actuators::Channel::CH2], SERVO_MIN_PWM, SERVO_MAX_PWM);
-    SRVout[Actuators::Channel::CH3] = constrain(SRVout[Actuators::Channel::CH3], SERVO_MIN_PWM, SERVO_MAX_PWM);
-    SRVout[Actuators::Channel::CH4] = constrain(SRVout[Actuators::Channel::CH4], SERVO_MIN_PWM, SERVO_MAX_PWM);
-#if defined(USE_AUXOUT1)
-    SRVout[Actuators::Channel::CH5] = constrain(SRVout[Actuators::Channel::CH5], SERVO_MIN_PWM, SERVO_MAX_PWM);
-#endif
-    actuators.writeServos(SRVout); // Write servo outputs to the actuators object
 }
 
 void Mode::resetControllers(void)

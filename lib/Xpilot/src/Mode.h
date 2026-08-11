@@ -34,6 +34,7 @@ Flight stabilization software
 
 #include <Arduino.h>
 #include "PlaneConfig.h"
+#include "AirplaneMixer.h"
 #include "PIDF.h"
 #include "Radio.h"
 #include "Actuators.h"
@@ -49,14 +50,14 @@ Flight stabilization software
 class Mode
 {
 public:
-    Mode() {}
+    Mode();
     Mode(const Radio::THREE_POS_SW modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
     virtual ~Mode() = default;                                                  // Virtual destructor for proper cleanup of derived classes
     virtual const char *modeName4(void) const = 0;                              // Returns string representation of the flight mode. 4 characters max
     virtual void enter(void) {}                                                 // Preliminary setup on mode enter
     virtual void process(void) = 0;                                             // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                                                 // High level processing specific to this mode
-    virtual void exit(void);                                                    // Perform any clean up before switching to another mode
+    virtual void exit(void) { missedImuInstances = 0; }                         // Perform any clean up before switching to another mode
     virtual bool imuAssisted(void) const { return false; }                      // Does this mode use the imu
     static void runTask(void *ctx)                                              // Trampoline function for the scheduler to call the run function
     {
@@ -81,23 +82,22 @@ public:
     static int16_t getFlaperon(void) { return flaperonOut; }
     static void flaperonInput(void);
 #endif
-    static void servoOut(void *); // Constrain and write servo outputs to the actuators object
+
     static bool imuDataHealthy(void);
 
     void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
-    static int16_t input_rpy[3];                                           // Mode dependent transformed input roll, pitch and yaw
-    static int16_t output_rpy[3];                                          // Mode dependent processed output for roll, pitch, yaw
-    Radio::THREE_POS_SW modeSwitchPosition;                                // Mode switch position for this mode
-    static int16_t SRVout[Actuators::Channel::NUM_CHANNELS];               // Servo output array
-    static uint8_t missedImuInstances;                                     // If the current mode goes 2 loops without ahrs sensor values, switch to passthrough mode
-    static bool imuFault;                                                  // if true, imu is in a faulted state
-    static void controlMixer(const int16_t, const int16_t, const int16_t); // Mixer for different airplane types
-    static void rudderMixer(void);                                         // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
-    static void resetControllers(void);                                    // Reset controllers when switching modes to prevent integral windup and derivative kick
-    virtual void controlFailsafe(void);                                    // Failsafe implementation
+    static int16_t input_rpy[3];                             // Mode dependent transformed input roll, pitch and yaw
+    static int16_t output_rpy[3];                            // Mode dependent processed output for roll, pitch, yaw
+    Radio::THREE_POS_SW modeSwitchPosition;                  // Mode switch position for this mode
+    static int16_t SRVout[Actuators::Channel::NUM_CHANNELS]; // Servo output array
+    static uint8_t missedImuInstances;                       // If the current mode goes 2 loops without ahrs sensor values, switch to passthrough mode
+    static bool imuFault;                                    // if true, imu is in a faulted state
+    static void rudderMixer(void);                           // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
+    static void resetControllers(void);                      // Reset controllers when switching modes to prevent integral windup and derivative kick
+    virtual void controlFailsafe(void);                      // Failsafe implementation
 #if defined(USE_FLAPERONS)
     static uint16_t flaperonOut;    // Flaperon position value, used in flaperon control
     static void setFlaperons(void); // Flaperon control, should be called in the run function of the flight mode
@@ -107,6 +107,9 @@ protected:
     static PIDF<int16_t> rollPIDF;
     static PIDF<int16_t> pitchPIDF;
     static PIDF<int16_t> yawPIDF;
+
+    // Odutput mixer for different airplane types
+    static AirplaneMixer airplaneMixer;
 };
 
 // Manual control of flight surfaces - USE WITH CAUTION. FOR ADVANCED FLYERS ONLY!

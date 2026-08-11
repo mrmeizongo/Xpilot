@@ -1,5 +1,11 @@
+#include <Arduino.h>
 #include "SystemConfig.h"
 #include "Actuators.h"
+
+// ISO C++ forbids in-class initialization of non-const static members
+// We define them here instead
+Servo Actuators::controlServo[NUM_CHANNELS]{};
+int16_t Actuators::channelOut[NUM_CHANNELS]{};
 
 Actuators::Actuators(void)
 {
@@ -56,12 +62,20 @@ void Actuators::writeServos(void)
 // Write all servo output values at once using an array
 void Actuators::writeServos(const int16_t (&SRVout)[NUM_CHANNELS])
 {
-    controlServo[CH1].writeMicroseconds(SRVout[CH1]);
-    controlServo[CH2].writeMicroseconds(SRVout[CH2]);
-    controlServo[CH3].writeMicroseconds(SRVout[CH3]);
-    controlServo[CH4].writeMicroseconds(SRVout[CH4]);
+    int16_t srv1 = constrain(SRVout[Actuators::Channel::CH1], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    int16_t srv2 = constrain(SRVout[Actuators::Channel::CH2], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    int16_t srv3 = constrain(SRVout[Actuators::Channel::CH3], SERVO_MIN_PWM, SERVO_MAX_PWM);
+    int16_t srv4 = constrain(SRVout[Actuators::Channel::CH4], SERVO_MIN_PWM, SERVO_MAX_PWM);
 #if defined(USE_AUXOUT1)
-    controlServo[CH5].writeMicroseconds(SRVout[CH5]);
+    int16_t srv5 = constrain(SRVout[Actuators::Channel::CH5], SERVO_MIN_PWM, SERVO_MAX_PWM);
+#endif
+
+    controlServo[CH1].writeMicroseconds(srv1);
+    controlServo[CH2].writeMicroseconds(srv2);
+    controlServo[CH3].writeMicroseconds(srv3);
+    controlServo[CH4].writeMicroseconds(srv4);
+#if defined(USE_AUXOUT1)
+    controlServo[CH5].writeMicroseconds(srv5);
 #endif
 }
 
