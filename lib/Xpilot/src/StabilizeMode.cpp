@@ -25,21 +25,21 @@ void StabilizeMode::process(void)
 
 void StabilizeMode::run(void)
 {
-    if (!Mode::imuDataHealthy())
+    if (!Mode::getAHRS())
     {
         return;
     }
 
     process();
 
-    int16_t rollDemand = Mode::input_rpy[0] - imu.getRoll();
-    int16_t pitchDemand = Mode::input_rpy[1] - imu.getPitch();
+    int16_t rollDemand = Mode::input_rpy[0] - Mode::imu_rpy[0];
+    int16_t pitchDemand = Mode::input_rpy[1] - Mode::imu_rpy[1];
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);
     pitchDemand = map(pitchDemand, -MAX_PITCH_ANGLE_DEGS, MAX_PITCH_ANGLE_DEGS, -MAX_PITCH_RATE_DEGS, MAX_PITCH_RATE_DEGS);
 
-    Mode::output_rpy[0] = Mode::rollPIDF.Compute(rollDemand, imu.getGyroX());
-    Mode::output_rpy[1] = Mode::pitchPIDF.Compute(pitchDemand, imu.getGyroY());
-    Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], imu.getGyroZ());
+    Mode::output_rpy[0] = Mode::rollPIDF.Compute(rollDemand, Mode::imu_g[0]);
+    Mode::output_rpy[1] = Mode::pitchPIDF.Compute(pitchDemand, Mode::imu_g[0]);
+    Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], Mode::imu_g[0]);
 
 #if defined(RUDDER_MIX_IN_STABILIZE)
     Mode::rudderMixer();

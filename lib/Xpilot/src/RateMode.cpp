@@ -25,16 +25,16 @@ void RateMode::process(void)
 
 void RateMode::run(void)
 {
-    if (!Mode::imuDataHealthy())
+    if (!Mode::getAHRS())
     {
         return;
     }
 
     process();
 
-    Mode::output_rpy[0] = Mode::rollPIDF.Compute(Mode::input_rpy[0], imu.getGyroX());
-    Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], imu.getGyroY());
-    Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], imu.getGyroZ());
+    Mode::output_rpy[0] = Mode::rollPIDF.Compute(Mode::input_rpy[0], Mode::imu_g[0]);
+    Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], Mode::imu_g[1]);
+    Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], Mode::imu_g[2]);
 
 #if defined(RUDDER_MIX_IN_RATE)
     Mode::rudderMixer();

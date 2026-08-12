@@ -15,15 +15,15 @@ public:
         static_cast<IMU *>(ctx)->getLatestReadings();
     }
 
-    int16_t getRoll(void) { return static_cast<int16_t>(rpy[0]); }
-    int16_t getPitch(void) { return static_cast<int16_t>(rpy[1]); }
-    int16_t getYaw(void) { return static_cast<int16_t>(rpy[2]); }
+    int16_t getRoll(void) { return static_cast<int16_t>(_rpy[0]); }
+    int16_t getPitch(void) { return static_cast<int16_t>(_rpy[1]); }
+    int16_t getYaw(void) { return static_cast<int16_t>(_rpy[2]); }
 
-    int16_t getGyroX(void) { return static_cast<int16_t>(g[0]); }
-    int16_t getGyroY(void) { return static_cast<int16_t>(g[1]); }
-    int16_t getGyroZ(void) { return static_cast<int16_t>(g[2]); }
+    int16_t getGyroX(void) { return static_cast<int16_t>(_g[0]); }
+    int16_t getGyroY(void) { return static_cast<int16_t>(_g[1]); }
+    int16_t getGyroZ(void) { return static_cast<int16_t>(_g[2]); }
 
-    bool consumeNewData(void); // Call before calling the individual getter functions
+    bool consumeNewData(float (&rpy)[3], float (&g)[3]); // Call before calling the individual getter functions
 
 private:
     /*
@@ -31,8 +31,8 @@ private:
      */
     MPU6050 mpu6050;
 
-    float rpy[3]; // Airplane coordinate system values
-    float g[3];   // Angular velocity about the respective axis - xyz
+    float _rpy[3]; // Airplane coordinate system values
+    float _g[3];   // Angular velocity about the respective axis - xyz
 
     bool dataReady; // Flag to indicate if new data is available
 };

@@ -88,12 +88,14 @@ public:
     static void flaperonInput(void);
 #endif
 
-    static bool imuDataHealthy(void);
+    static bool getAHRS(void);
 
     void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
+    static float imu_rpy[3];                                 // To hold imu rpy values
+    static float imu_g[3];                                   // To hold imu g values
     static int16_t input_rpy[3];                             // Mode dependent transformed input roll, pitch and yaw
     static int16_t output_rpy[3];                            // Mode dependent processed output for roll, pitch, yaw
     Radio::THREE_POS_SW modeSwitchPosition;                  // Mode switch position for this mode

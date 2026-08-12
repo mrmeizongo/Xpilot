@@ -5,6 +5,8 @@
 // We define them here instead
 int16_t Mode::input_rpy[3]{0, 0, 0};
 int16_t Mode::output_rpy[3]{0, 0, 0};
+float Mode::imu_rpy[3]{0.f, 0.f, 0.f};
+float Mode::imu_g[3]{0.f, 0.f, 0.f};
 int16_t Mode::SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};
 PIDF<int16_t> Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
 PIDF<int16_t> Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
@@ -60,9 +62,9 @@ void Mode::flaperonInput(void)
 }
 #endif
 
-bool Mode::imuDataHealthy(void)
+bool Mode::getAHRS(void)
 {
-    if (!imu.consumeNewData())
+    if (!imu.consumeNewData(imu_rpy, imu_g))
     {
         /*
          * This could be a sign of a faulty imu sensor

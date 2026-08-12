@@ -13,8 +13,8 @@ static void readFromEEPROM(void) __attribute__((unused));
 
 IMU::IMU(void)
 {
-    rpy[0] = rpy[1] = rpy[2] = 0.f;
-    g[0] = g[1] = g[2] = 0.f;
+    _rpy[0] = _rpy[1] = _rpy[2] = 0.f;
+    _g[0] = _g[1] = _g[2] = 0.f;
 }
 
 void IMU::init(void)
@@ -63,36 +63,43 @@ void IMU::init(void)
 
 void IMU::getLatestReadings(void)
 {
-    if (!mpu6050.update(rpy, g))
+    if (!mpu6050.update(_rpy, _g))
     {
         return;
     }
 
 #if defined(REVERSE_ROLL)
-    rpy[0] = -rpy[0];
+    _rpy[0] = -rpy[0];
 #endif
 #if defined(REVERSE_PITCH)
-    rpy[1] = -rpy[1];
+    _rpy[1] = -_rpy[1];
 #endif
 #if defined(REVERSE_YAW)
-    rpy[2] = -rpy[2];
+    _rpy[2] = -_rpy[2];
 #endif
 #if defined(REVERSE_X_GYRO)
-    g[0] = -g[0];
+    _g[0] = -_g[0];
 #endif
 #if defined(REVERSE_Y_GYRO)
-    g[1] = -g[1];
+    _g[1] = -_g[1];
 #endif
 #if defined(REVERSE_Z_GYRO)
-    g[2] = -g[2];
+    _g[2] = -_g[2];
 #endif
     dataReady = true;
 }
 
-bool IMU::consumeNewData(void)
+bool IMU::consumeNewData(float (&rpy)[3], float (&g)[3])
 {
     if (dataReady)
     {
+        rpy[0] = _rpy[0];
+        rpy[1] = _rpy[1];
+        rpy[2] = _rpy[2];
+        g[0] = _g[0];
+        g[1] = _g[1];
+        g[2] = _g[2];
+
         dataReady = false;
         return true;
     }
