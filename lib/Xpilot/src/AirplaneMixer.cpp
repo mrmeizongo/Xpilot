@@ -80,8 +80,8 @@ void AirplaneMixer::mixVTail(
     out.rightAileron = roll;
 
     mixDifferential(
-        pitch,
         yaw,
+        pitch,
         out.elevator,
         out.rudder);
 }
@@ -104,8 +104,8 @@ void AirplaneMixer::mixFlyingWingRudder(
     out.rudder = yaw;
 
     mixDifferential(
-        pitch,
         roll,
+        pitch,
         out.leftAileron,
         out.rightAileron);
 }
@@ -116,8 +116,8 @@ void AirplaneMixer::mixFlyingWingNoRudder(
     Outputs &out) const
 {
     mixDifferential(
-        pitch,
         roll,
+        pitch,
         out.leftAileron,
         out.rightAileron);
 }
@@ -167,9 +167,6 @@ void AirplaneMixer::mixAileronElevator(
  *
  * This preserves the requested pitch/yaw ratio better than independent
  * clipping.
- *
- * common represents the axis that move together in the same direction
- * differential represents the axis that are inverse
  */
 void AirplaneMixer::mixDifferential(
     int16_t common,
@@ -177,8 +174,8 @@ void AirplaneMixer::mixDifferential(
     int16_t &output1,
     int16_t &output2) const
 {
-    int32_t left = common - differential;
-    int32_t right = common + differential;
+    int32_t left = common + differential;
+    int32_t right = common - differential;
 
     normalizePair(left, right);
 

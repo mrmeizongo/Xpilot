@@ -233,7 +233,7 @@ Flight stabilization software
  * CAUTION:
  * Only uncomment one debug option at a time
  */
-// #define SCHEDULER_RATE_DEBUG
+#define SCHEDULER_RATE_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
 // #define CALIBRATE_DEBUG

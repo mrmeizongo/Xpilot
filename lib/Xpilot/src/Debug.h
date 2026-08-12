@@ -132,7 +132,7 @@ void Xpilot::printSchedulerRate(void)
     }
     if (scheduler.getStats(radioTaskId, taskStats))
     {
-        Serial.print("Radio Task Loop Rate:\t\t");
+        Serial.print("Radio Task Loop Rate:\t\t\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
