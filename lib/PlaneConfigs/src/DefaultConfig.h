@@ -212,7 +212,6 @@ Flight stabilization software
 // #define DEFAULT_TO_PASSTHROUGH_MODE
 #define DEFAULT_TO_RATE_MODE
 // #define DEFAULT_TO_STABILIZE_MODE
-
 // ------------------------------------------------------------------------------------------------------
 
 // Task scheduler control config
