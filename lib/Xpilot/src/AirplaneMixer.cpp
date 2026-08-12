@@ -85,8 +85,8 @@ void AirplaneMixer::mixVTail(
     mixDifferential(
         yaw,
         pitch,
-        out.rudder,
-        out.elevator);
+        out.elevator,
+        out.rudder);
 }
 
 /*
@@ -107,8 +107,8 @@ void AirplaneMixer::mixFlyingWingRudder(
     out.rudder = yaw;
 
     mixDifferential(
-        roll,
         pitch,
+        roll,
         out.leftAileron,
         out.rightAileron);
 }
@@ -119,8 +119,8 @@ void AirplaneMixer::mixFlyingWingNoRudder(
     Outputs &out) const
 {
     mixDifferential(
-        roll,
         pitch,
+        roll,
         out.leftAileron,
         out.rightAileron);
 }
@@ -170,6 +170,12 @@ void AirplaneMixer::mixAileronElevator(
  *
  * This preserves the requested pitch/yaw ratio better than independent
  * clipping.
+ *
+ * common represents the axis that move together in the same direction
+ * differential represents the axis that are inverse
+ *
+ * For proper functionality, servo installation direction will necessitate
+ * swapping the common and differential variables passed to the function
  */
 void AirplaneMixer::mixDifferential(
     int16_t common,
@@ -177,19 +183,19 @@ void AirplaneMixer::mixDifferential(
     int16_t &output1,
     int16_t &output2) const
 {
-    int16_t a = common + differential;
-    int16_t b = common - differential;
+    int32_t left = common + differential;
+    int32_t right = common - differential;
 
-    normalizePair(a, b);
+    normalizePair(left, right);
 
-    output1 = a;
-    output2 = b;
+    output1 = left;
+    output2 = right;
 }
 
-void AirplaneMixer::normalizePair(int16_t &a, int16_t &b) const
+void AirplaneMixer::normalizePair(int32_t &a, int32_t &b) const
 {
-    uint16_t maxMagnitude = abs(a);
-    const uint16_t bMagnitude = abs(b);
+    int32_t maxMagnitude = abs(a);
+    const int32_t bMagnitude = abs(b);
 
     if (bMagnitude > maxMagnitude)
     {

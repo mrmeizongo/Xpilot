@@ -2,7 +2,6 @@
 #define _AIRPLANE_MIXER
 
 #include <Arduino.h>
-#include <stdint.h>
 
 class AirplaneMixer
 {
@@ -18,6 +17,10 @@ public:
         CUSTOM
     };
 
+    /*
+     * For common and differential moving flight control surfaces(v tail and flying wings),
+     * elevator and rudder act as left and right surfaces, respectively
+     */
     struct Outputs
     {
         int16_t leftAileron;
@@ -35,7 +38,7 @@ public:
     Outputs mix(int16_t roll, int16_t pitch, int16_t yaw) const;
     void setAirframeType(AirframeType type) { _type = type; }
     AirframeType getAirframeType() const { return _type; }
-    void setCommandLimit(uint16_t limit) { _commandLimit = limit; }
+    void setCommandLimit(int16_t limit) { _commandLimit = limit; }
 
     int16_t getCommandLimit() const { return _commandLimit; }
 
@@ -55,7 +58,7 @@ protected:
 
 private:
     AirframeType _type;
-    uint16_t _commandLimit;
+    int16_t _commandLimit;
 
     void mixConventional(
         int16_t roll,
@@ -96,6 +99,6 @@ private:
         int16_t &output1,
         int16_t &output2) const;
 
-    void normalizePair(int16_t &a, int16_t &b) const;
+    void normalizePair(int32_t &a, int32_t &b) const;
 };
 #endif // _AIRPLANE_MIXER
