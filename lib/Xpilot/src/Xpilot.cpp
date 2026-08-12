@@ -49,7 +49,7 @@ void Xpilot::setup(void)
     (void)scheduler.addTask(&Xpilot::printFlightModeUpdateTaskStatTask, this, TASK_PRINT_RATE_HZ);
 #endif
 #if defined(PRINT_SERVO_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printServoTaskStatTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printActuatorTaskStatTask, this, TASK_PRINT_RATE_HZ);
 #endif
     scheduler.init();
 }
