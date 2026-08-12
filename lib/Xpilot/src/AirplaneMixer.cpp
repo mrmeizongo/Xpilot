@@ -69,9 +69,6 @@ void AirplaneMixer::mixConventional(
  *
  * Elevator contribution moves both surfaces together.
  * Rudder contribution moves them differentially.
- *
- * Left  = pitch + yaw
- * Right = pitch - yaw
  */
 void AirplaneMixer::mixVTail(
     int16_t roll,
@@ -83,8 +80,8 @@ void AirplaneMixer::mixVTail(
     out.rightAileron = roll;
 
     mixDifferential(
-        yaw,
         pitch,
+        yaw,
         out.elevator,
         out.rudder);
 }
@@ -173,9 +170,6 @@ void AirplaneMixer::mixAileronElevator(
  *
  * common represents the axis that move together in the same direction
  * differential represents the axis that are inverse
- *
- * For proper functionality, servo installation direction will necessitate
- * swapping the common and differential variables passed to the function
  */
 void AirplaneMixer::mixDifferential(
     int16_t common,
@@ -183,8 +177,8 @@ void AirplaneMixer::mixDifferential(
     int16_t &output1,
     int16_t &output2) const
 {
-    int32_t left = common + differential;
-    int32_t right = common - differential;
+    int32_t left = common - differential;
+    int32_t right = common + differential;
 
     normalizePair(left, right);
 
