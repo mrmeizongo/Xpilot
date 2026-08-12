@@ -250,7 +250,7 @@ void Xpilot::printFlightModeUpdateTaskStats(void)
     }
 }
 
-void Xpilot::printServoTaskStats(void)
+void Xpilot::printActuatorTaskStats(void)
 {
     clearTerminal();
     Scheduler::TaskStats taskStats;

@@ -54,7 +54,7 @@ public:
     static void printRadioTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printRadioTaskStats(); }
     static void printFlightModeRunTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeRunTaskStats(); }
     static void printFlightModeUpdateTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeUpdateTaskStats(); }
-    static void printServoTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printServoTaskStats(); }
+    static void printServoTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printActuatorTaskStats(); }
     // --------------------------------------------------------------------
 
     // Only functions called from the main setup and loop functions
@@ -70,7 +70,7 @@ public:
     void printRadioTaskStats(void);
     void printFlightModeRunTaskStats(void);
     void printFlightModeUpdateTaskStats(void);
-    void printServoTaskStats(void);
+    void printActuatorTaskStats(void);
     // --------------------------------------------------------------------
 
     Mode *getFlightMode(void) const { return currentMode; }
