@@ -38,6 +38,13 @@ Mode::Mode()
 #endif
 }
 
+void Mode::update(void)
+{
+#if defined(USE_FLAPERONS)
+    flaperonInput();
+#endif
+}
+
 void Mode::rudderMixer(void)
 {
 #if defined(FULL_TRADITIONAL_PLANE) || defined(FULL_V_TAIL_PLANE) || defined(FLYING_WING_W_RUDDER_PLANE)

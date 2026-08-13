@@ -13,7 +13,7 @@ void PassthroughMode::enter(void)
     Mode::airplaneMixer.setCommandLimit(MAX_PASS_THROUGH);
 }
 
-void PassthroughMode::process(void)
+void PassthroughMode::update(void)
 {
     if (radio.inFailsafe())
     {
@@ -24,14 +24,13 @@ void PassthroughMode::process(void)
     Mode::input_rpy[0] = FILTERED_NORM_INPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND) * MAX_PASS_THROUGH;
     Mode::input_rpy[1] = FILTERED_NORM_INPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND) * MAX_PASS_THROUGH;
     Mode::input_rpy[2] = FILTERED_NORM_INPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND) * MAX_PASS_THROUGH;
-#if defined(USE_FLAPERONS)
-    flaperonInput();
-#endif
+
+    Mode::update();
 }
 
 void PassthroughMode::run(void)
 {
-    process();
+    // update();
 
     Mode::output_rpy[0] = rollSlew.update(Mode::input_rpy[0]);
     Mode::output_rpy[1] = pitchSlew.update(Mode::input_rpy[1]);

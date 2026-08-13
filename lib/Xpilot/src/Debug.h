@@ -4,15 +4,16 @@
 #include "Actuators.h"
 #include "IMU.h"
 
-static void clearTerminal()
-{
-    Serial.print("\033[2J"); // Clear screen
-    Serial.print("\033[H");  // Move cursor to home
-}
+#define CLEAR_TERMINAL()         \
+    do                           \
+    {                            \
+        Serial.print("\033[2J"); \
+        Serial.print("\033[H");  \
+    } while (0)
 
 void Xpilot::printIO(void)
 {
-    clearTerminal();
+    CLEAR_TERMINAL();
     Serial.print("\t\t\t\t\t\t");
     Serial.print("Flight Mode: ");
     Serial.println(xpilot.getFlightMode()->modeName4());
@@ -98,7 +99,7 @@ void Xpilot::printIO(void)
 
 void Xpilot::printIMU(void)
 {
-    clearTerminal();
+    CLEAR_TERMINAL();
     Serial.println(">");
     Serial.print("Roll: ");
     Serial.println(imu.getRoll());
@@ -110,7 +111,7 @@ void Xpilot::printIMU(void)
 
 void Xpilot::printSchedulerRate(void)
 {
-    clearTerminal();
+    CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(imuTaskId, taskStats))
     {
@@ -121,6 +122,12 @@ void Xpilot::printSchedulerRate(void)
     if (scheduler.getStats(flightModeRunTaskId, taskStats))
     {
         Serial.print("Mode Run Task Loop Rate:\t\t");
+        Serial.print(taskStats.loopRateHz);
+        Serial.println();
+    }
+    if (scheduler.getStats(flightModeInputUpdateTaskId, taskStats))
+    {
+        Serial.print("Mode Input Update Task Loop Rate:\t");
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
@@ -146,7 +153,7 @@ void Xpilot::printSchedulerRate(void)
 
 void Xpilot::printIMUTaskStats(void)
 {
-    clearTerminal();
+    CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(imuTaskId, taskStats))
     {
@@ -172,7 +179,7 @@ void Xpilot::printIMUTaskStats(void)
 
 void Xpilot::printRadioTaskStats(void)
 {
-    clearTerminal();
+    CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(radioTaskId, taskStats))
     {
@@ -198,7 +205,7 @@ void Xpilot::printRadioTaskStats(void)
 
 void Xpilot::printFlightModeRunTaskStats(void)
 {
-    clearTerminal();
+    CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(flightModeRunTaskId, taskStats))
     {
@@ -226,7 +233,7 @@ void Xpilot::printFlightModeRunTaskStats(void)
 
 void Xpilot::printFlightModeUpdateTaskStats(void)
 {
-    clearTerminal();
+    CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(flightModeUpdateTaskId, taskStats))
     {
@@ -250,9 +257,35 @@ void Xpilot::printFlightModeUpdateTaskStats(void)
     }
 }
 
+void Xpilot::printFlightModeInputUpdateTaskStats(void)
+{
+    CLEAR_TERMINAL();
+    Scheduler::TaskStats taskStats;
+    if (scheduler.getStats(flightModeInputUpdateTaskId, taskStats))
+    {
+        Serial.println("FM Input Update Task Stats");
+        Serial.print("Run count: ");
+        Serial.println(taskStats.runCount);
+        Serial.print("Missed periods: ");
+        Serial.println(taskStats.missedPeriods);
+        Serial.print("Overrun count: ");
+        Serial.println(taskStats.overrunCount);
+        Serial.print("Last run time(us): ");
+        Serial.println(taskStats.lastRuntimeUs);
+        Serial.print("Max run time(us) : ");
+        Serial.println(taskStats.maxRuntimeUs);
+        Serial.print("Last loop rate update(us): ");
+        Serial.println(taskStats.lastLoopRateUpdateUs);
+        Serial.print("Loop rate(hz): ");
+        Serial.println(taskStats.loopRateHz);
+        Serial.print("Loop counter: ");
+        Serial.println(taskStats.loopCounter);
+    }
+}
+
 void Xpilot::printActuatorTaskStats(void)
 {
-    clearTerminal();
+    CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(actuatorTaskId, taskStats))
     {

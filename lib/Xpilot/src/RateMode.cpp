@@ -7,7 +7,7 @@ void RateMode::enter(void)
     Mode::airplaneMixer.setCommandLimit(MAX_PID_OUTPUT);
 }
 
-void RateMode::process(void)
+void RateMode::update(void)
 {
     if (radio.inFailsafe())
     {
@@ -18,9 +18,8 @@ void RateMode::process(void)
     Mode::input_rpy[0] = FILTERED_NORM_INPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND) * MAX_ROLL_RATE_DEGS;
     Mode::input_rpy[1] = FILTERED_NORM_INPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND) * MAX_PITCH_RATE_DEGS;
     Mode::input_rpy[2] = FILTERED_NORM_INPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND) * MAX_YAW_RATE_DEGS;
-#if defined(USE_FLAPERONS)
-    flaperonInput();
-#endif
+
+    Mode::update();
 }
 
 void RateMode::run(void)
@@ -30,7 +29,7 @@ void RateMode::run(void)
         return;
     }
 
-    process();
+    // update();
 
     Mode::output_rpy[0] = Mode::rollPIDF.Compute(Mode::input_rpy[0], Mode::imu_g[0]);
     Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], Mode::imu_g[1]);

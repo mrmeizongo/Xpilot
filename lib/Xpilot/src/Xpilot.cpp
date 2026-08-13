@@ -11,6 +11,7 @@
 uint8_t Xpilot::imuTaskId = 0;
 uint8_t Xpilot::radioTaskId = 0;
 uint8_t Xpilot::flightModeUpdateTaskId = 0;
+uint8_t Xpilot::flightModeInputUpdateTaskId = 0;
 uint8_t Xpilot::flightModeRunTaskId = 0;
 uint8_t Xpilot::actuatorTaskId = 0;
 
@@ -25,8 +26,10 @@ void Xpilot::setup(void)
     imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
     radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
     flightModeUpdateTaskId = scheduler.addTask(&Xpilot::updateFlightModeTask, this, FLIGHT_MODE_UPDATE_RATE_HZ);
+    flightModeInputUpdateTaskId = scheduler.addTask(&Mode::updateInput, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
     flightModeRunTaskId = scheduler.addTask(&Mode::runTask, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
     actuatorTaskId = scheduler.addTask(&Actuators::writeServosTask, &actuators, WRITE_SERVO_RATE_HZ);
+
 #if defined(IO_DEBUG)
     (void)scheduler.addTask(&Xpilot::printIOTask, this, IO_PRINT_RATE_HZ);
 #endif
@@ -51,6 +54,7 @@ void Xpilot::setup(void)
 #if defined(PRINT_SERVO_TASK_STAT)
     (void)scheduler.addTask(&Xpilot::printActuatorTaskStatTask, this, TASK_PRINT_RATE_HZ);
 #endif
+
     scheduler.init();
 }
 

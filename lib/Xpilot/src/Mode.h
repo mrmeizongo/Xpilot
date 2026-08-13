@@ -60,16 +60,26 @@ public:
     virtual ~Mode() = default;                                                  // Virtual destructor for proper cleanup of derived classes
     virtual const char *modeName4(void) const = 0;                              // Returns string representation of the flight mode. 4 characters max
     virtual void enter(void) {}                                                 // Preliminary setup on mode enter
-    virtual void process(void) = 0;                                             // Convert user input to mode specific targets, should be called first in the run function
+    virtual void update(void);                                                  // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0;                                                 // High level processing specific to this mode
     virtual void exit(void) { missedImuInstances = 0; }                         // Perform any clean up before switching to another mode
     virtual bool imuAssisted(void) const { return false; }                      // Does this mode use the imu
-    static void runTask(void *ctx)                                              // Trampoline function for the scheduler to call the run function
+
+    static void runTask(void *ctx) // Trampoline function for the scheduler to call the run function
     {
         Mode **modePointer = static_cast<Mode **>(ctx);
         if (*modePointer != nullptr)
         {
             (*modePointer)->run();
+        }
+    }
+
+    static void updateInput(void *ctx)
+    {
+        Mode **modePointer = static_cast<Mode **>(ctx);
+        if (*modePointer != nullptr)
+        {
+            (*modePointer)->update();
         }
     }
 
@@ -125,7 +135,7 @@ class PassthroughMode : public Mode
 public:
     const char *modeName4(void) const override { return "PASS"; }
     void enter(void) override;
-    void process(void) override;
+    void update(void) override;
     void run(void) override;
 };
 
@@ -135,7 +145,7 @@ class RateMode : public Mode
 public:
     const char *modeName4(void) const override { return "RATE"; }
     void enter(void) override;
-    void process(void) override;
+    void update(void) override;
     void run(void) override;
     bool imuAssisted(void) const override { return true; }
 };
@@ -146,7 +156,7 @@ class StabilizeMode : public Mode
 public:
     const char *modeName4(void) const override { return "STAB"; }
     void enter(void) override;
-    void process(void) override;
+    void update(void) override;
     void run(void) override;
     bool imuAssisted(void) const override { return true; }
 };
