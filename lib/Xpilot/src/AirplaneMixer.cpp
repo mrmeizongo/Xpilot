@@ -1,6 +1,5 @@
 #include "AirplaneMixer.h"
 
-// Main interface requested
 AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t yaw) const
 {
     Outputs out{};
