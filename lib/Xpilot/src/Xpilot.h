@@ -95,7 +95,6 @@ private:
     // --------------------------------------------------------------------
 
     bool failSafeActive; // System failsafe active flag
-    bool imuFaultActive; // Imu fault
     void updateFlightMode(void);
     // --------------------------------------------------------------------
 

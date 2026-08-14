@@ -87,12 +87,12 @@ void Xpilot::sysInit(void)
     previousMode = currentMode;
 
     failSafeActive = false;
-    imuFaultActive = false;
 
     // Initialize systems
     imu.init();
     radio.init();
     actuators.init();
+    currentMode->init();
 }
 
 void Xpilot::updateFlightMode(void)
@@ -102,7 +102,7 @@ void Xpilot::updateFlightMode(void)
      * If system failsafe has been activated and transmitter is still in fail safe,
      * or there is an active imu fault, prevent flight mode switching until cleared
      */
-    if ((failSafeActive && radioInFailSafe) || imuFaultActive)
+    if (failSafeActive && radioInFailSafe)
         return;
 
     // First time detecting radio in failsafe
@@ -116,24 +116,6 @@ void Xpilot::updateFlightMode(void)
 #elif defined(FAILSAFE_TO_PASSTHROUGH)
         currentMode = &passthroughMode;
 #endif
-    }
-    else if (currentMode->getFaultState())
-    {
-        /*
-         * If imu faulted and stopped returning ahrs values, default to passthrough until reset
-         * if already in a non-imu assisted mode, simply set imu fault active
-         * This will prevent user from switching flight modes until system reset is performed
-         */
-        if (currentMode->imuAssisted() && !imuFaultActive)
-        {
-            currentMode = &passthroughMode;
-            imuFaultActive = true;
-        }
-        else if (!imuFaultActive)
-        {
-            imuFaultActive = true;
-            return;
-        }
     }
     else
     {

@@ -30,8 +30,6 @@ void PassthroughMode::update(void)
 
 void PassthroughMode::run(void)
 {
-    // update();
-
     Mode::output_rpy[0] = rollSlew.update(Mode::input_rpy[0]);
     Mode::output_rpy[1] = pitchSlew.update(Mode::input_rpy[1]);
     Mode::output_rpy[2] = yawSlew.update(Mode::input_rpy[2]);

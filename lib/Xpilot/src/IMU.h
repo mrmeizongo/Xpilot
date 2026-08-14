@@ -5,11 +5,20 @@
 class IMU
 {
 public:
+    using Callback = void (*)(float (&)[3], float (&)[3], void *);
+
+    struct Consumer
+    {
+        Callback cb;
+        void *ctx;
+    };
+
     IMU(void);
     void init(void);
-    void calibrate(void);                        // Calibrate the IMU and store the biases in EEPROM
-    void restoreCalibration(void);               // Restore the calibration values from EEPROM
-    void getLatestReadings(void);                // Process the IMU data and update the AHRS values
+    void calibrate(void);          // Calibrate the IMU and store the biases in EEPROM
+    void restoreCalibration(void); // Restore the calibration values from EEPROM
+    void getLatestReadings(void);  // Process the IMU data and update the AHRS values
+
     static void getLatestReadingsTask(void *ctx) // Trampoline function for the scheduler to call the getLatestReadings function
     {
         static_cast<IMU *>(ctx)->getLatestReadings();
@@ -23,7 +32,10 @@ public:
     int16_t getGyroY(void) { return static_cast<int16_t>(_g[1]); }
     int16_t getGyroZ(void) { return static_cast<int16_t>(_g[2]); }
 
-    bool consumeNewData(float (&rpy)[3], float (&g)[3]); // Call before calling the individual getter functions
+    /// @brief              Register a callback to be invoked when new imu data is received
+    /// @param callback     Function to execute
+    /// @param ctx          Context pointer passed to the callback
+    void registerConsumer(Callback, void *);
 
 private:
     /*
@@ -34,7 +46,8 @@ private:
     float _rpy[3]; // Airplane coordinate system values
     float _g[3];   // Angular velocity about the respective axis - xyz
 
-    bool dataReady; // Flag to indicate if new data is available
+    Consumer _consumers[MAX_CONSUMERS]; // IMU values consumer
+    uint8_t _consumerCount;
 };
 
 extern IMU imu;

@@ -24,13 +24,6 @@ void StabilizeMode::update(void)
 
 void StabilizeMode::run(void)
 {
-    if (!Mode::getAHRS())
-    {
-        return;
-    }
-
-    // update();
-
     int16_t rollDemand = Mode::input_rpy[0] - Mode::imu_rpy[0];
     int16_t pitchDemand = Mode::input_rpy[1] - Mode::imu_rpy[1];
     rollDemand = map(rollDemand, -MAX_ROLL_ANGLE_DEGS, MAX_ROLL_ANGLE_DEGS, -MAX_ROLL_RATE_DEGS, MAX_ROLL_RATE_DEGS);

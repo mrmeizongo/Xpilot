@@ -24,13 +24,6 @@ void RateMode::update(void)
 
 void RateMode::run(void)
 {
-    if (!Mode::getAHRS())
-    {
-        return;
-    }
-
-    // update();
-
     Mode::output_rpy[0] = Mode::rollPIDF.Compute(Mode::input_rpy[0], Mode::imu_g[0]);
     Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], Mode::imu_g[1]);
     Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], Mode::imu_g[2]);

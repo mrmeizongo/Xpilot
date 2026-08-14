@@ -175,8 +175,6 @@ Flight stabilization software
 // #define REVERSE_Y_GYRO
 // #define REVERSE_Z_GYRO
 
-#define MISSED_IMU_VAL_THRESH 250
-
 // #define CALIBRATE    // Uncomment to calibrate the IMU on startup. Recommended for first time use. Place airplane on level surface and keep it still during calibration. Comment and reflash when done.
 // #define SELF_TEST_ACCEL_GYRO // Uncomment to perform a self-test calibration of the accel&gyro on startup.
 // ------------------------------------------------------------------------------------------------------
@@ -233,7 +231,7 @@ Flight stabilization software
  * CAUTION:
  * Only uncomment one debug option at a time
  */
-#define SCHEDULER_RATE_DEBUG
+// #define SCHEDULER_RATE_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
 // #define CALIBRATE_DEBUG

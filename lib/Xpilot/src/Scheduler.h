@@ -64,8 +64,7 @@ public:
     void init(void);
 
     /**
-     * Adds a periodic task.
-     *
+     * @brief               Adds a periodic task.
      * @param callback      Function to execute.
      * @param context       Context pointer passed to the callback.
      * @param frequencyHz   Task frequency in Hertz.

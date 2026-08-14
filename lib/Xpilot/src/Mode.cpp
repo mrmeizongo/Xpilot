@@ -11,15 +11,20 @@ int16_t Mode::SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};
 PIDF<int16_t> Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
 PIDF<int16_t> Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
 PIDF<int16_t> Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
-uint8_t Mode::missedImuInstances = 0;
-bool Mode::imuFault = false;
 AirplaneMixer Mode::airplaneMixer{};
 #if defined(USE_FLAPERONS)
 uint16_t Mode::flaperonOut = 0;
 #endif
 // --------------------------------------------------------------------------------------
 
-Mode::Mode()
+void Mode::update(void)
+{
+#if defined(USE_FLAPERONS)
+    flaperonInput();
+#endif
+}
+
+void Mode::init(void)
 {
 #if defined(FULL_TRADITIONAL_PLANE)
     airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::CONVENTIONAL);
@@ -36,13 +41,8 @@ Mode::Mode()
 #else
 #error No airplane type selected!
 #endif
-}
 
-void Mode::update(void)
-{
-#if defined(USE_FLAPERONS)
-    flaperonInput();
-#endif
+    imu.registerConsumer(updateAHRS, this);
 }
 
 void Mode::rudderMixer(void)
@@ -62,30 +62,36 @@ void Mode::setFlaperons(void)
     SRVout[Actuators::Channel::CH1] -= flaperonOut;
     SRVout[Actuators::Channel::CH2] += flaperonOut;
 }
-
-void Mode::flaperonInput(void)
-{
-    flaperonOut = GET_RAW_INPUT(radio.getRxAux2PWM(), INPUT_MID_PWM, INPUT_MIN_PWM, 0, FLAPERON_MAX_RANGE);
-}
 #endif
 
-bool Mode::getAHRS(void)
+void Mode::updateInput(void *ctx)
 {
-    if (!imu.consumeNewData(imu_rpy, imu_g))
+    Mode **modePointer = static_cast<Mode **>(ctx);
+    if (*modePointer != nullptr)
     {
-        /*
-         * This could be a sign of a faulty imu sensor
-         * Threshold is 2 full loops gone without sensor values
-         * It does not reset until a full system reboot is performed
-         */
-        if (++missedImuInstances == MISSED_IMU_VAL_THRESH * 2)
-        {
-            imuFault = true;
-        }
-        return false;
+        (*modePointer)->update();
     }
+}
 
-    return true;
+void Mode::runTask(void *ctx)
+{
+    Mode **modePointer = static_cast<Mode **>(ctx);
+    if (*modePointer != nullptr)
+    {
+        (*modePointer)->run();
+    }
+}
+
+void Mode::updateAHRS(float (&rpy)[3], float (&g)[3], void *ctx)
+{
+    (void)ctx; // Discard ctx since this is a static function that can be called directly
+    imu_rpy[0] = rpy[0];
+    imu_rpy[1] = rpy[1];
+    imu_rpy[2] = rpy[2];
+
+    imu_g[0] = g[0];
+    imu_g[1] = g[1];
+    imu_g[2] = g[2];
 }
 
 void Mode::resetControllers(void)

@@ -15,6 +15,7 @@ IMU::IMU(void)
 {
     _rpy[0] = _rpy[1] = _rpy[2] = 0.f;
     _g[0] = _g[1] = _g[2] = 0.f;
+    _consumerCount = 0;
 }
 
 void IMU::init(void)
@@ -86,24 +87,21 @@ void IMU::getLatestReadings(void)
 #if defined(REVERSE_Z_GYRO)
     _g[2] = -_g[2];
 #endif
-    dataReady = true;
+
+    for (uint8_t i = 0; i < _consumerCount; i++)
+    {
+        _consumers[i].cb(_rpy, _g, _consumers[i].ctx);
+    }
 }
 
-bool IMU::consumeNewData(float (&rpy)[3], float (&g)[3])
+void IMU::registerConsumer(Callback cb, void *ctx)
 {
-    if (dataReady)
+    if (_consumerCount < MAX_CONSUMERS)
     {
-        rpy[0] = _rpy[0];
-        rpy[1] = _rpy[1];
-        rpy[2] = _rpy[2];
-        g[0] = _g[0];
-        g[1] = _g[1];
-        g[2] = _g[2];
-
-        dataReady = false;
-        return true;
+        _consumers[_consumerCount].cb = cb;
+        _consumers[_consumerCount].ctx = ctx;
+        _consumerCount++;
     }
-    return false;
 }
 
 void IMU::calibrate(void)
