@@ -6,6 +6,7 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
 
     switch (_type)
     {
+    default:
     case AirframeType::CONVENTIONAL:
         mixConventional(roll, pitch, yaw, out);
         break;
