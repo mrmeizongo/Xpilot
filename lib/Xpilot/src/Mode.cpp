@@ -17,13 +17,6 @@ uint16_t Mode::flaperonOut = 0;
 #endif
 // --------------------------------------------------------------------------------------
 
-void Mode::update(void)
-{
-#if defined(USE_FLAPERONS)
-    flaperonInput();
-#endif
-}
-
 void Mode::init(void)
 {
 #if defined(FULL_TRADITIONAL_PLANE)
@@ -43,6 +36,13 @@ void Mode::init(void)
 #endif
 
     imu.registerConsumer(updateAHRS, this);
+}
+
+void Mode::update(void)
+{
+#if defined(USE_FLAPERONS)
+    flaperonInput();
+#endif
 }
 
 void Mode::rudderMixer(void)
