@@ -103,8 +103,8 @@ protected:
     static void resetControllers(void);                      // Reset controllers when switching modes to prevent integral windup and derivative kick
     virtual void controlFailsafe(void);                      // Failsafe implementation
 #if defined(USE_FLAPERONS)
-    static uint16_t flaperonOut;    // Flaperon position value, used in flaperon control
-    static void setFlaperons(void); // Flaperon control, should be called in the run function of the flight mode
+    static uint16_t flaperonOut;     // Flaperon position value, used in flaperon control
+    static void flaperonMixer(void); // Flaperon control, should be called in the run function of the flight mode
 #endif
 
     // PID controllers

@@ -44,7 +44,7 @@ void StabilizeMode::run(void)
     Mode::SRVout[Actuators::Channel::CH3] = map(outputs.elevator, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH4] = map(outputs.rudder, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
 #if defined(USE_FLAPERONS)
-    Mode::setFlaperons();
+    Mode::flaperonMixer();
 #endif
     actuators.setServoOut(SRVout); // Set servo output
 }

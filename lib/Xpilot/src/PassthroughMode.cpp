@@ -41,7 +41,7 @@ void PassthroughMode::run(void)
     Mode::SRVout[Actuators::Channel::CH3] = map(outputs.elevator, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
     Mode::SRVout[Actuators::Channel::CH4] = map(outputs.rudder, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
 #if defined(USE_FLAPERONS)
-    Mode::setFlaperons();
+    Mode::flaperonMixer();
 #endif
     actuators.setServoOut(SRVout); // Set servo output
 }
