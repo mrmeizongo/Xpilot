@@ -60,7 +60,7 @@ void Radio::processInput(void)
 
 void Radio::setPWM(int16_t &dest, uint32_t pulse, CHANNELS ch)
 {
-    auto setIfValid = [&dest, pulse](uint16_t minPulse, uint16_t maxPulse)
+    auto setIfValid = [](int16_t &dest, uint32_t pulse, uint16_t minPulse, uint16_t maxPulse)
     {
         if (pulse >= minPulse && pulse <= maxPulse)
             dest = static_cast<int16_t>(pulse);
@@ -69,22 +69,22 @@ void Radio::setPWM(int16_t &dest, uint32_t pulse, CHANNELS ch)
     switch (ch)
     {
     case CHANNELS::ROLL:
-        setIfValid(config().rollRC.min, config().rollRC.max);
+        setIfValid(dest, pulse, config().rollRC.min, config().rollRC.max);
         break;
 
     case CHANNELS::PITCH:
-        setIfValid(config().pitchRC.min, config().pitchRC.max);
+        setIfValid(dest, pulse, config().pitchRC.min, config().pitchRC.max);
         break;
 
     case CHANNELS::YAW:
-        setIfValid(config().yawRC.min, config().yawRC.max);
+        setIfValid(dest, pulse, config().yawRC.min, config().yawRC.max);
         break;
 
     case CHANNELS::AUX1:
 #if defined(USE_AUX2)
     case CHANNELS::AUX2:
 #endif
-        setIfValid(RX_PWM_MIN, RX_PWM_MAX);
+        setIfValid(dest, pulse, RX_PWM_MIN, RX_PWM_MAX);
         break;
 
     default:
