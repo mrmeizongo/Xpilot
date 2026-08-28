@@ -3,43 +3,52 @@
 
 void RateMode::enter(void)
 {
-    Mode::resetControllers();
-    Mode::airplaneMixer.setCommandLimit(MAX_PID_OUTPUT);
+    resetControllers();
 }
 
 void RateMode::update(void)
 {
     if (radio.inFailsafe())
     {
-        Mode::controlFailsafe();
+        controlFailsafe();
         return;
     }
 
-    Mode::input_rpy[0] = FILTERED_NORM_INPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND) * MAX_ROLL_RATE_DEGS;
-    Mode::input_rpy[1] = FILTERED_NORM_INPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND) * MAX_PITCH_RATE_DEGS;
-    Mode::input_rpy[2] = FILTERED_NORM_INPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND) * MAX_YAW_RATE_DEGS;
+    input_rpy[0] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::ROLL), rollConfig.min, rollConfig.trim, rollConfig.max, rollConfig.deadband) *
+                   fConfig.maxRollRateDegs;
+
+    input_rpy[1] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::PITCH), pitchConfig.min, pitchConfig.trim, pitchConfig.max, pitchConfig.deadband) *
+                   fConfig.maxRollRateDegs;
+
+    input_rpy[2] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::YAW), yawConfig.min, yawConfig.trim, yawConfig.max, yawConfig.deadband) *
+                   fConfig.maxRollRateDegs;
 
     Mode::update();
 }
 
 void RateMode::run(void)
 {
-    Mode::output_rpy[0] = Mode::rollPIDF.Compute(Mode::input_rpy[0], Mode::imu_g[0]);
-    Mode::output_rpy[1] = Mode::pitchPIDF.Compute(Mode::input_rpy[1], Mode::imu_g[1]);
-    Mode::output_rpy[2] = Mode::yawPIDF.Compute(Mode::input_rpy[2], Mode::imu_g[2]);
+    output_rpy[0] = rollPIDF.Compute(input_rpy[0], imu_g[0]);
+    output_rpy[1] = pitchPIDF.Compute(input_rpy[1], imu_g[1]);
+    output_rpy[2] = yawPIDF.Compute(input_rpy[2], imu_g[2]);
 
-#if defined(RUDDER_MIX_IN_RATE)
-    Mode::rudderMixer();
-#endif
+    rudderMixer();
 
-    AirplaneMixer::Outputs outputs = airplaneMixer.mix(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
+    AirplaneMixer::Outputs outputs = airplaneMixer.mix(output_rpy[0], output_rpy[1], output_rpy[2]);
 
-    Mode::SRVout[Actuators::Channel::CH1] = map(outputs.leftAileron, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH2] = map(outputs.rightAileron, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH3] = map(outputs.elevator, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH4] = map(outputs.rudder, -MAX_PID_OUTPUT, MAX_PID_OUTPUT, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    SRVout[Actuators::Channel::CH1] = map(outputs.leftAileron, fConfig.controlResolution,
+                                          srvConfig.min, srvConfig.max);
+
+    SRVout[Actuators::Channel::CH2] = map(outputs.rightAileron, fConfig.controlResolution,
+                                          srvConfig.min, srvConfig.max);
+
+    SRVout[Actuators::Channel::CH3] = map(outputs.elevator, fConfig.controlResolution,
+                                          srvConfig.min, srvConfig.max);
+
+    SRVout[Actuators::Channel::CH4] = map(outputs.rudder, fConfig.controlResolution,
+                                          srvConfig.min, srvConfig.max);
 #if defined(USE_FLAPERONS)
-    Mode::flaperonMixer();
+    flaperonMixer();
 #endif
     actuators.setServoOut(SRVout); // Set servo output
 }

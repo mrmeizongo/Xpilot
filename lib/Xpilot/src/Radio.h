@@ -34,29 +34,30 @@ Flight stabilization software
 #define _RADIO_H
 
 #include <stdint.h>
-#include "PlaneConfig.h"
+#include "SystemConfig.h"
 
-// Helper macro to set PWM values and switch positions based on pulse lengths
-#define SET_SWITCH_POS(controlPWM, controlSwitch, pulse)        \
-    if (pulse >= INPUT_MIN_PWM && pulse <= INPUT_MAX_PWM)       \
-    {                                                           \
-        controlPWM = pulse;                                     \
-        if (controlPWM >= INPUT_MAX_PWM - INPUT_SEPARATOR)      \
-            controlSwitch = THREE_POS_SW::HIGH_POS;             \
-        else if (controlPWM <= INPUT_MIN_PWM + INPUT_SEPARATOR) \
-            controlSwitch = THREE_POS_SW::LOW_POS;              \
-        else                                                    \
-            controlSwitch = THREE_POS_SW::MID_POS;              \
-    }
-
-// Helper macro to set PWM values based on pulse lengths
-#define SET_PWM(controlPWM, pulse)                        \
-    if (pulse >= INPUT_MIN_PWM && pulse <= INPUT_MAX_PWM) \
-        controlPWM = pulse;
+constexpr int16_t RX_PWM_MIN = 1000;           // Default owest pwm expected from transmitter
+constexpr int16_t RX_PWM_MAX = 2000;           // Default highest pwm expected from transmitter
+constexpr int16_t RX_PWM_TRIM = 1500;          // Mid pwm expected from transmitter
+constexpr int16_t RX_FAILSAFE_TOLERANCE = 200; // Tolerance used for determining a failsafe condition
+constexpr int16_t RX_TIMEOUT_MS = 500;         // Receiver timeout
+constexpr int16_t RX_3_SW_POS_THRESHOLD = 276; // 3 position switch input separator
 
 class Radio
 {
 public:
+    enum CHANNELS : uint8_t
+    {
+        ROLL = 0U,
+        PITCH,
+        YAW,
+        AUX1,
+#if defined(USE_AUX2)
+        AUX2,
+#endif
+        CHANNEL_COUNT
+    };
+
     // 3-position switch
     enum class THREE_POS_SW : uint8_t
     {
@@ -64,46 +65,6 @@ public:
         LOW_POS,
         MID_POS,
         HIGH_POS
-    };
-
-    /*
-     * Control struct
-     * Holds the radio input values
-     * Roll, Pitch, Yaw, Mode
-     * Roll, Pitch & Yaw PWM values
-     */
-    struct Control
-    {
-        uint16_t rollPWM;
-        uint16_t pitchPWM;
-        uint16_t yawPWM;
-        uint16_t aux1PWM;
-        THREE_POS_SW aux1SwitchPos;
-#if defined(USE_FLAPERONS)
-        uint16_t aux2PWM;
-        THREE_POS_SW aux2SwitchPos;
-#endif
-#if defined(USE_AUX3)
-        uint16_t aux3PWM;
-        THREE_POS_SW aux3SwitchPos;
-#endif
-
-        Control(void)
-        {
-            rollPWM = INPUT_MID_PWM;
-            pitchPWM = INPUT_MID_PWM;
-            yawPWM = INPUT_MID_PWM;
-            aux1PWM = INPUT_MID_PWM;
-            aux1SwitchPos = THREE_POS_SW::UNDEFINED;
-#if defined(USE_FLAPERONS)
-            aux2PWM = INPUT_MID_PWM;
-            aux2SwitchPos = THREE_POS_SW::UNDEFINED;
-#endif
-#if defined(USE_AUX3)
-            aux3PWM = INPUT_MID_PWM;
-            aux3SwitchPos = THREE_POS_SW::UNDEFINED;
-#endif
-        }
     };
 
     Radio(void);
@@ -114,41 +75,44 @@ public:
         static_cast<Radio *>(ctx)->processInput();
     }
 
-    int16_t getRxRollPWM(void)
+    int16_t getPWM(CHANNELS ch)
     {
-        if (failSafeTimerStarted)
-            return INPUT_MID_PWM;
+        if (ch < CHANNELS::CHANNEL_COUNT)
+        {
+            if (failSafeTimerStarted)
+                return RX_PWM_TRIM;
 
-        return currentRx.rollPWM;
+            return raw[ch];
+        }
+
+        return RX_PWM_TRIM;
     }
-    int16_t getRxPitchPWM(void)
+
+    void setPWM(int16_t &, uint32_t, Radio::CHANNELS);
+
+    THREE_POS_SW getThreeSwitchPos(CHANNELS ch)
     {
-        if (failSafeTimerStarted)
-            return INPUT_MID_PWM;
+        if (ch < CHANNELS::CHANNEL_COUNT)
+        {
+            int16_t pwm = raw[ch];
+            if (pwm >= RX_PWM_MAX - RX_3_SW_POS_THRESHOLD)
+                return THREE_POS_SW::HIGH_POS;
+            else if (pwm <= RX_PWM_MIN + RX_3_SW_POS_THRESHOLD)
+                return THREE_POS_SW::LOW_POS;
+            else
+                return THREE_POS_SW::MID_POS;
+        }
 
-        return currentRx.pitchPWM;
+        return THREE_POS_SW::UNDEFINED;
     }
-    int16_t getRxYawPWM(void)
-    {
-        if (failSafeTimerStarted)
-            return INPUT_MID_PWM;
 
-        return currentRx.yawPWM;
-    }
-    int16_t getRxAux1PWM(void) { return currentRx.aux1PWM; }
-    THREE_POS_SW getRxAux1Pos(void) { return currentRx.aux1SwitchPos; }
-#if defined(USE_FLAPERONS)
-    int16_t getRxAux2PWM(void) { return currentRx.aux2PWM; }
-    THREE_POS_SW getRxAux2Pos(void) { return currentRx.aux2SwitchPos; }
-#endif
-#if defined(USE_AUX3)
-    int16_t getRxAux3PWM(void) { return currentRx.aux3PWM; }
-    THREE_POS_SW getRxAux3Pos(void) { return currentRx.aux3SwitchPos; }
-#endif
+    uint32_t getLastValidRxTimeMs(void) { return lastValidRxTimeMs; }
+
     bool inFailsafe(void) { return failSafe; }
 
 private:
-    Control currentRx;
+    int16_t raw[CHANNELS::CHANNEL_COUNT];
+    uint32_t lastValidRxTimeMs;
     bool failSafe;
     bool failSafeTimerStarted;
     void FailSafe();

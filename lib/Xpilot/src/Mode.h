@@ -1,7 +1,4 @@
 // 02/25/2025 by Jamal Meizongo (mrmeizongo@outlook.com)
-// This and other library code in this repository
-// are partial releases and work is still in progress.
-// Please keep this in mind as you use this piece of software.
 
 /* ============================================
 Flight stabilization software
@@ -33,23 +30,56 @@ Flight stabilization software
 #define _MODE_H
 
 #include <Arduino.h>
-#include "PlaneConfig.h"
 #include "AirplaneMixer.h"
+#include "SystemConfig.h"
+#include "FlightConfigAccess.h"
+#include "SlewRateLimiter.h"
 #include "PIDF.h"
 #include "Radio.h"
 #include "Actuators.h"
 
-// Map raw radio values to outputMin-outputMax
-#define GET_RAW_INPUT(rawVal, inputMin, inputMax, outputMin, outputMax) \
-    (map(rawVal, inputMin, inputMax, outputMin, outputMax))
+inline float getNormalizedInput(
+    int16_t rawVal,
+    int16_t inputMin,
+    int16_t inputTrim,
+    int16_t inputMax,
+    uint8_t deadband)
+{
+    const int16_t delta = rawVal - inputTrim;
 
-// Normalize radio value to -1:1 range
-#define NORM_INPUT(rawVal) \
-    ((2 * (float)((rawVal) - (INPUT_MIN_PWM)) / (float)(INPUT_MAX_PWM - INPUT_MIN_PWM)) - 1)
+    if (abs(delta) <= deadband)
+        return 0.0f;
 
-// Normalize a deadband corrected radio value
-#define FILTERED_NORM_INPUT(rawVal, deadBand) \
-    (abs((rawVal) - (INPUT_MID_PWM)) <= (deadBand) ? 0 : (NORM_INPUT((rawVal))))
+    if (delta > 0)
+    {
+        return static_cast<float>(delta) /
+               static_cast<float>(inputMax - inputTrim);
+    }
+
+    return static_cast<float>(delta) /
+           static_cast<float>(inputTrim - inputMin);
+}
+
+inline int16_t map(
+    int16_t input,
+    int16_t inputRes,
+    int16_t outputMin,
+    int16_t outputMax)
+{
+    // Guard against division by zero
+    if (inputRes == 0)
+        return outputMin;
+
+    // Type promotion
+    const int32_t x = input;
+    const int32_t res = inputRes;
+    const int32_t min = outputMin;
+    const int32_t max = outputMax;
+    const int32_t range = max - min;
+
+    return static_cast<int16_t>(
+        min + ((x + res) * range) / (2 * res));
+}
 
 // Abstract flight mode class
 class Mode
@@ -58,12 +88,15 @@ public:
     Mode() {}
     Mode(const Radio::THREE_POS_SW modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
     virtual ~Mode() = default;                                                  // Virtual destructor for proper cleanup of derived classes
-    virtual const char *modeName4(void) const = 0;                              // Returns string representation of the flight mode. 4 characters max
-    virtual void enter(void) {}                                                 // Preliminary setup on mode enter
-    virtual void update(void);                                                  // Convert user input to mode specific targets, should be called first in the run function
-    virtual void run(void) = 0;                                                 // High level processing specific to this mode
-    virtual void exit(void) {}                                                  // Perform any clean up before switching to another mode
-    virtual bool imuAssisted(void) const { return false; }                      // Does this mode use the imu
+
+    virtual const char *modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
+
+    virtual void enter(void) {} // Preliminary setup on mode enter
+    virtual void update(void);  // Convert user input to mode specific targets, should be called first in the run function
+    virtual void run(void) = 0; // High level processing specific to this mode
+    virtual void exit(void) {}  // Perform any clean up before switching to another mode
+
+    virtual bool imuAssisted(void) const { return false; } // Does this mode use the imu
 
     void init(void);
 
@@ -73,10 +106,13 @@ public:
 
     static void updateAHRS(float (&)[3], float (&)[3], void *);
 
+    static void configSub(ConfigID, void *);
+
     // Debug functions to get outputs for testing and tuning purposes.
     static int16_t getRollInput(void) { return input_rpy[0]; }
     static int16_t getPitchInput(void) { return input_rpy[1]; }
     static int16_t getYawInput(void) { return input_rpy[2]; }
+
     static int16_t getRollOutput(void) { return output_rpy[0]; }
     static int16_t getPitchOutput(void) { return output_rpy[1]; }
     static int16_t getYawOutput(void) { return output_rpy[2]; }
@@ -85,7 +121,11 @@ public:
     static int16_t getFlaperon(void) { return flaperonOut; }
     static void flaperonInput(void)
     {
-        flaperonOut = GET_RAW_INPUT(radio.getRxAux2PWM(), INPUT_MID_PWM, INPUT_MIN_PWM, 0, FLAPERON_MAX_RANGE);
+        // flaperonOut = getRawInput(radio.getPWM(Radio::CHANNELS::AUX2), rollConfig.trim, rollConfig.min, 0, fConfig.flaperonMax);
+        int16_t flapPwm = radio.getPWM(Radio::CHANNELS::AUX2);
+        flapPwm = constrain(flapPwm, RX_PWM_MIN, RX_PWM_TRIM);
+        flaperonOut = static_cast<int16_t>(
+            (static_cast<int32_t>(RX_PWM_TRIM - flapPwm) * fConfig.flaperonMax) / 500);
     }
 #endif
 
@@ -93,26 +133,47 @@ public:
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
 
 protected:
-    static float imu_rpy[3];                                 // To hold imu rpy values
-    static float imu_g[3];                                   // To hold imu g values
-    static int16_t input_rpy[3];                             // Mode dependent transformed input roll, pitch and yaw
-    static int16_t output_rpy[3];                            // Mode dependent processed output for roll, pitch, yaw
-    Radio::THREE_POS_SW modeSwitchPosition;                  // Mode switch position for this mode
-    static int16_t SRVout[Actuators::Channel::NUM_CHANNELS]; // Servo output array
-    static void rudderMixer(void);                           // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
-    static void resetControllers(void);                      // Reset controllers when switching modes to prevent integral windup and derivative kick
-    virtual void controlFailsafe(void);                      // Failsafe implementation
+    static float imu_rpy[3]; // To hold imu rpy values
+    static float imu_g[3];   // To hold imu g values
+
+    static int16_t input_rpy[3];  // Input roll, pitch, and yaw
+    static int16_t output_rpy[3]; // Output roll, pitch, and yaw
+
+    static SlewRateLimiter<int16_t> rollSlew;
+    static SlewRateLimiter<int16_t> pitchSlew;
+    static SlewRateLimiter<int16_t> yawSlew;
+
+    Radio::THREE_POS_SW modeSwitchPosition; // Mode switch position for this mode
+
+    static int16_t SRVout[Actuators::Channel::CHANNEL_COUNT]; // Servo output array
+
+    static void rudderMixer(void); // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
+
+    static void resetControllers(void); // Reset controllers when switching modes to prevent integral windup and derivative kick
+
+    virtual void controlFailsafe(void); // Failsafe implementation
+
 #if defined(USE_FLAPERONS)
-    static uint16_t flaperonOut;     // Flaperon position value, used in flaperon control
-    static void flaperonMixer(void); // Flaperon control, should be called in the run function of the flight mode
+    static int16_t flaperonOut;     // Flaperon position value, used in flaperon control
+    static void flaperonMixer(void) // Flaperon control, should be called in the run function of the flight mode
+    {
+        SRVout[Actuators::Channel::CH1] -= flaperonOut;
+        SRVout[Actuators::Channel::CH2] += flaperonOut;
+    }
 #endif
 
-    // PID controllers
     static PIDF<int16_t> rollPIDF;
     static PIDF<int16_t> pitchPIDF;
     static PIDF<int16_t> yawPIDF;
 
-    // Odutput mixer for different airplane types
+    static Config::RCConfig rollConfig;
+    static Config::RCConfig pitchConfig;
+    static Config::RCConfig yawConfig;
+
+    static Config::FlightConfig fConfig;
+
+    static Config::SRVConfig srvConfig;
+
     static AirplaneMixer airplaneMixer;
 };
 

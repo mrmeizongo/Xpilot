@@ -1,41 +1,120 @@
 #include "Mode.h"
 #include "IMU.h"
 
-// ISO C++ forbids in-class initialization of non-const static members
-// We define them here instead
-int16_t Mode::input_rpy[3]{0, 0, 0};
-int16_t Mode::output_rpy[3]{0, 0, 0};
-float Mode::imu_rpy[3]{0.f, 0.f, 0.f};
-float Mode::imu_g[3]{0.f, 0.f, 0.f};
-int16_t Mode::SRVout[Actuators::Channel::NUM_CHANNELS]{0, 0, 0, 0};
-PIDF<int16_t> Mode::rollPIDF{ROLL_KP, ROLL_KI, ROLL_KD, ROLL_KF, ROLL_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
-PIDF<int16_t> Mode::pitchPIDF{PITCH_KP, PITCH_KI, PITCH_KD, PITCH_KF, PITCH_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
-PIDF<int16_t> Mode::yawPIDF{YAW_KP, YAW_KI, YAW_KD, YAW_KF, YAW_I_WINDUP_MAX, PROCESS_DT, AUTO_LPF_FREQ};
-AirplaneMixer Mode::airplaneMixer{};
-#if defined(USE_FLAPERONS)
-uint16_t Mode::flaperonOut = 0;
-#endif
-// --------------------------------------------------------------------------------------
-
 void Mode::init(void)
 {
-#if defined(FULL_TRADITIONAL_PLANE)
-    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::CONVENTIONAL);
-#elif defined(FULL_V_TAIL_PLANE)
-    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::V_TAIL);
-#elif defined(RUDDER_ELEVATOR_ONLY_PLANE)
-    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::RUDDER_ELEVATOR);
-#elif defined(AILERON_ELEVATOR_ONLY_PLANE)
-    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::AILERON_ELEVATOR);
-#elif defined(FLYING_WING_W_RUDDER_PLANE)
-    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::FLYING_WING_RUDDER);
-#elif defined(FLYING_WING_NO_RUDDER_PLANE)
-    airplaneMixer.setAirframeType(AirplaneMixer::AirframeType::FLYING_WING_NO_RUDDER);
-#else
-#error No airplane type selected!
-#endif
+    // Changing airframe type requires a reset to take effect
+    airplaneMixer.setAirframeType(config().airframeType.type);
+    airplaneMixer.setCommandLimit(config().flightConfig.controlResolution);
+
+    rollConfig = config().rollRC;
+    pitchConfig = config().pitchRC;
+    yawConfig = config().yawRC;
+
+    fConfig = config().flightConfig;
+
+    srvConfig = config().srvConfig;
+
+    rollSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
+    pitchSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
+    yawSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
+
+    rollPIDF = PIDF<int16_t>{config().rollPIDF.Kp, config().rollPIDF.Ki, config().rollPIDF.Kd, config().rollPIDF.Kf,
+                             config().rollPIDF.iWindUpMax, config().processFilter.processDT, config().processFilter.lowPassFilterFreq};
+
+    pitchPIDF = PIDF<int16_t>{config().pitchPIDF.Kp, config().pitchPIDF.Ki, config().pitchPIDF.Kd, config().pitchPIDF.Kf,
+                              config().pitchPIDF.iWindUpMax, config().processFilter.processDT, config().processFilter.lowPassFilterFreq};
+
+    yawPIDF = PIDF<int16_t>{config().yawPIDF.Kp, config().yawPIDF.Ki, config().yawPIDF.Kd, config().yawPIDF.Kf,
+                            config().yawPIDF.iWindUpMax, config().processFilter.processDT, config().processFilter.lowPassFilterFreq};
 
     imu.registerConsumer(updateAHRS, this);
+    configManager.registerSubscriber(configSub, this);
+}
+
+void Mode::configSub(ConfigID id, void *ctx)
+{
+    (void)ctx;
+
+    switch (id)
+    {
+    case ConfigID::AIRFRAME_TYPE:
+        airplaneMixer.setAirframeType(config().airframeType.type);
+        break;
+
+    case ConfigID::FLIGHT_CONTROL_RES:
+        airplaneMixer.setCommandLimit(config().flightConfig.controlResolution);
+        break;
+
+    case ConfigID::FILTER_SLEW_RATE:
+        rollSlew.setRate(config().processFilter.controlSlewRate);
+        pitchSlew.setRate(config().processFilter.controlSlewRate);
+        yawSlew.setRate(config().processFilter.controlSlewRate);
+        break;
+
+    case ConfigID::PIDF_ROLL_KP:
+        rollPIDF.setKp(config().rollPIDF.Kp);
+        break;
+
+    case ConfigID::PIDF_ROLL_KI:
+        rollPIDF.setKi(config().rollPIDF.Ki);
+        break;
+
+    case ConfigID::PIDF_ROLL_KD:
+        rollPIDF.setKd(config().rollPIDF.Kd);
+        break;
+
+    case ConfigID::PIDF_ROLL_KF:
+        rollPIDF.setKf(config().rollPIDF.Kf);
+        break;
+
+    case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
+        rollPIDF.setIMax(config().rollPIDF.iWindUpMax);
+        break;
+
+    case ConfigID::PIDF_PITCH_KP:
+        pitchPIDF.setKp(config().pitchPIDF.Kp);
+        break;
+
+    case ConfigID::PIDF_PITCH_KI:
+        pitchPIDF.setKi(config().pitchPIDF.Ki);
+        break;
+
+    case ConfigID::PIDF_PITCH_KD:
+        pitchPIDF.setKd(config().pitchPIDF.Kd);
+        break;
+
+    case ConfigID::PIDF_PITCH_KF:
+        pitchPIDF.setKf(config().pitchPIDF.Kf);
+        break;
+
+    case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
+        pitchPIDF.setIMax(config().pitchPIDF.iWindUpMax);
+        break;
+
+    case ConfigID::PIDF_YAW_KP:
+        yawPIDF.setKp(config().yawPIDF.Kp);
+        break;
+
+    case ConfigID::PIDF_YAW_KI:
+        yawPIDF.setKi(config().yawPIDF.Ki);
+        break;
+
+    case ConfigID::PIDF_YAW_KD:
+        yawPIDF.setKd(config().yawPIDF.Kd);
+        break;
+
+    case ConfigID::PIDF_YAW_KF:
+        yawPIDF.setKf(config().yawPIDF.Kf);
+        break;
+
+    case ConfigID::PIDF_YAW_I_WINDUP_MAX:
+        yawPIDF.setIMax(config().yawPIDF.iWindUpMax);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void Mode::update(void)
@@ -47,22 +126,11 @@ void Mode::update(void)
 
 void Mode::rudderMixer(void)
 {
-#if defined(FULL_TRADITIONAL_PLANE) || defined(FULL_V_TAIL_PLANE) || defined(FLYING_WING_W_RUDDER_PLANE)
-#if defined(REVERSE_RUDDER_MIX)
-    output_rpy[2] = output_rpy[2] - (output_rpy[0] * RUDDER_MIXING);
-#else
-    output_rpy[2] = output_rpy[2] + (output_rpy[0] * RUDDER_MIXING);
-#endif
-#endif
-}
+    output_rpy[2] = output_rpy[2] + (output_rpy[0] * fConfig.rudderMixScale);
 
-#if defined(USE_FLAPERONS)
-void Mode::flaperonMixer(void)
-{
-    SRVout[Actuators::Channel::CH1] -= flaperonOut;
-    SRVout[Actuators::Channel::CH2] += flaperonOut;
+    if (fConfig.reverseRudderMix)
+        output_rpy[2] = -output_rpy[2];
 }
-#endif
 
 void Mode::updateInput(void *ctx)
 {
@@ -108,6 +176,6 @@ void Mode::controlFailsafe(void)
     input_rpy[1] = 0;
     input_rpy[2] = 0;
 #if defined(USE_FLAPERONS)
-    flaperonOut = FLAPERON_MAX_RANGE; // set flaperons to landing position
+    flaperonOut = config().flightConfig.flaperonMax; // set flaperons to landing position
 #endif
 }

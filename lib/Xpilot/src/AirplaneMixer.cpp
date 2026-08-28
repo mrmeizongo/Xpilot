@@ -7,31 +7,31 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
     switch (_type)
     {
     default:
-    case AirframeType::CONVENTIONAL:
+    case Config::AirframeType::CONVENTIONAL:
         mixConventional(roll, pitch, yaw, out);
         break;
 
-    case AirframeType::V_TAIL:
+    case Config::AirframeType::V_TAIL:
         mixVTail(roll, pitch, yaw, out);
         break;
 
-    case AirframeType::FLYING_WING_RUDDER:
+    case Config::AirframeType::FLYING_WING_RUDDER:
         mixFlyingWingRudder(roll, pitch, yaw, out);
         break;
 
-    case AirframeType::FLYING_WING_NO_RUDDER:
+    case Config::AirframeType::FLYING_WING_NO_RUDDER:
         mixFlyingWingNoRudder(roll, pitch, out);
         break;
 
-    case AirframeType::RUDDER_ELEVATOR:
+    case Config::AirframeType::RUDDER_ELEVATOR:
         mixRudderElevator(pitch, yaw, out);
         break;
 
-    case AirframeType::AILERON_ELEVATOR:
+    case Config::AirframeType::AILERON_ELEVATOR:
         mixAileronElevator(roll, pitch, out);
         break;
 
-    case AirframeType::CUSTOM:
+    case Config::AirframeType::CUSTOM:
         mixCustom(roll, pitch, yaw, out);
         break;
     }
@@ -58,7 +58,7 @@ void AirplaneMixer::mixConventional(
     Outputs &out) const
 {
     out.leftAileron = roll;
-    out.rightAileron = -roll;
+    out.rightAileron = roll;
 
     out.elevator = pitch;
     out.rudder = yaw;

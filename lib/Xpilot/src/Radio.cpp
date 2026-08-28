@@ -1,18 +1,16 @@
 #include <Arduino.h>
 #include <util/atomic.h>
-#include "PinChangeInterrupt.h"
-#include "SystemConfig.h"
+#include "GPIODef.h"
 #include "Radio.h"
+#include "FlightConfigAccess.h"
+#include "PinChangeInterrupt.h"
 
-volatile static unsigned long aileronCurrentTime = 0, aileronStartTime = 0, aileronPulses = 0;
-volatile static unsigned long elevatorCurrentTime = 0, elevatorStartTime = 0, elevatorPulses = 0;
-volatile static unsigned long rudderCurrentTime = 0, rudderStartTime = 0, rudderPulses = 0;
-volatile static unsigned long aux1CurrentTime = 0, aux1StartTime = 0, aux1Pulses = 0;
-#if defined(USE_FLAPERONS)
-volatile static unsigned long aux2CurrentTime = 0, aux2StartTime = 0, aux2Pulses = 0;
-#endif
-#if defined(USE_AUX3)
-volatile static unsigned long aux3CurrentTime = 0, aux3StartTime = 0, aux3Pulses = 0;
+volatile static uint32_t aileronCurrentTime = 0, aileronStartTime = 0, aileronPulses = 0;
+volatile static uint32_t elevatorCurrentTime = 0, elevatorStartTime = 0, elevatorPulses = 0;
+volatile static uint32_t rudderCurrentTime = 0, rudderStartTime = 0, rudderPulses = 0;
+volatile static uint32_t aux1CurrentTime = 0, aux1StartTime = 0, aux1Pulses = 0;
+#if defined(USE_AUX2)
+volatile static uint32_t aux2CurrentTime = 0, aux2StartTime = 0, aux2Pulses = 0;
 #endif
 // -------------------------
 
@@ -37,15 +35,10 @@ void Radio::init(void)
     // Auxiliary switch 1 setup
     pinMode(AUX1PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX1PIN_INT, CHANGE);
-#if defined(USE_FLAPERONS)
+#if defined(USE_AUX2)
     // Auxiliary switch 2 setup
     pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
-#endif
-#if defined(USE_AUX3)
-    // Auxiliary switch 3 setup
-    pinMode(AUX3PIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AUX3PIN_INT, CHANGE);
 #endif
 }
 
@@ -53,22 +46,50 @@ void Radio::processInput(void)
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        SET_SWITCH_POS(currentRx.aux1PWM, currentRx.aux1SwitchPos, aux1Pulses);
-
-#if defined(USE_FLAPERONS)
-        SET_SWITCH_POS(currentRx.aux2PWM, currentRx.aux2SwitchPos, aux2Pulses);
+        setPWM(raw[CHANNELS::ROLL], aileronPulses, CHANNELS::ROLL);
+        setPWM(raw[CHANNELS::PITCH], elevatorPulses, CHANNELS::PITCH);
+        setPWM(raw[CHANNELS::YAW], rudderPulses, CHANNELS::YAW);
+        setPWM(raw[CHANNELS::AUX1], aux1Pulses, CHANNELS::AUX1);
+#if defined(USE_AUX2)
+        setPWM(raw[CHANNELS::AUX2], aux2Pulses, CHANNELS::AUX2);
 #endif
-
-#if defined(USE_AUX3)
-        SET_SWITCH_POS(currentRx.aux3PWM, currentRx.aux3SwitchPos, aux3Pulses);
-#endif
-
-        SET_PWM(currentRx.rollPWM, aileronPulses);
-        SET_PWM(currentRx.pitchPWM, elevatorPulses);
-        SET_PWM(currentRx.yawPWM, rudderPulses);
     }
 
-    FailSafe();
+    // FailSafe();
+}
+
+void Radio::setPWM(int16_t &dest, uint32_t pulse, CHANNELS ch)
+{
+    auto setIfValid = [&dest, pulse](uint16_t minPulse, uint16_t maxPulse)
+    {
+        if (pulse >= minPulse && pulse <= maxPulse)
+            dest = static_cast<int16_t>(pulse);
+    };
+
+    switch (ch)
+    {
+    case CHANNELS::ROLL:
+        setIfValid(config().rollRC.min, config().rollRC.max);
+        break;
+
+    case CHANNELS::PITCH:
+        setIfValid(config().pitchRC.min, config().pitchRC.max);
+        break;
+
+    case CHANNELS::YAW:
+        setIfValid(config().yawRC.min, config().yawRC.max);
+        break;
+
+    case CHANNELS::AUX1:
+#if defined(USE_AUX2)
+    case CHANNELS::AUX2:
+#endif
+        setIfValid(RX_PWM_MIN, RX_PWM_MAX);
+        break;
+
+    default:
+        break;
+    }
 }
 
 /**
@@ -78,31 +99,36 @@ void Radio::processInput(void)
  */
 void Radio::FailSafe()
 {
+    uint32_t now = millis();
+
     static uint32_t signalLossTimeMs = 0;
 
-    // Check transmitter failsafe position i.e. max for roll, pitch and yaw
-    bool signalLost = (abs(INPUT_MAX_PWM - currentRx.rollPWM) <= FAILSAFE_TOLERANCE) &&
-                      (abs(INPUT_MAX_PWM - currentRx.pitchPWM) <= FAILSAFE_TOLERANCE) &&
-                      (abs(INPUT_MAX_PWM - currentRx.yawPWM) <= FAILSAFE_TOLERANCE);
+    const bool noRecentSignal = (now - lastValidRxTimeMs) >= RX_TIMEOUT_MS;
 
-    if (signalLost)
+    // Check transmitter failsafe position i.e. max for roll, pitch and yaw
+    const bool rxFailsafePosition = (abs(RX_PWM_MAX - raw[CHANNELS::ROLL]) <= RX_FAILSAFE_TOLERANCE) &&
+                                    (abs(RX_PWM_MAX - raw[CHANNELS::PITCH]) <= RX_FAILSAFE_TOLERANCE) &&
+                                    (abs(RX_PWM_MAX - raw[CHANNELS::YAW]) <= RX_FAILSAFE_TOLERANCE);
+
+    const bool signalLost = noRecentSignal || rxFailsafePosition;
+
+    if (!signalLost)
     {
-        if (!failSafeTimerStarted)
-        {
-            signalLossTimeMs = millis();
-            failSafeTimerStarted = true;
-        }
-        else
-        {
-            failSafe = (millis() - signalLossTimeMs >= 2000) ? true : false;
-        }
+        failSafe = false;
+        failSafeTimerStarted = false;
+        lastValidRxTimeMs = now;
+        return;
     }
-    else
+
+    if (!failSafeTimerStarted)
     {
-        failSafe = false;             // Reset failsafe condition
-        failSafeTimerStarted = false; // Reset timer flag
-        signalLossTimeMs = 0;         // Reset timer counter
+        signalLossTimeMs = now;
+        failSafeTimerStarted = true;
+        return;
     }
+
+    if (now - signalLossTimeMs >= 2000)
+        failSafe = true;
 }
 
 /*
@@ -146,21 +172,12 @@ void PinChangeInterruptEvent(AUX1PIN_INT)(void)
     aux1StartTime = aux1CurrentTime;
 }
 
-#if defined(USE_FLAPERONS)
+#if defined(USE_AUX2)
 void PinChangeInterruptEvent(AUX2PIN_INT)(void)
 {
     aux2CurrentTime = micros();
     aux2Pulses = aux2CurrentTime - aux2StartTime;
     aux2StartTime = aux2CurrentTime;
-}
-#endif
-
-#if defined(USE_AUX3)
-void PinChangeInterruptEvent(AUX3PIN_INT)(void)
-{
-    aux3CurrentTime = micros();
-    aux3Pulses = aux3CurrentTime - aux3StartTime;
-    aux3StartTime = aux3CurrentTime;
 }
 #endif
 // ----------------------------

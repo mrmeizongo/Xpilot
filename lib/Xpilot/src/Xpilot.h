@@ -1,8 +1,5 @@
 // Started - 03/13/2024 by Jamal Meizongo (mrmeizongo@outlook.com)
-// Updated - 02/25/2025 by Jamal Meizongo
-// This and other library code in this repository
-// are partial releases and work is still in progress.
-// Please keep this in mind as you use this piece of software.
+// Updated - 07/27/2026 by Jamal Meizongo
 
 /* ============================================
 Flight stabilization software
@@ -33,20 +30,20 @@ Flight stabilization software
 
 #ifndef _XPILOT_H
 #define _XPILOT_H
-#include <PlaneConfig.h>
-#include "Scheduler.h"
 #include "Mode.h"
+#include "Scheduler.h"
+#include "SerialConfigTask.h"
 
 class Xpilot
 {
 public:
-    Xpilot(void) {}
+    Xpilot(void);
     Xpilot(const Xpilot &) = delete;            // Prevent this class from being copyable
     Xpilot &operator=(const Xpilot &) = delete; // Prevent this class from being assignable
-    // --------------------------------------------------------------------
 
     // Trampoline functions for the scheduler
     static void updateFlightModeTask(void *ctx) { static_cast<Xpilot *>(ctx)->updateFlightMode(); }
+    static void runSerialConfigTask(void *ctx) { static_cast<Xpilot *>(ctx)->serialConfigTask.run(); }
     static void printIMUTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIMU(); }
     static void printIOTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIO(); }
     static void printSchedulerRateTask(void *ctx) { static_cast<Xpilot *>(ctx)->printSchedulerRate(); }
@@ -56,12 +53,10 @@ public:
     static void printFlightModeUpdateTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeUpdateTaskStats(); }
     static void printFlightModeInputUpdateTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeInputUpdateTaskStats(); }
     static void printActuatorTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printActuatorTaskStats(); }
-    // --------------------------------------------------------------------
 
     // Only functions called from the main setup and loop functions
     void setup(void);
     void loop(void);
-    // --------------------------------------------------------------------
 
     // Debug functions to get outputs for testing and tuning purposes.
     void printIMU(void);
@@ -73,10 +68,9 @@ public:
     void printFlightModeUpdateTaskStats(void);
     void printFlightModeInputUpdateTaskStats(void);
     void printActuatorTaskStats(void);
-    // --------------------------------------------------------------------
 
-    Mode *getFlightMode(void) const { return currentMode; }
-    bool inFailsafe(void) const { return failSafeActive; }
+    const Mode *getCurrentFlightMode(void) const { return currentMode; }
+    bool inFailsafe(void) const { return sysFailsafeActive; }
 
 private:
     RateMode rateMode;
@@ -85,18 +79,13 @@ private:
 
     // This is the state of the flight stabilization system
     Mode *currentMode;
-    Mode *previousMode;
-    // --------------------------------------------------------------------
 
-    Scheduler scheduler; // Scheduler object to manage periodic tasks
-    // --------------------------------------------------------------------
+    SerialConfigTask serialConfigTask;
 
     void sysInit(void); // Initialize system components
-    // --------------------------------------------------------------------
 
-    bool failSafeActive; // System failsafe active flag
+    bool sysFailsafeActive; // System failsafe active flag
     void updateFlightMode(void);
-    // --------------------------------------------------------------------
 
     // Task handlers for the scheduler to manage periodic tasks
     static uint8_t imuTaskId;
@@ -105,7 +94,9 @@ private:
     static uint8_t flightModeInputUpdateTaskId;
     static uint8_t flightModeRunTaskId;
     static uint8_t actuatorTaskId;
-    // --------------------------------------------------------------------
+    static uint8_t serialConfigTaskId;
+
+    Scheduler scheduler; // Scheduler object to manage periodic tasks
 };
 
 extern Xpilot xpilot;

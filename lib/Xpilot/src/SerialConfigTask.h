@@ -1,4 +1,7 @@
 /* ============================================
+Flight stabilization software
+    Copyright (C) 2024 Jamal Meizongo (mrmeizongo@outlook.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -21,52 +24,62 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
+#ifndef _SERIAL_CONFIG_TASK_H
+#define _SERIAL_CONFIG_TASK_H
+#include <Arduino.h>
+#include "ConfigManager.h"
+#include "SerialProtocol.h"
 
-#ifndef _SLEWRATE
-#define _SLEWRATE
-
-template <typename T>
-class SlewRateLimiter
+class SerialConfigTask
 {
 public:
-    SlewRateLimiter()
-        : _output{T{}}, _maxChangeRate{0.f} {}
+    SerialConfigTask(
+        HardwareSerial &serial,
+        ConfigManager &configManager);
 
-    SlewRateLimiter(T ratePerSecond, float dt)
-        : _output{T{}}, _ratePerSecond{ratePerSecond}
-    {
-        _maxChangeRate = _ratePerSecond * dt;
-    }
-
-    SlewRateLimiter(SlewRateLimiter &&) = default;
-    SlewRateLimiter &operator=(SlewRateLimiter &&) = default;
-
-    T update(T target)
-    {
-        const float error = target - _output;
-
-        if (error >= _maxChangeRate)
-            _output += _maxChangeRate;
-        else if (error <= -_maxChangeRate)
-            _output -= _maxChangeRate;
-        else
-            _output = target;
-
-        return _output;
-    }
-
-    void setRate(T newRatePerSecond)
-    {
-        float dt = _maxChangeRate / _ratePerSecond;
-        _maxChangeRate = newRatePerSecond * dt;
-        _ratePerSecond = newRatePerSecond;
-    }
-
-    void reset(T prevOutput = T{}) { _output = prevOutput; }
+    void run();
 
 private:
-    T _output;
-    T _ratePerSecond;
-    float _maxChangeRate;
+    enum class RxState : uint8_t
+    {
+        WAITING_FOR_START,
+        RECEIVING_PACKET
+    };
+
+    HardwareSerial &_serial;
+    ConfigManager &_configManager;
+
+    RxState _rxState;
+
+    uint8_t _rxBuffer[SERIAL_PACKET_SIZE];
+
+    uint8_t _rxIndex;
+
+    void processByte(uint8_t byte);
+
+    void processPacket(
+        const SerialPacket &packet);
+
+    void processGet(
+        const SerialPacket &packet);
+
+    void processSet(
+        const SerialPacket &packet);
+
+    void sendValue(
+        ConfigID id);
+
+    void sendAck(
+        SerialCommand originalCommand);
+
+    void sendNack(
+        SerialCommand originalCommand);
+
+    void sendPacket(
+        SerialPacket &packet);
+
+    static uint8_t calculateChecksum(
+        const uint8_t *data,
+        uint8_t length);
 };
-#endif // _SLEWRATE
+#endif //_SERIAL_CONFIG_TASK_H

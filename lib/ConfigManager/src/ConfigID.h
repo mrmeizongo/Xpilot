@@ -1,0 +1,86 @@
+#ifndef _CONGIF_ID_H
+#define _CONFIG_ID_H
+#include <stdint.h>
+
+enum class ConfigID : uint8_t
+{
+    // AirframeConfig
+    AIRFRAME_TYPE = 0U,
+
+    // RCConfig
+    RC_ROLL_MIN,
+    RC_ROLL_TRIM,
+    RC_ROLL_MAX,
+    RC_ROLL_DB,
+
+    RC_PITCH_MIN,
+    RC_PITCH_TRIM,
+    RC_PITCH_MAX,
+    RC_PITCH_DB,
+
+    RC_YAW_MIN,
+    RC_YAW_TRIM,
+    RC_YAW_MAX,
+    RC_YAW_DB,
+
+    // SRVConfig
+    SRV_MIN,
+    SRV_TRIM,
+    SRV_MAX,
+
+    // FlightConfig
+    FLIGHT_CONTROL_RES,
+
+    FLIGHT_MAX_ROLL_RATE_DEGS,
+    FLIGHT_MAX_PITCH_RATE_DEGS,
+    FLIGHT_MAX_YAW_RATE_DEGS,
+
+    FLIGHT_MAX_ROLL_ANGLE_DEGS,
+    FLIGHT_MAX_PITCH_ANGLE_DEGS,
+
+    FLIGHT_FLAPERON_SCALE_FACTOR,
+    FLIGHT_MAX_FLAPERON,
+
+    FLIGHT_REVERSE_RUDDER_MIX,
+    FLIGHT_RUDDER_MIX_SCALE_FACTOR,
+
+    // PIDFConfig
+    PIDF_ROLL_KP,
+    PIDF_ROLL_KI,
+    PIDF_ROLL_KD,
+    PIDF_ROLL_KF,
+    PIDF_ROLL_I_WINDUP_MAX,
+
+    PIDF_PITCH_KP,
+    PIDF_PITCH_KI,
+    PIDF_PITCH_KD,
+    PIDF_PITCH_KF,
+    PIDF_PITCH_I_WINDUP_MAX,
+
+    PIDF_YAW_KP,
+    PIDF_YAW_KI,
+    PIDF_YAW_KD,
+    PIDF_YAW_KF,
+    PIDF_YAW_I_WINDUP_MAX,
+
+    // IMUConfig
+    IMU_ACC_BIAS_X,
+    IMU_ACC_BIAS_Y,
+    IMU_ACC_BIAS_Z,
+
+    IMU_GYRO_BIAS_X,
+    IMU_GYRO_BIAS_Y,
+    IMU_GYRO_BIAS_Z,
+
+    IMU_CALIBRATED,
+
+    // FilterConfig
+    FILTER_SLEW_RATE,
+    FILTER_LPF_FREQ,
+    FILTER_PROCESS_DT,
+
+    // End-of-list
+    COUNT
+};
+
+#endif //_CONFIG_ID_H

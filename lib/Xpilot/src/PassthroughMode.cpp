@@ -1,47 +1,53 @@
 #include "Mode.h"
-#include "SlewRateLimiter.h"
-
-static SlewRateLimiter<int16_t> rollSlew(PT_SLEW_RATE, PROCESS_DT);
-static SlewRateLimiter<int16_t> pitchSlew(PT_SLEW_RATE, PROCESS_DT);
-static SlewRateLimiter<int16_t> yawSlew(PT_SLEW_RATE, PROCESS_DT);
 
 void PassthroughMode::enter(void)
 {
-    rollSlew.reset();
-    pitchSlew.reset();
-    yawSlew.reset();
-    Mode::airplaneMixer.setCommandLimit(MAX_PASS_THROUGH);
+    rollSlew.reset(output_rpy[0]);
+    pitchSlew.reset(output_rpy[1]);
+    yawSlew.reset(output_rpy[2]);
 }
 
 void PassthroughMode::update(void)
 {
     if (radio.inFailsafe())
     {
-        Mode::controlFailsafe();
+        controlFailsafe();
         return;
     }
 
-    Mode::input_rpy[0] = FILTERED_NORM_INPUT(radio.getRxRollPWM(), ROLL_INPUT_DEADBAND) * MAX_PASS_THROUGH;
-    Mode::input_rpy[1] = FILTERED_NORM_INPUT(radio.getRxPitchPWM(), PITCH_INPUT_DEADBAND) * MAX_PASS_THROUGH;
-    Mode::input_rpy[2] = FILTERED_NORM_INPUT(radio.getRxYawPWM(), YAW_INPUT_DEADBAND) * MAX_PASS_THROUGH;
+    input_rpy[0] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::ROLL), rollConfig.min, rollConfig.trim, rollConfig.max, rollConfig.deadband) *
+                   fConfig.controlResolution;
+
+    input_rpy[1] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::PITCH), pitchConfig.min, pitchConfig.trim, pitchConfig.max, pitchConfig.deadband) *
+                   fConfig.controlResolution;
+
+    input_rpy[2] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::YAW), yawConfig.min, yawConfig.trim, yawConfig.max, yawConfig.deadband) *
+                   fConfig.controlResolution;
 
     Mode::update();
 }
 
 void PassthroughMode::run(void)
 {
-    Mode::output_rpy[0] = rollSlew.update(Mode::input_rpy[0]);
-    Mode::output_rpy[1] = pitchSlew.update(Mode::input_rpy[1]);
-    Mode::output_rpy[2] = yawSlew.update(Mode::input_rpy[2]);
+    output_rpy[0] = rollSlew.update(input_rpy[0]);
+    output_rpy[1] = pitchSlew.update(input_rpy[1]);
+    output_rpy[2] = yawSlew.update(input_rpy[2]);
 
-    AirplaneMixer::Outputs outputs = airplaneMixer.mix(Mode::output_rpy[0], Mode::output_rpy[1], Mode::output_rpy[2]);
+    AirplaneMixer::Outputs outputs = airplaneMixer.mix(output_rpy[0], output_rpy[1], output_rpy[2]);
 
-    Mode::SRVout[Actuators::Channel::CH1] = map(outputs.leftAileron, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH2] = map(outputs.rightAileron, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH3] = map(outputs.elevator, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
-    Mode::SRVout[Actuators::Channel::CH4] = map(outputs.rudder, -MAX_PASS_THROUGH, MAX_PASS_THROUGH, SERVO_MIN_PWM, SERVO_MAX_PWM);
+    SRVout[Actuators::Channel::CH1] = map(outputs.leftAileron, fConfig.controlResolution,
+                                          srvConfig.min, srvConfig.max);
+
+    SRVout[Actuators::Channel::CH2] = map(outputs.rightAileron, fConfig.controlResolution,
+                                          srvConfig.min, srvConfig.max);
+
+    SRVout[Actuators::Channel::CH3] = map(outputs.elevator, fConfig.controlResolution,
+                                          srvConfig.min, srvConfig.max);
+
+    SRVout[Actuators::Channel::CH4] = map(outputs.rudder, fConfig.controlResolution,
+                                          srvConfig.min, srvConfig.max);
 #if defined(USE_FLAPERONS)
-    Mode::flaperonMixer();
+    flaperonMixer();
 #endif
     actuators.setServoOut(SRVout); // Set servo output
 }

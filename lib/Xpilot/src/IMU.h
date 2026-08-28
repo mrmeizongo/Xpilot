@@ -15,9 +15,9 @@ public:
 
     IMU(void);
     void init(void);
-    void calibrate(void);          // Calibrate the IMU and store the biases in EEPROM
-    void restoreCalibration(void); // Restore the calibration values from EEPROM
-    void getLatestReadings(void);  // Process the IMU data and update the AHRS values
+    void getLatestReadings(void); // Process the IMU data and update the AHRS values
+    void calibrate(void);         // Calibrate IMU to obtain sensor bias values
+    void getCalibration(float (&)[3], float (&)[3]);
 
     static void getLatestReadingsTask(void *ctx) // Trampoline function for the scheduler to call the getLatestReadings function
     {
@@ -46,8 +46,7 @@ private:
     float _rpy[3]; // Airplane coordinate system values
     float _g[3];   // Angular velocity about the respective axis - xyz
 
-    Consumer _consumers[MAX_CONSUMERS]; // IMU values consumer
-    uint8_t _consumerCount;
+    Consumer _consumer; // IMU values consumer
 };
 
 extern IMU imu;

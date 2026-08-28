@@ -34,7 +34,9 @@ Flight stabilization software
 #define _ACTUATORS_H
 #include <Servo.h>
 #include <stdint.h>
-#include "PlaneConfig.h"
+#include "SystemConfig.h"
+
+#define CHANNEL_START 0U
 
 class Actuators
 {
@@ -44,29 +46,29 @@ public:
     // MAX_SERVOS for the Arduino Nano is 12 servos because it has 1 16 bit timer
     enum Channel : uint8_t
     {
-        CH1 = 0U,
+        CH1 = CHANNEL_START,
         CH2,
         CH3,
         CH4,
 #if defined(USE_AUXOUT1)
         CH5, // Auxiliary output channel 1
 #endif
-        NUM_CHANNELS
+        CHANNEL_COUNT
     };
 
     Actuators(void);
     void init(void);
     void writeServos(void);
-    void writeServos(const int16_t (&SRVout)[NUM_CHANNELS]);
+    void writeServos(const int16_t (&SRVout)[CHANNEL_COUNT]);
     void setServoOut(Channel, int16_t);
-    void setServoOut(const int16_t (&SRVout)[NUM_CHANNELS]);
+    void setServoOut(const int16_t (&SRVout)[CHANNEL_COUNT]);
     int16_t getServoOut(Channel);
 
     static void writeServosTask(void *ctx) { static_cast<Actuators *>(ctx)->writeServos(channelOut); }
 
 private:
-    static Servo controlServo[NUM_CHANNELS]; // Control servos
-    static int16_t channelOut[NUM_CHANNELS]; // Servo output values
+    static Servo controlServo[CHANNEL_COUNT]; // Control servos
+    static int16_t channelOut[CHANNEL_COUNT]; // Servo output values
 };
 
 extern Actuators actuators;

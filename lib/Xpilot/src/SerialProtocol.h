@@ -1,4 +1,7 @@
 /* ============================================
+Flight stabilization software
+    Copyright (C) 2024 Jamal Meizongo (mrmeizongo@outlook.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -22,51 +25,50 @@
 ===============================================
 */
 
-#ifndef _SLEWRATE
-#define _SLEWRATE
+/**
+ * Byte 0       START        0xAA
+ * Byte 1       COMMAND
+ * Byte 2       PARAM ID
+ * Byte 3       TYPE
+ * Byte 4-7     VALUE
+ * Byte 8       CHECKSUM
+ *
+ * Every packet is exactly 9 bytes
+ */
 
-template <typename T>
-class SlewRateLimiter
+#ifndef _SERIAL_PROTOCOL_H
+#define _SERIAL_PROTOCOL_H
+#include <stdint.h>
+
+enum class SerialCommand : uint8_t
 {
-public:
-    SlewRateLimiter()
-        : _output{T{}}, _maxChangeRate{0.f} {}
+    GET = 0x01,
+    SET = 0x02,
+    SAVE = 0x03,
+    LOAD = 0x04,
+    DEFAULTS = 0x05,
+    IMU_CALIBRATE = 0x06,
 
-    SlewRateLimiter(T ratePerSecond, float dt)
-        : _output{T{}}, _ratePerSecond{ratePerSecond}
-    {
-        _maxChangeRate = _ratePerSecond * dt;
-    }
-
-    SlewRateLimiter(SlewRateLimiter &&) = default;
-    SlewRateLimiter &operator=(SlewRateLimiter &&) = default;
-
-    T update(T target)
-    {
-        const float error = target - _output;
-
-        if (error >= _maxChangeRate)
-            _output += _maxChangeRate;
-        else if (error <= -_maxChangeRate)
-            _output -= _maxChangeRate;
-        else
-            _output = target;
-
-        return _output;
-    }
-
-    void setRate(T newRatePerSecond)
-    {
-        float dt = _maxChangeRate / _ratePerSecond;
-        _maxChangeRate = newRatePerSecond * dt;
-        _ratePerSecond = newRatePerSecond;
-    }
-
-    void reset(T prevOutput = T{}) { _output = prevOutput; }
-
-private:
-    T _output;
-    T _ratePerSecond;
-    float _maxChangeRate;
+    ACK = 0x80,
+    NACK = 0x81,
+    VALUE = 0x82
 };
-#endif // _SLEWRATE
+
+struct SerialPacket
+{
+    uint8_t start;
+    uint8_t command;
+    uint8_t paramId;
+    uint8_t type;
+
+    uint8_t value[4];
+
+    uint8_t checksum;
+};
+
+constexpr uint8_t SERIAL_PACKET_START =
+    0xAA;
+
+constexpr uint8_t SERIAL_PACKET_SIZE =
+    sizeof(SerialPacket);
+#endif //_SERIAL_PROTOCOL_H

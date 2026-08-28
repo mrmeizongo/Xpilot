@@ -110,6 +110,7 @@ Flight stabilization software
 // #define USE_FLAPERONS
 
 #if defined(USE_FLAPERONS)
+#define USE_AUX2
 #define FLAPERON_PC 1.0f // Percentage of flap deflection compared to aileron deflection(0.0f - 1.0f)
 #define FLAPERON_MAX_RANGE (SERVO_MAX_PWM - SERVO_MID_PWM) * (FLAPERON_PC)
 #endif
@@ -120,11 +121,6 @@ Flight stabilization software
 
 // Uncomment to enable auxiliary output channel 1
 // #define USE_AUXOUT1
-
-// Uncomment to use the second auxiliary switch.
-// If using aux3 input, provide implementation for functionality.
-// aux3 input is tied to pin D7
-// #define USE_AUX3
 // ------------------------------------------------------------------------------------------------------
 
 // PID config

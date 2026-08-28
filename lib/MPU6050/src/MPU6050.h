@@ -81,12 +81,6 @@ public:
         // addr should be valid for MPU
         if ((addr < MPU6050_DEFAULT_ADDRESS) || (addr > MPU6050_DEFAULT_ADDRESS + 7))
         {
-            if (b_verbose)
-            {
-                Serial.print("I2C address 0x");
-                Serial.print(addr, HEX);
-                Serial.println(" is not valid for MPU. Please check your I2C address.");
-            }
             return false;
         }
         mpu_i2c_addr = addr;
@@ -95,15 +89,11 @@ public:
 
         if (isConnected())
         {
-            if (b_verbose)
-                Serial.println("MPU6050 connected successfully. Initializing...");
             initMPU6050();
             has_connected = true;
         }
         else
         {
-            if (b_verbose)
-                Serial.println("Could not connect to MPU6050");
             has_connected = false;
         }
         return has_connected;
@@ -123,16 +113,6 @@ public:
         write_byte(PWR_MGMT_1, c);
     }
 
-    void verbose(const bool b)
-    {
-        b_verbose = b;
-    }
-
-    void ahrs(const bool b)
-    {
-        b_ahrs = b;
-    }
-
     // Function which accumulates gyro and accelerometer data after device initialization. It calculates the average
     // of the at-rest readings and then stores the resulting offsets into accelerometer and gyro bias variables
     // ACCEL_FS_SEL: 2g (maximum sensitivity)
@@ -142,34 +122,11 @@ public:
         set_acc_gyro_to_calibration();
         collect_acc_gyro_data_to(acc_bias, gyro_bias);
         delay(100);
-        if (b_verbose)
-        {
-            Serial.println("< Calibration Parameters >");
-            Serial.println("Accel bias [g]: ");
-            Serial.print(acc_bias[0]);
-            Serial.print(", ");
-            Serial.print(acc_bias[1]);
-            Serial.print(", ");
-            Serial.println(acc_bias[2]);
-            Serial.println("Gyro bias [deg/s]: ");
-            Serial.print(gyro_bias[0]);
-            Serial.print(", ");
-            Serial.print(gyro_bias[1]);
-            Serial.print(", ");
-            Serial.println(gyro_bias[2]);
-        }
-        initMPU6050();
-        delay(1000);
     }
 
     bool isConnected()
     {
         byte c = read_byte(WHO_AM_I_MPU6050);
-        if (b_verbose)
-        {
-            Serial.print("MPU6050 WHO AM I = ");
-            Serial.println(c, HEX);
-        }
         return (c == mpu_i2c_addr);
     }
 
@@ -213,11 +170,11 @@ public:
 
         update_rpy(q[0], q[1], q[2], q[3]);
         _rpy[0] = rpy[0];
-        _rpy[1] = rpy[1];
+        _rpy[1] = -rpy[1]; // Reverse pitch due to sensor orientation on board
         _rpy[2] = rpy[2];
         _g[0] = g[0];
         _g[1] = g[1];
-        _g[2] = g[2];
+        _g[2] = -g[2]; // Reverse gyro z due to sensor orientation on board
 
         return true;
     }
@@ -314,10 +271,7 @@ private:
     QuaternionFilter quat_filter;
     size_t n_filter_iter{1};
 
-    // Other settings
     bool has_connected{false};
-    bool b_ahrs{true};
-    bool b_verbose{false};
 
     // I2C
     WireType *wire;
@@ -496,14 +450,6 @@ private:
         read_bytes(FIFO_COUNTH, 2, &data[0]); // read FIFO sample count
         uint16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
         uint16_t packet_count = fifo_count / 12; // How many sets of full gyro and accelerometer data for averaging
-        if (b_verbose)
-        {
-            Serial.print("Accel & Gyro FIFO packets obtained: ");
-            Serial.println(fifo_count);
-            Serial.print("Sets of ");
-            Serial.print(packet_count);
-            Serial.println(" full accel and gyro data acquired for bias calculation.");
-        }
 
         for (uint16_t ii = 0; ii < packet_count; ii++)
         {
@@ -640,28 +586,6 @@ private:
             self_test_result[i + 3] = 100.0 * ((float)(gSTAvg[i] - gAvg[i])) / factoryTrim[i + 3]; // Report percent differences
         }
 
-        if (b_verbose)
-        {
-            Serial.print("x-axis self test: acceleration trim within : ");
-            Serial.print(self_test_result[0], 1);
-            Serial.println("% of factory value");
-            Serial.print("y-axis self test: acceleration trim within : ");
-            Serial.print(self_test_result[1], 1);
-            Serial.println("% of factory value");
-            Serial.print("z-axis self test: acceleration trim within : ");
-            Serial.print(self_test_result[2], 1);
-            Serial.println("% of factory value");
-            Serial.print("x-axis self test: gyration trim within : ");
-            Serial.print(self_test_result[3], 1);
-            Serial.println("% of factory value");
-            Serial.print("y-axis self test: gyration trim within : ");
-            Serial.print(self_test_result[4], 1);
-            Serial.println("% of factory value");
-            Serial.print("z-axis self test: gyration trim within : ");
-            Serial.print(self_test_result[5], 1);
-            Serial.println("% of factory value");
-        }
-
         bool b = true;
         for (uint8_t i = 0; i < 6; ++i)
         {
@@ -750,13 +674,8 @@ private:
 
     void print_i2c_error()
     {
-        if (b_verbose)
-        {
-            Serial.print("I2C ERROR CODE : ");
-            Serial.println(i2c_err_);
-        }
-        if (i2c_err_ == 7)
-            return; // to avoid stickbreaker-i2c branch's error code
+        Serial.print("I2C ERROR CODE: ");
+        Serial.println(i2c_err_);
     }
 };
 

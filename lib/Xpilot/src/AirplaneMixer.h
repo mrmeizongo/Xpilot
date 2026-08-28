@@ -2,21 +2,11 @@
 #define _AIRPLANE_MIXER
 
 #include <Arduino.h>
+#include <Config.h>
 
 class AirplaneMixer
 {
 public:
-    enum class AirframeType : uint8_t
-    {
-        CONVENTIONAL,          // Aileron + Elevator + Rudder
-        V_TAIL,                // Aileron + Ruddervators
-        FLYING_WING_RUDDER,    // Elevons with rudder
-        FLYING_WING_NO_RUDDER, // Elevons without rudder
-        RUDDER_ELEVATOR,       // Rudder + Elevator only
-        AILERON_ELEVATOR,      // Aileron + Elevator only
-        CUSTOM
-    };
-
     /*
      * For common and differential moving flight control surfaces(v tail and flying wings),
      * elevator and rudder act as left and right surfaces, respectively
@@ -29,17 +19,21 @@ public:
         int16_t rudder;
     };
 
+    AirplaneMixer(AirplaneMixer &&) = default;
+    AirplaneMixer &operator=(AirplaneMixer &&) = default;
+
     explicit AirplaneMixer(
-        AirframeType type = AirframeType::CONVENTIONAL,
+        Config::AirframeType type = Config::AirframeType::CONVENTIONAL,
         uint16_t commandLimit = 1000)
         : _type(type),
           _commandLimit(commandLimit) {}
 
     Outputs mix(int16_t roll, int16_t pitch, int16_t yaw) const;
-    void setAirframeType(AirframeType type) { _type = type; }
-    AirframeType getAirframeType() const { return _type; }
-    void setCommandLimit(int16_t limit) { _commandLimit = limit; }
 
+    void setAirframeType(Config::AirframeType type) { _type = type; }
+    Config::AirframeType getAirframeType() const { return _type; }
+
+    void setCommandLimit(int16_t limit) { _commandLimit = limit; }
     int16_t getCommandLimit() const { return _commandLimit; }
 
 protected:
@@ -57,7 +51,7 @@ protected:
     }
 
 private:
-    AirframeType _type;
+    Config::AirframeType _type;
     int16_t _commandLimit;
 
     void mixConventional(

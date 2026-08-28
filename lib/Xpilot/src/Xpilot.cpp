@@ -1,11 +1,12 @@
 #include <Arduino.h>
-#include "Xpilot.h"
-#include "PlaneConfig.h"
-#include "SystemConfig.h"
 #include "IMU.h"
 #include "Radio.h"
-#include "Actuators.h"
 #include "Debug.h"
+#include "Actuators.h"
+#include "SystemConfig.h"
+#include "FlightConfigAccess.h"
+
+#define SERIAL_BAUD_RATE 250000 // Serial baud rate
 
 // Task handlers for the scheduler to manage periodic tasks
 uint8_t Xpilot::imuTaskId = 0;
@@ -14,6 +15,10 @@ uint8_t Xpilot::flightModeUpdateTaskId = 0;
 uint8_t Xpilot::flightModeInputUpdateTaskId = 0;
 uint8_t Xpilot::flightModeRunTaskId = 0;
 uint8_t Xpilot::actuatorTaskId = 0;
+uint8_t Xpilot::serialConfigTaskId = 0;
+
+Xpilot::Xpilot()
+    : serialConfigTask{Serial, configManager} {}
 
 void Xpilot::setup(void)
 {
@@ -33,7 +38,7 @@ void Xpilot::setup(void)
 #if defined(IO_DEBUG)
     (void)scheduler.addTask(&Xpilot::printIOTask, this, IO_PRINT_RATE_HZ);
 #endif
-#if defined(IMU_DEBUG) || defined(CALIBRATE_DEBUG)
+#if defined(IMU_DEBUG)
     (void)scheduler.addTask(&Xpilot::printIMUTask, this, IMU_PRINT_RATE_HZ);
 #endif
 #if defined(SCHEDULER_RATE_DEBUG)
@@ -55,6 +60,10 @@ void Xpilot::setup(void)
     (void)scheduler.addTask(&Xpilot::printActuatorTaskStatTask, this, TASK_PRINT_RATE_HZ);
 #endif
 
+#if defined(USE_SERIAL_TASK)
+    serialConfigTaskId = scheduler.addTask(&Xpilot::runSerialConfigTask, this, SERIAL_TASK_RATE_HZ);
+#endif
+
     scheduler.init();
 }
 
@@ -66,78 +75,68 @@ void Xpilot::loop(void)
 
 void Xpilot::sysInit(void)
 {
-#if defined(DEBUG)
-    Serial.begin(BAUD_RATE);
+    Serial.begin(SERIAL_BAUD_RATE);
     while (!Serial)
         ; // Wait for Serial port to open
-#endif
 
-    // Specify the mode switch position for each mode
-    passthroughMode.setModeSwitchPosition(Radio::THREE_POS_SW::HIGH_POS);
-    rateMode.setModeSwitchPosition(Radio::THREE_POS_SW::MID_POS);
-    stabilizeMode.setModeSwitchPosition(Radio::THREE_POS_SW::LOW_POS);
-
-#if defined(DEFAULT_TO_PASSTHROUGH_MODE)
-    currentMode = &passthroughMode;
-#elif defined(DEFAULT_TO_RATE_MODE)
-    currentMode = &rateMode;
-#elif defined(DEFAULT_TO_STABILIZE_MODE)
-    currentMode = &stabilizeMode;
-#endif
-    previousMode = currentMode;
-
-    failSafeActive = false;
+    configManager.init(); // Initiailize configuration manager
 
     // Initialize systems
     imu.init();
     radio.init();
     actuators.init();
     currentMode->init();
+
+    // Specify the mode switch position for each mode
+    passthroughMode.setModeSwitchPosition(Radio::THREE_POS_SW::HIGH_POS);
+    rateMode.setModeSwitchPosition(Radio::THREE_POS_SW::MID_POS);
+    stabilizeMode.setModeSwitchPosition(Radio::THREE_POS_SW::LOW_POS);
+
+    currentMode = &rateMode; // Rate mode is the default mode of operation on startup
 }
 
 void Xpilot::updateFlightMode(void)
 {
     bool radioInFailSafe = radio.inFailsafe();
-    /*
-     * If system failsafe has been activated and transmitter is still in fail safe,
-     * or there is an active imu fault, prevent flight mode switching until cleared
-     */
-    if (failSafeActive && radioInFailSafe)
+
+    // Failsafe already processed
+    if (radioInFailSafe && sysFailsafeActive)
         return;
 
-    // First time detecting radio in failsafe
+    Mode *requestedMode = currentMode;
+
     if (radioInFailSafe)
     {
-        failSafeActive = true; // Set failsafe active flag
-#if defined(FAILSAFE_TO_STABILIZE)
-        currentMode = &stabilizeMode;
-#elif defined(FAILSAFE_TO_RATE)
-        currentMode = &rateMode;
-#elif defined(FAILSAFE_TO_PASSTHROUGH)
-        currentMode = &passthroughMode;
-#endif
+        sysFailsafeActive = true;
+        requestedMode = &stabilizeMode;
     }
     else
     {
-        // Both system and radio are not in failsafe
-        failSafeActive = false; // Reset failsafe active flag
-        Radio::THREE_POS_SW radioModeSwitchPos = radio.getRxAux1Pos();
-        // Radio mode switch position has not changed
-        if (radioModeSwitchPos == currentMode->getModeSwitchPosition())
+        sysFailsafeActive = false;
+
+        const Radio::THREE_POS_SW switchPos =
+            radio.getThreeSwitchPos(Radio::CHANNELS::AUX1);
+
+        // Mode select switch position has not changed
+        if (switchPos == currentMode->getModeSwitchPosition())
             return;
 
-        // Process new mode if mode switch position has changed
-        if (radioModeSwitchPos == passthroughMode.getModeSwitchPosition())
-            currentMode = &passthroughMode;
-        else if (radioModeSwitchPos == stabilizeMode.getModeSwitchPosition())
-            currentMode = &stabilizeMode;
-        else if (radioModeSwitchPos == rateMode.getModeSwitchPosition())
-            currentMode = &rateMode;
+        if (switchPos == passthroughMode.getModeSwitchPosition())
+            requestedMode = &passthroughMode;
+
+        else if (switchPos == rateMode.getModeSwitchPosition())
+            requestedMode = &rateMode;
+
+        else if (switchPos == stabilizeMode.getModeSwitchPosition())
+            requestedMode = &stabilizeMode;
+
+        else
+            return;
     }
 
-    // Failsafe detected, mode switch position has changed, or imu has faulted perform mode transition
-    previousMode->exit();
+    currentMode->exit();
+
+    currentMode = requestedMode;
     currentMode->enter();
-    previousMode = currentMode;
 }
 // ---------------------------

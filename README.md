@@ -31,10 +31,10 @@ Copyright (C) 2024 Jamal Meizongo
 ### Developed using PlatformIO on vscode
 
 Xpilot is a flight stabilization system based on the ATMEGA328P chip in the Arduino Nano, Uno and Mini microcontrollers and MPU6050.  
-It is capable of stabilizing various airplane types including the traditional airplane, V-tail and flying wing.  
-It also works for various configurations of these airplanes i.e. 1 channel AIL, ELEV, and RUDD(traditional and V-tail),  
-2 channel AIL, ELEV and RUDD(traditional tail, V-tail and flying wing), AIL and ELEV only(traditional and V-tail) or ELEV and RUDD only(traditional and V-tail).  
-See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) for airplane type configuration.
+
+It is capable of stabilizing various airplane types including the traditional airplane, V-tail, flying wings(with and without rudder) and 2-channel planes.
+
+See [XP_SERIAL.md](XP_SERIAL.md) for information on using the serial interface to set flight configurations.
 
 ## Stabilization system loop
 
@@ -50,8 +50,8 @@ This is sufficient for the flight characteristics of the UAV this software was d
 |                                           Elevator                                            |  3  |
 |                                            Rudder                                             |  4  |
 |                                          AUX1 - Mode                                          |  5  |
-|   AUX2 - FLAPERON (if activated in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h))   |  6  |
-| AUX3 - User defined (if activated in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)) |  7  |
+|   FLAPERON (if activated in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h))            |  6  |
+| AUX3 - User defined (if activated in [SystemConfig.h](lib/SystemConfig/src/SystemConfig.h))   |  7  |
 
 ### Output
 
@@ -73,7 +73,7 @@ This is sufficient for the flight characteristics of the UAV this software was d
 
 ## Info
 
-These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). However, changing the pins for the channel inputs to Xpilot will require modification of the PinChangeInterrupt library.
+These pin numbers with the exception of MPU6050 can be reconfigured in [GPIOConfig.h](lib/SystemConfig/src/GPIODef.h). However, changing the pins for the channel inputs to Xpilot will require modifications to the PinChangeInterrupt library.
 
 <p align="center">
   <img src="assets/img/Schematics.png" />
@@ -83,8 +83,11 @@ These pin numbers with the exception of MPU6050 can be reconfigured in [DefaultC
 
 There are 3 flight modes; 1 = passthrough/manual, 2 = rate, and 3 = stabilize.
 
-Rate mode is the most popular among inexperienced flyers. If mode switch is not configured, any of the 3 modes can be used as the default mode. See [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h).  
-Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. You can override this and/or set roll % to be mixed with rudder in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h). Default aileron-rudder mixing value is 30%.
+Rate mode is the most popular among inexperienced flyers. If mode switch is not configured, rate mode is the default.  
+
+Passthrough mode is for advanced flyers. It passes the output through a slew rate limiter before the servos receive the command. The slew rate is configurable.
+
+Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. Default aileron-to-rudder mixing value is 30%.
 
 |      Flight mode       |                                     Description                                     |
 | :--------------------: | :---------------------------------------------------------------------------------: |
@@ -92,23 +95,14 @@ Passthrough is for advanced flyers. Rudder mixing for coordinated turns is enabl
 |        Rate - 2        |                               Gyro based rate control                               |
 |     Stabilize - 3      | Surfaces follow stick movement up-to set limits with wing-leveling on stick release |
 
-## Airplane Selection
-
-See [README.md](lib/PlaneConfigs/README.md) for instructions on how to set up configuration files for multi airplane use.
 
 ## NOTICE
 
 Throttle is always under manual control.
 
-Rate/Expo should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode.
+Rate/Expo set up on the transmitter should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode.
 
-Two calibration functions are provided; CALIBRATE and CALIBRATE_DEBUG.  
-Uncommenting CALIBRATE runs the calibration function and stores the X, Y, and Z accel/gyro biases in flash memory.  
-Uncommenting CALIBRATE_DEBUG does same and prints out the calibration values in the serial monitor for inspection. Ensure the airplane is on a level surface and held still throughout the calibration process.
-
-At any time, you can view the calibrated values on the serial monitor by uncommenting READ_CALIBRATION_FROM_EEPROM in [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h)
-
-After all debug and calibration operations are complete, be sure to uncomment and reupload Xpilot for normal operation.
+The IMU is calibrated through xp_serial.py.
 
 ## Build & Upload
 
@@ -116,7 +110,7 @@ To build and upload the project to the microcontroller, download [vscode](https:
 
 ## Preflight
 
-Be sure to go through [DefaultConfig.h](lib/PlaneConfigs/src/DefaultConfig.h) and perform any required modifications and preflight checks before flight.
+Be sure to go through [XP_SERIAL.md](XP_SERIAL.md) and perform any required modifications and preflight checks before flight.
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
 

@@ -1,87 +1,61 @@
 #ifndef _SYSTEM_CONFIG_H
 #define _SYSTEM_CONFIG_H
-#include "PlaneConfig.h"
 
-#define SYSTEM_CONFIG_VERSION "2.2.1"
+#define SYSTEM_CONFIG_VERSION "3"
 
-// ATmega328p pin definitions
+// Uncomment to use flaperons
+// Flaperons are ailerons that can be used as flaps
+// #define USE_FLAPERONS
+
+#if defined(USE_FLAPERONS)
+#define USE_AUXIN2
+#endif
+
+// Uncomment to enable auxiliary output channel 1
+// #define USE_AUXOUT1
+
+// Uncomment to enable auxiliary input 3
+// #define USE_AUXIN3
+
+// Enable communication with xp_serial.py
+#define USE_SERIAL_TASK
+
+// Task scheduler config
+#define CONTROL_LOOP_RATE_HZ 250                     // Control loop period in hz
+#define IMU_UPDATE_RATE_HZ CONTROL_LOOP_RATE_HZ      // IMU update period in hz
+#define FLIGHT_MODE_RUN_RATE_HZ CONTROL_LOOP_RATE_HZ // Flight mode run period in hz
+#define FLIGHT_MODE_UPDATE_RATE_HZ 25                // Flight mode update period in hz
+#define RADIO_INPUT_PROCESS_RATE_HZ 50               // Radio input period in hz
+#define WRITE_SERVO_RATE_HZ 50                       // Write servo output period in hz
+#define IMU_PRINT_RATE_HZ 4                          // IMU debug print period in hz
+#define TASK_PRINT_RATE_HZ 2                         // Task rate debug print period in hz
+#define IO_PRINT_RATE_HZ 2                           // IO debug print period in hz
+#define SERIAL_TASK_RATE_HZ 20                       // Serial task period in hz
+
+// Debug config
+
 /*
- * ISR vectors
- * All input pins use pin change interrupts
- * Depending on airplane type selected, input interrupt pins must be defined
- * Best to keep these unchanged unless absolutely necessary
- * Changing any XXXXPIN_INT or XXXXPIN_INPUT value requires modifications to PinChangeInterruptSettings.h
- *
- * | PCINT |  Uno/Nano/Mini  |
- * | ----- | --------------- |
- * |     0 |  8       (PB0)  |
- * |     1 |  9       (PB1)  |
- * |     2 | 10 SS    (PB2)  |
- * |     3 | 11 MISO  (PB3)  |
- * |     4 | 12 MOSI  (PB4)  |
- * |     5 | 13 SCK   (PB5)  |
- * |     6 |    XTAL1 (PB6)* |
- * |     7 |    XTAL2 (PB7)* |
- * | ----- | --------------- |
- * |     8 | A0       (PC0)  |
- * |     9 | A1       (PC1)  |
- * |    10 | A2       (PC2)  |
- * |    11 | A3       (PC3)  |
- * |    12 | A4 SDA   (PC4)  |
- * |    13 | A5 SDC   (PC5)  |
- * |    14 |    RST   (PC6)* |
- * |    15 |                 |
- * | ----- | --------------- |
- * |    16 |  0 RX    (PD0)  |
- * |    17 |  1 TX    (PD1)  |
- * |    18 |  2 INT0  (PD2)  |
- * |    19 |  3 INT1  (PD3)  |
- * |    20 |  4       (PD4)  |
- * |    21 |  5       (PD5)  |
- * |    22 |  6       (PD6)  |
- * |    23 |  7       (PD7)  |
- * | ----- | --------------- |
+ * Uncomment to enable the respective debugging
+ * CAUTION: Only uncomment one debug option at a time
+ * Any debugging enabled, disables the serial task for communication with xp_serial.py
  */
+// #define SCHEDULER_RATE_DEBUG
+// #define IMU_DEBUG
+// #define IO_DEBUG
 
-// Input pins
-#define AILPIN_INPUT 2
-#define ELEVPIN_INPUT 3
-#define RUDDPIN_INPUT 4
-#define AUX1PIN_INPUT 5
-#if defined(USE_FLAPERONS)
-#define AUX2PIN_INPUT 6
+#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG)
+#if defined(USE_SERIAL_TASK)
+#undef USE_SERIAL_TASK
 #endif
-#if defined(USE_AUX3)
-#define AUX3PIN_INPUT 7
 #endif
 
-// Interrupt pins
-#define AILPIN_INT 18
-#define ELEVPIN_INT 19
-#define RUDDPIN_INT 20
-#define AUX1PIN_INT 21
-#if defined(USE_FLAPERONS)
-#define AUX2PIN_INT 22
-#endif
-#if defined(USE_AUX3)
-#define AUX3PIN_INT 23
-#endif
-
-// Output pins
-#define AIL1PIN_OUTPUT 8
-#define AIL2PIN_OUTPUT 9
-#define ELEVPIN_OUTPUT 10
-#define RUDDPIN_OUTPUT 11
-#if defined(USE_AUXOUT1)
-#define AUX1PIN_OUTPUT 12
-#endif
-
-// System config
-#define BAUD_RATE 250000          // Serial baud rate
-#define ONEHZ_LOOP_US 1000000     // 1Hz loop rate in microseconds
-#define MPU6050_ADDRESS 0x68      // I2C address of MPU6050
-#define I2C_CLOCK_400KHZ 400000   // I2C clock speed in Hz
-#define CALIBRATE_MEMORY_OFFSET 0 // EEPROM offset for calibration data.
-#define FAILSAFE_TOLERANCE 200    // Failsafe tolerance in microseconds
+/*
+ * Disable USE_SERIAL_TASK to use these
+ */
+// #define PRINT_IMU_TASK_STAT
+// #define PRINT_RADIO_TASK_STAT
+// #define PRINT_FM_RUN_TASK_STAT
+// #define PRINT_FM_UPDATE_TASK_STAT
+// #define PRINT_SERVO_TASK_STAT
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H
