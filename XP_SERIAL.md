@@ -6,6 +6,123 @@ The tool communicates directly with XPilot's `ConfigManager` over the serial con
 
 ---
 
+## Commands
+
+```bash
+GET <configID>
+SET <configID> <value>
+SAVE
+LOAD
+DEFAULTS
+IMU_CALIBRATE
+```
+
+## Value Types
+
+```bash
+FLOAT
+UINT16
+INT16
+UINT8
+INT8
+BOOL
+```
+
+## ConfigIDs
+
+```bash
+    ConfigID                            Value Type
+
+    // AirframeConfig
+    AIRFRAME_TYPE                       UINT8
+
+    // RCConfig
+    RC_ROLL_MIN                         INT16
+    RC_ROLL_TRIM                        INT16
+    RC_ROLL_MAX                         INT16
+    RC_ROLL_DB                          UINT8
+
+    RC_PITCH_MIN                        INT16
+    RC_PITCH_TRIM                       INT16
+    RC_PITCH_MAX                        INT16
+    RC_PITCH_DB                         UINT8
+
+    RC_YAW_MIN                          INT16
+    RC_YAW_TRIM                         INT16
+    RC_YAW_MAX                          INT16
+    RC_YAW_DB                           UINT8
+
+    // SRVConfig
+    SRV_MIN                             INT16
+    SRV_TRIM                            INT16
+    SRV_MAX                             INT16
+
+    // FlightConfig
+    FLIGHT_CONTROL_RES                  INT16
+
+    FLIGHT_MAX_ROLL_RATE_DEGS           INT16
+    FLIGHT_MAX_PITCH_RATE_DEGS          INT16
+    FLIGHT_MAX_YAW_RATE_DEGS            INT16
+
+    FLIGHT_MAX_ROLL_ANGLE_DEGS          INT16
+    FLIGHT_MAX_PITCH_ANGLE_DEGS         INT16
+
+    FLIGHT_FLAPERON_SCALE_FACTOR        FLOAT
+    FLIGHT_MAX_FLAPERON                 INT16
+
+    FLIGHT_REVERSE_RUDDER_MIX           BOOL
+    FLIGHT_RUDDER_MIX_SCALE_FACTOR      FLOAT
+
+    // PIDFConfig
+    PIDF_ROLL_KP                        FLOAT
+    PIDF_ROLL_KI                        FLOAT
+    PIDF_ROLL_KD                        FLOAT
+    PIDF_ROLL_KF                        FLOAT
+    PIDF_ROLL_I_WINDUP_MAX              FLOAT
+
+    PIDF_PITCH_KP                       FLOAT
+    PIDF_PITCH_KI                       FLOAT
+    PIDF_PITCH_KD                       FLOAT
+    PIDF_PITCH_KF                       FLOAT
+    PIDF_PITCH_I_WINDUP_MAX             FLOAT
+
+    PIDF_YAW_KP                         FLOAT
+    PIDF_YAW_KI                         FLOAT
+    PIDF_YAW_KD                         FLOAT
+    PIDF_YAW_KF                         FLOAT
+    PIDF_YAW_I_WINDUP_MAX               FLOAT
+
+    // IMUConfig
+    IMU_ACC_BIAS_X                      FLOAT
+    IMU_ACC_BIAS_Y                      FLOAT
+    IMU_ACC_BIAS_Z                      FLOAT
+
+    IMU_GYRO_BIAS_X                     FLOAT
+    IMU_GYRO_BIAS_Y                     FLOAT
+    IMU_GYRO_BIAS_Z                     FLOAT
+
+    IMU_CALIBRATED                      BOOL
+
+    // FilterConfig
+    FILTER_SLEW_RATE                    INT16
+    FILTER_LPF_FREQ                     INT16
+    FILTER_PROCESS_DT                   FLOAT
+```
+
+## Airframe Types
+
+```bash
+CONVENTIONAL                            0
+V_TAIL                                  1
+FLYING_WING_RUDDER                      2
+FLYING_WING_NO_RUDDER                   3
+RUDDER_ELEVATOR                         4
+AILERON_ELEVATOR                        5
+CUSTOM                                  6
+```
+
+---
+
 ## Starting the Tool
 
 From the XPilot project directory, run:
