@@ -176,27 +176,11 @@ Use the names defined by the current `ConfigID` table in `xp_serial.py`.
 
 ## View Configuration
 
-Use the configuration display command to view the current XPilot configuration IDs.
+Use the configuration display command to view the current XPilot config table.
 
 ```text
 config
 ```
-
-This requests the configuration values from XPilot and displays them in a formatted configuration table.
-
-Use this command to verify:
-
-* Current parameter values
-* Configuration changes
-* Loaded aircraft profiles
-* PID gains
-* Radio calibration
-* Servo configuration
-* Flight-control limits
-* Filter settings
-* Airframe configuration
-
-It is good practice to run `config` after making multiple changes to verify that the expected values are active.
 
 ---
 
