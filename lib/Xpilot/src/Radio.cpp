@@ -55,7 +55,7 @@ void Radio::processInput(void)
 #endif
     }
 
-    // FailSafe();
+    FailSafe();
 }
 
 void Radio::setPWM(int16_t &dest, uint32_t pulse, CHANNELS ch)
@@ -100,8 +100,6 @@ void Radio::setPWM(int16_t &dest, uint32_t pulse, CHANNELS ch)
 void Radio::FailSafe()
 {
     uint32_t now = millis();
-
-    static uint32_t signalLossTimeMs = 0;
 
     const bool noRecentSignal = (now - lastValidRxTimeMs) >= RX_TIMEOUT_MS;
 

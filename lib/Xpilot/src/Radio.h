@@ -70,10 +70,13 @@ public:
     Radio(void);
     void init(void);
     void processInput(void);
+
     static void processInputTask(void *ctx) // Trampoline function for the scheduler to call the processInput function
     {
         static_cast<Radio *>(ctx)->processInput();
     }
+
+    void setPWM(int16_t &, uint32_t, Radio::CHANNELS);
 
     int16_t getPWM(CHANNELS ch)
     {
@@ -87,8 +90,6 @@ public:
 
         return RX_PWM_TRIM;
     }
-
-    void setPWM(int16_t &, uint32_t, Radio::CHANNELS);
 
     THREE_POS_SW getThreeSwitchPos(CHANNELS ch)
     {
@@ -108,11 +109,17 @@ public:
 
     uint32_t getLastValidRxTimeMs(void) { return lastValidRxTimeMs; }
 
+    uint32_t getSignalLossTimeMs(void) { return signalLossTimeMs; }
+
     bool inFailsafe(void) { return failSafe; }
 
 private:
     int16_t raw[CHANNELS::CHANNEL_COUNT];
+
     uint32_t lastValidRxTimeMs;
+
+    uint32_t signalLossTimeMs;
+
     bool failSafe;
     bool failSafeTimerStarted;
     void FailSafe();
