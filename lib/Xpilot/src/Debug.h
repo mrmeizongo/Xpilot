@@ -74,7 +74,7 @@ void Xpilot::printIO(void)
     Serial.print("Rudder: ");
     Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
 
-#if defined(USE_AUX2)
+#if defined(USE_FLAPERONS)
     Serial.print("Flaperon: ");
     Serial.print(radio.getPWM(Radio::CHANNELS::AUX2));
     Serial.print("\t\t\t");

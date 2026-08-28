@@ -6,7 +6,7 @@
 #include "SystemConfig.h"
 #include "FlightConfigAccess.h"
 
-#define SERIAL_BAUD_RATE 250000 // Serial baud rate
+static constexpr uint32_t SERIAL_BAUD_RATE = 250000; // Serial baud rate
 
 // Task handlers for the scheduler to manage periodic tasks
 uint8_t Xpilot::imuTaskId = 0;

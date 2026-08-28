@@ -4,18 +4,17 @@
 #define SYSTEM_CONFIG_VERSION "3"
 
 // Uncomment to use flaperons
-// Flaperons are ailerons that can be used as flaps
 // #define USE_FLAPERONS
 
 #if defined(USE_FLAPERONS)
 #define USE_AUXIN2
 #endif
 
-// Uncomment to enable auxiliary output channel 1
-// #define USE_AUXOUT1
-
 // Uncomment to enable auxiliary input 3
 // #define USE_AUXIN3
+
+// Uncomment to enable auxiliary output channel 1
+// #define USE_AUXOUT1
 
 // Enable communication with xp_serial.py
 #define USE_SERIAL_TASK
