@@ -9,7 +9,7 @@ volatile static uint32_t aileronCurrentTime = 0, aileronStartTime = 0, aileronPu
 volatile static uint32_t elevatorCurrentTime = 0, elevatorStartTime = 0, elevatorPulses = 0;
 volatile static uint32_t rudderCurrentTime = 0, rudderStartTime = 0, rudderPulses = 0;
 volatile static uint32_t aux1CurrentTime = 0, aux1StartTime = 0, aux1Pulses = 0;
-#if defined(USE_AUX2)
+#if defined(USE_AUXIN2)
 volatile static uint32_t aux2CurrentTime = 0, aux2StartTime = 0, aux2Pulses = 0;
 #endif
 // -------------------------
@@ -18,6 +18,8 @@ Radio::Radio(void)
 {
     failSafe = false;
     failSafeTimerStarted = false;
+
+    signalLossTimeMs = 0;
 }
 
 void Radio::init(void)
@@ -46,75 +48,90 @@ void Radio::processInput(void)
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        setPWM(raw[CHANNELS::ROLL], aileronPulses, CHANNELS::ROLL);
-        setPWM(raw[CHANNELS::PITCH], elevatorPulses, CHANNELS::PITCH);
-        setPWM(raw[CHANNELS::YAW], rudderPulses, CHANNELS::YAW);
-        setPWM(raw[CHANNELS::AUX1], aux1Pulses, CHANNELS::AUX1);
+        setPWM(aileronPulses, CHANNELS::ROLL);
+        setPWM(elevatorPulses, CHANNELS::PITCH);
+        setPWM(rudderPulses, CHANNELS::YAW);
+        setPWM(aux1Pulses, CHANNELS::AUX1);
 #if defined(USE_AUX2)
-        setPWM(raw[CHANNELS::AUX2], aux2Pulses, CHANNELS::AUX2);
+        setPWM(aux2Pulses, CHANNELS::AUX2);
 #endif
     }
 
     FailSafe();
 }
 
-void Radio::setPWM(int16_t &dest, uint32_t pulse, CHANNELS ch)
+void Radio::setPWM(uint32_t pulse, CHANNELS ch)
 {
-    auto setIfValid = [](int16_t &dest, uint32_t pulse, uint16_t minPulse, uint16_t maxPulse)
-    {
-        if (pulse >= minPulse && pulse <= maxPulse)
-            dest = static_cast<int16_t>(pulse);
-    };
+    uint16_t minPulse;
+    uint16_t maxPulse;
 
     switch (ch)
     {
     case CHANNELS::ROLL:
-        setIfValid(dest, pulse, config().rollRC.min, config().rollRC.max);
+        minPulse = config().rollRC.min;
+        maxPulse = config().rollRC.max;
         break;
 
     case CHANNELS::PITCH:
-        setIfValid(dest, pulse, config().pitchRC.min, config().pitchRC.max);
+        minPulse = config().pitchRC.min;
+        maxPulse = config().pitchRC.max;
         break;
 
     case CHANNELS::YAW:
-        setIfValid(dest, pulse, config().yawRC.min, config().yawRC.max);
+        minPulse = config().yawRC.min;
+        maxPulse = config().yawRC.max;
         break;
 
     case CHANNELS::AUX1:
 #if defined(USE_AUX2)
     case CHANNELS::AUX2:
 #endif
-        setIfValid(dest, pulse, RX_PWM_MIN, RX_PWM_MAX);
+        minPulse = RX_PWM_MIN;
+        maxPulse = RX_PWM_MAX;
         break;
 
     default:
-        break;
+        return;
     }
+
+    if (pulse < minPulse || pulse > maxPulse)
+        return;
+
+    raw[ch] = static_cast<int16_t>(pulse);
+    lastValidRxTimeMs[ch] = millis();
 }
 
 /**
- * Failsafe logic is highly user/system peculiar, modify test logic accordingly
- * The implemented failsafe assumes roll, pitch and yaw go to maximum on signal loss
- * Failsafe is triggered after 2 seconds if signal is not recovered
+ * Only roll, pitch and yaw channels are monitored for a failsafe
+ * For this failsafe technique to work, tx should be configured to set all channels to max on signal loss
  */
 void Radio::FailSafe()
 {
-    uint32_t now = millis();
+    const uint32_t now = millis();
+    const uint8_t req = requiredChannels(config().airframeType.type);
 
-    const bool noRecentSignal = (now - lastValidRxTimeMs) >= RX_TIMEOUT_MS;
+    bool timeout = false;
+    bool rxFailsafe = true;
 
-    // Check transmitter failsafe position i.e. max for roll, pitch and yaw
-    const bool rxFailsafePosition = (abs(RX_PWM_MAX - raw[CHANNELS::ROLL]) <= RX_FAILSAFE_TOLERANCE) &&
-                                    (abs(RX_PWM_MAX - raw[CHANNELS::PITCH]) <= RX_FAILSAFE_TOLERANCE) &&
-                                    (abs(RX_PWM_MAX - raw[CHANNELS::YAW]) <= RX_FAILSAFE_TOLERANCE);
+    for (uint8_t i = 0; i < 3; ++i)
+    {
+        const uint8_t mask = 1 << i;
 
-    const bool signalLost = noRecentSignal || rxFailsafePosition;
+        if (!(req & mask))
+            continue;
+
+        timeout |= (now - lastValidRxTimeMs[i]) >= RX_TIMEOUT_MS;
+
+        rxFailsafe &=
+            abs(RX_PWM_MAX - raw[i]) <= RX_FAILSAFE_TOLERANCE;
+    }
+
+    const bool signalLost = timeout || rxFailsafe;
 
     if (!signalLost)
     {
         failSafe = false;
         failSafeTimerStarted = false;
-        lastValidRxTimeMs = now;
         return;
     }
 

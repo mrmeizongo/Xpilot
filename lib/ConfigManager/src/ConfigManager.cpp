@@ -56,10 +56,13 @@ void ConfigManager::loadDefaults()
 
     _config.flightConfig.maxRollRateDegs = 45;
     _config.flightConfig.maxPitchRateDegs = 45;
-    _config.flightConfig.maxPitchRateDegs = 45;
+    _config.flightConfig.maxYawRateDegs = 45;
 
     _config.flightConfig.maxRollAngleDegs = 45;
     _config.flightConfig.maxPitchAngleDegs = 45;
+
+    _config.flightConfig.rollAngleKp = 1.;
+    _config.flightConfig.pitchAngleKp = 1.f;
 
     _config.flightConfig.flaperonScaleFactor = 1.f;
     _config.flightConfig.flaperonMax = 500;
@@ -219,6 +222,16 @@ bool ConfigManager::get(
     case ConfigID::FLIGHT_MAX_PITCH_ANGLE_DEGS:
         type = ConfigValueType::INT16;
         value.i16 = _config.flightConfig.maxPitchAngleDegs;
+        break;
+
+    case ConfigID::FLIGHT_ROLL_ANGLE_KP:
+        type = ConfigValueType::FLOAT;
+        value.f = _config.flightConfig.rollAngleKp;
+        break;
+
+    case ConfigID::FLIGHT_PITCH_ANGLE_KP:
+        type = ConfigValueType::FLOAT;
+        value.f = _config.flightConfig.pitchAngleKp;
         break;
 
     case ConfigID::FLIGHT_FLAPERON_SCALE_FACTOR:
@@ -472,6 +485,14 @@ bool ConfigManager::set(
         _config.flightConfig.maxPitchRateDegs = value.i16;
         break;
 
+    case ConfigID::FLIGHT_ROLL_ANGLE_KP:
+        _config.flightConfig.rollAngleKp = value.f;
+        break;
+
+    case ConfigID::FLIGHT_PITCH_ANGLE_KP:
+        _config.flightConfig.pitchAngleKp = value.f;
+        break;
+
     case ConfigID::FLIGHT_FLAPERON_SCALE_FACTOR:
         _config.flightConfig.flaperonScaleFactor = value.f;
         _config.flightConfig.flaperonMax =
@@ -648,6 +669,9 @@ bool ConfigManager::validate(
     case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
     case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
     case ConfigID::PIDF_YAW_I_WINDUP_MAX:
+
+    case ConfigID::FLIGHT_ROLL_ANGLE_KP:
+    case ConfigID::FLIGHT_PITCH_ANGLE_KP:
 
         return value.f >= 0.f &&
                value.f <= 1000.f;

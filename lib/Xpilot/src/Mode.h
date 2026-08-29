@@ -104,7 +104,7 @@ public:
     static void runTask(void *);
     static void updateInput(void *);
 
-    static void updateAHRS(float (&)[3], float (&)[3], void *);
+    static void updateAHRS(float (&)[3], float (&)[3]);
 
     static void configSub(ConfigID, void *);
 
@@ -119,14 +119,6 @@ public:
 
 #if defined(USE_FLAPERONS)
     static int16_t getFlaperon(void) { return flaperonOut; }
-    static void flaperonInput(void)
-    {
-        // flaperonOut = getRawInput(radio.getPWM(Radio::CHANNELS::AUX2), rollConfig.trim, rollConfig.min, 0, fConfig.flaperonMax);
-        int16_t flapPwm = radio.getPWM(Radio::CHANNELS::AUX2);
-        flapPwm = constrain(flapPwm, RX_PWM_MIN, RX_PWM_TRIM);
-        flaperonOut = static_cast<int16_t>(
-            (static_cast<int32_t>(RX_PWM_TRIM - flapPwm) * fConfig.flaperonMax) / 500);
-    }
 #endif
 
     void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
@@ -165,14 +157,6 @@ protected:
     static PIDF<int16_t> rollPIDF;
     static PIDF<int16_t> pitchPIDF;
     static PIDF<int16_t> yawPIDF;
-
-    static Config::RCConfig rollConfig;
-    static Config::RCConfig pitchConfig;
-    static Config::RCConfig yawConfig;
-
-    static Config::FlightConfig fConfig;
-
-    static Config::SRVConfig srvConfig;
 
     static AirplaneMixer airplaneMixer;
 };

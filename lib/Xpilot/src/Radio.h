@@ -34,14 +34,43 @@ Flight stabilization software
 #define _RADIO_H
 
 #include <stdint.h>
+#include "Config.h"
 #include "SystemConfig.h"
 
 constexpr int16_t RX_PWM_MIN = 1000;           // Default owest pwm expected from transmitter
 constexpr int16_t RX_PWM_MAX = 2000;           // Default highest pwm expected from transmitter
 constexpr int16_t RX_PWM_TRIM = 1500;          // Mid pwm expected from transmitter
 constexpr int16_t RX_FAILSAFE_TOLERANCE = 200; // Tolerance used for determining a failsafe condition
-constexpr int16_t RX_TIMEOUT_MS = 500;         // Receiver timeout
+constexpr int16_t RX_TIMEOUT_MS = 100;         // Rx timeout; 5 missed PWM frames triggers a failsafe
 constexpr int16_t RX_3_SW_POS_THRESHOLD = 276; // 3 position switch input separator
+
+enum CHANNELMASK : uint8_t
+{
+    REQ_ROLL = 1 << 0,
+    REQ_PITCH = 1 << 1,
+    REQ_YAW = 1 << 2,
+};
+
+inline uint8_t requiredChannels(Config::AirframeType type)
+{
+    switch (type)
+    {
+    case Config::AirframeType::CONVENTIONAL:
+    case Config::AirframeType::V_TAIL:
+    case Config::AirframeType::FLYING_WING_RUDDER:
+        return REQ_ROLL | REQ_PITCH | REQ_YAW;
+
+    case Config::AirframeType::FLYING_WING_NO_RUDDER:
+    case Config::AirframeType::AILERON_ELEVATOR:
+        return REQ_ROLL | REQ_PITCH;
+
+    case Config::AirframeType::RUDDER_ELEVATOR:
+        return REQ_PITCH | REQ_YAW;
+
+    default:
+        return 0;
+    }
+}
 
 class Radio
 {
@@ -52,7 +81,7 @@ public:
         PITCH,
         YAW,
         AUX1,
-#if defined(USE_AUX2)
+#if defined(USE_AUXIN2)
         AUX2,
 #endif
         CHANNEL_COUNT
@@ -68,7 +97,9 @@ public:
     };
 
     Radio(void);
+
     void init(void);
+
     void processInput(void);
 
     static void processInputTask(void *ctx) // Trampoline function for the scheduler to call the processInput function
@@ -76,7 +107,7 @@ public:
         static_cast<Radio *>(ctx)->processInput();
     }
 
-    void setPWM(int16_t &, uint32_t, Radio::CHANNELS);
+    void setPWM(uint32_t, Radio::CHANNELS);
 
     int16_t getPWM(CHANNELS ch)
     {
@@ -88,7 +119,7 @@ public:
             return raw[ch];
         }
 
-        return RX_PWM_TRIM;
+        return -1;
     }
 
     THREE_POS_SW getThreeSwitchPos(CHANNELS ch)
@@ -107,7 +138,13 @@ public:
         return THREE_POS_SW::UNDEFINED;
     }
 
-    uint32_t getLastValidRxTimeMs(void) { return lastValidRxTimeMs; }
+    uint32_t getLastValidRxTimeMs(CHANNELS ch)
+    {
+        if (ch < CHANNELS::CHANNEL_COUNT)
+            return lastValidRxTimeMs[ch];
+
+        return 0;
+    }
 
     uint32_t getSignalLossTimeMs(void) { return signalLossTimeMs; }
 
@@ -116,12 +153,14 @@ public:
 private:
     int16_t raw[CHANNELS::CHANNEL_COUNT];
 
-    uint32_t lastValidRxTimeMs;
+    uint32_t lastValidRxTimeMs[CHANNELS::CHANNEL_COUNT];
 
     uint32_t signalLossTimeMs;
 
     bool failSafe;
+
     bool failSafeTimerStarted;
+
     void FailSafe();
 };
 

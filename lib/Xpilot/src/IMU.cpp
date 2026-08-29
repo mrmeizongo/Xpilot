@@ -56,13 +56,12 @@ void IMU::getLatestReadings(void)
         return;
     }
 
-    _consumer.cb(_rpy, _g, _consumer.ctx);
+    _consumer(_rpy, _g);
 }
 
-void IMU::registerConsumer(Callback cb, void *ctx)
+void IMU::registerConsumer(Consumer cb)
 {
-    _consumer.cb = cb;
-    _consumer.ctx = ctx;
+    _consumer = cb;
 }
 
 void IMU::calibrate(void)

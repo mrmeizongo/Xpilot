@@ -50,6 +50,9 @@ struct Config
         int16_t maxRollAngleDegs;
         int16_t maxPitchAngleDegs;
 
+        float rollAngleKp;
+        float pitchAngleKp;
+
         float flaperonScaleFactor;
         int16_t flaperonMax;
 

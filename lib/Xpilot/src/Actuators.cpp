@@ -63,20 +63,12 @@ void Actuators::writeServos(void)
 // Write all servo output values at once using an array
 void Actuators::writeServos(const int16_t (&SRVout)[CHANNEL_COUNT])
 {
-    int16_t srv1 = constrain(SRVout[Actuators::Channel::CH1], config().srvConfig.min, config().srvConfig.max);
-    int16_t srv2 = constrain(SRVout[Actuators::Channel::CH2], config().srvConfig.min, config().srvConfig.max);
-    int16_t srv3 = constrain(SRVout[Actuators::Channel::CH3], config().srvConfig.min, config().srvConfig.max);
-    int16_t srv4 = constrain(SRVout[Actuators::Channel::CH4], config().srvConfig.min, config().srvConfig.max);
+    controlServo[CH1].writeMicroseconds(SRVout[CH1]);
+    controlServo[CH2].writeMicroseconds(SRVout[CH2]);
+    controlServo[CH3].writeMicroseconds(SRVout[CH3]);
+    controlServo[CH4].writeMicroseconds(SRVout[CH4]);
 #if defined(USE_AUXOUT1)
-    uint16_t srv5 = constrain((uint16_t)SRVout[Actuators::Channel::CH5], config().actuatorSRV.min, config().actuatorSRV.max);
-#endif
-
-    controlServo[CH1].writeMicroseconds(srv1);
-    controlServo[CH2].writeMicroseconds(srv2);
-    controlServo[CH3].writeMicroseconds(srv3);
-    controlServo[CH4].writeMicroseconds(srv4);
-#if defined(USE_AUXOUT1)
-    controlServo[CH5].writeMicroseconds(srv5);
+    controlServo[CH5].writeMicroseconds(SRVout[CH5]);
 #endif
 }
 

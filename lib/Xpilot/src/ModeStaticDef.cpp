@@ -17,14 +17,6 @@ PIDF<int16_t> Mode::rollPIDF;
 PIDF<int16_t> Mode::pitchPIDF;
 PIDF<int16_t> Mode::yawPIDF;
 
-Config::RCConfig Mode::rollConfig;
-Config::RCConfig Mode::pitchConfig;
-Config::RCConfig Mode::yawConfig;
-
-Config::FlightConfig Mode::fConfig;
-
-Config::SRVConfig Mode::srvConfig;
-
 AirplaneMixer Mode::airplaneMixer;
 
 SlewRateLimiter<int16_t> Mode::rollSlew;

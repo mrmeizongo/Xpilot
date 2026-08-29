@@ -7,14 +7,6 @@ void Mode::init(void)
     airplaneMixer.setAirframeType(config().airframeType.type);
     airplaneMixer.setCommandLimit(config().flightConfig.controlResolution);
 
-    rollConfig = config().rollRC;
-    pitchConfig = config().pitchRC;
-    yawConfig = config().yawRC;
-
-    fConfig = config().flightConfig;
-
-    srvConfig = config().srvConfig;
-
     rollSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
     pitchSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
     yawSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
@@ -28,7 +20,7 @@ void Mode::init(void)
     yawPIDF = PIDF<int16_t>{config().yawPIDF.Kp, config().yawPIDF.Ki, config().yawPIDF.Kd, config().yawPIDF.Kf,
                             config().yawPIDF.iWindUpMax, config().processFilter.processDT, config().processFilter.lowPassFilterFreq};
 
-    imu.registerConsumer(updateAHRS, this);
+    imu.registerConsumer(updateAHRS);
     configManager.registerSubscriber(configSub, this);
 }
 
@@ -120,16 +112,23 @@ void Mode::configSub(ConfigID id, void *ctx)
 void Mode::update(void)
 {
 #if defined(USE_FLAPERONS)
-    flaperonInput();
+    /// TODO: Untested
+    // flaperonOut = getRawInput(radio.getPWM(Radio::CHANNELS::AUX2), config().rollRC.trim, config().rollRC.min, 0, config().flightConfig.flaperonMax);
+    int16_t flapPwm = radio.getPWM(Radio::CHANNELS::AUX2);
+    flapPwm = constrain(flapPwm, RX_PWM_MIN, RX_PWM_TRIM);
+    flaperonOut = static_cast<int16_t>(
+        (static_cast<int32_t>(RX_PWM_TRIM - flapPwm) * config().flightConfig.flaperonMax) / 500);
 #endif
 }
 
 void Mode::rudderMixer(void)
 {
-    output_rpy[2] = output_rpy[2] + (output_rpy[0] * fConfig.rudderMixScale);
+    int16_t contribution = static_cast<int16_t>(input_rpy[0] * config().flightConfig.rudderMixScale);
 
-    if (fConfig.reverseRudderMix)
-        output_rpy[2] = -output_rpy[2];
+    if (config().flightConfig.reverseRudderMix)
+        input_rpy[2] -= contribution;
+    else
+        input_rpy[2] += contribution;
 }
 
 void Mode::updateInput(void *ctx)
@@ -150,9 +149,8 @@ void Mode::runTask(void *ctx)
     }
 }
 
-void Mode::updateAHRS(float (&rpy)[3], float (&g)[3], void *ctx)
+void Mode::updateAHRS(float (&rpy)[3], float (&g)[3])
 {
-    (void)ctx; // Discard ctx since this is a static function that can be called directly
     imu_rpy[0] = rpy[0];
     imu_rpy[1] = rpy[1];
     imu_rpy[2] = rpy[2];

@@ -144,47 +144,50 @@ CONFIG_NAMES = {
     20: "FLIGHT_MAX_ROLL_ANGLE_DEGS",
     21: "FLIGHT_MAX_PITCH_ANGLE_DEGS",
 
-    22: "FLIGHT_FLAPERON_SCALE_FACTOR",
-    23: "FLIGHT_MAX_FLAPERON",
+    22: "FLIGHT_ROLL_ANGLE_KP",
+    23: "FLIGHT_PITCH_ANGLE_KP",
 
-    24: "FLIGHT_REVERSE_RUDDER_MIX",
-    25: "FLIGHT_RUDDER_MIX_SCALE_FACTOR",
+    24: "FLIGHT_FLAPERON_SCALE_FACTOR",
+    25: "FLIGHT_MAX_FLAPERON",
 
-    26: "PIDF_ROLL_KP",
-    27: "PIDF_ROLL_KI",
-    28: "PIDF_ROLL_KD",
-    29: "PIDF_ROLL_KF",
-    30: "PIDF_ROLL_I_WINDUP_MAX",
+    26: "FLIGHT_REVERSE_RUDDER_MIX",
+    27: "FLIGHT_RUDDER_MIX_SCALE_FACTOR",
 
-    31: "PIDF_PITCH_KP",
-    32: "PIDF_PITCH_KI",
-    33: "PIDF_PITCH_KD",
-    34: "PIDF_PITCH_KF",
-    35: "PIDF_PITCH_I_WINDUP_MAX",
+    28: "PIDF_ROLL_KP",
+    29: "PIDF_ROLL_KI",
+    30: "PIDF_ROLL_KD",
+    31: "PIDF_ROLL_KF",
+    32: "PIDF_ROLL_I_WINDUP_MAX",
 
-    36: "PIDF_YAW_KP",
-    37: "PIDF_YAW_KI",
-    38: "PIDF_YAW_KD",
-    39: "PIDF_YAW_KF",
-    40: "PIDF_YAW_I_WINDUP_MAX",
+    33: "PIDF_PITCH_KP",
+    34: "PIDF_PITCH_KI",
+    35: "PIDF_PITCH_KD",
+    36: "PIDF_PITCH_KF",
+    37: "PIDF_PITCH_I_WINDUP_MAX",
 
-    41: "IMU_ACC_BIAS_X",
-    42: "IMU_ACC_BIAS_Y",
-    43: "IMU_ACC_BIAS_Z",
+    38: "PIDF_YAW_KP",
+    39: "PIDF_YAW_KI",
+    40: "PIDF_YAW_KD",
+    41: "PIDF_YAW_KF",
+    42: "PIDF_YAW_I_WINDUP_MAX",
 
-    44: "IMU_GYRO_BIAS_X",
-    45: "IMU_GYRO_BIAS_Y",
-    46: "IMU_GYRO_BIAS_Z",
+    43: "IMU_ACC_BIAS_X",
+    44: "IMU_ACC_BIAS_Y",
+    45: "IMU_ACC_BIAS_Z",
 
-    47: "IMU_CALIBRATED",
+    46: "IMU_GYRO_BIAS_X",
+    47: "IMU_GYRO_BIAS_Y",
+    48: "IMU_GYRO_BIAS_Z",
 
-    48: "FILTER_SLEW_RATE",
-    49: "FILTER_LPF_FREQ",
-    50: "FILTER_PROCESS_DT",
+    49: "IMU_CALIBRATED",
+
+    50: "FILTER_SLEW_RATE",
+    51: "FILTER_LPF_FREQ",
+    52: "FILTER_PROCESS_DT",
 }
 
 
-CONFIG_COUNT = 51
+CONFIG_COUNT = 53
 
 
 CONFIG_IDS_BY_NAME = {
@@ -235,47 +238,50 @@ CONFIG_TYPES = {
     21: ValueType.INT16,
 
     22: ValueType.FLOAT,
-    23: ValueType.INT16,
+    23: ValueType.FLOAT,
 
-    24: ValueType.BOOL,
-    25: ValueType.FLOAT,
+    24: ValueType.FLOAT,
+    25: ValueType.INT16,
+
+    26: ValueType.BOOL,
+    27: ValueType.FLOAT,
 
     # RollPIDF
-    26: ValueType.FLOAT,
-    27: ValueType.FLOAT,
     28: ValueType.FLOAT,
     29: ValueType.FLOAT,
     30: ValueType.FLOAT,
-
-    # PitchPIDF
     31: ValueType.FLOAT,
     32: ValueType.FLOAT,
+
+    # PitchPIDF
     33: ValueType.FLOAT,
     34: ValueType.FLOAT,
     35: ValueType.FLOAT,
-
-    # YawPIDF
     36: ValueType.FLOAT,
     37: ValueType.FLOAT,
+
+    # YawPIDF
     38: ValueType.FLOAT,
     39: ValueType.FLOAT,
     40: ValueType.FLOAT,
-
-    # IMUConfig
     41: ValueType.FLOAT,
     42: ValueType.FLOAT,
-    43: ValueType.FLOAT,
 
+    # IMUConfig
+    43: ValueType.FLOAT,
     44: ValueType.FLOAT,
     45: ValueType.FLOAT,
-    46: ValueType.FLOAT,
 
-    47: ValueType.BOOL,
+    46: ValueType.FLOAT,
+    47: ValueType.FLOAT,
+    48: ValueType.FLOAT,
+
+    49: ValueType.BOOL,
 
     # FilterConfig
-    48: ValueType.INT16,
-    49: ValueType.INT16,
-    50: ValueType.FLOAT,
+    50: ValueType.INT16,
+    51: ValueType.INT16,
+    52: ValueType.FLOAT,
 }
 
 
@@ -1208,7 +1214,7 @@ def main():
     try:
         while True:
             line = input(
-                "XPilot> "
+                "\nXPilot> "
             ).strip()
 
             if not line:

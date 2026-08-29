@@ -5,13 +5,7 @@
 class IMU
 {
 public:
-    using Callback = void (*)(float (&)[3], float (&)[3], void *);
-
-    struct Consumer
-    {
-        Callback cb;
-        void *ctx;
-    };
+    using Consumer = void (*)(float (&)[3], float (&)[3]);
 
     IMU(void);
     void init(void);
@@ -35,7 +29,7 @@ public:
     /// @brief              Register a callback to be invoked when new imu data is received
     /// @param callback     Function to execute
     /// @param ctx          Context pointer passed to the callback
-    void registerConsumer(Callback, void *);
+    void registerConsumer(Consumer);
 
 private:
     /*
