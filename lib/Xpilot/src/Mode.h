@@ -91,12 +91,10 @@ public:
 
     virtual const char *modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
 
-    virtual void enter(void) {} // Preliminary setup on mode enter
+    virtual void enter(void) {} // Called on mode enter
     virtual void update(void);  // Convert user input to mode specific targets, should be called first in the run function
     virtual void run(void) = 0; // High level processing specific to this mode
     virtual void exit(void) {}  // Perform any clean up before switching to another mode
-
-    virtual bool imuAssisted(void) const { return false; } // Does this mode use the imu
 
     void init(void);
 
@@ -108,7 +106,7 @@ public:
 
     static void configSub(ConfigID, void *);
 
-    // Debug functions to get outputs for testing and tuning purposes.
+    // Debug functions to get outputs for testing and tuning
     static int16_t getRollInput(void) { return input_rpy[0]; }
     static int16_t getPitchInput(void) { return input_rpy[1]; }
     static int16_t getYawInput(void) { return input_rpy[2]; }
@@ -121,8 +119,8 @@ public:
     static int16_t getFlaperon(void) { return flaperonOut; }
 #endif
 
-    void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; } // Set the mode switch position. Should be called from main set up function for config
-    Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }            // Return mode switch position for this mode
+    void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }
+    Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
 
 protected:
     static float imu_rpy[3]; // To hold imu rpy values
@@ -161,7 +159,7 @@ protected:
     static AirplaneMixer airplaneMixer;
 };
 
-// Manual control of flight surfaces - USE WITH CAUTION. FOR ADVANCED FLYERS ONLY!
+// Manual control of flight surfaces
 class PassthroughMode : public Mode
 {
 public:
@@ -179,7 +177,6 @@ public:
     void enter(void) override;
     void update(void) override;
     void run(void) override;
-    bool imuAssisted(void) const override { return true; }
 };
 
 // Gyro-based rate control with wing leveling on stick release
@@ -190,7 +187,6 @@ public:
     void enter(void) override;
     void update(void) override;
     void run(void) override;
-    bool imuAssisted(void) const override { return true; }
 };
 
 #endif // _MODE_H
