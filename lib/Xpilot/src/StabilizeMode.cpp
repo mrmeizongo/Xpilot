@@ -14,13 +14,13 @@ void StabilizeMode::update(void)
         return;
     }
 
-    input_rpy[0] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::ROLL), config().rollRC.min, config().rollRC.trim, config().rollRC.max, config().rollRC.deadband) *
+    input_rpy[0] = normalizeInput(radio.getPWM(Radio::CHANNELS::ROLL), config().rollRC.min, config().rollRC.trim, config().rollRC.max, config().rollRC.deadband) *
                    config().flightConfig.maxRollAngleDegs;
 
-    input_rpy[1] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::PITCH), config().pitchRC.min, config().pitchRC.trim, config().pitchRC.max, config().pitchRC.deadband) *
+    input_rpy[1] = normalizeInput(radio.getPWM(Radio::CHANNELS::PITCH), config().pitchRC.min, config().pitchRC.trim, config().pitchRC.max, config().pitchRC.deadband) *
                    config().flightConfig.maxPitchAngleDegs;
 
-    input_rpy[2] = getNormalizedInput(radio.getPWM(Radio::CHANNELS::YAW), config().yawRC.min, config().yawRC.trim, config().yawRC.max, config().yawRC.deadband) *
+    input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNELS::YAW), config().yawRC.min, config().yawRC.trim, config().yawRC.max, config().yawRC.deadband) *
                    config().flightConfig.maxYawRateDegs;
 
     Mode::update();

@@ -38,7 +38,7 @@ Flight stabilization software
 #include "Radio.h"
 #include "Actuators.h"
 
-inline float getNormalizedInput(
+inline float normalizeInput(
     int16_t rawVal,
     int16_t inputMin,
     int16_t inputTrim,
