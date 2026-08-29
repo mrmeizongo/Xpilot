@@ -29,7 +29,6 @@ void StabilizeMode::update(void)
 
 void StabilizeMode::run(void)
 {
-
     int16_t rollError = input_rpy[0] - imu_rpy[0];
     int16_t pitchError = input_rpy[1] - imu_rpy[1];
 
