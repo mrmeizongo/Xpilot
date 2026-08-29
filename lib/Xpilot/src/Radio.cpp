@@ -35,7 +35,7 @@ void Radio::init(void)
     // Auxiliary switch 1 setup
     pinMode(AUX1PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX1PIN_INT, CHANGE);
-#if defined(USE_AUX2)
+#if defined(USE_AUXIN2)
     // Auxiliary switch 2 setup
     pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
@@ -170,7 +170,7 @@ void PinChangeInterruptEvent(AUX1PIN_INT)(void)
     aux1StartTime = aux1CurrentTime;
 }
 
-#if defined(USE_AUX2)
+#if defined(USE_AUXIN2)
 void PinChangeInterruptEvent(AUX2PIN_INT)(void)
 {
     aux2CurrentTime = micros();
