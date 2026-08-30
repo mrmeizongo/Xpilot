@@ -48,7 +48,7 @@ enum CHANNELMASK : uint8_t
 {
     REQ_ROLL = 1 << 0,
     REQ_PITCH = 1 << 1,
-    REQ_YAW = 1 << 2,
+    REQ_YAW = 1 << 2
 };
 
 inline uint8_t requiredChannels(Config::AirframeType type)

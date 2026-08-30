@@ -117,11 +117,14 @@ void Radio::FailSafe()
     {
         const uint8_t mask = 1 << i;
 
+        // Skip iteration if rx channel is not required for this airframe
         if (!(req & mask))
             continue;
 
+        // Only one channel is required to trigger a timeout
         timeout |= (now - lastValidRxTimeMs[i]) >= RX_TIMEOUT_MS;
 
+        // All channels are required to trigger a failsafe
         rxFailsafe &=
             abs(RX_PWM_MAX - raw[i]) <= RX_FAILSAFE_TOLERANCE;
     }
