@@ -35,7 +35,7 @@ class Command:
     SAVE = 0x03
     LOAD = 0x04
     DEFAULTS = 0x05
-    IMU_CALIBRATE = 0x06
+    CALIBRATE_IMU = 0x06
 
     ACK = 0x80
     NACK = 0x81
@@ -57,7 +57,7 @@ COMMAND_NAMES = {
     Command.SAVE: "SAVE",
     Command.LOAD: "LOAD",
     Command.DEFAULTS: "DEFAULTS",
-    Command.IMU_CALIBRATE: "IMU_CALIBRATE",
+    Command.CALIBRATE_IMU: "CALIBRATE_IMU",
 
     Command.ACK: "ACK",
     Command.NACK: "NACK",
@@ -71,7 +71,7 @@ COMMAND_IDS_BY_NAME = {
     "SAVE": Command.SAVE,
     "LOAD": Command.LOAD,
     "DEFAULTS": Command.DEFAULTS,
-    "IMU_CALIBRATE": Command.IMU_CALIBRATE,
+    "CALIBRATE_IMU": Command.CALIBRATE_IMU,
 }
 
 
@@ -821,7 +821,7 @@ def parse_user_command(line):
         Command.SAVE,
         Command.LOAD,
         Command.DEFAULTS,
-        Command.IMU_CALIBRATE,
+        Command.CALIBRATE_IMU,
     ):
         if len(parts) != 1:
             name = COMMAND_NAMES.get(
@@ -1095,7 +1095,7 @@ and the airframe name.
 
     DEFAULTS
 
-    IMU_CALIBRATE
+    CALIBRATE_IMU
 
 
 {Color.MAGENTA}UTILITY COMMANDS{Color.RESET}

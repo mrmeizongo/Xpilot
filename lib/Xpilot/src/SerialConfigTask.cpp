@@ -138,7 +138,7 @@ void SerialConfigTask::processPacket(
         break;
     }
 
-    case SerialCommand::IMU_CALIBRATE:
+    case SerialCommand::CALIBRATE_IMU:
     {
         imu.calibrate();
 

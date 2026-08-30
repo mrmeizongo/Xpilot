@@ -47,7 +47,7 @@ enum class SerialCommand : uint8_t
     SAVE = 0x03,
     LOAD = 0x04,
     DEFAULTS = 0x05,
-    IMU_CALIBRATE = 0x06,
+    CALIBRATE_IMU = 0x06,
 
     ACK = 0x80,
     NACK = 0x81,

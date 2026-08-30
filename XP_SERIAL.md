@@ -14,7 +14,7 @@ SET <configID> <value>
 SAVE
 LOAD
 DEFAULTS
-IMU_CALIBRATE
+CALIBRATE_IMU
 ```
 
 ## Value Types
@@ -335,7 +335,7 @@ IMU calibration is performed using the dedicated calibration action rather than 
 Use the IMU calibration command:
 
 ```text
-IMU_CALIBRATE
+CALIBRATE_IMU
 ```
 
 XPilot performs the calibration procedure internally and generates the required bias values.
@@ -347,7 +347,7 @@ The calibration flag and generated biases can then be inspected through their co
 The intended configuration flow is:
 
 ```text
-IMU_CALIBRATE
+CALIBRATE_IMU
        ↓
 XPilot collects IMU samples
        ↓
