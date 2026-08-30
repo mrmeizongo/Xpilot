@@ -109,7 +109,7 @@ void SerialConfigTask::processPacket(
         }
         else
         {
-            sendNack(command);
+            sendAck(command, SerialCommand::NACK);
         }
 
         break;
@@ -123,7 +123,7 @@ void SerialConfigTask::processPacket(
         }
         else
         {
-            sendNack(command);
+            sendAck(command, SerialCommand::NACK);
         }
 
         break;
@@ -141,8 +141,10 @@ void SerialConfigTask::processPacket(
     case SerialCommand::IMU_CALIBRATE:
     {
         imu.calibrate();
+
         float accel[3], gyro[3];
         imu.getCalibration(accel, gyro);
+
         _configManager.setIMUCalibration(accel, gyro);
 
         sendAck(command);
@@ -150,7 +152,7 @@ void SerialConfigTask::processPacket(
     }
 
     default:
-        sendNack(command);
+        sendAck(command, SerialCommand::NACK);
         break;
     }
 }
@@ -161,7 +163,7 @@ void SerialConfigTask::processGet(
     if (packet.paramId >=
         static_cast<uint8_t>(ConfigID::COUNT))
     {
-        sendNack(SerialCommand::GET);
+        sendAck(SerialCommand::GET, SerialCommand::NACK);
         return;
     }
 
@@ -178,7 +180,7 @@ void SerialConfigTask::processSet(
     if (packet.paramId >=
         static_cast<uint8_t>(ConfigID::COUNT))
     {
-        sendNack(SerialCommand::SET);
+        sendAck(SerialCommand::SET, SerialCommand::NACK);
         return;
     }
 
@@ -200,8 +202,8 @@ void SerialConfigTask::processSet(
     }
     else
     {
-        sendNack(
-            SerialCommand::SET);
+        sendAck(
+            SerialCommand::SET, SerialCommand::NACK);
     }
 }
 
@@ -216,8 +218,8 @@ void SerialConfigTask::sendValue(
             value,
             type))
     {
-        sendNack(
-            SerialCommand::GET);
+        sendAck(
+            SerialCommand::GET, SerialCommand::NACK);
 
         return;
     }
@@ -246,7 +248,7 @@ void SerialConfigTask::sendValue(
 }
 
 void SerialConfigTask::sendAck(
-    SerialCommand originalCommand)
+    SerialCommand originalCommand, SerialCommand ack)
 {
     SerialPacket packet{};
 
@@ -255,26 +257,7 @@ void SerialConfigTask::sendAck(
 
     packet.command =
         static_cast<uint8_t>(
-            SerialCommand::ACK);
-
-    packet.paramId =
-        static_cast<uint8_t>(
-            originalCommand);
-
-    sendPacket(packet);
-}
-
-void SerialConfigTask::sendNack(
-    SerialCommand originalCommand)
-{
-    SerialPacket packet{};
-
-    packet.start =
-        SERIAL_PACKET_START;
-
-    packet.command =
-        static_cast<uint8_t>(
-            SerialCommand::NACK);
+            ack);
 
     packet.paramId =
         static_cast<uint8_t>(

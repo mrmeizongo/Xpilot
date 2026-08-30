@@ -70,10 +70,7 @@ private:
         ConfigID id);
 
     void sendAck(
-        SerialCommand originalCommand);
-
-    void sendNack(
-        SerialCommand originalCommand);
+        SerialCommand originalCommand, SerialCommand ack = SerialCommand::ACK);
 
     void sendPacket(
         SerialPacket &packet);
