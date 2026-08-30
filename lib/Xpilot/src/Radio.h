@@ -58,6 +58,7 @@ inline uint8_t requiredChannels(Config::AirframeType type)
     case Config::AirframeType::CONVENTIONAL:
     case Config::AirframeType::V_TAIL:
     case Config::AirframeType::FLYING_WING_RUDDER:
+    case Config::AirframeType::CUSTOM:
         return REQ_ROLL | REQ_PITCH | REQ_YAW;
 
     case Config::AirframeType::FLYING_WING_NO_RUDDER:
