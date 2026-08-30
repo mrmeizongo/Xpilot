@@ -52,7 +52,7 @@ void Radio::processInput(void)
         setPWM(elevatorPulses, CHANNELS::PITCH);
         setPWM(rudderPulses, CHANNELS::YAW);
         setPWM(aux1Pulses, CHANNELS::AUX1);
-#if defined(USE_AUX2)
+#if defined(USE_AUXIN2)
         setPWM(aux2Pulses, CHANNELS::AUX2);
 #endif
     }
@@ -83,7 +83,7 @@ void Radio::setPWM(uint32_t pulse, CHANNELS ch)
         break;
 
     case CHANNELS::AUX1:
-#if defined(USE_AUX2)
+#if defined(USE_AUXIN2)
     case CHANNELS::AUX2:
 #endif
         minPulse = RX_PWM_MIN;
