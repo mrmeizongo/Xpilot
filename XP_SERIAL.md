@@ -200,12 +200,6 @@ Example:
 GET FILTER_SLEW_RATE
 ```
 
-Another example:
-
-```text
-GET FLIGHT_CONTROL_RESOLUTION
-```
-
 The tool sends the corresponding `ConfigID` to XPilot and displays the value returned by the firmware.
 
 The numeric/hexadecimal `ConfigID` may also be used when necessary, but using the enum name is recommended because it is easier to read and less prone to mistakes.
@@ -228,18 +222,6 @@ Example:
 SET FILTER_SLEW_RATE 500
 ```
 
-Example:
-
-```text
-SET FLIGHT_CONTROL_RESOLUTION 1000
-```
-
-Example:
-
-```text
-SET AIRFRAME_TYPE 0
-```
-
 The requested value is sent to `ConfigManager::set()`.
 
 If the value passes validation and the operation succeeds:
@@ -249,15 +231,14 @@ If the value passes validation and the operation succeeds:
 3. Registered configuration subscribers are notified.
 4. Subsystems that cache the affected parameter can update their runtime state.
 
-This allows supported parameters to take effect without requiring the subsystem to continuously reread the configuration.
-
-Some parameters may intentionally require a reboot or configuration reload before their full effects are applied.
+This allows supported parameters to take effect without requiring a reboot.
+Some parameters intentionally require a reboot before their full effects are applied.
 
 ---
 
 ## Verify a SET Operation
 
-After changing an important parameter, verify it with `GET`:
+After changing an important parameter, verify it with the `GET` command:
 
 ```text
 SET FILTER_SLEW_RATE 500
@@ -268,9 +249,9 @@ GET FILTER_SLEW_RATE
 
 # Configuration Subscribers
 
-XPilot uses a subscriber system to notify runtime components when configuration values change.
+The XPilot configuration manager uses a subscriber system to notify runtime components when configuration values change.
 
-Subsystems register callbacks with `ConfigManager`.
+Subsystems register callbacks with `ConfigManager` on initialization.
 
 When a successful `SET` operation occurs:
 
@@ -304,7 +285,7 @@ Not every configuration parameter is necessarily intended to be applied live. Pa
 
 # LOAD
 
-`LOAD` reloads the stored XPilot configuration.
+`LOAD` reloads the stored XPilot configuration from EEPROM.
 
 Use:
 
@@ -326,7 +307,7 @@ Not every `ConfigID` that can be read is externally writable.
 
 Some parameters represent system-generated state rather than user configuration.
 
-A notable example is IMU calibration data.
+A notable example is IMU calibration bias data.
 
 The following types of values are intentionally read-only from the normal `SET` interface:
 
@@ -379,7 +360,7 @@ Calibration marked valid
 
 Do not attempt to reproduce an IMU calibration by manually modifying calibration-related configuration values.
 
-After calibration run the save command to store the biases in EEPROM
+After calibration run the `SAVE` command to store the biases in EEPROM
 
 ```bash
 SAVE
@@ -450,6 +431,7 @@ For normal parameter tuning:
 4. GET the parameter to verify it
 5. Test the new behavior
 6. Run config when needed to inspect the complete configuration
+7. SAVE config to EEPROM
 ```
 
 Example:
@@ -461,20 +443,7 @@ SET FILTER_SLEW_RATE 400
 
 GET FILTER_SLEW_RATE
 
-config
-```
-
-For aircraft setup:
-
-```text
-1. Connect XPilot
-2. Apply the aircraft JSON configuration profile
-3. Verify the loaded configuration
-4. Reboot XPilot if required
-5. Reconnect
-6. Run config
-7. Verify critical parameters
-8. Perform IMU calibration if required
+SAVE
 ```
 
 ---
@@ -594,7 +563,3 @@ ConfigManager
       ↓
 Config
 ```
-
-Runtime subsystems access the same XPilot configuration and may subscribe to `ConfigManager` when they need to respond immediately to configuration changes.
-
-System-generated values, such as IMU calibration results, should remain protected from arbitrary external writes and should only be changed through their corresponding XPilot actions.

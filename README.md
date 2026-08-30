@@ -110,7 +110,7 @@ To build and upload the project to the microcontroller, download [vscode](https:
 
 ## Preflight
 
-Be sure to go through [XP_SERIAL.md](XP_SERIAL.md) and perform any required modifications and preflight checks before flight.
+Be sure to go through [XP_SERIAL.md](XP_SERIAL.md) to learn how to communicate with XPilot and perform any required calibrations, modifications and preflight checks before flight.
 
 Pull requests are welcome. Please try to adhere to the coding style in the project. I will review and approve them as time and opportunity permits.
 
