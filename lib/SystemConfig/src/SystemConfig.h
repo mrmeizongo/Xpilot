@@ -42,12 +42,6 @@
 // #define IMU_DEBUG
 // #define IO_DEBUG
 
-#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG)
-#if defined(USE_SERIAL_TASK)
-#undef USE_SERIAL_TASK
-#endif
-#endif
-
 /*
  * Disable USE_SERIAL_TASK to use these
  */
@@ -56,5 +50,11 @@
 // #define PRINT_FM_RUN_TASK_STAT
 // #define PRINT_FM_UPDATE_TASK_STAT
 // #define PRINT_SERVO_TASK_STAT
+
+#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) || defined(PRINT_IMU_TASK_STAT) || defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) || defined(PRINT_SERVO_TASK_STAT)
+#if defined(USE_SERIAL_TASK)
+#undef USE_SERIAL_TASK
+#endif
+#endif
 // ------------------------------------------------------------------------------------------------------
 #endif // _SYSTEM_CONFIG_H
