@@ -36,7 +36,6 @@
 /*
  * Uncomment to enable the respective debugging
  * CAUTION: Only uncomment one debug option at a time
- * Any debugging enabled, disables the serial task for communication with xp_serial.py
  */
 // #define SCHEDULER_RATE_DEBUG
 // #define IMU_DEBUG
