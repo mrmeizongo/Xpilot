@@ -115,7 +115,7 @@ void Xpilot::updateFlightMode(void)
         sysFailsafeActive = false;
 
         const Radio::THREE_POS_SW switchPos =
-            radio.getThreeSwitchPos(Radio::CHANNELS::AUX1);
+            radio.getThreeSwitchPos(Radio::CHANNEL::AUX1);
 
         // Mode select switch position has not changed
         if (switchPos == currentMode->getModeSwitchPosition())

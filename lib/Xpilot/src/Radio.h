@@ -40,7 +40,7 @@ Flight stabilization software
 constexpr int16_t RX_PWM_MIN = 1000;           // Default owest pwm expected from transmitter
 constexpr int16_t RX_PWM_MAX = 2000;           // Default highest pwm expected from transmitter
 constexpr int16_t RX_PWM_TRIM = 1500;          // Mid pwm expected from transmitter
-constexpr int16_t RX_FAILSAFE_TOLERANCE = 200; // Tolerance used for determining a failsafe condition
+constexpr int16_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining a failsafe condition
 constexpr int16_t RX_TIMEOUT_MS = 100;         // Rx timeout; 5 missed PWM frames triggers a failsafe
 constexpr int16_t RX_3_SW_POS_THRESHOLD = 276; // 3 position switch input separator
 
@@ -76,7 +76,7 @@ inline uint8_t requiredChannels(Config::AirframeType type)
 class Radio
 {
 public:
-    enum CHANNELS : uint8_t
+    enum CHANNEL : uint8_t
     {
         ROLL = 0U,
         PITCH,
@@ -108,11 +108,11 @@ public:
         static_cast<Radio *>(ctx)->processInput();
     }
 
-    void setPWM(uint32_t, Radio::CHANNELS);
+    void setPWM(uint32_t, Radio::CHANNEL);
 
-    int16_t getPWM(CHANNELS ch)
+    int16_t getPWM(CHANNEL ch)
     {
-        if (ch < CHANNELS::CHANNEL_COUNT)
+        if (ch < CHANNEL::CHANNEL_COUNT)
         {
             if (failSafeTimerStarted)
                 return RX_PWM_TRIM;
@@ -123,9 +123,9 @@ public:
         return -1;
     }
 
-    THREE_POS_SW getThreeSwitchPos(CHANNELS ch)
+    THREE_POS_SW getThreeSwitchPos(CHANNEL ch)
     {
-        if (ch < CHANNELS::CHANNEL_COUNT)
+        if (ch < CHANNEL::CHANNEL_COUNT)
         {
             int16_t pwm = raw[ch];
             if (pwm >= RX_PWM_MAX - RX_3_SW_POS_THRESHOLD)
@@ -139,9 +139,9 @@ public:
         return THREE_POS_SW::UNDEFINED;
     }
 
-    uint32_t getLastValidRxTimeMs(CHANNELS ch)
+    uint32_t getLastValidRxTimeMs(CHANNEL ch)
     {
-        if (ch < CHANNELS::CHANNEL_COUNT)
+        if (ch < CHANNEL::CHANNEL_COUNT)
             return lastValidRxTimeMs[ch];
 
         return 0;
@@ -152,9 +152,9 @@ public:
     bool inFailsafe(void) { return failSafe; }
 
 private:
-    int16_t raw[CHANNELS::CHANNEL_COUNT];
+    int16_t raw[CHANNEL::CHANNEL_COUNT];
 
-    uint32_t lastValidRxTimeMs[CHANNELS::CHANNEL_COUNT];
+    uint32_t lastValidRxTimeMs[CHANNEL::CHANNEL_COUNT];
 
     uint32_t signalLossTimeMs;
 

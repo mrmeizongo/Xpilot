@@ -112,7 +112,7 @@ void Mode::configSub(ConfigID id, void *ctx)
 void Mode::update(void)
 {
 #if defined(USE_FLAPERONS)
-    int16_t flapPwm = radio.getPWM(Radio::CHANNELS::AUX2);
+    int16_t flapPwm = radio.getPWM(Radio::CHANNEL::AUX2);
     flapPwm = constrain(flapPwm, RX_PWM_MIN, RX_PWM_TRIM);
     flaperonOut = static_cast<int16_t>((RX_PWM_TRIM - flapPwm) * config().flightConfig.flaperonScaleFactor);
 #endif

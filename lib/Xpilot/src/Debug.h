@@ -27,7 +27,7 @@ void Xpilot::printIO(void)
     Serial.println("Servo Output PWM");
 
     Serial.print("Aileron 1: ");
-    Serial.print(radio.getPWM(Radio::CHANNELS::ROLL));
+    Serial.print(radio.getPWM(Radio::CHANNEL::ROLL));
     Serial.print("\t\t\t");
     Serial.print("Aileron 1: ");
     Serial.print(currentMode->getRollInput());
@@ -39,7 +39,7 @@ void Xpilot::printIO(void)
     Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
 
     Serial.print("Aileron 2: ");
-    Serial.print(radio.getPWM(Radio::CHANNELS::ROLL));
+    Serial.print(radio.getPWM(Radio::CHANNEL::ROLL));
     Serial.print("\t\t\t");
     Serial.print("Aileron 2: ");
     Serial.print(currentMode->getRollInput());
@@ -51,7 +51,7 @@ void Xpilot::printIO(void)
     Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
 
     Serial.print("Elevator: ");
-    Serial.print(radio.getPWM(Radio::CHANNELS::PITCH));
+    Serial.print(radio.getPWM(Radio::CHANNEL::PITCH));
     Serial.print("\t\t\t");
     Serial.print("Elevator: ");
     Serial.print(currentMode->getPitchInput());
@@ -63,7 +63,7 @@ void Xpilot::printIO(void)
     Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
 
     Serial.print("Rudder: ");
-    Serial.print(radio.getPWM(Radio::CHANNELS::YAW));
+    Serial.print(radio.getPWM(Radio::CHANNEL::YAW));
     Serial.print("\t\t\t");
     Serial.print("Rudder: ");
     Serial.print(currentMode->getYawInput());
@@ -76,13 +76,13 @@ void Xpilot::printIO(void)
 
 #if defined(USE_FLAPERONS)
     Serial.print("Flaperon: ");
-    Serial.print(radio.getPWM(Radio::CHANNELS::AUX2));
+    Serial.print(radio.getPWM(Radio::CHANNEL::AUX2));
     Serial.print("\t\t\t");
     Serial.print("Flaperon: ");
     Serial.print(currentMode->getFlaperon());
     Serial.print("\t\t\t");
     Serial.print("Flaperon Position: ");
-    Serial.println((int16_t)radio.getThreeSwitchPos(Radio::CHANNELS::AUX2));
+    Serial.println((int16_t)radio.getThreeSwitchPos(Radio::CHANNEL::AUX2));
 #endif
 }
 

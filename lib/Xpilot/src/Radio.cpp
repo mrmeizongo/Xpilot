@@ -48,43 +48,43 @@ void Radio::processInput(void)
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        setPWM(aileronPulses, CHANNELS::ROLL);
-        setPWM(elevatorPulses, CHANNELS::PITCH);
-        setPWM(rudderPulses, CHANNELS::YAW);
-        setPWM(aux1Pulses, CHANNELS::AUX1);
+        setPWM(aileronPulses, CHANNEL::ROLL);
+        setPWM(elevatorPulses, CHANNEL::PITCH);
+        setPWM(rudderPulses, CHANNEL::YAW);
+        setPWM(aux1Pulses, CHANNEL::AUX1);
 #if defined(USE_AUXIN2)
-        setPWM(aux2Pulses, CHANNELS::AUX2);
+        setPWM(aux2Pulses, CHANNEL::AUX2);
 #endif
     }
 
     FailSafe();
 }
 
-void Radio::setPWM(uint32_t pulse, CHANNELS ch)
+void Radio::setPWM(uint32_t pulse, CHANNEL ch)
 {
     uint16_t minPulse;
     uint16_t maxPulse;
 
     switch (ch)
     {
-    case CHANNELS::ROLL:
+    case CHANNEL::ROLL:
         minPulse = config().rollRC.min;
         maxPulse = config().rollRC.max;
         break;
 
-    case CHANNELS::PITCH:
+    case CHANNEL::PITCH:
         minPulse = config().pitchRC.min;
         maxPulse = config().pitchRC.max;
         break;
 
-    case CHANNELS::YAW:
+    case CHANNEL::YAW:
         minPulse = config().yawRC.min;
         maxPulse = config().yawRC.max;
         break;
 
-    case CHANNELS::AUX1:
+    case CHANNEL::AUX1:
 #if defined(USE_AUXIN2)
-    case CHANNELS::AUX2:
+    case CHANNEL::AUX2:
 #endif
         minPulse = RX_PWM_MIN;
         maxPulse = RX_PWM_MAX;
@@ -98,6 +98,7 @@ void Radio::setPWM(uint32_t pulse, CHANNELS ch)
         return;
 
     raw[ch] = static_cast<int16_t>(pulse);
+
     lastValidRxTimeMs[ch] = millis();
 }
 
@@ -108,7 +109,10 @@ void Radio::setPWM(uint32_t pulse, CHANNELS ch)
 void Radio::FailSafe()
 {
     const uint32_t now = millis();
+
     const uint8_t req = requiredChannels(config().airframeType.type);
+
+    const int16_t rxMax[3] = {config().rollRC.max, config().pitchRC.max, config().yawRC.max};
 
     bool timeout = false;
     bool rxFailsafe = true;
@@ -126,7 +130,7 @@ void Radio::FailSafe()
 
         // All channels are required to trigger a failsafe
         rxFailsafe &=
-            abs(RX_PWM_MAX - raw[i]) <= RX_FAILSAFE_TOLERANCE;
+            abs(rxMax[i] - raw[i]) <= RX_FAILSAFE_TOLERANCE;
     }
 
     const bool signalLost = timeout || rxFailsafe;
