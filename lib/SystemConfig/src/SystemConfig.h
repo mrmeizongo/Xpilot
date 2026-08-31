@@ -42,9 +42,6 @@
 // #define IMU_DEBUG
 // #define IO_DEBUG
 
-/*
- * Disable USE_SERIAL_TASK to use these
- */
 // #define PRINT_IMU_TASK_STAT
 // #define PRINT_RADIO_TASK_STAT
 // #define PRINT_FM_RUN_TASK_STAT
