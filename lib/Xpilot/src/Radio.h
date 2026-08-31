@@ -47,6 +47,7 @@ constexpr int16_t RX_3_SW_POS_THRESHOLD = 276; // 3 position switch input separa
 
 enum CHANNELMASK : uint8_t
 {
+    NONE = 0x0,
     REQ_ROLL = 1 << 0,
     REQ_PITCH = 1 << 1,
     REQ_YAW = 1 << 2
@@ -70,7 +71,7 @@ inline uint8_t requiredChannels(Config::AirframeType type)
         return REQ_PITCH | REQ_YAW;
 
     default:
-        return 0;
+        return NONE;
     }
 }
 
