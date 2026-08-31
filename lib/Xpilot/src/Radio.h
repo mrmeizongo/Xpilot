@@ -121,16 +121,15 @@ public:
                 {
                 case CHANNEL::ROLL:
                     return config().rollRC.trim;
-                    break;
+
                 case CHANNEL::PITCH:
                     return config().pitchRC.trim;
-                    break;
+
                 case CHANNEL::YAW:
                     return config().yawRC.trim;
-                    break;
+
                 default:
                     return RX_PWM_TRIM;
-                    break;
                 }
             }
 
