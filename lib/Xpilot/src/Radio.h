@@ -36,8 +36,9 @@ Flight stabilization software
 #include <stdint.h>
 #include "Config.h"
 #include "SystemConfig.h"
+#include "FlightConfigAccess.h"
 
-constexpr int16_t RX_PWM_MIN = 1000;           // Default owest pwm expected from transmitter
+constexpr int16_t RX_PWM_MIN = 1000;           // Default lowest pwm expected from transmitter
 constexpr int16_t RX_PWM_MAX = 2000;           // Default highest pwm expected from transmitter
 constexpr int16_t RX_PWM_TRIM = 1500;          // Mid pwm expected from transmitter
 constexpr int16_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining a failsafe condition
@@ -115,7 +116,23 @@ public:
         if (ch < CHANNEL::CHANNEL_COUNT)
         {
             if (failSafeTimerStarted)
-                return RX_PWM_TRIM;
+            {
+                switch (ch)
+                {
+                case CHANNEL::ROLL:
+                    return config().rollRC.trim;
+                    break;
+                case CHANNEL::PITCH:
+                    return config().pitchRC.trim;
+                    break;
+                case CHANNEL::YAW:
+                    return config().yawRC.trim;
+                    break;
+                default:
+                    return RX_PWM_TRIM;
+                    break;
+                }
+            }
 
             return raw[ch];
         }

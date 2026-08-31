@@ -2,7 +2,6 @@
 #include <util/atomic.h>
 #include "GPIODef.h"
 #include "Radio.h"
-#include "FlightConfigAccess.h"
 #include "PinChangeInterrupt.h"
 
 volatile static uint32_t aileronCurrentTime = 0, aileronStartTime = 0, aileronPulses = 0;
@@ -104,7 +103,7 @@ void Radio::setPWM(uint32_t pulse, CHANNEL ch)
 
 /**
  * Only roll, pitch and yaw channels are monitored for a failsafe
- * For this failsafe technique to work, tx should be configured to set all channels to max on signal loss
+ * Rx should be configured to set rpy channels to max on signal loss
  */
 void Radio::FailSafe()
 {
