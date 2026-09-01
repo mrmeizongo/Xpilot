@@ -44,7 +44,7 @@ constexpr int16_t RX_PWM_MAX = 2400;           // Highest pwm expected from tran
 constexpr int16_t RX_FAILSAFE_PWM = 1746;      // My rx PWM output for all channels on signal loss
 constexpr uint8_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining a failsafe condition
 constexpr int16_t RX_TIMEOUT_MS = 110;         // Rx timeout; 5 missed 22ms PWM frames triggers a failsafe
-constexpr int16_t RX_3_SW_POS_THRESHOLD = 466; // 3 position switch input separator
+constexpr int16_t RX_3_SW_POS_THRESHOLD = 200; // 3 position switch input separator
 
 enum CHANNELMASK : uint8_t
 {
@@ -115,54 +115,37 @@ public:
 
     int16_t getPWM(CHANNEL ch)
     {
-        if (ch < CHANNEL::CHANNEL_COUNT)
-        {
-            if (failSafeTimerStarted)
-            {
-                switch (ch)
-                {
-                case CHANNEL::ROLL:
-                    return config().rollRC.trim;
+        if (ch >= CHANNEL::CHANNEL_COUNT)
+            return -1;
 
-                case CHANNEL::PITCH:
-                    return config().pitchRC.trim;
+        if (failSafeTimerStarted)
+            return RX_PWM_TRIM;
 
-                case CHANNEL::YAW:
-                    return config().yawRC.trim;
-
-                default:
-                    return RX_PWM_TRIM;
-                }
-            }
-
-            return raw[ch];
-        }
-
-        return -1;
+        return raw[ch];
     }
 
     THREE_POS_SW getThreeSwitchPos(CHANNEL ch)
     {
-        if (ch < CHANNEL::CHANNEL_COUNT)
-        {
-            int16_t pwm = raw[ch];
-            if (pwm >= RX_PWM_MAX - RX_3_SW_POS_THRESHOLD)
-                return THREE_POS_SW::HIGH_POS;
-            else if (pwm <= RX_PWM_MIN + RX_3_SW_POS_THRESHOLD)
-                return THREE_POS_SW::LOW_POS;
-            else
-                return THREE_POS_SW::MID_POS;
-        }
+        if (ch >= CHANNEL::CHANNEL_COUNT)
+            return THREE_POS_SW::UNDEFINED;
 
-        return THREE_POS_SW::UNDEFINED;
+        const int16_t pwm = raw[ch];
+
+        if (pwm < RX_PWM_TRIM - RX_3_SW_POS_THRESHOLD)
+            return THREE_POS_SW::LOW_POS;
+
+        if (pwm > RX_PWM_TRIM + RX_3_SW_POS_THRESHOLD)
+            return THREE_POS_SW::HIGH_POS;
+
+        return THREE_POS_SW::MID_POS;
     }
 
     uint32_t getLastValidRxTimeMs(CHANNEL ch)
     {
-        if (ch < CHANNEL::CHANNEL_COUNT)
-            return lastValidRxTimeMs[ch];
+        if (ch >= CHANNEL::CHANNEL_COUNT)
+            return 0;
 
-        return 0;
+        return lastValidRxTimeMs[ch];
     }
 
     uint32_t getSignalLossTimeMs(void) { return signalLossTimeMs; }
