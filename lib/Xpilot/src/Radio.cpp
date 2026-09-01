@@ -61,39 +61,7 @@ void Radio::processInput(void)
 
 void Radio::setPWM(uint32_t pulse, CHANNEL ch)
 {
-    uint16_t minPulse;
-    uint16_t maxPulse;
-
-    switch (ch)
-    {
-    case CHANNEL::ROLL:
-        minPulse = config().rollRC.min;
-        maxPulse = config().rollRC.max;
-        break;
-
-    case CHANNEL::PITCH:
-        minPulse = config().pitchRC.min;
-        maxPulse = config().pitchRC.max;
-        break;
-
-    case CHANNEL::YAW:
-        minPulse = config().yawRC.min;
-        maxPulse = config().yawRC.max;
-        break;
-
-    case CHANNEL::AUX1:
-#if defined(USE_AUXIN2)
-    case CHANNEL::AUX2:
-#endif
-        minPulse = RX_PWM_MIN;
-        maxPulse = RX_PWM_MAX;
-        break;
-
-    default:
-        return;
-    }
-
-    if (pulse < minPulse || pulse > maxPulse)
+    if (pulse < RX_PWM_MIN || pulse > RX_PWM_MAX)
         return;
 
     raw[ch] = static_cast<int16_t>(pulse);
@@ -111,8 +79,6 @@ void Radio::FailSafe()
 
     const uint8_t req = requiredChannels(config().airframeType.type);
 
-    const int16_t rxMax[3] = {config().rollRC.max, config().pitchRC.max, config().yawRC.max};
-
     bool timeout = false;
     bool rxFailsafe = true;
 
@@ -129,7 +95,7 @@ void Radio::FailSafe()
 
         // All channels are required to trigger a failsafe
         rxFailsafe &=
-            abs(rxMax[i] - raw[i]) <= RX_FAILSAFE_TOLERANCE;
+            abs(RX_FAILSAFE_PWM - raw[i]) <= RX_FAILSAFE_TOLERANCE;
     }
 
     const bool signalLost = timeout || rxFailsafe;

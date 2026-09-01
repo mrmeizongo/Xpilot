@@ -11,77 +11,77 @@
 void Xpilot::printIO(void)
 {
     CLEAR_TERMINAL();
-    Serial.print("\t\t\t\t\t\t");
-    Serial.print("Flight Mode: ");
+    Serial.print(F("\t\t\t\t\t\t"));
+    Serial.print(F("Flight Mode: "));
     Serial.println(xpilot.getCurrentFlightMode()->modeName4());
-    Serial.print("\t\t\t\t\t\t");
-    Serial.print("Failsafe: ");
-    Serial.println(xpilot.inFailsafe() ? "Active" : "Inactive");
+    Serial.print(F("\t\t\t\t\t\t"));
+    Serial.print(F("Failsafe: "));
+    Serial.println(xpilot.inFailsafe() ? F("Active") : F("Inactive"));
     Serial.println();
-    Serial.print("Radio Input PWM");
-    Serial.print("\t\t\t");
-    Serial.print("Mode Input");
-    Serial.print("\t\t\t");
-    Serial.print("Mode Output");
-    Serial.print("\t\t\t");
-    Serial.println("Servo Output PWM");
+    Serial.print(F("Radio Input PWM"));
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Mode Input"));
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Mode Output"));
+    Serial.print(F("\t\t\t"));
+    Serial.println(F("Servo Output PWM"));
 
-    Serial.print("Aileron 1: ");
+    Serial.print(F("Aileron 1: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::ROLL));
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 1: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Aileron 1: "));
     Serial.print(currentMode->getRollInput());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 1: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Aileron 1: "));
     Serial.print(currentMode->getRollOutput());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 1: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Aileron 1: "));
     Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
 
-    Serial.print("Aileron 2: ");
+    Serial.print(F("Aileron 2: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::ROLL));
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 2: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Aileron 2: "));
     Serial.print(currentMode->getRollInput());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 2: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Aileron 2: "));
     Serial.print(currentMode->getRollOutput());
-    Serial.print("\t\t\t");
-    Serial.print("Aileron 2: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Aileron 2: "));
     Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
 
-    Serial.print("Elevator: ");
+    Serial.print(F("Elevator: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::PITCH));
-    Serial.print("\t\t\t");
-    Serial.print("Elevator: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Elevator: "));
     Serial.print(currentMode->getPitchInput());
-    Serial.print("\t\t\t");
-    Serial.print("Elevator: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Elevator: "));
     Serial.print(currentMode->getPitchOutput());
-    Serial.print("\t\t\t");
-    Serial.print("Elevator: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Elevator: "));
     Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
 
-    Serial.print("Rudder: ");
+    Serial.print(F("Rudder: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::YAW));
-    Serial.print("\t\t\t");
-    Serial.print("Rudder: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Rudder: "));
     Serial.print(currentMode->getYawInput());
-    Serial.print("\t\t\t");
-    Serial.print("Rudder: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Rudder: "));
     Serial.print(currentMode->getYawOutput());
-    Serial.print("\t\t\t");
-    Serial.print("Rudder: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Rudder: "));
     Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
 
 #if defined(USE_FLAPERONS)
-    Serial.print("Flaperon: ");
+    Serial.print(F("Flaperon: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::AUX2));
-    Serial.print("\t\t\t");
-    Serial.print("Flaperon: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Flaperon: "));
     Serial.print(currentMode->getFlaperon());
-    Serial.print("\t\t\t");
-    Serial.print("Flaperon Position: ");
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Flaperon Position: "));
     Serial.println((int16_t)radio.getThreeSwitchPos(Radio::CHANNEL::AUX2));
 #endif
 }
@@ -89,12 +89,11 @@ void Xpilot::printIO(void)
 void Xpilot::printIMU(void)
 {
     CLEAR_TERMINAL();
-    Serial.println(">");
-    Serial.print("Roll: ");
+    Serial.print(F("Roll: "));
     Serial.println(imu.getRoll());
-    Serial.print("Pitch: ");
+    Serial.print(F("Pitch: "));
     Serial.println(imu.getPitch());
-    Serial.print("Yaw: ");
+    Serial.print(F("Yaw: "));
     Serial.println(imu.getYaw());
 }
 
@@ -104,37 +103,37 @@ void Xpilot::printSchedulerRate(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(imuTaskId, taskStats))
     {
-        Serial.print("IMU Task Loop Rate:\t\t\t");
+        Serial.print(F("IMU Task Loop Rate:\t\t\t"));
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
     if (scheduler.getStats(flightModeRunTaskId, taskStats))
     {
-        Serial.print("Mode Run Task Loop Rate:\t\t");
+        Serial.print(F("Mode Run Task Loop Rate:\t\t"));
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
     if (scheduler.getStats(flightModeInputUpdateTaskId, taskStats))
     {
-        Serial.print("Mode Input Update Task Loop Rate:\t");
+        Serial.print(F("Mode Input Update Task Loop Rate:\t"));
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
     if (scheduler.getStats(flightModeUpdateTaskId, taskStats))
     {
-        Serial.print("Mode Update Task Loop Rate:\t\t");
+        Serial.print(F("Mode Update Task Loop Rate:\t\t"));
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
     if (scheduler.getStats(radioTaskId, taskStats))
     {
-        Serial.print("Radio Task Loop Rate:\t\t\t");
+        Serial.print(F("Radio Task Loop Rate:\t\t\t"));
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
     if (scheduler.getStats(actuatorTaskId, taskStats))
     {
-        Serial.print("Actuator Task Loop Rate:\t\t");
+        Serial.print(F("Actuator Task Loop Rate:\t\t"));
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
@@ -146,22 +145,22 @@ void Xpilot::printIMUTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(imuTaskId, taskStats))
     {
-        Serial.println("IMU Task Stats");
-        Serial.print("Run count: ");
+        Serial.println(F("IMU Task Stats"));
+        Serial.print(F("Run count: "));
         Serial.println(taskStats.runCount);
-        Serial.print("Missed periods: ");
+        Serial.print(F("Missed periods: "));
         Serial.println(taskStats.missedPeriods);
-        Serial.print("Overrun count: ");
+        Serial.print(F("Overrun count: "));
         Serial.println(taskStats.overrunCount);
-        Serial.print("Last run time(us): ");
+        Serial.print(F("Last run time(us): "));
         Serial.println(taskStats.lastRuntimeUs);
-        Serial.print("Max run time(us) : ");
+        Serial.print(F("Max run time(us) : "));
         Serial.println(taskStats.maxRuntimeUs);
-        Serial.print("Last loop rate update(us): ");
+        Serial.print(F("Last loop rate update(us): "));
         Serial.println(taskStats.lastLoopRateUpdateUs);
-        Serial.print("Loop rate(hz): ");
+        Serial.print(F("Loop rate(hz): "));
         Serial.println(taskStats.loopRateHz);
-        Serial.print("Loop counter: ");
+        Serial.print(F("Loop counter: "));
         Serial.println(taskStats.loopCounter);
     }
 }
@@ -172,22 +171,22 @@ void Xpilot::printRadioTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(radioTaskId, taskStats))
     {
-        Serial.println("Radio Task Stats");
-        Serial.print("Run count: ");
+        Serial.println(F("Radio Task Stats"));
+        Serial.print(F("Run count: "));
         Serial.println(taskStats.runCount);
-        Serial.print("Missed periods: ");
+        Serial.print(F("Missed periods: "));
         Serial.println(taskStats.missedPeriods);
-        Serial.print("Overrun count: ");
+        Serial.print(F("Overrun count: "));
         Serial.println(taskStats.overrunCount);
-        Serial.print("Last run time(us): ");
+        Serial.print(F("Last run time(us): "));
         Serial.println(taskStats.lastRuntimeUs);
-        Serial.print("Max run time(us) : ");
+        Serial.print(F("Max run time(us) : "));
         Serial.println(taskStats.maxRuntimeUs);
-        Serial.print("Last loop rate update(us): ");
+        Serial.print(F("Last loop rate update(us): "));
         Serial.println(taskStats.lastLoopRateUpdateUs);
-        Serial.print("Loop rate(hz): ");
+        Serial.print(F("Loop rate(hz): "));
         Serial.println(taskStats.loopRateHz);
-        Serial.print("Loop counter: ");
+        Serial.print(F("Loop counter: "));
         Serial.println(taskStats.loopCounter);
     }
 }
@@ -198,22 +197,22 @@ void Xpilot::printFlightModeRunTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(flightModeRunTaskId, taskStats))
     {
-        Serial.println("FM Run Task Stats");
-        Serial.print("Run count: ");
+        Serial.println(F("FM Run Task Stats"));
+        Serial.print(F("Run count: "));
         Serial.println(taskStats.runCount);
-        Serial.print("Missed periods: ");
+        Serial.print(F("Missed periods: "));
         Serial.println(taskStats.missedPeriods);
-        Serial.print("Overrun count: ");
+        Serial.print(F("Overrun count: "));
         Serial.println(taskStats.overrunCount);
-        Serial.print("Last run time(us): ");
+        Serial.print(F("Last run time(us): "));
         Serial.println(taskStats.lastRuntimeUs);
-        Serial.print("Max run time(us) : ");
+        Serial.print(F("Max run time(us) : "));
         Serial.println(taskStats.maxRuntimeUs);
-        Serial.print("Last loop rate update(us): ");
+        Serial.print(F("Last loop rate update(us): "));
         Serial.println(taskStats.lastLoopRateUpdateUs);
-        Serial.print("Loop rate(hz): ");
+        Serial.print(F("Loop rate(hz): "));
         Serial.println(taskStats.loopRateHz);
-        Serial.print("Loop counter: ");
+        Serial.print(F("Loop counter: "));
         Serial.println(taskStats.loopCounter);
     }
 }
@@ -224,22 +223,22 @@ void Xpilot::printFlightModeUpdateTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(flightModeUpdateTaskId, taskStats))
     {
-        Serial.println("FM Update Task Stats");
-        Serial.print("Run count: ");
+        Serial.println(F("FM Update Task Stats"));
+        Serial.print(F("Run count: "));
         Serial.println(taskStats.runCount);
-        Serial.print("Missed periods: ");
+        Serial.print(F("Missed periods: "));
         Serial.println(taskStats.missedPeriods);
-        Serial.print("Overrun count: ");
+        Serial.print(F("Overrun count: "));
         Serial.println(taskStats.overrunCount);
-        Serial.print("Last run time(us): ");
+        Serial.print(F("Last run time(us): "));
         Serial.println(taskStats.lastRuntimeUs);
-        Serial.print("Max run time(us) : ");
+        Serial.print(F("Max run time(us) : "));
         Serial.println(taskStats.maxRuntimeUs);
-        Serial.print("Last loop rate update(us): ");
+        Serial.print(F("Last loop rate update(us): "));
         Serial.println(taskStats.lastLoopRateUpdateUs);
-        Serial.print("Loop rate(hz): ");
+        Serial.print(F("Loop rate(hz): "));
         Serial.println(taskStats.loopRateHz);
-        Serial.print("Loop counter: ");
+        Serial.print(F("Loop counter: "));
         Serial.println(taskStats.loopCounter);
     }
 }
@@ -250,22 +249,22 @@ void Xpilot::printFlightModeInputUpdateTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(flightModeInputUpdateTaskId, taskStats))
     {
-        Serial.println("FM Input Update Task Stats");
-        Serial.print("Run count: ");
+        Serial.println(F("FM Input Update Task Stats"));
+        Serial.print(F("Run count: "));
         Serial.println(taskStats.runCount);
-        Serial.print("Missed periods: ");
+        Serial.print(F("Missed periods: "));
         Serial.println(taskStats.missedPeriods);
-        Serial.print("Overrun count: ");
+        Serial.print(F("Overrun count: "));
         Serial.println(taskStats.overrunCount);
-        Serial.print("Last run time(us): ");
+        Serial.print(F("Last run time(us): "));
         Serial.println(taskStats.lastRuntimeUs);
-        Serial.print("Max run time(us) : ");
+        Serial.print(F("Max run time(us) : "));
         Serial.println(taskStats.maxRuntimeUs);
-        Serial.print("Last loop rate update(us): ");
+        Serial.print(F("Last loop rate update(us): "));
         Serial.println(taskStats.lastLoopRateUpdateUs);
-        Serial.print("Loop rate(hz): ");
+        Serial.print(F("Loop rate(hz): "));
         Serial.println(taskStats.loopRateHz);
-        Serial.print("Loop counter: ");
+        Serial.print(F("Loop counter: "));
         Serial.println(taskStats.loopCounter);
     }
 }
@@ -276,22 +275,22 @@ void Xpilot::printActuatorTaskStats(void)
     Scheduler::TaskStats taskStats;
     if (scheduler.getStats(actuatorTaskId, taskStats))
     {
-        Serial.println("Actuator Task Stats");
-        Serial.print("Run count: ");
+        Serial.println(F("Actuator Task Stats"));
+        Serial.print(F("Run count: "));
         Serial.println(taskStats.runCount);
-        Serial.print("Missed periods: ");
+        Serial.print(F("Missed periods: "));
         Serial.println(taskStats.missedPeriods);
-        Serial.print("Overrun count: ");
+        Serial.print(F("Overrun count: "));
         Serial.println(taskStats.overrunCount);
-        Serial.print("Last run time(us): ");
+        Serial.print(F("Last run time(us): "));
         Serial.println(taskStats.lastRuntimeUs);
-        Serial.print("Max run time(us) : ");
+        Serial.print(F("Max run time(us) : "));
         Serial.println(taskStats.maxRuntimeUs);
-        Serial.print("Last loop rate update(us): ");
+        Serial.print(F("Last loop rate update(us): "));
         Serial.println(taskStats.lastLoopRateUpdateUs);
-        Serial.print("Loop rate(hz): ");
+        Serial.print(F("Loop rate(hz): "));
         Serial.println(taskStats.loopRateHz);
-        Serial.print("Loop counter: ");
+        Serial.print(F("Loop counter: "));
         Serial.println(taskStats.loopCounter);
     }
 }

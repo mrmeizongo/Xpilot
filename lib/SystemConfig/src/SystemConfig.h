@@ -24,7 +24,7 @@
 #define IMU_UPDATE_RATE_HZ CONTROL_LOOP_RATE_HZ      // IMU update period in hz
 #define FLIGHT_MODE_RUN_RATE_HZ CONTROL_LOOP_RATE_HZ // Flight mode run period in hz
 #define FLIGHT_MODE_UPDATE_RATE_HZ 25                // Flight mode update period in hz
-#define RADIO_INPUT_PROCESS_RATE_HZ 45.45            // Radio input period in hz, Spektrum uses 22ms frame rates
+#define RADIO_INPUT_PROCESS_RATE_HZ 50               // Radio input period in hz
 #define WRITE_SERVO_RATE_HZ 50                       // Write servo output period in hz
 #define IMU_PRINT_RATE_HZ 4                          // IMU debug print period in hz
 #define TASK_PRINT_RATE_HZ 2                         // Task rate debug print period in hz

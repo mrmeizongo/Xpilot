@@ -38,12 +38,14 @@ Flight stabilization software
 #include "SystemConfig.h"
 #include "FlightConfigAccess.h"
 
-constexpr int16_t RX_PWM_MIN = 1000;           // Default lowest pwm expected from transmitter
-constexpr int16_t RX_PWM_MAX = 2000;           // Default highest pwm expected from transmitter
-constexpr int16_t RX_PWM_TRIM = 1500;          // Mid pwm expected from transmitter
-constexpr int16_t RX_FAILSAFE_TOLERANCE = 100; // Tolerance used for determining a failsafe condition
+constexpr int16_t RX_PWM_MIN = 800;   // Lowest pwm expected from transmitter
+constexpr int16_t RX_PWM_TRIM = 1500; // Trim pwm expected from transmitter
+constexpr int16_t RX_PWM_MAX = 2200;  // Highest pwm expected from transmitter
+
+constexpr int16_t RX_FAILSAFE_PWM = 1746;      // My rx PWM on signal loss
+constexpr uint8_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining a failsafe condition
 constexpr int16_t RX_TIMEOUT_MS = 100;         // Rx timeout; 5 missed PWM frames triggers a failsafe
-constexpr int16_t RX_3_SW_POS_THRESHOLD = 276; // 3 position switch input separator
+constexpr int16_t RX_3_SW_POS_THRESHOLD = 466; // 3 position switch input separator
 
 enum CHANNELMASK : uint8_t
 {
