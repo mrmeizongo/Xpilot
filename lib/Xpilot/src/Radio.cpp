@@ -120,7 +120,7 @@ void Radio::FailSafe()
 
 /*
  * ISR
- * RC receivers are designed to send a pulse to the servos ever 20ms - 22ms, going HIGH for the duration of the pulse and LOW otherwise
+ * RC receivers are designed to send a 1000us-2000us pulse to the servos every 20ms - 22ms, going HIGH for the duration of the pulse and LOW otherwise
  * The receiver PWM output is used to drive a pin change interrupt routine
  * The ISR simply records the time between the pulses.
  */
