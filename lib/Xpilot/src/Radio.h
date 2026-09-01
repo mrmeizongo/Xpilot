@@ -38,9 +38,9 @@ Flight stabilization software
 #include "SystemConfig.h"
 #include "FlightConfigAccess.h"
 
-constexpr int16_t RX_PWM_MIN = 800;   // Lowest pwm expected from transmitter
+constexpr int16_t RX_PWM_MIN = 700;   // Lowest pwm expected from transmitter
 constexpr int16_t RX_PWM_TRIM = 1500; // Trim pwm expected from transmitter
-constexpr int16_t RX_PWM_MAX = 2200;  // Highest pwm expected from transmitter
+constexpr int16_t RX_PWM_MAX = 2300;  // Highest pwm expected from transmitter
 
 constexpr int16_t RX_FAILSAFE_PWM = 1746;      // My rx PWM on signal loss
 constexpr uint8_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining a failsafe condition
