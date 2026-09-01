@@ -111,7 +111,7 @@ public:
         static_cast<Radio *>(ctx)->processInput();
     }
 
-    void setPWM(uint32_t, Radio::CHANNEL);
+    void setPWM(uint32_t, Radio::CHANNEL); // Store valid receiver pwm signals
 
     int16_t getPWM(CHANNEL ch)
     {

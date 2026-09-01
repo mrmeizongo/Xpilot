@@ -120,16 +120,9 @@ void Radio::FailSafe()
 
 /*
  * ISR
- * Typical hobby servos expect to see a pulse every 20ms and the length of the pulse determines the position to set the servo
- * The length of the pulse is typically between 1ms - 2ms with 1ms setting the servo position to 0°, 1.5ms to 90° and 2ms to 180°
- * This gives us a servo refresh rate of 22ms(20ms interval + actual 1ms-2ms pulse duration)
- * RC transmitters are designed to send a pulse to the receiver within this range, going HIGH for the duration of the pulse and LOW otherwise
- * If the output of the channel on the receiver is attached to an interrupt pin, we can use it to drive a PCISR
- * The ISR simply records the time between the changes. We're only interested in pulses lasting between INPUT_MIN_PWM and INPUT_MAX_PWM
- * Due to this input capture mechanism, implementing a failsafe is largely dependent on the receiver's behavior when the signal is lost
- * Example: The Spektrum tx/rx I use will either hold the last known position when the signal is lost or default to a preset position determined at bind time
- * I set up my transmitter's failsafe position to be the maximum value for roll, pitch and yaw
- * Failsafe is triggered if the input pulse is at maximum value with a FAILSAFE_TOLERANCE for more than 2 seconds
+ * RC receivers are designed to send a pulse to the servos ever 20ms - 22ms, going HIGH for the duration of the pulse and LOW otherwise
+ * The receiver PWM output is used to drive a pin change interrupt routine
+ * The ISR simply records the time between the pulses.
  */
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
