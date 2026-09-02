@@ -137,7 +137,7 @@ protected:
 
     static int16_t SRVout[Actuators::Channel::CHANNEL_COUNT]; // Servo output array
 
-    static void rudderMixer(void); // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
+    static void applyRudderMix(void); // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
 
     static void resetControllers(void); // Reset controllers when switching modes to prevent integral windup and derivative kick
 

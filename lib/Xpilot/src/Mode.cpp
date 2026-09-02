@@ -118,14 +118,11 @@ void Mode::update(void)
 #endif
 }
 
-void Mode::rudderMixer(void)
+void Mode::applyRudderMix(void)
 {
     int16_t contribution = static_cast<int16_t>(input_rpy[0] * config().flightConfig.rudderMixScale);
 
-    if (config().flightConfig.reverseRudderMix)
-        input_rpy[2] -= contribution;
-    else
-        input_rpy[2] += contribution;
+    input_rpy[2] += config().flightConfig.reverseRudderMix ? -contribution : contribution;
 }
 
 void Mode::updateInput(void *ctx)

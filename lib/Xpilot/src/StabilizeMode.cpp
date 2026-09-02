@@ -23,7 +23,7 @@ void StabilizeMode::update(void)
     input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW), config().yawRC.min, config().yawRC.trim, config().yawRC.max, config().yawRC.deadband) *
                    config().flightConfig.maxYawRateDegs;
 
-    rudderMixer();
+    applyRudderMix();
     Mode::update();
 }
 
