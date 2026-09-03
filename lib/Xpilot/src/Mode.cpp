@@ -5,19 +5,18 @@ void Mode::init(void)
 {
     // Changing airframe type requires a reset to take effect
     airplaneMixer.setAirframeType(config().airframeType.type);
-    airplaneMixer.setCommandLimit(config().flightConfig.controlResolution);
 
-    rollSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
-    pitchSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
-    yawSlew = SlewRateLimiter<int16_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
+    rollSlew = SlewRateLimiter<int32_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
+    pitchSlew = SlewRateLimiter<int32_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
+    yawSlew = SlewRateLimiter<int32_t>{config().processFilter.controlSlewRate, config().processFilter.processDT};
 
-    rollPIDF = PIDF<int16_t>{config().rollPIDF.Kp, config().rollPIDF.Ki, config().rollPIDF.Kd, config().rollPIDF.Kf,
+    rollPIDF = PIDF<int32_t>{config().rollPIDF.Kp, config().rollPIDF.Ki, config().rollPIDF.Kd, config().rollPIDF.Kf,
                              config().rollPIDF.iWindUpMax, config().processFilter.processDT, config().processFilter.lowPassFilterFreq};
 
-    pitchPIDF = PIDF<int16_t>{config().pitchPIDF.Kp, config().pitchPIDF.Ki, config().pitchPIDF.Kd, config().pitchPIDF.Kf,
+    pitchPIDF = PIDF<int32_t>{config().pitchPIDF.Kp, config().pitchPIDF.Ki, config().pitchPIDF.Kd, config().pitchPIDF.Kf,
                               config().pitchPIDF.iWindUpMax, config().processFilter.processDT, config().processFilter.lowPassFilterFreq};
 
-    yawPIDF = PIDF<int16_t>{config().yawPIDF.Kp, config().yawPIDF.Ki, config().yawPIDF.Kd, config().yawPIDF.Kf,
+    yawPIDF = PIDF<int32_t>{config().yawPIDF.Kp, config().yawPIDF.Ki, config().yawPIDF.Kd, config().yawPIDF.Kf,
                             config().yawPIDF.iWindUpMax, config().processFilter.processDT, config().processFilter.lowPassFilterFreq};
 
     imu.registerConsumer(updateAHRS);
@@ -145,13 +144,13 @@ void Mode::runTask(void *ctx)
 
 void Mode::updateAHRS(float (&rpy)[3], float (&g)[3])
 {
-    imu_rpy[0] = rpy[0];
-    imu_rpy[1] = rpy[1];
-    imu_rpy[2] = rpy[2];
+    imu_rpy[0] = rpy[0] * Control::RESOLUTION;
+    imu_rpy[1] = rpy[1] * Control::RESOLUTION;
+    imu_rpy[2] = rpy[2] * Control::RESOLUTION;
 
-    imu_g[0] = g[0];
-    imu_g[1] = g[1];
-    imu_g[2] = g[2];
+    imu_g[0] = g[0] * Control::RESOLUTION;
+    imu_g[1] = g[1] * Control::RESOLUTION;
+    imu_g[2] = g[2] * Control::RESOLUTION;
 }
 
 void Mode::resetControllers(void)

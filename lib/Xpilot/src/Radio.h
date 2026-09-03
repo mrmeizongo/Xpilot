@@ -34,7 +34,6 @@ Flight stabilization software
 #define _RADIO_H
 
 #include <stdint.h>
-#include "Config.h"
 #include "SystemConfig.h"
 #include "FlightConfigAccess.h"
 
@@ -45,6 +44,34 @@ constexpr int16_t RX_FAILSAFE_PWM = 1746;      // My rx PWM output for all chann
 constexpr uint8_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining a failsafe condition
 constexpr int16_t RX_TIMEOUT_MS = 110;         // Rx timeout; 5 missed 22ms PWM frames triggers a failsafe
 constexpr int16_t RX_3_SW_POS_THRESHOLD = 200; // 3 position switch input separator
+
+inline int32_t normalizeInput(
+    int16_t rawVal,
+    int16_t inputMin,
+    int16_t inputTrim,
+    int16_t inputMax,
+    uint8_t deadband)
+{
+    const int32_t delta = rawVal - inputTrim;
+
+    if (abs(delta) <= deadband)
+        return 0;
+
+    int32_t output;
+
+    if (delta > 0)
+    {
+        output = (delta * Control::RESOLUTION) /
+                 (inputMax - inputTrim);
+    }
+    else
+    {
+        output = (delta * Control::RESOLUTION) /
+                 (inputTrim - inputMin);
+    }
+
+    return output;
+}
 
 enum CHANNELMASK : uint8_t
 {

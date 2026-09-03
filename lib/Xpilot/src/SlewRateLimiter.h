@@ -30,12 +30,12 @@ class SlewRateLimiter
 {
 public:
     SlewRateLimiter()
-        : _output{T{}}, _maxChangeRate{0.f} {}
+        : _output{T{}}, _maxChangeRate{0} {}
 
-    SlewRateLimiter(T ratePerSecond, float dt)
+    SlewRateLimiter(int16_t ratePerSecond, float dt)
         : _output{T{}}, _ratePerSecond{ratePerSecond}
     {
-        _maxChangeRate = _ratePerSecond * dt;
+        _maxChangeRate = ratePerSecond * dt;
     }
 
     SlewRateLimiter(SlewRateLimiter &&) = default;
@@ -55,7 +55,7 @@ public:
         return _output;
     }
 
-    void setRate(T newRatePerSecond)
+    void setRate(int16_t newRatePerSecond)
     {
         float dt = _maxChangeRate / _ratePerSecond;
         _maxChangeRate = newRatePerSecond * dt;
@@ -66,7 +66,7 @@ public:
 
 private:
     T _output;
-    T _ratePerSecond;
-    float _maxChangeRate;
+    int16_t _ratePerSecond;
+    uint8_t _maxChangeRate;
 };
 #endif // _SLEWRATE

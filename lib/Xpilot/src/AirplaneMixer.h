@@ -13,10 +13,10 @@ public:
      */
     struct Outputs
     {
-        int16_t leftAileron;
-        int16_t rightAileron;
-        int16_t elevator;
-        int16_t rudder;
+        int32_t leftAileron;
+        int32_t rightAileron;
+        int32_t elevator;
+        int32_t rudder;
     };
 
     AirplaneMixer(AirplaneMixer &&) = default;
@@ -24,11 +24,11 @@ public:
 
     explicit AirplaneMixer(
         Config::AirframeType type = Config::AirframeType::CONVENTIONAL,
-        uint16_t commandLimit = 1000)
+        int32_t commandLimit = Control::RESOLUTION)
         : _type(type),
           _commandLimit(commandLimit) {}
 
-    Outputs mix(int16_t roll, int16_t pitch, int16_t yaw) const;
+    Outputs mix(int32_t roll, int32_t pitch, int32_t yaw) const;
 
     void setAirframeType(Config::AirframeType type) { _type = type; }
     Config::AirframeType getAirframeType() const { return _type; }
@@ -41,9 +41,9 @@ protected:
      * Custom mixer hook.
      */
     virtual void mixCustom(
-        int16_t roll,
-        int16_t pitch,
-        int16_t yaw,
+        int32_t roll,
+        int32_t pitch,
+        int32_t yaw,
         Outputs &out) const
     {
         // Default custom behavior = conventional
@@ -52,46 +52,46 @@ protected:
 
 private:
     Config::AirframeType _type;
-    int16_t _commandLimit;
+    int32_t _commandLimit;
 
     void mixConventional(
-        int16_t roll,
-        int16_t pitch,
-        int16_t yaw,
+        int32_t roll,
+        int32_t pitch,
+        int32_t yaw,
         Outputs &out) const;
 
     void mixVTail(
-        int16_t roll,
-        int16_t pitch,
-        int16_t yaw,
+        int32_t roll,
+        int32_t pitch,
+        int32_t yaw,
         Outputs &out) const;
 
     void mixFlyingWingRudder(
-        int16_t roll,
-        int16_t pitch,
-        int16_t yaw,
+        int32_t roll,
+        int32_t pitch,
+        int32_t yaw,
         Outputs &out) const;
 
     void mixFlyingWingNoRudder(
-        int16_t roll,
-        int16_t pitch,
+        int32_t roll,
+        int32_t pitch,
         Outputs &out) const;
 
     void mixRudderElevator(
-        int16_t pitch,
-        int16_t yaw,
+        int32_t pitch,
+        int32_t yaw,
         Outputs &out) const;
 
     void mixAileronElevator(
-        int16_t roll,
-        int16_t pitch,
+        int32_t roll,
+        int32_t pitch,
         Outputs &out) const;
 
     void mixDifferential(
-        int16_t common,
-        int16_t differential,
-        int16_t &output1,
-        int16_t &output2) const;
+        int32_t common,
+        int32_t differential,
+        int32_t &output1,
+        int32_t &output2) const;
 
     void normalizePair(int32_t &a, int32_t &b) const;
 };

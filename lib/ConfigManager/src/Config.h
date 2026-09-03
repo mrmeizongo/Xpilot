@@ -2,6 +2,11 @@
 #define _CONFIG_H
 #include <stdint.h>
 
+namespace Control
+{
+    constexpr int16_t RESOLUTION = 1000;
+}
+
 // Parameters that can be changed at runtime.
 struct Config
 {

@@ -38,47 +38,13 @@ Flight stabilization software
 #include "Radio.h"
 #include "Actuators.h"
 
-inline float normalizeInput(
-    int16_t rawVal,
-    int16_t inputMin,
-    int16_t inputTrim,
-    int16_t inputMax,
-    uint8_t deadband)
+inline int16_t mapToSRV(int32_t input)
 {
-    const int16_t delta = rawVal - inputTrim;
-
-    if (abs(delta) <= deadband)
-        return 0.0f;
-
-    if (delta > 0)
-    {
-        return static_cast<float>(delta) /
-               static_cast<float>(inputMax - inputTrim);
-    }
-
-    return static_cast<float>(delta) /
-           static_cast<float>(inputTrim - inputMin);
-}
-
-inline int16_t map(
-    int16_t input,
-    int16_t inputRes,
-    int16_t outputMin,
-    int16_t outputMax)
-{
-    // Guard against division by zero
-    if (inputRes == 0)
-        return outputMin;
-
-    // Type promotion
-    const int32_t x = input;
-    const int32_t res = inputRes;
-    const int32_t min = outputMin;
-    const int32_t max = outputMax;
-    const int32_t range = max - min;
+    const int16_t range = config().srvConfig.max - config().srvConfig.min;
 
     return static_cast<int16_t>(
-        min + ((x + res) * range) / (2 * res));
+        config().srvConfig.min +
+        ((input + Control::RESOLUTION) * range) / (2 * Control::RESOLUTION));
 }
 
 // Abstract flight mode class
@@ -107,13 +73,13 @@ public:
     static void configSub(ConfigID, void *);
 
     // Debug functions to get outputs for testing and tuning
-    static int16_t getRollInput(void) { return input_rpy[0]; }
-    static int16_t getPitchInput(void) { return input_rpy[1]; }
-    static int16_t getYawInput(void) { return input_rpy[2]; }
+    static int32_t getRollInput(void) { return input_rpy[0]; }
+    static int32_t getPitchInput(void) { return input_rpy[1]; }
+    static int32_t getYawInput(void) { return input_rpy[2]; }
 
-    static int16_t getRollOutput(void) { return output_rpy[0]; }
-    static int16_t getPitchOutput(void) { return output_rpy[1]; }
-    static int16_t getYawOutput(void) { return output_rpy[2]; }
+    static int32_t getRollOutput(void) { return output_rpy[0]; }
+    static int32_t getPitchOutput(void) { return output_rpy[1]; }
+    static int32_t getYawOutput(void) { return output_rpy[2]; }
 
 #if defined(USE_FLAPERONS)
     static int16_t getFlaperon(void) { return flaperonOut; }
@@ -123,15 +89,15 @@ public:
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
 
 protected:
-    static float imu_rpy[3]; // To hold imu rpy values
-    static float imu_g[3];   // To hold imu g values
+    static int32_t imu_rpy[3]; // To hold imu rpy values
+    static int32_t imu_g[3];   // To hold imu g values
 
-    static int16_t input_rpy[3];  // Input roll, pitch, and yaw
-    static int16_t output_rpy[3]; // Output roll, pitch, and yaw
+    static int32_t input_rpy[3];  // Input roll, pitch, and yaw
+    static int32_t output_rpy[3]; // Output roll, pitch, and yaw
 
-    static SlewRateLimiter<int16_t> rollSlew;
-    static SlewRateLimiter<int16_t> pitchSlew;
-    static SlewRateLimiter<int16_t> yawSlew;
+    static SlewRateLimiter<int32_t> rollSlew;
+    static SlewRateLimiter<int32_t> pitchSlew;
+    static SlewRateLimiter<int32_t> yawSlew;
 
     Radio::THREE_POS_SW modeSwitchPosition; // Mode switch position for this mode
 
@@ -152,9 +118,9 @@ protected:
     }
 #endif
 
-    static PIDF<int16_t> rollPIDF;
-    static PIDF<int16_t> pitchPIDF;
-    static PIDF<int16_t> yawPIDF;
+    static PIDF<int32_t> rollPIDF;
+    static PIDF<int32_t> pitchPIDF;
+    static PIDF<int32_t> yawPIDF;
 
     static AirplaneMixer airplaneMixer;
 };
