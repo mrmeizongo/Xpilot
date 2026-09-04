@@ -6,24 +6,16 @@ void RateMode::enter(void)
     resetControllers();
 }
 
+// Convert radio input to rate demands for all channels
 void RateMode::update(void)
 {
-    if (radio.inFailsafe())
-    {
-        controlFailsafe();
-        return;
-    }
-
-    input_rpy[0] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL), config().rollRxConfig.min, config().rollRxConfig.trim, config().rollRxConfig.max, config().rollRxConfig.deadband) *
-                   config().flightConfig.maxRollRateDegs;
-
-    input_rpy[1] = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH), config().pitchRxConfig.min, config().pitchRxConfig.trim, config().pitchRxConfig.max, config().pitchRxConfig.deadband) *
-                   config().flightConfig.maxPitchRateDegs;
-
-    input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW), config().yawRxConfig.min, config().yawRxConfig.trim, config().yawRxConfig.max, config().yawRxConfig.deadband) *
-                   config().flightConfig.maxYawRateDegs;
-
     Mode::update();
+
+    input_rpy[0] *= config().flightConfig.maxRollRateDegs;
+
+    input_rpy[1] *= config().flightConfig.maxPitchRateDegs;
+
+    input_rpy[2] *= config().flightConfig.maxYawRateDegs;
 }
 
 void RateMode::run(void)

@@ -1,41 +1,65 @@
 #include "Mode.h"
 #include "IMU.h"
 
+inline int32_t stabilizeDemand(
+    int16_t input,    // -1000 : +1000
+    int32_t angle,    // deg * Control::RESOLUTION
+    int16_t maxRate,  // deg/s
+    int16_t maxAngle, // deg
+    float levelKp)
+{
+    const int32_t rateLimit =
+        static_cast<int32_t>(maxRate) * Control::RESOLUTION;
+
+    const int32_t angleLimit =
+        static_cast<int32_t>(maxAngle) * Control::RESOLUTION;
+
+    const int32_t target =
+        input > 0 ? angleLimit : (input < 0) ? -angleLimit
+                                             : 0;
+
+    int32_t demand;
+
+    const bool correctAttitude =
+        input == 0 ||
+        (input > 0 && angle > angleLimit) ||
+        (input < 0 && angle < -angleLimit);
+
+    if (correctAttitude)
+    {
+        demand = (target - angle) * levelKp;
+    }
+    else
+    {
+        demand = static_cast<int32_t>(input) * maxRate;
+    }
+
+    return constrain(demand, -rateLimit, rateLimit);
+}
+
 void StabilizeMode::enter(void)
 {
     resetControllers();
 }
 
+// Yaw is rate controlled
 void StabilizeMode::update(void)
 {
-    if (radio.inFailsafe())
-    {
-        controlFailsafe();
-        return;
-    }
-
-    input_rpy[0] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL), config().rollRxConfig.min, config().rollRxConfig.trim, config().rollRxConfig.max, config().rollRxConfig.deadband) *
-                   config().flightConfig.maxRollAngleDegs;
-
-    input_rpy[1] = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH), config().pitchRxConfig.min, config().pitchRxConfig.trim, config().pitchRxConfig.max, config().pitchRxConfig.deadband) *
-                   config().flightConfig.maxPitchAngleDegs;
-
-    input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW), config().yawRxConfig.min, config().yawRxConfig.trim, config().yawRxConfig.max, config().yawRxConfig.deadband) *
-                   config().flightConfig.maxYawRateDegs;
-
     Mode::update();
+
+    input_rpy[2] *= config().flightConfig.maxYawRateDegs;
 }
 
 void StabilizeMode::run(void)
 {
-    int32_t rollError = input_rpy[0] - imu_rpy[0];
-    int32_t pitchError = input_rpy[1] - imu_rpy[1];
+    int32_t rollDemand = stabilizeDemand(input_rpy[0], imu_rpy[0],
+                                         config().flightConfig.maxRollRateDegs, config().flightConfig.maxRollAngleDegs, config().flightConfig.rollAngleKp);
 
-    rollError = rollError * config().flightConfig.rollAngleKp;
-    pitchError = pitchError * config().flightConfig.pitchAngleKp;
+    int32_t pitchDemand = stabilizeDemand(input_rpy[1], imu_rpy[1],
+                                          config().flightConfig.maxPitchRateDegs, config().flightConfig.maxPitchAngleDegs, config().flightConfig.pitchAngleKp);
 
-    output_rpy[0] = rollPIDF.Compute(rollError, imu_g[0]);
-    output_rpy[1] = pitchPIDF.Compute(pitchError, imu_g[1]);
+    output_rpy[0] = rollPIDF.Compute(rollDemand, imu_g[0]);
+    output_rpy[1] = pitchPIDF.Compute(pitchDemand, imu_g[1]);
     output_rpy[2] = yawPIDF.Compute(input_rpy[2], imu_g[2]);
 
     output_rpy[0] = constrain(output_rpy[0], -Control::RESOLUTION, Control::RESOLUTION);
