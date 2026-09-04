@@ -6,34 +6,34 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
 
     switch (_type)
     {
-    default:
-    case Config::AirframeType::CONVENTIONAL:
-        mixConventional(roll, pitch, yaw, out);
-        break;
+        default:
+        case Config::AirframeType::CONVENTIONAL:
+            mixConventional(roll, pitch, yaw, out);
+            break;
 
-    case Config::AirframeType::V_TAIL:
-        mixVTail(roll, pitch, yaw, out);
-        break;
+        case Config::AirframeType::V_TAIL:
+            mixVTail(roll, pitch, yaw, out);
+            break;
 
-    case Config::AirframeType::FLYING_WING_RUDDER:
-        mixFlyingWingRudder(roll, pitch, yaw, out);
-        break;
+        case Config::AirframeType::FLYING_WING_RUDDER:
+            mixFlyingWingRudder(roll, pitch, yaw, out);
+            break;
 
-    case Config::AirframeType::FLYING_WING_NO_RUDDER:
-        mixFlyingWingNoRudder(roll, pitch, out);
-        break;
+        case Config::AirframeType::FLYING_WING_NO_RUDDER:
+            mixFlyingWingNoRudder(roll, pitch, out);
+            break;
 
-    case Config::AirframeType::RUDDER_ELEVATOR:
-        mixRudderElevator(pitch, yaw, out);
-        break;
+        case Config::AirframeType::RUDDER_ELEVATOR:
+            mixRudderElevator(pitch, yaw, out);
+            break;
 
-    case Config::AirframeType::AILERON_ELEVATOR:
-        mixAileronElevator(roll, pitch, out);
-        break;
+        case Config::AirframeType::AILERON_ELEVATOR:
+            mixAileronElevator(roll, pitch, out);
+            break;
 
-    case Config::AirframeType::CUSTOM:
-        mixCustom(roll, pitch, yaw, out);
-        break;
+        case Config::AirframeType::CUSTOM:
+            mixCustom(roll, pitch, yaw, out);
+            break;
     }
 
     return out;
@@ -51,11 +51,7 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
  * Pitch -> Elevator
  * Yaw   -> Rudder
  */
-void AirplaneMixer::mixConventional(
-    int16_t roll,
-    int16_t pitch,
-    int16_t yaw,
-    Outputs &out) const
+void AirplaneMixer::mixConventional(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const
 {
     out.leftAileron = roll;
     out.rightAileron = roll;
@@ -70,20 +66,12 @@ void AirplaneMixer::mixConventional(
  * Elevator contribution moves both surfaces together.
  * Rudder contribution moves them differentially.
  */
-void AirplaneMixer::mixVTail(
-    int16_t roll,
-    int16_t pitch,
-    int16_t yaw,
-    Outputs &out) const
+void AirplaneMixer::mixVTail(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const
 {
     out.leftAileron = roll;
     out.rightAileron = roll;
 
-    mixDifferential(
-        yaw,
-        pitch,
-        out.elevator,
-        out.rudder);
+    mixDifferential(yaw, pitch, out.elevator, out.rudder);
 }
 
 /*
@@ -95,31 +83,19 @@ void AirplaneMixer::mixVTail(
  * Left  = pitch + roll
  * Right = pitch - roll
  */
-void AirplaneMixer::mixFlyingWingRudder(
-    int16_t roll,
-    int16_t pitch,
-    int16_t yaw,
-    Outputs &out) const
+void AirplaneMixer::mixFlyingWingRudder(int16_t roll,
+                                        int16_t pitch,
+                                        int16_t yaw,
+                                        Outputs& out) const
 {
     out.rudder = yaw;
 
-    mixDifferential(
-        roll,
-        pitch,
-        out.leftAileron,
-        out.rightAileron);
+    mixDifferential(roll, pitch, out.leftAileron, out.rightAileron);
 }
 
-void AirplaneMixer::mixFlyingWingNoRudder(
-    int16_t roll,
-    int16_t pitch,
-    Outputs &out) const
+void AirplaneMixer::mixFlyingWingNoRudder(int16_t roll, int16_t pitch, Outputs& out) const
 {
-    mixDifferential(
-        roll,
-        pitch,
-        out.leftAileron,
-        out.rightAileron);
+    mixDifferential(roll, pitch, out.leftAileron, out.rightAileron);
 }
 
 /*
@@ -128,19 +104,13 @@ void AirplaneMixer::mixFlyingWingNoRudder(
  * Typically used for simple trainers or aircraft with sufficient
  * dihedral to convert yaw into roll.
  */
-void AirplaneMixer::mixRudderElevator(
-    int16_t pitch,
-    int16_t yaw,
-    Outputs &out) const
+void AirplaneMixer::mixRudderElevator(int16_t pitch, int16_t yaw, Outputs& out) const
 {
     out.elevator = pitch;
     out.rudder = yaw;
 }
 
-void AirplaneMixer::mixAileronElevator(
-    int16_t roll,
-    int16_t pitch,
-    Outputs &out) const
+void AirplaneMixer::mixAileronElevator(int16_t roll, int16_t pitch, Outputs& out) const
 {
     out.leftAileron = roll;
     out.rightAileron = roll;
@@ -168,11 +138,10 @@ void AirplaneMixer::mixAileronElevator(
  * This preserves the requested pitch/yaw ratio better than independent
  * clipping.
  */
-void AirplaneMixer::mixDifferential(
-    int16_t common,
-    int16_t differential,
-    int16_t &output1,
-    int16_t &output2) const
+void AirplaneMixer::mixDifferential(int16_t common,
+                                    int16_t differential,
+                                    int16_t& output1,
+                                    int16_t& output2) const
 {
     int32_t left = common + differential;
     int32_t right = common - differential;
@@ -183,7 +152,7 @@ void AirplaneMixer::mixDifferential(
     output2 = static_cast<int16_t>(right);
 }
 
-void AirplaneMixer::normalizePair(int32_t &a, int32_t &b) const
+void AirplaneMixer::normalizePair(int32_t& a, int32_t& b) const
 {
     int32_t maxMagnitude = abs(a);
     const int32_t bMagnitude = abs(b);

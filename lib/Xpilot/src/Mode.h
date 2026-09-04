@@ -29,22 +29,21 @@ Flight stabilization software
 #ifndef _MODE_H
 #define _MODE_H
 
-#include <Arduino.h>
+#include "Actuators.h"
 #include "AirplaneMixer.h"
-#include "SystemConfig.h"
 #include "FlightConfigAccess.h"
-#include "SlewRateLimiter.h"
 #include "PIDF.h"
 #include "Radio.h"
-#include "Actuators.h"
+#include "SlewRateLimiter.h"
+#include "SystemConfig.h"
+#include <Arduino.h>
 
 inline int16_t mapToSRV(int16_t input)
 {
     const int32_t range = config().srvConfig.max - config().srvConfig.min;
 
-    return static_cast<int16_t>(
-        config().srvConfig.min +
-        ((input + Control::RESOLUTION) * range) / (2 * Control::RESOLUTION));
+    return static_cast<int16_t>(config().srvConfig.min +
+                                ((input + Control::RESOLUTION) * range) / (2 * Control::RESOLUTION));
 }
 
 // Abstract flight mode class
@@ -52,10 +51,13 @@ class Mode
 {
 public:
     Mode() {}
-    Mode(const Radio::THREE_POS_SW modePos) { setModeSwitchPosition(modePos); } // Constructor with mode switch position;
-    virtual ~Mode() = default;                                                  // Virtual destructor for proper cleanup of derived classes
+    Mode(const Radio::THREE_POS_SW modePos) // Constructor with mode switch position;
+    {
+        setModeSwitchPosition(modePos);
+    }
+    virtual ~Mode() = default; // Virtual destructor for proper cleanup of derived classes
 
-    virtual const char *modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
+    virtual const char* modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
 
     virtual void enter(void) {} // Called on mode enter
     virtual void update(void);  // Convert user input to mode specific targets, should be called first in the run function
@@ -65,28 +67,55 @@ public:
     void init(void);
 
     // Sceduler trampoline functions
-    static void runTask(void *);
-    static void updateInput(void *);
+    static void runTask(void*);
+    static void updateInput(void*);
 
     static void updateAHRS(float (&)[3], float (&)[3]);
 
-    static void configSub(ConfigID, void *);
+    static void configSub(ConfigID, void*);
 
     // Debug functions to get outputs for testing and tuning
-    static int32_t getRollInput(void) { return input_rpy[0]; }
-    static int32_t getPitchInput(void) { return input_rpy[1]; }
-    static int32_t getYawInput(void) { return input_rpy[2]; }
+    static int32_t getRollInput(void)
+    {
+        return input_rpy[0];
+    }
+    static int32_t getPitchInput(void)
+    {
+        return input_rpy[1];
+    }
+    static int32_t getYawInput(void)
+    {
+        return input_rpy[2];
+    }
 
-    static int16_t getRollOutput(void) { return output_rpy[0]; }
-    static int16_t getPitchOutput(void) { return output_rpy[1]; }
-    static int16_t getYawOutput(void) { return output_rpy[2]; }
+    static int16_t getRollOutput(void)
+    {
+        return output_rpy[0];
+    }
+    static int16_t getPitchOutput(void)
+    {
+        return output_rpy[1];
+    }
+    static int16_t getYawOutput(void)
+    {
+        return output_rpy[2];
+    }
 
 #if defined(USE_FLAPERONS)
-    static int16_t getFlaperon(void) { return flaperonOut; }
+    static int16_t getFlaperon(void)
+    {
+        return flaperonOut;
+    }
 #endif
 
-    void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }
-    Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
+    void setModeSwitchPosition(Radio::THREE_POS_SW modePos)
+    {
+        modeSwitchPosition = modePos;
+    }
+    Radio::THREE_POS_SW getModeSwitchPosition(void)
+    {
+        return modeSwitchPosition;
+    }
 
 protected:
     static int32_t imu_rpy[3]; // To hold imu rpy values
@@ -105,7 +134,8 @@ protected:
 
     static void applyRudderMix(void); // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
 
-    static void resetControllers(void); // Reset controllers when switching modes to prevent integral windup and derivative kick
+    static void
+    resetControllers(void); // Reset controllers when switching modes to prevent integral windup and derivative kick
 
     virtual void controlFailsafe(void); // Failsafe implementation
 
@@ -129,7 +159,10 @@ protected:
 class PassthroughMode : public Mode
 {
 public:
-    const char *modeName4(void) const override { return "PASS"; }
+    const char* modeName4(void) const override
+    {
+        return "PASS";
+    }
     void enter(void) override;
     void update(void) override;
     void run(void) override;
@@ -139,7 +172,10 @@ public:
 class RateMode : public Mode
 {
 public:
-    const char *modeName4(void) const override { return "RATE"; }
+    const char* modeName4(void) const override
+    {
+        return "RATE";
+    }
     void enter(void) override;
     void update(void) override;
     void run(void) override;
@@ -149,7 +185,10 @@ public:
 class StabilizeMode : public Mode
 {
 public:
-    const char *modeName4(void) const override { return "STAB"; }
+    const char* modeName4(void) const override
+    {
+        return "STAB";
+    }
     void enter(void) override;
     void update(void) override;
     void run(void) override;

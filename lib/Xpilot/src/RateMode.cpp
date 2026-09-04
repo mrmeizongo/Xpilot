@@ -1,5 +1,5 @@
-#include "Mode.h"
 #include "IMU.h"
+#include "Mode.h"
 
 void RateMode::enter(void)
 {
