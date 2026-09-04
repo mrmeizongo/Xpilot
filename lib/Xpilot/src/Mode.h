@@ -38,9 +38,9 @@ Flight stabilization software
 #include "Radio.h"
 #include "Actuators.h"
 
-inline int16_t mapToSRV(int32_t input)
+inline int16_t mapToSRV(int16_t input)
 {
-    const int16_t range = config().srvConfig.max - config().srvConfig.min;
+    const int32_t range = config().srvConfig.max - config().srvConfig.min;
 
     return static_cast<int16_t>(
         config().srvConfig.min +
@@ -93,11 +93,11 @@ protected:
     static int32_t imu_g[3];   // To hold imu g values
 
     static int32_t input_rpy[3];  // Input roll, pitch, and yaw
-    static int32_t output_rpy[3]; // Output roll, pitch, and yaw
+    static int16_t output_rpy[3]; // Output roll, pitch, and yaw
 
-    static SlewRateLimiter<int32_t> rollSlew;
-    static SlewRateLimiter<int32_t> pitchSlew;
-    static SlewRateLimiter<int32_t> yawSlew;
+    static SlewRateLimiter<int32_t, int16_t> rollSlew;
+    static SlewRateLimiter<int32_t, int16_t> pitchSlew;
+    static SlewRateLimiter<int32_t, int16_t> yawSlew;
 
     Radio::THREE_POS_SW modeSwitchPosition; // Mode switch position for this mode
 
@@ -118,9 +118,9 @@ protected:
     }
 #endif
 
-    static PIDF<int32_t> rollPIDF;
-    static PIDF<int32_t> pitchPIDF;
-    static PIDF<int32_t> yawPIDF;
+    static PIDF<int32_t, int16_t> rollPIDF;
+    static PIDF<int32_t, int16_t> pitchPIDF;
+    static PIDF<int32_t, int16_t> yawPIDF;
 
     static AirplaneMixer airplaneMixer;
 };

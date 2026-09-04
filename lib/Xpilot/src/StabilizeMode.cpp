@@ -14,13 +14,13 @@ void StabilizeMode::update(void)
         return;
     }
 
-    input_rpy[0] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL), config().rollRC.min, config().rollRC.trim, config().rollRC.max, config().rollRC.deadband) *
+    input_rpy[0] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL), config().rollRxConfig.min, config().rollRxConfig.trim, config().rollRxConfig.max, config().rollRxConfig.deadband) *
                    config().flightConfig.maxRollAngleDegs;
 
-    input_rpy[1] = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH), config().pitchRC.min, config().pitchRC.trim, config().pitchRC.max, config().pitchRC.deadband) *
+    input_rpy[1] = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH), config().pitchRxConfig.min, config().pitchRxConfig.trim, config().pitchRxConfig.max, config().pitchRxConfig.deadband) *
                    config().flightConfig.maxPitchAngleDegs;
 
-    input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW), config().yawRC.min, config().yawRC.trim, config().yawRC.max, config().yawRC.deadband) *
+    input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW), config().yawRxConfig.min, config().yawRxConfig.trim, config().yawRxConfig.max, config().yawRxConfig.deadband) *
                    config().flightConfig.maxYawRateDegs;
 
     Mode::update();
@@ -28,14 +28,11 @@ void StabilizeMode::update(void)
 
 void StabilizeMode::run(void)
 {
-    int16_t rollError = input_rpy[0] - imu_rpy[0];
-    int16_t pitchError = input_rpy[1] - imu_rpy[1];
+    int32_t rollError = input_rpy[0] - imu_rpy[0];
+    int32_t pitchError = input_rpy[1] - imu_rpy[1];
 
     rollError = rollError * config().flightConfig.rollAngleKp;
     pitchError = pitchError * config().flightConfig.pitchAngleKp;
-
-    rollError = constrain(rollError, -config().flightConfig.maxRollRateDegs, config().flightConfig.maxRollRateDegs);
-    pitchError = constrain(pitchError, -config().flightConfig.maxPitchRateDegs, config().flightConfig.maxPitchRateDegs);
 
     output_rpy[0] = rollPIDF.Compute(rollError, imu_g[0]);
     output_rpy[1] = pitchPIDF.Compute(pitchError, imu_g[1]);

@@ -14,13 +14,13 @@ void RateMode::update(void)
         return;
     }
 
-    input_rpy[0] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL), config().rollRC.min, config().rollRC.trim, config().rollRC.max, config().rollRC.deadband) *
+    input_rpy[0] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL), config().rollRxConfig.min, config().rollRxConfig.trim, config().rollRxConfig.max, config().rollRxConfig.deadband) *
                    config().flightConfig.maxRollRateDegs;
 
-    input_rpy[1] = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH), config().pitchRC.min, config().pitchRC.trim, config().pitchRC.max, config().pitchRC.deadband) *
+    input_rpy[1] = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH), config().pitchRxConfig.min, config().pitchRxConfig.trim, config().pitchRxConfig.max, config().pitchRxConfig.deadband) *
                    config().flightConfig.maxPitchRateDegs;
 
-    input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW), config().yawRC.min, config().yawRC.trim, config().yawRC.max, config().yawRC.deadband) *
+    input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW), config().yawRxConfig.min, config().yawRxConfig.trim, config().yawRxConfig.max, config().yawRxConfig.deadband) *
                    config().flightConfig.maxYawRateDegs;
 
     Mode::update();

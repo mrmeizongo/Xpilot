@@ -31,37 +31,35 @@ bool ConfigManager::isDirty() const
 
 void ConfigManager::loadDefaults()
 {
-    _config.airframeType.type = Config::AirframeType::CONVENTIONAL;
+    _config.airframeConfig.type = Config::AirframeType::CONVENTIONAL;
 
-    _config.rollRC.min = 1000;
-    _config.rollRC.trim = 1500;
-    _config.rollRC.max = 2000;
-    _config.rollRC.deadband = 8;
+    _config.rollRxConfig.min = 1100;
+    _config.rollRxConfig.trim = 1500;
+    _config.rollRxConfig.max = 1900;
+    _config.rollRxConfig.deadband = 8;
 
-    _config.pitchRC.min = 1000;
-    _config.pitchRC.trim = 1500;
-    _config.pitchRC.max = 2000;
-    _config.pitchRC.deadband = 8;
+    _config.pitchRxConfig.min = 1100;
+    _config.pitchRxConfig.trim = 1500;
+    _config.pitchRxConfig.max = 1900;
+    _config.pitchRxConfig.deadband = 8;
 
-    _config.yawRC.min = 1000;
-    _config.yawRC.trim = 1500;
-    _config.yawRC.max = 2000;
-    _config.yawRC.deadband = 8;
+    _config.yawRxConfig.min = 1100;
+    _config.yawRxConfig.trim = 1500;
+    _config.yawRxConfig.max = 1900;
+    _config.yawRxConfig.deadband = 8;
 
     _config.srvConfig.min = 1000;
     _config.srvConfig.trim = 1500;
     _config.srvConfig.max = 2000;
 
-    _config.flightConfig.controlResolution = 1000;
-
-    _config.flightConfig.maxRollRateDegs = 45;
+    _config.flightConfig.maxRollRateDegs = 60;
     _config.flightConfig.maxPitchRateDegs = 45;
     _config.flightConfig.maxYawRateDegs = 45;
 
-    _config.flightConfig.maxRollAngleDegs = 45;
-    _config.flightConfig.maxPitchAngleDegs = 45;
+    _config.flightConfig.maxRollAngleDegs = 75;
+    _config.flightConfig.maxPitchAngleDegs = 60;
 
-    _config.flightConfig.rollAngleKp = 1.;
+    _config.flightConfig.rollAngleKp = 1.f;
     _config.flightConfig.pitchAngleKp = 1.f;
 
     _config.flightConfig.flaperonScaleFactor = 1.f;
@@ -70,37 +68,37 @@ void ConfigManager::loadDefaults()
     _config.flightConfig.reverseRudderMix = false;
     _config.flightConfig.rudderMixScale = 0.3f;
 
-    _config.rollPIDF.Kp = 5.f;
-    _config.rollPIDF.Ki = 0.f;
-    _config.rollPIDF.Kd = 0.f;
-    _config.rollPIDF.Kf = 0.f;
-    _config.rollPIDF.iWindUpMax = 100.f;
+    _config.rPIDFConfig.Kp = 5.f;
+    _config.rPIDFConfig.Ki = 2.1f;
+    _config.rPIDFConfig.Kd = 0.f;
+    _config.rPIDFConfig.Kf = 1.5f;
+    _config.rPIDFConfig.iWindUpMax = 500.f;
 
-    _config.pitchPIDF.Kp = 7.f;
-    _config.pitchPIDF.Ki = 0.f;
-    _config.pitchPIDF.Kd = 0.f;
-    _config.pitchPIDF.Kf = 0.f;
-    _config.pitchPIDF.iWindUpMax = 100.f;
+    _config.pPIDFConfig.Kp = 7.f;
+    _config.pPIDFConfig.Ki = 2.1f;
+    _config.pPIDFConfig.Kd = 0.f;
+    _config.pPIDFConfig.Kf = 1.5f;
+    _config.pPIDFConfig.iWindUpMax = 500.f;
 
-    _config.yawPIDF.Kp = 9.f;
-    _config.yawPIDF.Ki = 0.f;
-    _config.yawPIDF.Kd = 0.f;
-    _config.yawPIDF.Kf = 0.f;
-    _config.yawPIDF.iWindUpMax = 100.f;
+    _config.yPIDFConfig.Kp = 9.f;
+    _config.yPIDFConfig.Ki = 0.f;
+    _config.yPIDFConfig.Kd = 0.f;
+    _config.yPIDFConfig.Kf = 1.5f;
+    _config.yPIDFConfig.iWindUpMax = 500.f;
 
-    _config.ahrsIMU.accBiasX = 0.f;
-    _config.ahrsIMU.accBiasY = 0.f;
-    _config.ahrsIMU.accBiasZ = 0.f;
+    _config.imuConfig.accBiasX = 0.f;
+    _config.imuConfig.accBiasY = 0.f;
+    _config.imuConfig.accBiasZ = 0.f;
 
-    _config.ahrsIMU.gyroBiasX = 0.f;
-    _config.ahrsIMU.gyroBiasY = 0.f;
-    _config.ahrsIMU.gyroBiasZ = 0.f;
+    _config.imuConfig.gyroBiasX = 0.f;
+    _config.imuConfig.gyroBiasY = 0.f;
+    _config.imuConfig.gyroBiasZ = 0.f;
 
-    _config.ahrsIMU.calibrated = false;
+    _config.imuConfig.calibrated = false;
 
-    _config.processFilter.controlSlewRate = 1000;
-    _config.processFilter.lowPassFilterFreq = 10;
-    _config.processFilter.processDT = 0.004;
+    _config.filterConfig.controlSlewRate = 2000;
+    _config.filterConfig.lowPassFilterFreq = 10;
+    _config.filterConfig.processDT = 0.004;
 
     _dirty = true;
 }
@@ -116,67 +114,67 @@ bool ConfigManager::get(
     {
     case ConfigID::AIRFRAME_TYPE:
         type = ConfigValueType::UINT8;
-        value.u8 = static_cast<uint8_t>(_config.airframeType.type);
+        value.u8 = static_cast<uint8_t>(_config.airframeConfig.type);
         break;
 
     case ConfigID::RC_ROLL_MIN:
         type = ConfigValueType::INT16;
-        value.i16 = _config.rollRC.min;
+        value.i16 = _config.rollRxConfig.min;
         break;
 
     case ConfigID::RC_ROLL_TRIM:
         type = ConfigValueType::INT16;
-        value.i16 = _config.rollRC.trim;
+        value.i16 = _config.rollRxConfig.trim;
         break;
 
     case ConfigID::RC_ROLL_MAX:
         type = ConfigValueType::INT16;
-        value.i16 = _config.rollRC.max;
+        value.i16 = _config.rollRxConfig.max;
         break;
 
     case ConfigID::RC_ROLL_DB:
         type = ConfigValueType::UINT8;
-        value.u8 = _config.rollRC.deadband;
+        value.u8 = _config.rollRxConfig.deadband;
         break;
 
     case ConfigID::RC_PITCH_MIN:
         type = ConfigValueType::INT16;
-        value.i16 = _config.pitchRC.min;
+        value.i16 = _config.pitchRxConfig.min;
         break;
 
     case ConfigID::RC_PITCH_TRIM:
         type = ConfigValueType::INT16;
-        value.i16 = _config.pitchRC.trim;
+        value.i16 = _config.pitchRxConfig.trim;
         break;
 
     case ConfigID::RC_PITCH_MAX:
         type = ConfigValueType::INT16;
-        value.i16 = _config.pitchRC.max;
+        value.i16 = _config.pitchRxConfig.max;
         break;
 
     case ConfigID::RC_PITCH_DB:
         type = ConfigValueType::UINT8;
-        value.u8 = _config.pitchRC.deadband;
+        value.u8 = _config.pitchRxConfig.deadband;
         break;
 
     case ConfigID::RC_YAW_MIN:
         type = ConfigValueType::INT16;
-        value.i16 = _config.yawRC.min;
+        value.i16 = _config.yawRxConfig.min;
         break;
 
     case ConfigID::RC_YAW_TRIM:
         type = ConfigValueType::INT16;
-        value.i16 = _config.yawRC.trim;
+        value.i16 = _config.yawRxConfig.trim;
         break;
 
     case ConfigID::RC_YAW_MAX:
         type = ConfigValueType::INT16;
-        value.i16 = _config.yawRC.max;
+        value.i16 = _config.yawRxConfig.max;
         break;
 
     case ConfigID::RC_YAW_DB:
         type = ConfigValueType::UINT8;
-        value.u8 = _config.yawRC.deadband;
+        value.u8 = _config.yawRxConfig.deadband;
         break;
 
     case ConfigID::SRV_MIN:
@@ -192,11 +190,6 @@ bool ConfigManager::get(
     case ConfigID::SRV_MAX:
         type = ConfigValueType::INT16;
         value.i16 = _config.srvConfig.max;
-        break;
-
-    case ConfigID::FLIGHT_CONTROL_RES:
-        type = ConfigValueType::INT16;
-        value.i16 = _config.flightConfig.controlResolution;
         break;
 
     case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:
@@ -255,127 +248,127 @@ bool ConfigManager::get(
 
     case ConfigID::PIDF_ROLL_KP:
         type = ConfigValueType::FLOAT;
-        value.f = _config.rollPIDF.Kp;
+        value.f = _config.rPIDFConfig.Kp;
         break;
 
     case ConfigID::PIDF_ROLL_KI:
         type = ConfigValueType::FLOAT;
-        value.f = _config.rollPIDF.Ki;
+        value.f = _config.rPIDFConfig.Ki;
         break;
 
     case ConfigID::PIDF_ROLL_KD:
         type = ConfigValueType::FLOAT;
-        value.f = _config.rollPIDF.Kd;
+        value.f = _config.rPIDFConfig.Kd;
         break;
 
     case ConfigID::PIDF_ROLL_KF:
         type = ConfigValueType::FLOAT;
-        value.f = _config.rollPIDF.Kf;
+        value.f = _config.rPIDFConfig.Kf;
         break;
 
     case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
         type = ConfigValueType::FLOAT;
-        value.f = _config.rollPIDF.iWindUpMax;
+        value.f = _config.rPIDFConfig.iWindUpMax;
         break;
 
     case ConfigID::PIDF_PITCH_KP:
         type = ConfigValueType::FLOAT;
-        value.f = _config.pitchPIDF.Kp;
+        value.f = _config.pPIDFConfig.Kp;
         break;
 
     case ConfigID::PIDF_PITCH_KI:
         type = ConfigValueType::FLOAT;
-        value.f = _config.pitchPIDF.Ki;
+        value.f = _config.pPIDFConfig.Ki;
         break;
 
     case ConfigID::PIDF_PITCH_KD:
         type = ConfigValueType::FLOAT;
-        value.f = _config.pitchPIDF.Kd;
+        value.f = _config.pPIDFConfig.Kd;
         break;
 
     case ConfigID::PIDF_PITCH_KF:
         type = ConfigValueType::FLOAT;
-        value.f = _config.pitchPIDF.Kf;
+        value.f = _config.pPIDFConfig.Kf;
         break;
 
     case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
         type = ConfigValueType::FLOAT;
-        value.f = _config.pitchPIDF.iWindUpMax;
+        value.f = _config.pPIDFConfig.iWindUpMax;
         break;
 
     case ConfigID::PIDF_YAW_KP:
         type = ConfigValueType::FLOAT;
-        value.f = _config.yawPIDF.Kp;
+        value.f = _config.yPIDFConfig.Kp;
         break;
 
     case ConfigID::PIDF_YAW_KI:
         type = ConfigValueType::FLOAT;
-        value.f = _config.yawPIDF.Ki;
+        value.f = _config.yPIDFConfig.Ki;
         break;
 
     case ConfigID::PIDF_YAW_KD:
         type = ConfigValueType::FLOAT;
-        value.f = _config.yawPIDF.Kd;
+        value.f = _config.yPIDFConfig.Kd;
         break;
 
     case ConfigID::PIDF_YAW_KF:
         type = ConfigValueType::FLOAT;
-        value.f = _config.yawPIDF.Kf;
+        value.f = _config.yPIDFConfig.Kf;
         break;
 
     case ConfigID::PIDF_YAW_I_WINDUP_MAX:
         type = ConfigValueType::FLOAT;
-        value.f = _config.yawPIDF.iWindUpMax;
+        value.f = _config.yPIDFConfig.iWindUpMax;
         break;
 
     case ConfigID::IMU_ACC_BIAS_X:
         type = ConfigValueType::FLOAT;
-        value.f = _config.ahrsIMU.accBiasX;
+        value.f = _config.imuConfig.accBiasX;
         break;
 
     case ConfigID::IMU_ACC_BIAS_Y:
         type = ConfigValueType::FLOAT;
-        value.f = _config.ahrsIMU.accBiasY;
+        value.f = _config.imuConfig.accBiasY;
         break;
 
     case ConfigID::IMU_ACC_BIAS_Z:
         type = ConfigValueType::FLOAT;
-        value.f = _config.ahrsIMU.accBiasZ;
+        value.f = _config.imuConfig.accBiasZ;
         break;
 
     case ConfigID::IMU_GYRO_BIAS_X:
         type = ConfigValueType::FLOAT;
-        value.f = _config.ahrsIMU.gyroBiasX;
+        value.f = _config.imuConfig.gyroBiasX;
         break;
 
     case ConfigID::IMU_GYRO_BIAS_Y:
         type = ConfigValueType::FLOAT;
-        value.f = _config.ahrsIMU.gyroBiasY;
+        value.f = _config.imuConfig.gyroBiasY;
         break;
 
     case ConfigID::IMU_GYRO_BIAS_Z:
         type = ConfigValueType::FLOAT;
-        value.f = _config.ahrsIMU.gyroBiasZ;
+        value.f = _config.imuConfig.gyroBiasZ;
         break;
 
     case ConfigID::IMU_CALIBRATED:
         type = ConfigValueType::BOOL;
-        value.u8 = _config.ahrsIMU.calibrated ? 1U : 0U;
+        value.u8 = _config.imuConfig.calibrated ? 1U : 0U;
         break;
 
     case ConfigID::FILTER_SLEW_RATE:
         type = ConfigValueType::INT16;
-        value.i16 = _config.processFilter.controlSlewRate;
+        value.i16 = _config.filterConfig.controlSlewRate;
         break;
 
     case ConfigID::FILTER_LPF_FREQ:
         type = ConfigValueType::INT16;
-        value.i16 = _config.processFilter.lowPassFilterFreq;
+        value.i16 = _config.filterConfig.lowPassFilterFreq;
         break;
 
     case ConfigID::FILTER_PROCESS_DT:
         type = ConfigValueType::FLOAT;
-        value.f = _config.processFilter.processDT;
+        value.f = _config.filterConfig.processDT;
         break;
 
         // ------------------------------------------------------------
@@ -399,54 +392,54 @@ bool ConfigManager::set(
     switch (id)
     {
     case ConfigID::AIRFRAME_TYPE:
-        _config.airframeType.type = static_cast<Config::AirframeType>(value.u8);
+        _config.airframeConfig.type = static_cast<Config::AirframeType>(value.u8);
         break;
     case ConfigID::RC_ROLL_MIN:
-        _config.rollRC.min = value.i16;
+        _config.rollRxConfig.min = value.i16;
         break;
 
     case ConfigID::RC_ROLL_TRIM:
-        _config.rollRC.trim = value.i16;
+        _config.rollRxConfig.trim = value.i16;
         break;
 
     case ConfigID::RC_ROLL_MAX:
-        _config.rollRC.max = value.i16;
+        _config.rollRxConfig.max = value.i16;
         break;
 
     case ConfigID::RC_ROLL_DB:
-        _config.rollRC.deadband = value.u8;
+        _config.rollRxConfig.deadband = value.u8;
         break;
 
     case ConfigID::RC_PITCH_MIN:
-        _config.pitchRC.min = value.i16;
+        _config.pitchRxConfig.min = value.i16;
         break;
 
     case ConfigID::RC_PITCH_TRIM:
-        _config.pitchRC.trim = value.i16;
+        _config.pitchRxConfig.trim = value.i16;
         break;
 
     case ConfigID::RC_PITCH_MAX:
-        _config.pitchRC.max = value.i16;
+        _config.pitchRxConfig.max = value.i16;
         break;
 
     case ConfigID::RC_PITCH_DB:
-        _config.pitchRC.deadband = value.u8;
+        _config.pitchRxConfig.deadband = value.u8;
         break;
 
     case ConfigID::RC_YAW_MIN:
-        _config.yawRC.min = value.i16;
+        _config.yawRxConfig.min = value.i16;
         break;
 
     case ConfigID::RC_YAW_TRIM:
-        _config.yawRC.trim = value.i16;
+        _config.yawRxConfig.trim = value.i16;
         break;
 
     case ConfigID::RC_YAW_MAX:
-        _config.yawRC.max = value.i16;
+        _config.yawRxConfig.max = value.i16;
         break;
 
     case ConfigID::RC_YAW_DB:
-        _config.yawRC.deadband = value.u8;
+        _config.yawRxConfig.deadband = value.u8;
         break;
 
     case ConfigID::SRV_MIN:
@@ -459,10 +452,6 @@ bool ConfigManager::set(
 
     case ConfigID::SRV_MAX:
         _config.srvConfig.max = value.i16;
-        break;
-
-    case ConfigID::FLIGHT_CONTROL_RES:
-        _config.flightConfig.controlResolution = value.i16;
         break;
 
     case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:
@@ -508,75 +497,75 @@ bool ConfigManager::set(
         break;
 
     case ConfigID::PIDF_ROLL_KP:
-        _config.rollPIDF.Kp = value.f;
+        _config.rPIDFConfig.Kp = value.f;
         break;
 
     case ConfigID::PIDF_ROLL_KI:
-        _config.rollPIDF.Ki = value.f;
+        _config.rPIDFConfig.Ki = value.f;
         break;
 
     case ConfigID::PIDF_ROLL_KD:
-        _config.rollPIDF.Kd = value.f;
+        _config.rPIDFConfig.Kd = value.f;
         break;
 
     case ConfigID::PIDF_ROLL_KF:
-        _config.rollPIDF.Kf = value.f;
+        _config.rPIDFConfig.Kf = value.f;
         break;
 
     case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
-        _config.rollPIDF.iWindUpMax = value.f;
+        _config.rPIDFConfig.iWindUpMax = value.f;
         break;
 
     case ConfigID::PIDF_PITCH_KP:
-        _config.pitchPIDF.Kp = value.f;
+        _config.pPIDFConfig.Kp = value.f;
         break;
 
     case ConfigID::PIDF_PITCH_KI:
-        _config.pitchPIDF.Ki = value.f;
+        _config.pPIDFConfig.Ki = value.f;
         break;
 
     case ConfigID::PIDF_PITCH_KD:
-        _config.pitchPIDF.Kd = value.f;
+        _config.pPIDFConfig.Kd = value.f;
         break;
 
     case ConfigID::PIDF_PITCH_KF:
-        _config.pitchPIDF.Kf = value.f;
+        _config.pPIDFConfig.Kf = value.f;
         break;
 
     case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
-        _config.pitchPIDF.iWindUpMax = value.f;
+        _config.pPIDFConfig.iWindUpMax = value.f;
         break;
 
     case ConfigID::PIDF_YAW_KP:
-        _config.yawPIDF.Kp = value.f;
+        _config.yPIDFConfig.Kp = value.f;
         break;
 
     case ConfigID::PIDF_YAW_KI:
-        _config.yawPIDF.Ki = value.f;
+        _config.yPIDFConfig.Ki = value.f;
         break;
 
     case ConfigID::PIDF_YAW_KD:
-        _config.yawPIDF.Kd = value.f;
+        _config.yPIDFConfig.Kd = value.f;
         break;
 
     case ConfigID::PIDF_YAW_KF:
-        _config.yawPIDF.Kf = value.f;
+        _config.yPIDFConfig.Kf = value.f;
         break;
 
     case ConfigID::PIDF_YAW_I_WINDUP_MAX:
-        _config.yawPIDF.iWindUpMax = value.f;
+        _config.yPIDFConfig.iWindUpMax = value.f;
         break;
 
     case ConfigID::FILTER_SLEW_RATE:
-        _config.processFilter.controlSlewRate = value.i16;
+        _config.filterConfig.controlSlewRate = value.i16;
         break;
 
     case ConfigID::FILTER_LPF_FREQ:
-        _config.processFilter.lowPassFilterFreq = value.i16;
+        _config.filterConfig.lowPassFilterFreq = value.i16;
         break;
 
     case ConfigID::FILTER_PROCESS_DT:
-        _config.processFilter.processDT = value.f;
+        _config.filterConfig.processDT = value.f;
         break;
 
     default:
@@ -618,8 +607,6 @@ bool ConfigManager::validate(
     case ConfigID::SRV_MIN:
     case ConfigID::SRV_TRIM:
     case ConfigID::SRV_MAX:
-
-    case ConfigID::FLIGHT_CONTROL_RES:
 
         return value.i16 >= 544 &&
                value.i16 <= 2400;
@@ -666,15 +653,16 @@ bool ConfigManager::validate(
     case ConfigID::PIDF_YAW_KD:
     case ConfigID::PIDF_YAW_KF:
 
-    case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
-    case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
-    case ConfigID::PIDF_YAW_I_WINDUP_MAX:
-
     case ConfigID::FLIGHT_ROLL_ANGLE_KP:
     case ConfigID::FLIGHT_PITCH_ANGLE_KP:
 
         return value.f >= 0.f &&
-               value.f <= 1000.f;
+               value.f <= static_cast<float>(Control::RESOLUTION);
+
+    case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
+    case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
+    case ConfigID::PIDF_YAW_I_WINDUP_MAX:
+        return value.f >= 0.f;
 
     case ConfigID::FLIGHT_REVERSE_RUDDER_MIX:
 
@@ -762,15 +750,15 @@ void ConfigManager::registerSubscriber(Callback cb, void *ctx)
 
 void ConfigManager::setIMUCalibration(const float (&accelBias)[3], const float (&gyroBias)[3])
 {
-    _config.ahrsIMU.accBiasX = accelBias[0];
-    _config.ahrsIMU.accBiasY = accelBias[1];
-    _config.ahrsIMU.accBiasZ = accelBias[2];
+    _config.imuConfig.accBiasX = accelBias[0];
+    _config.imuConfig.accBiasY = accelBias[1];
+    _config.imuConfig.accBiasZ = accelBias[2];
 
-    _config.ahrsIMU.gyroBiasX = gyroBias[0];
-    _config.ahrsIMU.gyroBiasY = gyroBias[1];
-    _config.ahrsIMU.gyroBiasZ = gyroBias[2];
+    _config.imuConfig.gyroBiasX = gyroBias[0];
+    _config.imuConfig.gyroBiasY = gyroBias[1];
+    _config.imuConfig.gyroBiasZ = gyroBias[2];
 
-    _config.ahrsIMU.calibrated = true;
+    _config.imuConfig.calibrated = true;
 
     _dirty = true;
 }

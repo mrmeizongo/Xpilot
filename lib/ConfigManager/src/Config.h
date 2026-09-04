@@ -28,7 +28,7 @@ struct Config
         AirframeType type;
     };
 
-    struct RCConfig
+    struct RxConfig
     {
         int16_t min;
         int16_t trim;
@@ -46,8 +46,6 @@ struct Config
 
     struct FlightConfig
     {
-        int16_t controlResolution;
-
         int16_t maxRollRateDegs;
         int16_t maxPitchRateDegs;
         int16_t maxYawRateDegs;
@@ -94,23 +92,23 @@ struct Config
         float processDT;
     };
 
-    AirframeConfig airframeType;
+    AirframeConfig airframeConfig;
 
-    RCConfig rollRC;
-    RCConfig pitchRC;
-    RCConfig yawRC;
+    RxConfig rollRxConfig;
+    RxConfig pitchRxConfig;
+    RxConfig yawRxConfig;
 
     SRVConfig srvConfig;
 
     FlightConfig flightConfig;
 
-    PIDFConfig rollPIDF;
-    PIDFConfig pitchPIDF;
-    PIDFConfig yawPIDF;
+    PIDFConfig rPIDFConfig;
+    PIDFConfig pPIDFConfig;
+    PIDFConfig yPIDFConfig;
 
-    IMUConfig ahrsIMU;
+    IMUConfig imuConfig;
 
-    FilterConfig processFilter;
+    FilterConfig filterConfig;
 };
 
 #endif //_CONFIG_G

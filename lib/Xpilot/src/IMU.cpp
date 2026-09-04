@@ -45,8 +45,8 @@ void IMU::init(void)
         }
     }
 
-    mpu6050.setAccBias(config().ahrsIMU.accBiasX, config().ahrsIMU.accBiasY, config().ahrsIMU.accBiasZ);
-    mpu6050.setGyroBias(config().ahrsIMU.gyroBiasX, config().ahrsIMU.gyroBiasY, config().ahrsIMU.gyroBiasZ);
+    mpu6050.setAccBias(config().imuConfig.accBiasX, config().imuConfig.accBiasY, config().imuConfig.accBiasZ);
+    mpu6050.setGyroBias(config().imuConfig.gyroBiasX, config().imuConfig.gyroBiasY, config().imuConfig.gyroBiasZ);
 }
 
 void IMU::getLatestReadings(void)

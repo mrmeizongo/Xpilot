@@ -77,7 +77,7 @@ void Radio::FailSafe()
 {
     const uint32_t now = millis();
 
-    const uint8_t req = requiredChannels(config().airframeType.type);
+    const uint8_t req = requiredChannels(config().airframeConfig.type);
 
     bool timeout = false;
     bool rxFailsafe = true;

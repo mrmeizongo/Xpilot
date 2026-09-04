@@ -1,6 +1,6 @@
 #include "AirplaneMixer.h"
 
-AirplaneMixer::Outputs AirplaneMixer::mix(int32_t roll, int32_t pitch, int32_t yaw) const
+AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t yaw) const
 {
     Outputs out{};
 
@@ -52,9 +52,9 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int32_t roll, int32_t pitch, int32_t y
  * Yaw   -> Rudder
  */
 void AirplaneMixer::mixConventional(
-    int32_t roll,
-    int32_t pitch,
-    int32_t yaw,
+    int16_t roll,
+    int16_t pitch,
+    int16_t yaw,
     Outputs &out) const
 {
     out.leftAileron = roll;
@@ -71,9 +71,9 @@ void AirplaneMixer::mixConventional(
  * Rudder contribution moves them differentially.
  */
 void AirplaneMixer::mixVTail(
-    int32_t roll,
-    int32_t pitch,
-    int32_t yaw,
+    int16_t roll,
+    int16_t pitch,
+    int16_t yaw,
     Outputs &out) const
 {
     out.leftAileron = roll;
@@ -96,9 +96,9 @@ void AirplaneMixer::mixVTail(
  * Right = pitch - roll
  */
 void AirplaneMixer::mixFlyingWingRudder(
-    int32_t roll,
-    int32_t pitch,
-    int32_t yaw,
+    int16_t roll,
+    int16_t pitch,
+    int16_t yaw,
     Outputs &out) const
 {
     out.rudder = yaw;
@@ -111,8 +111,8 @@ void AirplaneMixer::mixFlyingWingRudder(
 }
 
 void AirplaneMixer::mixFlyingWingNoRudder(
-    int32_t roll,
-    int32_t pitch,
+    int16_t roll,
+    int16_t pitch,
     Outputs &out) const
 {
     mixDifferential(
@@ -129,8 +129,8 @@ void AirplaneMixer::mixFlyingWingNoRudder(
  * dihedral to convert yaw into roll.
  */
 void AirplaneMixer::mixRudderElevator(
-    int32_t pitch,
-    int32_t yaw,
+    int16_t pitch,
+    int16_t yaw,
     Outputs &out) const
 {
     out.elevator = pitch;
@@ -138,8 +138,8 @@ void AirplaneMixer::mixRudderElevator(
 }
 
 void AirplaneMixer::mixAileronElevator(
-    int32_t roll,
-    int32_t pitch,
+    int16_t roll,
+    int16_t pitch,
     Outputs &out) const
 {
     out.leftAileron = roll;
@@ -169,18 +169,18 @@ void AirplaneMixer::mixAileronElevator(
  * clipping.
  */
 void AirplaneMixer::mixDifferential(
-    int32_t common,
-    int32_t differential,
-    int32_t &output1,
-    int32_t &output2) const
+    int16_t common,
+    int16_t differential,
+    int16_t &output1,
+    int16_t &output2) const
 {
     int32_t left = common + differential;
     int32_t right = common - differential;
 
     normalizePair(left, right);
 
-    output1 = left;
-    output2 = right;
+    output1 = static_cast<int16_t>(left);
+    output2 = static_cast<int16_t>(right);
 }
 
 void AirplaneMixer::normalizePair(int32_t &a, int32_t &b) const
