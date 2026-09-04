@@ -77,9 +77,9 @@ public:
     static int32_t getPitchInput(void) { return input_rpy[1]; }
     static int32_t getYawInput(void) { return input_rpy[2]; }
 
-    static int32_t getRollOutput(void) { return output_rpy[0]; }
-    static int32_t getPitchOutput(void) { return output_rpy[1]; }
-    static int32_t getYawOutput(void) { return output_rpy[2]; }
+    static int16_t getRollOutput(void) { return output_rpy[0]; }
+    static int16_t getPitchOutput(void) { return output_rpy[1]; }
+    static int16_t getYawOutput(void) { return output_rpy[2]; }
 
 #if defined(USE_FLAPERONS)
     static int16_t getFlaperon(void) { return flaperonOut; }
