@@ -15,8 +15,7 @@ inline int32_t stabilizeDemand(int16_t input,    // -1000 : +1000
 
     int32_t demand;
 
-    const bool correctAttitude =
-        input == 0 || (input > 0 && angle > angleLimit) || (input < 0 && angle < -angleLimit);
+    const bool correctAttitude = input == 0 || (input > 0 && angle > angleLimit) || (input < 0 && angle < -angleLimit);
 
     if (correctAttitude)
     {
@@ -42,13 +41,17 @@ void StabilizeMode::update(void)
 
 void StabilizeMode::run(void)
 {
-    int32_t rollDemand =
-        stabilizeDemand(input_rpy[0], imu_rpy[0], config().flightConfig.maxRollRateDegs,
-                        config().flightConfig.maxRollAngleDegs, config().flightConfig.rollAngleKp);
+    int32_t rollDemand = stabilizeDemand(input_rpy[0],
+                                         imu_rpy[0],
+                                         config().flightConfig.maxRollRateDegs,
+                                         config().flightConfig.maxRollAngleDegs,
+                                         config().flightConfig.rollAngleKp);
 
-    int32_t pitchDemand = stabilizeDemand(
-        input_rpy[1], imu_rpy[1], config().flightConfig.maxPitchRateDegs,
-        config().flightConfig.maxPitchAngleDegs, config().flightConfig.pitchAngleKp);
+    int32_t pitchDemand = stabilizeDemand(input_rpy[1],
+                                          imu_rpy[1],
+                                          config().flightConfig.maxPitchRateDegs,
+                                          config().flightConfig.maxPitchAngleDegs,
+                                          config().flightConfig.pitchAngleKp);
 
     output_rpy[0] = rollPIDF.Compute(rollDemand, imu_g[0]);
     output_rpy[1] = pitchPIDF.Compute(pitchDemand, imu_g[1]);

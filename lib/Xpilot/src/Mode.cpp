@@ -6,12 +6,9 @@ void Mode::init(void)
     // Changing airframe type requires a reset to take effect
     airplaneMixer.setAirframeType(config().airframeConfig.type);
 
-    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate,
-                                                 config().filterConfig.processDT};
-    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate,
-                                                  config().filterConfig.processDT};
-    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate,
-                                                config().filterConfig.processDT};
+    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.processDT};
+    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.processDT};
+    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.processDT};
 
     rollPIDF = PIDF<int32_t, int16_t>{config().rPIDFConfig.Kp / Control::RESOLUTION,
                                       config().rPIDFConfig.Ki / Control::RESOLUTION,
@@ -150,15 +147,13 @@ void Mode::update(void)
 #if defined(USE_FLAPERONS)
     int16_t flapPwm = radio.getPWM(Radio::CHANNEL::AUX2);
     flapPwm = constrain(flapPwm, RX_PWM_MIN, RX_PWM_TRIM);
-    flaperonOut =
-        static_cast<int16_t>((RX_PWM_TRIM - flapPwm) * config().flightConfig.flaperonScaleFactor);
+    flaperonOut = static_cast<int16_t>((RX_PWM_TRIM - flapPwm) * config().flightConfig.flaperonScaleFactor);
 #endif
 }
 
 void Mode::applyRudderMix(void)
 {
-    int16_t contribution =
-        static_cast<int16_t>(input_rpy[0] * config().flightConfig.rudderMixScale);
+    int16_t contribution = static_cast<int16_t>(input_rpy[0] * config().flightConfig.rudderMixScale);
 
     input_rpy[2] += config().flightConfig.reverseRudderMix ? -contribution : contribution;
 }

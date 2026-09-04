@@ -13,9 +13,9 @@ public:
     void calibrate(void);         // Calibrate IMU to obtain sensor bias values
     void getCalibration(float (&)[3], float (&)[3]);
 
-    static void getLatestReadingsTask(void *ctx) // Trampoline function for the scheduler to call the getLatestReadings function
+    static void getLatestReadingsTask(void* ctx) // Trampoline function for the scheduler
     {
-        static_cast<IMU *>(ctx)->getLatestReadings();
+        static_cast<IMU*>(ctx)->getLatestReadings();
     }
 
     int16_t getRoll(void) { return static_cast<int16_t>(_rpy[0]); }

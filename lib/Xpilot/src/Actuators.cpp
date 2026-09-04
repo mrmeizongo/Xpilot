@@ -8,9 +8,7 @@
 Servo Actuators::controlServo[CHANNEL_COUNT]{};
 int16_t Actuators::channelOut[CHANNEL_COUNT]{};
 
-Actuators::Actuators(void)
-{
-}
+Actuators::Actuators(void) {}
 
 // Set up output servos
 void Actuators::init(void)
@@ -55,10 +53,7 @@ int16_t Actuators::getServoOut(Actuators::Channel ch)
 }
 
 // Write current servo output values to the servos
-void Actuators::writeServos(void)
-{
-    writeServos(channelOut);
-}
+void Actuators::writeServos(void) { writeServos(channelOut); }
 
 // Write all servo output values at once using an array
 void Actuators::writeServos(const int16_t (&SRVout)[CHANNEL_COUNT])

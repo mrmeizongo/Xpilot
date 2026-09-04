@@ -94,8 +94,7 @@ void Radio::FailSafe()
         timeout |= (now - lastValidRxTimeMs[i]) >= RX_TIMEOUT_MS;
 
         // All channels are required to trigger a failsafe
-        rxFailsafe &=
-            abs(RX_FAILSAFE_PWM - raw[i]) <= RX_FAILSAFE_TOLERANCE;
+        rxFailsafe &= abs(RX_FAILSAFE_PWM - raw[i]) <= RX_FAILSAFE_TOLERANCE;
     }
 
     const bool signalLost = timeout || rxFailsafe;

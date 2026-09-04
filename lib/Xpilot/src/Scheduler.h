@@ -32,7 +32,7 @@ Flight stabilization software
 class Scheduler
 {
 public:
-    using TaskCallback = void (*)(void *);
+    using TaskCallback = void (*)(void*);
 
     /**
      * This is an arbitrary limit.
@@ -72,11 +72,7 @@ public:
      *
      * @return Task ID from 0 to MAX_TASKS - 1, or INVALID_TASK_ID on failure.
      */
-    int8_t addTask(
-        TaskCallback callback,
-        void *context,
-        uint16_t frequencyHz,
-        uint16_t startDelayMs = 0);
+    int8_t addTask(TaskCallback callback, void* context, uint16_t frequencyHz, uint16_t startDelayMs = 0);
 
     /**
      * Executes all tasks that are currently due.
@@ -87,7 +83,7 @@ public:
 
     bool isEnabled(int8_t taskId) const;
 
-    bool getStats(int8_t taskId, TaskStats &stats) const;
+    bool getStats(int8_t taskId, TaskStats& stats) const;
 
     bool resetStats(int8_t taskId);
 
@@ -107,7 +103,7 @@ private:
     struct Task
     {
         TaskCallback callback;
-        void *context;
+        void* context;
 
         uint32_t nextRunTick;
         uint16_t frequencyHz;
@@ -124,9 +120,7 @@ private:
 
     static volatile uint32_t tickCount;
 
-    static bool deadlineReached(
-        uint32_t currentTick,
-        uint32_t deadlineTick);
+    static bool deadlineReached(uint32_t currentTick, uint32_t deadlineTick);
 
     bool isValidTask(int8_t taskId) const;
 };

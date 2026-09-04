@@ -33,9 +33,7 @@ Flight stabilization software
 class SerialConfigTask
 {
 public:
-    SerialConfigTask(
-        HardwareSerial &serial,
-        ConfigManager &configManager);
+    SerialConfigTask(HardwareSerial& serial, ConfigManager& configManager);
 
     void run();
 
@@ -46,8 +44,8 @@ private:
         RECEIVING_PACKET
     };
 
-    HardwareSerial &_serial;
-    ConfigManager &_configManager;
+    HardwareSerial& _serial;
+    ConfigManager& _configManager;
 
     RxState _rxState;
 
@@ -57,26 +55,18 @@ private:
 
     void processByte(uint8_t byte);
 
-    void processPacket(
-        const SerialPacket &packet);
+    void processPacket(const SerialPacket& packet);
 
-    void processGet(
-        const SerialPacket &packet);
+    void processGet(const SerialPacket& packet);
 
-    void processSet(
-        const SerialPacket &packet);
+    void processSet(const SerialPacket& packet);
 
-    void sendValue(
-        ConfigID id);
+    void sendValue(ConfigID id);
 
-    void sendAck(
-        SerialCommand originalCommand, SerialCommand ack = SerialCommand::ACK);
+    void sendAck(SerialCommand originalCommand, SerialCommand ack = SerialCommand::ACK);
 
-    void sendPacket(
-        SerialPacket &packet);
+    void sendPacket(SerialPacket& packet);
 
-    static uint8_t calculateChecksum(
-        const uint8_t *data,
-        uint8_t length);
+    static uint8_t calculateChecksum(const uint8_t* data, uint8_t length);
 };
 #endif //_SERIAL_CONFIG_TASK_H

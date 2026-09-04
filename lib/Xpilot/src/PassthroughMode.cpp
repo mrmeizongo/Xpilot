@@ -7,10 +7,7 @@ void PassthroughMode::enter(void)
     yawSlew.reset(output_rpy[2]);
 }
 
-void PassthroughMode::update(void)
-{
-    Mode::update();
-}
+void PassthroughMode::update(void) { Mode::update(); }
 
 void PassthroughMode::run(void)
 {

@@ -25,21 +25,24 @@
 #ifndef _SLEWRATE
 #define _SLEWRATE
 
-template <typename T, typename U>
-class SlewRateLimiter
+template <typename T, typename U> class SlewRateLimiter
 {
 public:
     SlewRateLimiter()
-        : _output{U{}}, _maxChangeRate{0} {}
+        : _output{U{}}
+        , _maxChangeRate{0}
+    {
+    }
 
     SlewRateLimiter(int16_t ratePerSecond, float dt)
-        : _output{U{}}, _ratePerSecond{ratePerSecond}
+        : _output{U{}}
+        , _ratePerSecond{ratePerSecond}
     {
         _maxChangeRate = ratePerSecond * dt;
     }
 
-    SlewRateLimiter(SlewRateLimiter &&) = default;
-    SlewRateLimiter &operator=(SlewRateLimiter &&) = default;
+    SlewRateLimiter(SlewRateLimiter&&) = default;
+    SlewRateLimiter& operator=(SlewRateLimiter&&) = default;
 
     U update(T target)
     {

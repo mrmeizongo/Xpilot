@@ -1,11 +1,11 @@
 #include "Xpilot.h"
 #include "IMU.h"
 
-#define CLEAR_TERMINAL()         \
-    do                           \
-    {                            \
-        Serial.print("\033[2J"); \
-        Serial.print("\033[H");  \
+#define CLEAR_TERMINAL()                                                                                               \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        Serial.print("\033[2J");                                                                                       \
+        Serial.print("\033[H");                                                                                        \
     } while (0)
 
 void Xpilot::printIO(void)

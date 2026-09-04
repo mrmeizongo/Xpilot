@@ -66,9 +66,7 @@ struct SerialPacket
     uint8_t checksum;
 };
 
-constexpr uint8_t SERIAL_PACKET_START =
-    0xAA;
+constexpr uint8_t SERIAL_PACKET_START = 0xAA;
 
-constexpr uint8_t SERIAL_PACKET_SIZE =
-    sizeof(SerialPacket);
+constexpr uint8_t SERIAL_PACKET_SIZE = sizeof(SerialPacket);
 #endif //_SERIAL_PROTOCOL_H

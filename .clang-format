@@ -38,7 +38,7 @@ AllowAllParametersOfDeclarationOnNextLine: true
 # Short statements
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: true
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortLambdasOnASingleLine: Empty
@@ -83,11 +83,6 @@ SpacesBeforeTrailingComments: 1
 # Empty lines
 MaxEmptyLinesToKeep: 1
 KeepEmptyLinesAtTheStartOfBlocks: false
-
-# Misc
-Cpp11BracedListStyle: true
-Standard: Latest
-CompactNamespaces: false
 
 # Misc
 Cpp11BracedListStyle: true

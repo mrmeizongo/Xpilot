@@ -4,9 +4,6 @@
 
 extern ConfigManager configManager;
 
-inline const Config &config()
-{
-    return configManager.config();
-}
+inline const Config& config() { return configManager.config(); }
 
 #endif //_CONFIG_ACCESS_H

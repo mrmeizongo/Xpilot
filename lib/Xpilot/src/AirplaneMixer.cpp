@@ -83,10 +83,7 @@ void AirplaneMixer::mixVTail(int16_t roll, int16_t pitch, int16_t yaw, Outputs& 
  * Left  = pitch + roll
  * Right = pitch - roll
  */
-void AirplaneMixer::mixFlyingWingRudder(int16_t roll,
-                                        int16_t pitch,
-                                        int16_t yaw,
-                                        Outputs& out) const
+void AirplaneMixer::mixFlyingWingRudder(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const
 {
     out.rudder = yaw;
 
@@ -138,10 +135,7 @@ void AirplaneMixer::mixAileronElevator(int16_t roll, int16_t pitch, Outputs& out
  * This preserves the requested pitch/yaw ratio better than independent
  * clipping.
  */
-void AirplaneMixer::mixDifferential(int16_t common,
-                                    int16_t differential,
-                                    int16_t& output1,
-                                    int16_t& output2) const
+void AirplaneMixer::mixDifferential(int16_t common, int16_t differential, int16_t& output1, int16_t& output2) const
 {
     int32_t left = common + differential;
     int32_t right = common - differential;

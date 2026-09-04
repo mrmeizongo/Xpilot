@@ -75,47 +75,20 @@ public:
     static void configSub(ConfigID, void*);
 
     // Debug functions to get outputs for testing and tuning
-    static int32_t getRollInput(void)
-    {
-        return input_rpy[0];
-    }
-    static int32_t getPitchInput(void)
-    {
-        return input_rpy[1];
-    }
-    static int32_t getYawInput(void)
-    {
-        return input_rpy[2];
-    }
+    static int32_t getRollInput(void) { return input_rpy[0]; }
+    static int32_t getPitchInput(void) { return input_rpy[1]; }
+    static int32_t getYawInput(void) { return input_rpy[2]; }
 
-    static int16_t getRollOutput(void)
-    {
-        return output_rpy[0];
-    }
-    static int16_t getPitchOutput(void)
-    {
-        return output_rpy[1];
-    }
-    static int16_t getYawOutput(void)
-    {
-        return output_rpy[2];
-    }
+    static int16_t getRollOutput(void) { return output_rpy[0]; }
+    static int16_t getPitchOutput(void) { return output_rpy[1]; }
+    static int16_t getYawOutput(void) { return output_rpy[2]; }
 
 #if defined(USE_FLAPERONS)
-    static int16_t getFlaperon(void)
-    {
-        return flaperonOut;
-    }
+    static int16_t getFlaperon(void) { return flaperonOut; }
 #endif
 
-    void setModeSwitchPosition(Radio::THREE_POS_SW modePos)
-    {
-        modeSwitchPosition = modePos;
-    }
-    Radio::THREE_POS_SW getModeSwitchPosition(void)
-    {
-        return modeSwitchPosition;
-    }
+    void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }
+    Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
 
 protected:
     static int32_t imu_rpy[3]; // To hold imu rpy values
@@ -159,10 +132,7 @@ protected:
 class PassthroughMode : public Mode
 {
 public:
-    const char* modeName4(void) const override
-    {
-        return "PASS";
-    }
+    const char* modeName4(void) const override { return "PASS"; }
     void enter(void) override;
     void update(void) override;
     void run(void) override;
@@ -172,10 +142,7 @@ public:
 class RateMode : public Mode
 {
 public:
-    const char* modeName4(void) const override
-    {
-        return "RATE";
-    }
+    const char* modeName4(void) const override { return "RATE"; }
     void enter(void) override;
     void update(void) override;
     void run(void) override;
@@ -185,10 +152,7 @@ public:
 class StabilizeMode : public Mode
 {
 public:
-    const char* modeName4(void) const override
-    {
-        return "STAB";
-    }
+    const char* modeName4(void) const override { return "STAB"; }
     void enter(void) override;
     void update(void) override;
     void run(void) override;

@@ -34,15 +34,13 @@ volatile uint32_t Scheduler::tickCount = 0;
 
 namespace
 {
-    constexpr uint32_t TIMER2_PRESCALER = 64UL;
-    constexpr uint32_t SCHEDULER_TICK_HZ = 1000UL;
+constexpr uint32_t TIMER2_PRESCALER = 64UL;
+constexpr uint32_t SCHEDULER_TICK_HZ = 1000UL;
 
-    constexpr uint32_t TIMER2_COMPARE_VALUE =
-        (F_CPU / TIMER2_PRESCALER / SCHEDULER_TICK_HZ) - 1UL;
+constexpr uint32_t TIMER2_COMPARE_VALUE = (F_CPU / TIMER2_PRESCALER / SCHEDULER_TICK_HZ) - 1UL;
 
-    static_assert(
-        (TIMER2_COMPARE_VALUE >= 1UL) && (TIMER2_COMPARE_VALUE <= 255UL),
-        "Timer2 compare value range 1 <= TIMER2_COMPARE_VALUE <= 255");
+static_assert((TIMER2_COMPARE_VALUE >= 1UL) && (TIMER2_COMPARE_VALUE <= 255UL),
+              "Timer2 compare value range 1 <= TIMER2_COMPARE_VALUE <= 255");
 }
 
 Scheduler::Scheduler(void)
@@ -102,11 +100,7 @@ void Scheduler::init(void)
     }
 }
 
-int8_t Scheduler::addTask(
-    TaskCallback callback,
-    void *context,
-    uint16_t frequencyHz,
-    uint16_t startDelayMs)
+int8_t Scheduler::addTask(TaskCallback callback, void* context, uint16_t frequencyHz, uint16_t startDelayMs)
 {
     if (callback == nullptr || frequencyHz <= 0 || frequencyHz > 1000)
     {
@@ -117,8 +111,7 @@ int8_t Scheduler::addTask(
      * For rates that do not divide evenly into 1000
      * the period is rounded up to the nearest millisecond.
      */
-    const uint32_t periodMs =
-        static_cast<uint32_t>((1000UL + (frequencyHz / 2U)) / frequencyHz);
+    const uint32_t periodMs = static_cast<uint32_t>((1000UL + (frequencyHz / 2U)) / frequencyHz);
 
     if (periodMs == 0)
     {
@@ -127,7 +120,7 @@ int8_t Scheduler::addTask(
 
     for (uint8_t i = 0; i < MAX_TASKS; ++i)
     {
-        Task &task = tasks_[i];
+        Task& task = tasks_[i];
 
         if (!task.occupied)
         {
@@ -149,9 +142,8 @@ int8_t Scheduler::addTask(
 
             // startDelayMs == 0, means run after one period, otherwise run after startDelayMs
             // This allows system initialization to complete before the first task execution.
-            const uint32_t initialDelayMs = (startDelayMs == 0)
-                                                ? static_cast<uint32_t>(periodMs)
-                                                : static_cast<uint32_t>(startDelayMs);
+            const uint32_t initialDelayMs =
+                (startDelayMs == 0) ? static_cast<uint32_t>(periodMs) : static_cast<uint32_t>(startDelayMs);
 
             task.nextRunTick = ticks() + initialDelayMs;
             lastTask_++;
@@ -167,7 +159,7 @@ void Scheduler::runTasks(void)
 {
     for (uint8_t i = 0; i <= lastTask_; ++i)
     {
-        Task &task = tasks_[i];
+        Task& task = tasks_[i];
 
         if (!isEnabled(i))
         {
@@ -189,19 +181,16 @@ void Scheduler::runTasks(void)
          * The scheduler executes the task once and skips obsolete
          * invocations rather than repeatedly running the task to catch up.
          */
-        const uint32_t latenessMs =
-            currentTick - task.nextRunTick;
+        const uint32_t latenessMs = currentTick - task.nextRunTick;
 
-        const uint32_t missedPeriods =
-            latenessMs / task.periodMs;
+        const uint32_t missedPeriods = latenessMs / task.periodMs;
 
         /*
          * Advance from the previous scheduled deadline rather than from
          * the current time. This prevents normal execution jitter from
          * accumulating into long-term schedule drift.
          */
-        task.nextRunTick +=
-            (missedPeriods + 1UL) * task.periodMs;
+        task.nextRunTick += (missedPeriods + 1UL) * task.periodMs;
 
         task.stats.missedPeriods += missedPeriods;
 
@@ -230,8 +219,7 @@ void Scheduler::runTasks(void)
         }
 
         // Convert time task took to run to milliseconds and compare it to the alloted time
-        const uint32_t availableTimeUs =
-            static_cast<uint32_t>(task.periodMs) * 1000UL;
+        const uint32_t availableTimeUs = static_cast<uint32_t>(task.periodMs) * 1000UL;
 
         if (taskPeriodTakenUs > availableTimeUs)
         {
@@ -250,9 +238,7 @@ bool Scheduler::isEnabled(int8_t taskId) const
     return tasks_[taskId].enabled;
 }
 
-bool Scheduler::getStats(
-    int8_t taskId,
-    TaskStats &stats) const
+bool Scheduler::getStats(int8_t taskId, TaskStats& stats) const
 {
     if (!isValidTask(taskId))
     {
@@ -271,7 +257,7 @@ bool Scheduler::resetStats(int8_t taskId)
         return false;
     }
 
-    TaskStats &stats = tasks_[taskId].stats;
+    TaskStats& stats = tasks_[taskId].stats;
 
     stats.runCount = 0;
     stats.missedPeriods = 0;
@@ -294,24 +280,18 @@ uint32_t Scheduler::ticks(void)
      * The atomic block prevents the ISR from modifying tickCount_ while
      * it is being copied.
      */
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-    {
-        tickSnapshot = tickCount;
-    }
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { tickSnapshot = tickCount; }
 
     return tickSnapshot;
 }
 
-bool Scheduler::deadlineReached(
-    uint32_t currentTick,
-    uint32_t deadlineTick)
+bool Scheduler::deadlineReached(uint32_t currentTick, uint32_t deadlineTick)
 {
     /*
      * Signed subtraction allows correct comparisons across uint32_t
      * timer rollover, provided deadlines are less than 2^31 ms apart.
      */
-    return static_cast<int32_t>(
-               currentTick - deadlineTick) >= 0;
+    return static_cast<int32_t>(currentTick - deadlineTick) >= 0;
 }
 
 bool Scheduler::isValidTask(int8_t taskId) const
@@ -324,12 +304,6 @@ bool Scheduler::isValidTask(int8_t taskId) const
     return true;
 }
 
-void Scheduler::onTimerCompareISR()
-{
-    ++tickCount;
-}
+void Scheduler::onTimerCompareISR() { ++tickCount; }
 
-ISR(TIMER2_COMPA_vect)
-{
-    Scheduler::onTimerCompareISR();
-}
+ISR(TIMER2_COMPA_vect) { Scheduler::onTimerCompareISR(); }

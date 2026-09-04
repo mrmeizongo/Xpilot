@@ -18,7 +18,9 @@ uint8_t Xpilot::actuatorTaskId = 0;
 uint8_t Xpilot::serialConfigTaskId = 0;
 
 Xpilot::Xpilot()
-    : serialConfigTask{Serial, configManager} {}
+    : serialConfigTask{Serial, configManager}
+{
+}
 
 void Xpilot::setup(void)
 {
@@ -68,10 +70,7 @@ void Xpilot::setup(void)
 }
 
 // Main Xpilot execution loop
-void Xpilot::loop(void)
-{
-    scheduler.runTasks();
-}
+void Xpilot::loop(void) { scheduler.runTasks(); }
 
 void Xpilot::sysInit(void)
 {
@@ -103,7 +102,7 @@ void Xpilot::updateFlightMode(void)
     if (radioInFailSafe && sysFailsafeActive)
         return;
 
-    Mode *requestedMode = currentMode;
+    Mode* requestedMode = currentMode;
 
     if (radioInFailSafe)
     {
@@ -114,8 +113,7 @@ void Xpilot::updateFlightMode(void)
     {
         sysFailsafeActive = false;
 
-        const Radio::THREE_POS_SW switchPos =
-            radio.getThreeSwitchPos(Radio::CHANNEL::AUX1);
+        const Radio::THREE_POS_SW switchPos = radio.getThreeSwitchPos(Radio::CHANNEL::AUX1);
 
         // Mode select switch position has not changed
         if (switchPos == currentMode->getModeSwitchPosition())

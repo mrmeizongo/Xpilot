@@ -45,12 +45,7 @@ constexpr uint8_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining
 constexpr int16_t RX_TIMEOUT_MS = 110;         // Rx timeout; 5 missed 22ms PWM frames triggers a failsafe
 constexpr int16_t RX_3_SW_POS_THRESHOLD = 200; // 3 position switch input separator
 
-inline int32_t normalizeInput(
-    int16_t rawVal,
-    int16_t inputMin,
-    int16_t inputTrim,
-    int16_t inputMax,
-    uint8_t deadband)
+inline int32_t normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inputMax, uint8_t deadband)
 {
     const int32_t delta = rawVal - inputTrim;
 
@@ -61,13 +56,11 @@ inline int32_t normalizeInput(
 
     if (delta > 0)
     {
-        output = (delta * Control::RESOLUTION) /
-                 (inputMax - inputTrim);
+        output = (delta * Control::RESOLUTION) / (inputMax - inputTrim);
     }
     else
     {
-        output = (delta * Control::RESOLUTION) /
-                 (inputTrim - inputMin);
+        output = (delta * Control::RESOLUTION) / (inputTrim - inputMin);
     }
 
     return output;
@@ -85,21 +78,21 @@ inline uint8_t requiredChannels(Config::AirframeType type)
 {
     switch (type)
     {
-    case Config::AirframeType::CONVENTIONAL:
-    case Config::AirframeType::V_TAIL:
-    case Config::AirframeType::FLYING_WING_RUDDER:
-    case Config::AirframeType::CUSTOM:
-        return REQ_ROLL | REQ_PITCH | REQ_YAW;
+        case Config::AirframeType::CONVENTIONAL:
+        case Config::AirframeType::V_TAIL:
+        case Config::AirframeType::FLYING_WING_RUDDER:
+        case Config::AirframeType::CUSTOM:
+            return REQ_ROLL | REQ_PITCH | REQ_YAW;
 
-    case Config::AirframeType::FLYING_WING_NO_RUDDER:
-    case Config::AirframeType::AILERON_ELEVATOR:
-        return REQ_ROLL | REQ_PITCH;
+        case Config::AirframeType::FLYING_WING_NO_RUDDER:
+        case Config::AirframeType::AILERON_ELEVATOR:
+            return REQ_ROLL | REQ_PITCH;
 
-    case Config::AirframeType::RUDDER_ELEVATOR:
-        return REQ_PITCH | REQ_YAW;
+        case Config::AirframeType::RUDDER_ELEVATOR:
+            return REQ_PITCH | REQ_YAW;
 
-    default:
-        return NONE;
+        default:
+            return NONE;
     }
 }
 
@@ -133,9 +126,9 @@ public:
 
     void processInput(void);
 
-    static void processInputTask(void *ctx) // Trampoline function for the scheduler to call the processInput function
+    static void processInputTask(void* ctx) // Trampoline function for the scheduler to call the processInput function
     {
-        static_cast<Radio *>(ctx)->processInput();
+        static_cast<Radio*>(ctx)->processInput();
     }
 
     void setPWM(uint32_t, Radio::CHANNEL); // Store valid receiver pwm signals

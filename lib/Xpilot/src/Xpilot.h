@@ -38,21 +38,24 @@ class Xpilot
 {
 public:
     Xpilot(void);
-    Xpilot(const Xpilot &) = delete;            // Prevent this class from being copyable
-    Xpilot &operator=(const Xpilot &) = delete; // Prevent this class from being assignable
+    Xpilot(const Xpilot&) = delete;            // Prevent this class from being copyable
+    Xpilot& operator=(const Xpilot&) = delete; // Prevent this class from being assignable
 
     // Trampoline functions for the scheduler
-    static void updateFlightModeTask(void *ctx) { static_cast<Xpilot *>(ctx)->updateFlightMode(); }
-    static void runSerialConfigTask(void *ctx) { static_cast<Xpilot *>(ctx)->serialConfigTask.run(); }
-    static void printIMUTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIMU(); }
-    static void printIOTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIO(); }
-    static void printSchedulerRateTask(void *ctx) { static_cast<Xpilot *>(ctx)->printSchedulerRate(); }
-    static void printIMUTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printIMUTaskStats(); }
-    static void printRadioTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printRadioTaskStats(); }
-    static void printFlightModeRunTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeRunTaskStats(); }
-    static void printFlightModeUpdateTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeUpdateTaskStats(); }
-    static void printFlightModeInputUpdateTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printFlightModeInputUpdateTaskStats(); }
-    static void printActuatorTaskStatTask(void *ctx) { static_cast<Xpilot *>(ctx)->printActuatorTaskStats(); }
+    static void updateFlightModeTask(void* ctx) { static_cast<Xpilot*>(ctx)->updateFlightMode(); }
+    static void runSerialConfigTask(void* ctx) { static_cast<Xpilot*>(ctx)->serialConfigTask.run(); }
+    static void printIMUTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIMU(); }
+    static void printIOTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIO(); }
+    static void printSchedulerRateTask(void* ctx) { static_cast<Xpilot*>(ctx)->printSchedulerRate(); }
+    static void printIMUTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIMUTaskStats(); }
+    static void printRadioTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printRadioTaskStats(); }
+    static void printFlightModeRunTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeRunTaskStats(); }
+    static void printFlightModeUpdateTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeUpdateTaskStats(); }
+    static void printFlightModeInputUpdateTaskStatTask(void* ctx)
+    {
+        static_cast<Xpilot*>(ctx)->printFlightModeInputUpdateTaskStats();
+    }
+    static void printActuatorTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printActuatorTaskStats(); }
 
     // Only functions called from the main setup and loop functions
     void setup(void);
@@ -69,7 +72,7 @@ public:
     void printFlightModeInputUpdateTaskStats(void);
     void printActuatorTaskStats(void);
 
-    const Mode *getCurrentFlightMode(void) const { return currentMode; }
+    const Mode* getCurrentFlightMode(void) const { return currentMode; }
     bool inFailsafe(void) const { return sysFailsafeActive; }
 
 private:
@@ -78,7 +81,7 @@ private:
     PassthroughMode passthroughMode;
 
     // This is the state of the flight stabilization system
-    Mode *currentMode;
+    Mode* currentMode;
 
     SerialConfigTask serialConfigTask;
 

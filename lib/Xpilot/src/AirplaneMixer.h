@@ -30,19 +30,10 @@ public:
 
     Outputs mix(int16_t roll, int16_t pitch, int16_t yaw) const;
 
-    void setAirframeType(Config::AirframeType type)
-    {
-        _type = type;
-    }
-    Config::AirframeType getAirframeType() const
-    {
-        return _type;
-    }
+    void setAirframeType(Config::AirframeType type) { _type = type; }
+    Config::AirframeType getAirframeType() const { return _type; }
 
-    int16_t getCommandLimit() const
-    {
-        return _commandLimit;
-    }
+    int16_t getCommandLimit() const { return _commandLimit; }
 
 protected:
     /*
@@ -70,8 +61,7 @@ private:
 
     void mixAileronElevator(int16_t roll, int16_t pitch, Outputs& out) const;
 
-    void
-    mixDifferential(int16_t common, int16_t differential, int16_t& output1, int16_t& output2) const;
+    void mixDifferential(int16_t common, int16_t differential, int16_t& output1, int16_t& output2) const;
 
     void normalizePair(int32_t& a, int32_t& b) const;
 };
