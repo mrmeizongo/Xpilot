@@ -275,8 +275,8 @@ CONFIG_TYPES = {
     48: ValueType.BOOL,
 
     # FilterConfig
-    49: ValueType.INT16,
-    50: ValueType.INT16,
+    49: ValueType.UINT16,
+    50: ValueType.UINT16,
     51: ValueType.FLOAT,
 }
 

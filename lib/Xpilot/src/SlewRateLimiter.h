@@ -34,7 +34,7 @@ public:
     {
     }
 
-    SlewRateLimiter(int16_t ratePerSecond, float dt)
+    SlewRateLimiter(uint16_t ratePerSecond, float dt)
         : _output{U{}}
         , _ratePerSecond{ratePerSecond}
     {
@@ -58,7 +58,7 @@ public:
         return _output;
     }
 
-    void setRate(int16_t newRatePerSecond)
+    void setRate(uint16_t newRatePerSecond)
     {
         float dt = static_cast<float>(_maxChangeRate) / _ratePerSecond;
         _maxChangeRate = newRatePerSecond * dt;
@@ -71,7 +71,7 @@ public:
 
 private:
     U _output;
-    int16_t _ratePerSecond;
+    uint16_t _ratePerSecond;
     uint8_t _maxChangeRate;
 };
 #endif // _SLEWRATE

@@ -4,7 +4,7 @@
 
 namespace Control
 {
-    constexpr int16_t RESOLUTION = 1000;
+constexpr int16_t RESOLUTION = 1000;
 }
 
 // Parameters that can be changed at runtime.
@@ -87,8 +87,8 @@ struct Config
 
     struct FilterConfig
     {
-        int16_t controlSlewRate;
-        int16_t lowPassFilterFreq;
+        uint16_t controlSlewRate;
+        uint16_t lowPassFilterFreq;
         float processDT;
     };
 
