@@ -26,7 +26,7 @@ public:
     int16_t getGyroY(void) { return static_cast<int16_t>(_g[1]); }
     int16_t getGyroZ(void) { return static_cast<int16_t>(_g[2]); }
 
-    /// @brief              Register a callback to be invoked when new imu data is received
+    /// @brief              Register a single callback to be invoked when new imu data is received
     /// @param callback     Function to execute
     /// @param ctx          Context pointer passed to the callback
     void registerConsumer(Consumer);
