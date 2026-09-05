@@ -96,7 +96,7 @@ protected:
     static int32_t imu_g[3];   // To hold imu g values
 
     static int32_t input_rpy[3];  // Input roll, pitch, and yaw
-    static int16_t output_rpy[3]; // Output roll, pitch, and yaw
+    static int16_t output_rpy[3]; // Roll, pitch, and yaw staging outputs before mixing
 
     static AirplaneMixer::Outputs mixerOutputs; // Outputs from the airplane mixer
 
