@@ -79,9 +79,10 @@ public:
     static int32_t getPitchInput(void) { return input_rpy[1]; }
     static int32_t getYawInput(void) { return input_rpy[2]; }
 
-    static int16_t getRollOutput(void) { return output_rpy[0]; }
-    static int16_t getPitchOutput(void) { return output_rpy[1]; }
-    static int16_t getYawOutput(void) { return output_rpy[2]; }
+    static int16_t getLeftRollOutput(void) { return mixerOutputs.leftAileron; }
+    static int16_t getRightRollOutput(void) { return mixerOutputs.rightAileron; }
+    static int16_t getPitchOutput(void) { return mixerOutputs.elevator; }
+    static int16_t getYawOutput(void) { return mixerOutputs.rudder; }
 
 #if defined(USE_FLAPERONS)
     static int16_t getFlaperon(void) { return flaperonOut; }
@@ -96,6 +97,8 @@ protected:
 
     static int32_t input_rpy[3];  // Input roll, pitch, and yaw
     static int16_t output_rpy[3]; // Output roll, pitch, and yaw
+
+    static AirplaneMixer::Outputs mixerOutputs; // Outputs from the airplane mixer
 
     static SlewRateLimiter<int32_t, int16_t> rollSlew;
     static SlewRateLimiter<int32_t, int16_t> pitchSlew;

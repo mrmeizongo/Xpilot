@@ -33,7 +33,7 @@ void Xpilot::printIO(void)
     Serial.print(currentMode->getRollInput());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Aileron 1: "));
-    Serial.print(currentMode->getRollOutput());
+    Serial.print(currentMode->getLeftRollOutput());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Aileron 1: "));
     Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
@@ -45,7 +45,7 @@ void Xpilot::printIO(void)
     Serial.print(currentMode->getRollInput());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Aileron 2: "));
-    Serial.print(currentMode->getRollOutput());
+    Serial.print(currentMode->getRightRollOutput());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Aileron 2: "));
     Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
