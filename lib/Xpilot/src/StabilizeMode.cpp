@@ -1,7 +1,7 @@
 #include "IMU.h"
 #include "Mode.h"
 
-inline int32_t stabilizeDemand(int16_t input,    // -1000 : +1000
+inline int32_t stabilizeDemand(int32_t input,    // -1000 : +1000
                                int32_t angle,    // deg * Control::RESOLUTION
                                int16_t maxRate,  // deg/s
                                int16_t maxAngle, // deg
@@ -23,7 +23,7 @@ inline int32_t stabilizeDemand(int16_t input,    // -1000 : +1000
     }
     else
     {
-        demand = static_cast<int32_t>(input) * maxRate;
+        demand = input * maxRate;
     }
 
     return constrain(demand, -rateLimit, rateLimit);

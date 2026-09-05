@@ -161,19 +161,15 @@ void Mode::applyRudderMix(void)
 void Mode::updateInput(void* ctx)
 {
     Mode** modePointer = static_cast<Mode**>(ctx);
-    if (*modePointer != nullptr)
-    {
-        (*modePointer)->update();
-    }
+
+    (*modePointer)->update();
 }
 
 void Mode::runTask(void* ctx)
 {
     Mode** modePointer = static_cast<Mode**>(ctx);
-    if (*modePointer != nullptr)
-    {
-        (*modePointer)->run();
-    }
+
+    (*modePointer)->run();
 }
 
 void Mode::updateAHRS(float (&rpy)[3], float (&g)[3])
