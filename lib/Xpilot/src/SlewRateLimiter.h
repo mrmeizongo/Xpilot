@@ -30,7 +30,7 @@ template <typename T, typename U> class SlewRateLimiter
 public:
     SlewRateLimiter()
         : _output{U{}}
-        , _maxChangeRate{0}
+        , _maxChangeRate{1}
     {
     }
 
@@ -48,9 +48,9 @@ public:
     {
         const float error = target - _output;
 
-        if (error >= _maxChangeRate)
+        if (error > _maxChangeRate)
             _output += _maxChangeRate;
-        else if (error <= -_maxChangeRate)
+        else if (error < -_maxChangeRate)
             _output -= _maxChangeRate;
         else
             _output = target;
