@@ -55,19 +55,19 @@ void Mode::configSub(ConfigID id, void* ctx)
             break;
 
         case ConfigID::PIDF_ROLL_KP:
-            rollPIDF.setKp(config().rPIDFConfig.Kp);
+            rollPIDF.setKp(config().rPIDFConfig.Kp / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_ROLL_KI:
-            rollPIDF.setKi(config().rPIDFConfig.Ki);
+            rollPIDF.setKi(config().rPIDFConfig.Ki / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_ROLL_KD:
-            rollPIDF.setKd(config().rPIDFConfig.Kd);
+            rollPIDF.setKd(config().rPIDFConfig.Kd / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_ROLL_KF:
-            rollPIDF.setKf(config().rPIDFConfig.Kf);
+            rollPIDF.setKf(config().rPIDFConfig.Kf / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
@@ -75,19 +75,19 @@ void Mode::configSub(ConfigID id, void* ctx)
             break;
 
         case ConfigID::PIDF_PITCH_KP:
-            pitchPIDF.setKp(config().pPIDFConfig.Kp);
+            pitchPIDF.setKp(config().pPIDFConfig.Kp / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_PITCH_KI:
-            pitchPIDF.setKi(config().pPIDFConfig.Ki);
+            pitchPIDF.setKi(config().pPIDFConfig.Ki / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_PITCH_KD:
-            pitchPIDF.setKd(config().pPIDFConfig.Kd);
+            pitchPIDF.setKd(config().pPIDFConfig.Kd / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_PITCH_KF:
-            pitchPIDF.setKf(config().pPIDFConfig.Kf);
+            pitchPIDF.setKf(config().pPIDFConfig.Kf / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
@@ -95,19 +95,19 @@ void Mode::configSub(ConfigID id, void* ctx)
             break;
 
         case ConfigID::PIDF_YAW_KP:
-            yawPIDF.setKp(config().yPIDFConfig.Kp);
+            yawPIDF.setKp(config().yPIDFConfig.Kp / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_YAW_KI:
-            yawPIDF.setKi(config().yPIDFConfig.Ki);
+            yawPIDF.setKi(config().yPIDFConfig.Ki / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_YAW_KD:
-            yawPIDF.setKd(config().yPIDFConfig.Kd);
+            yawPIDF.setKd(config().yPIDFConfig.Kd / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_YAW_KF:
-            yawPIDF.setKf(config().yPIDFConfig.Kf);
+            yawPIDF.setKf(config().yPIDFConfig.Kf / Control::RESOLUTION);
             break;
 
         case ConfigID::PIDF_YAW_I_WINDUP_MAX:
