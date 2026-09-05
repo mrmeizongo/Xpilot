@@ -48,7 +48,9 @@
 // #define PRINT_SERVO_TASK_STAT
 
 // Any debugging should disable serial communication with xp_serial.py
-#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) || defined(PRINT_IMU_TASK_STAT) || defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) || defined(PRINT_SERVO_TASK_STAT)
+#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) || defined(PRINT_IMU_TASK_STAT) ||             \
+    defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) ||              \
+    defined(PRINT_SERVO_TASK_STAT)
 #if defined(USE_SERIAL_TASK)
 #undef USE_SERIAL_TASK
 #endif
