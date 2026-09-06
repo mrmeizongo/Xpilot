@@ -110,7 +110,7 @@ protected:
 
     static void applyRudderMix(void); // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
 
-    virtual void controlFailsafe(void); // Failsafe implementation
+    virtual void setFailsafeInputs(void); // Failsafe implementation
 
 #if defined(USE_FLAPERONS)
     static int16_t flaperonOut;     // Flaperon position value, used in flaperon control

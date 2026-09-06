@@ -123,7 +123,7 @@ void Mode::update(void)
 {
     if (radio.inFailsafe())
     {
-        controlFailsafe();
+        setFailsafeInputs();
         return;
     }
 
@@ -183,7 +183,7 @@ void Mode::consumeAHRS(float (&rpy)[3], float (&g)[3])
     imu_g[2] = g[2] * Control::RESOLUTION;
 }
 
-void Mode::controlFailsafe(void)
+void Mode::setFailsafeInputs(void)
 {
     // Default failsafe implementation
     input_rpy[0] = 0;

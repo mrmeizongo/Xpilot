@@ -91,17 +91,16 @@ void Xpilot::sysInit(void)
 
 void Xpilot::updateFlightMode(void)
 {
-    bool radioInFailSafe = radio.inFailsafe();
-
-    // Failsafe already processed
-    if (radioInFailSafe && sysFailsafeActive)
-        return;
-
     Mode* requestedMode = currentMode;
 
-    if (radioInFailSafe)
+    if (radio.inFailsafe())
     {
+        if (currentMode == &stabilizeMode)
+            return;
+
         sysFailsafeActive = true;
+
+        // Stabilize mode is the default failsafe mode
         requestedMode = &stabilizeMode;
     }
     else
@@ -109,6 +108,11 @@ void Xpilot::updateFlightMode(void)
         sysFailsafeActive = false;
 
         const Radio::THREE_POS_SW switchPos = radio.getThreeSwitchPos(Radio::CHANNEL::AUX1);
+
+        // Default mode not specified, rx mode pwm wire is probably not connected, is configured incorrectly
+        // Either way, remain in current mode
+        if (switchPos == Radio::THREE_POS_SW::UNDEFINED)
+            return;
 
         // Mode select switch position has not changed
         if (switchPos == currentMode->getModeSwitchPosition())
