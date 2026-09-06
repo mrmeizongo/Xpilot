@@ -1,17 +1,13 @@
 #include "IMU.h"
 #include "Mode.h"
 
-inline int32_t stabilizeDemand(int32_t input,    // -1000 : +1000
-                               int32_t angle,    // deg * Control::RESOLUTION
-                               int16_t maxRate,  // deg/s
-                               int16_t maxAngle, // deg
-                               float levelKp)
+inline int32_t stabilizeDemand(int32_t input, int32_t angle, int16_t maxRate, int16_t maxAngle, float levelKp)
 {
     const int32_t rateLimit = static_cast<int32_t>(maxRate) * Control::RESOLUTION;
 
     const int32_t angleLimit = static_cast<int32_t>(maxAngle) * Control::RESOLUTION;
 
-    const int32_t target = input > 0 ? angleLimit : (input < 0) ? -angleLimit : 0;
+    const int32_t correctionTarget = input > 0 ? angleLimit : (input < 0) ? -angleLimit : 0;
 
     int32_t demand;
 
@@ -19,7 +15,7 @@ inline int32_t stabilizeDemand(int32_t input,    // -1000 : +1000
 
     if (correctAttitude)
     {
-        demand = (target - angle) * levelKp;
+        demand = (correctionTarget - angle) * levelKp;
     }
     else
     {
