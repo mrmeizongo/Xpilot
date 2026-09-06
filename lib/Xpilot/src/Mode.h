@@ -60,7 +60,7 @@ public:
     virtual const char* modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
 
     virtual void enter(void) {} // Called on mode enter
-    virtual void update(void);  // Convert radio input to +/- control resolution
+    virtual void update(void);  // Convert radio input to user control resolution
     virtual void run(void) = 0; // High level processing specific to this mode
     virtual void exit(void) {}  // Perform any clean up before switching to another mode
 
@@ -70,7 +70,7 @@ public:
     static void runTask(void*);
     static void updateInput(void*);
 
-    static void updateAHRS(float (&)[3], float (&)[3]);
+    static void consumeAHRS(float (&)[3], float (&)[3]);
 
     static void configSub(ConfigID, void*);
 
