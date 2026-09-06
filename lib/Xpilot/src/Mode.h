@@ -50,8 +50,7 @@ inline int16_t mapToSRV(int16_t input)
 class Mode
 {
 public:
-    Mode() {}
-    Mode(const Radio::THREE_POS_SW modePos) // Constructor with mode switch position;
+    Mode(const Radio::THREE_POS_SW modePos = Radio::THREE_POS_SW::UNDEFINED) // Constructor with mode switch position;
     {
         modeSwitchPosition = modePos;
     }
