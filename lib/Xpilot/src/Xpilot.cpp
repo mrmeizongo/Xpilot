@@ -86,11 +86,6 @@ void Xpilot::sysInit(void)
     actuators.init();
     currentMode->init();
 
-    // Specify the mode switch position for each mode
-    passthroughMode.setModeSwitchPosition(Radio::THREE_POS_SW::HIGH_POS);
-    rateMode.setModeSwitchPosition(Radio::THREE_POS_SW::MID_POS);
-    stabilizeMode.setModeSwitchPosition(Radio::THREE_POS_SW::LOW_POS);
-
     currentMode = &rateMode; // Rate mode is the default mode of operation on startup
 }
 

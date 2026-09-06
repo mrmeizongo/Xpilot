@@ -53,8 +53,9 @@ public:
     Mode() {}
     Mode(const Radio::THREE_POS_SW modePos) // Constructor with mode switch position;
     {
-        setModeSwitchPosition(modePos);
+        modeSwitchPosition = modePos;
     }
+
     virtual ~Mode() = default; // Virtual destructor for proper cleanup of derived classes
 
     virtual const char* modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
@@ -110,9 +111,6 @@ protected:
 
     static void applyRudderMix(void); // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
 
-    static void
-    resetControllers(void); // Reset controllers when switching modes to prevent integral windup and derivative kick
-
     virtual void controlFailsafe(void); // Failsafe implementation
 
 #if defined(USE_FLAPERONS)
@@ -132,9 +130,14 @@ protected:
 };
 
 // Manual control of flight surfaces
-class PassthroughMode : public Mode
+class PassthroughMode final : public Mode
 {
 public:
+    PassthroughMode()
+        : Mode(Radio::THREE_POS_SW::HIGH_POS)
+    {
+    }
+
     const char* modeName4(void) const override { return "PASS"; }
     void enter(void) override;
     void update(void) override;
@@ -142,9 +145,14 @@ public:
 };
 
 // Gyro-based rate control
-class RateMode : public Mode
+class RateMode final : public Mode
 {
 public:
+    RateMode()
+        : Mode(Radio::THREE_POS_SW::MID_POS)
+    {
+    }
+
     const char* modeName4(void) const override { return "RATE"; }
     void enter(void) override;
     void update(void) override;
@@ -152,9 +160,14 @@ public:
 };
 
 // Gyro-based rate control with wing leveling on stick release
-class StabilizeMode : public Mode
+class StabilizeMode final : public Mode
 {
 public:
+    StabilizeMode()
+        : Mode(Radio::THREE_POS_SW::LOW_POS)
+    {
+    }
+
     const char* modeName4(void) const override { return "STAB"; }
     void enter(void) override;
     void update(void) override;

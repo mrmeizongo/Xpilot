@@ -183,13 +183,6 @@ void Mode::updateAHRS(float (&rpy)[3], float (&g)[3])
     imu_g[2] = g[2] * Control::RESOLUTION;
 }
 
-void Mode::resetControllers(void)
-{
-    rollPIDF.reset();
-    pitchPIDF.reset();
-    yawPIDF.reset();
-}
-
 void Mode::controlFailsafe(void)
 {
     // Default failsafe implementation
