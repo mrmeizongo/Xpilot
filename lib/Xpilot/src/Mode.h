@@ -60,7 +60,7 @@ public:
     virtual const char* modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
 
     virtual void enter(void) {} // Called on mode enter
-    virtual void update(void);  // Convert user input to mode specific targets, should be called first in the run function
+    virtual void update(void);  // Convert radio input to +/- control resolution
     virtual void run(void) = 0; // High level processing specific to this mode
     virtual void exit(void) {}  // Perform any clean up before switching to another mode
 
@@ -139,7 +139,6 @@ public:
 
     const char* modeName4(void) const override { return "PASS"; }
     void enter(void) override;
-    void update(void) override;
     void run(void) override;
 };
 

@@ -7,8 +7,6 @@ void PassthroughMode::enter(void)
     yawSlew.reset(output_rpy[2]);
 }
 
-void PassthroughMode::update(void) { Mode::update(); }
-
 void PassthroughMode::run(void)
 {
     output_rpy[0] = rollSlew.update(input_rpy[0]);
