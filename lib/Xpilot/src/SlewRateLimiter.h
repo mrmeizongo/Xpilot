@@ -72,6 +72,6 @@ public:
 private:
     U _output;
     uint16_t _ratePerSecond;
-    uint8_t _maxChangeRate;
+    uint8_t _maxChangeRate; // Under reasonable conditions, 0 < maxChangeRate < 255
 };
 #endif // _SLEWRATE
