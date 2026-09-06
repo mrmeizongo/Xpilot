@@ -170,7 +170,7 @@ public:
 
     uint32_t getSignalLossTimeMs(void) { return signalLossTimeMs; }
 
-    bool inFailsafe(void) { return failSafe; }
+    bool inFailsafe(void) const { return failSafe; }
 
 private:
     int16_t raw[CHANNEL::CHANNEL_COUNT];
@@ -187,4 +187,4 @@ private:
 };
 
 extern Radio radio;
-#endif
+#endif // _RADIO_H
