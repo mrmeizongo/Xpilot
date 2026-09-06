@@ -46,7 +46,7 @@ public:
 
     U update(T target)
     {
-        const float error = target - _output;
+        const T error = target - _output;
 
         if (error > _maxChangeRate)
             _output += _maxChangeRate;
