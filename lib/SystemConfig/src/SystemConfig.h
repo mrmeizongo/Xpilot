@@ -37,14 +37,15 @@
  * Uncomment to enable the respective debugging
  * CAUTION: Only uncomment one debug option at a time
  */
-#define SCHEDULER_RATE_DEBUG
+// #define SCHEDULER_RATE_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
 
 // #define PRINT_IMU_TASK_STAT
 // #define PRINT_RADIO_TASK_STAT
-// #define PRINT_FM_RUN_TASK_STAT
 // #define PRINT_FM_UPDATE_TASK_STAT
+// #define PRINT_FM_MODE_INPUT_UPDATE_TASK_STAT
+// #define PRINT_FM_RUN_TASK_STAT
 // #define PRINT_SERVO_TASK_STAT
 
 // Any debugging should disable serial communication with xp_serial.py

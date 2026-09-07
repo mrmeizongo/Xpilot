@@ -52,11 +52,14 @@ void Xpilot::setup(void)
 #if defined(PRINT_RADIO_TASK_STAT)
     (void)scheduler.addTask(&Xpilot::printRadioTaskStatTask, this, TASK_PRINT_RATE_HZ);
 #endif
-#if defined(PRINT_FM_RUN_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeRunTaskStatTask, this, TASK_PRINT_RATE_HZ);
-#endif
 #if defined(PRINT_FM_UPDATE_TASK_STAT)
     (void)scheduler.addTask(&Xpilot::printFlightModeUpdateTaskStatTask, this, TASK_PRINT_RATE_HZ);
+#endif
+#if defined(PRINT_FM_MODE_INPUT_UPDATE_TASK_STAT)
+    (void)scheduler.addTask(&Xpilot::printFlightModeInputUpdateTaskStatTask, this, TASK_PRINT_RATE_HZ);
+#endif
+#if defined(PRINT_FM_RUN_TASK_STAT)
+    (void)scheduler.addTask(&Xpilot::printFlightModeRunTaskStatTask, this, TASK_PRINT_RATE_HZ);
 #endif
 #if defined(PRINT_SERVO_TASK_STAT)
     (void)scheduler.addTask(&Xpilot::printActuatorTaskStatTask, this, TASK_PRINT_RATE_HZ);
