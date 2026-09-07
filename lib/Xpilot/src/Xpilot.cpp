@@ -38,10 +38,10 @@ void Xpilot::setup(void)
     actuatorTaskId = scheduler.addTask(&Actuators::writeServosTask, &actuators, WRITE_SERVO_RATE_HZ);
 
 #if defined(IO_DEBUG)
-    (void)scheduler.addTask(&Xpilot::printIOTask, this, IO_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printIOTask, this, TASK_PRINT_RATE_HZ);
 #endif
 #if defined(IMU_DEBUG)
-    (void)scheduler.addTask(&Xpilot::printIMUTask, this, IMU_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printIMUTask, this, TASK_PRINT_RATE_HZ);
 #endif
 #if defined(SCHEDULER_RATE_DEBUG)
     (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_RATE_HZ);
