@@ -2,6 +2,11 @@
 #define _IMU_H
 #include "MPU6050.h"
 
+// Xpilot body/control convention
+// +Roll = right wind down
+// +Pitch = nose up
+// +Yaw = nose right
+
 class IMU
 {
 public:
