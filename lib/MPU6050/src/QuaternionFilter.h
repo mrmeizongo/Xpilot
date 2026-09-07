@@ -49,6 +49,11 @@ public:
             ey = (az * vx - ax * vz);
             ez = (ax * vy - ay * vx);
 
+            // Apply proportional feedback to gyro term
+            gx += Kp * ex;
+            gy += Kp * ey;
+            gz += Kp * ez;
+
             // Compute and apply to gyro term the integral feedback, if enabled
             if (Ki > 0.0f)
             {
@@ -59,11 +64,6 @@ public:
                 gy += iy;
                 gz += iz;
             }
-
-            // Apply proportional feedback to gyro term
-            gx += Kp * ex;
-            gy += Kp * ey;
-            gz += Kp * ez;
         }
 
         // Integrate rate of change of quaternion, q cross gyro term
