@@ -88,6 +88,7 @@ public:
 
     bool setup(const uint8_t addr = MPU6050_DEFAULT_ADDRESS,
                const MPU6050Setting& mpu_setting = MPU6050Setting(),
+               float _filterDt = 0.001f,
                WireType& w = Wire)
     {
         // addr should be valid for MPU
@@ -97,6 +98,7 @@ public:
         }
         mpu_i2c_addr = addr;
         setting = mpu_setting;
+        quat_filter = QuaternionFilter(_filterDt);
         wire = &w;
 
         if (isConnected())
@@ -157,15 +159,12 @@ public:
         // update_temperature();
 
         /*
-         * Madgwick function needs to be fed North, East, and Down direction like
+         * Quaternion filter function needs to be fed North, East, and Down direction like
          * (AN, AE, AD, GN, GE, GD)
          * Accel and Gyro direction is Right-Hand, X-Forward, Z-Up
-         * Magneto direction is Right-Hand, Y-Forward, Z-Down
          * So to adopt to the general Aircraft coordinate system (Right-Hand, X-Forward, Z-Down),
          * we need to feed (ax, -ay, -az, gx, -gy, -gz) but we pass (-ax, ay, az, gx, -gy, -gz)
          * because gravity is by convention positive down, we need to invert the accel data.
-         * Get quaternion based on aircraft coordinate (Right-Hand, X-Forward, Z-Down)
-         * Gyro will be converted from [deg/s] to [rad/s] inside of this function.
          */
 
         float an = -a[0];
@@ -175,18 +174,15 @@ public:
         float ge = -g[1] * DEG_TO_RAD;
         float gd = -g[2] * DEG_TO_RAD;
 
-        for (size_t i = 0; i < n_filter_iter; ++i)
-        {
-            quat_filter.update(an, ae, ad, gn, ge, gd, q);
-        }
+        quat_filter.mahony6DOF(an, ae, ad, gn, ge, gd, q);
 
         update_rpy(q[0], q[1], q[2], q[3]);
         _rpy[0] = rpy[0];
-        _rpy[1] = -rpy[1]; // Reverse pitch due to sensor orientation on board
+        _rpy[1] = rpy[1];
         _rpy[2] = rpy[2];
         _g[0] = g[0];
         _g[1] = g[1];
-        _g[2] = -g[2]; // Reverse gyro z due to sensor orientation on board
+        _g[2] = g[2];
 
         return true;
     }
@@ -243,12 +239,6 @@ public:
         gyro_bias[2] = z;
     }
 
-    void setFilterIterations(const size_t n)
-    {
-        if (n > 0)
-            n_filter_iter = n;
-    }
-
     bool selftest() { return self_test_impl(); }
 
 private:
@@ -278,7 +268,6 @@ private:
     float rpy[3]{0.f, 0.f, 0.f};
     // float lin_acc[3]{0.f, 0.f, 0.f}; // linear acceleration (acceleration with gravity component subtracted)
     QuaternionFilter quat_filter;
-    size_t n_filter_iter{1};
 
     bool has_connected{false};
 
@@ -337,47 +326,71 @@ private:
 
     void update_rpy(float qw, float qx, float qy, float qz)
     {
-        // This arises from the definition of the homogeneous rotation matrix constructed from quaternions to euler angles.
-        // See https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_angles_(in_3-2-1_sequence)_conversion
-        float sinr_cosp = 2 * ((qw * qx) + (qy * qz));
-        float cosr_cosp = 1 - (2 * ((qx * qx) + (qy * qy)));
-        float sinp = sqrt(1 + (2 * ((qw * qy) - (qx * qz))));
-        float cosp = sqrt(1 - (2 * ((qw * qy) - (qx * qz))));
-        float siny_cosp = 2 * ((qw * qz) + (qx * qy));
-        float cosy_cosp = 1 - (2 * ((qy * qy) + (qz * qz)));
+        float sinr_cosp = 2.0f * ((qw * qx) + (qy * qz));
+        float cosr_cosp = 1.0f - (2.0f * ((qx * qx) + (qy * qy)));
 
+        float sinp = 2.0f * ((qw * qy) - (qz * qx));
+
+        float siny_cosp = 2.0f * ((qw * qz) + (qx * qy));
+        float cosy_cosp = 1.0f - (2.0f * ((qy * qy) + (qz * qz)));
+
+        // Protect asin() from small floating-point overshoot
+        sinp = constrain(sinp, -1.0f, 1.0f);
+
+        // Quaternion to Euler
         rpy[0] = atan2f(sinr_cosp, cosr_cosp);
-        rpy[1] = (2 * atan2f(sinp, cosp)) - (PI / 2);
+        rpy[1] = asinf(sinp);
         rpy[2] = atan2f(siny_cosp, cosy_cosp);
 
-        // Convert radian to degrees
+        // Convert radians to degrees
         rpy[0] *= RAD_TO_DEG;
         rpy[1] *= RAD_TO_DEG;
         rpy[2] *= RAD_TO_DEG;
-
-        // Limit roll to +/-180 degrees range
-        if (rpy[0] >= +180)
-            rpy[0] -= 360.f;
-        else if (rpy[0] <= -180)
-            rpy[0] += 360.f;
-
-        // Limit pitch to +/-90 degrees range
-        if (rpy[1] >= +90.f)
-            rpy[1] -= 180.f;
-        else if (rpy[1] <= -90.f)
-            rpy[1] += 180.f;
-
-        // Limit yaw to +/-180 degrees range
-        if (rpy[2] >= +180)
-            rpy[2] -= 360.f;
-        else if (rpy[2] <= -180)
-            rpy[2] += 360.f;
-
-        // Convert to linear acceleration
-        // lin_acc[0] = a[0] + (2 * ((qw * qy) + (qx * qz)));
-        // lin_acc[1] = a[1] + (2 * ((qy * qz) - (qw * qx)));
-        // lin_acc[2] = a[2] - ((qw * qw) - (qx * qx) - (qy * qy) - (qz * qz));
     }
+
+    // void update_rpy(float qw, float qx, float qy, float qz)
+    // {
+    //     // This arises from the definition of the homogeneous rotation matrix constructed from quaternions to euler angles.
+    //     // See https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_angles_(in_3-2-1_sequence)_conversion
+    //     float sinr_cosp = 2 * ((qw * qx) + (qy * qz));
+    //     float cosr_cosp = 1 - (2 * ((qx * qx) + (qy * qy)));
+    //     float sinp = sqrt(1 + (2 * ((qw * qy) - (qx * qz))));
+    //     float cosp = sqrt(1 - (2 * ((qw * qy) - (qx * qz))));
+    //     float siny_cosp = 2 * ((qw * qz) + (qx * qy));
+    //     float cosy_cosp = 1 - (2 * ((qy * qy) + (qz * qz)));
+
+    //     rpy[0] = atan2f(sinr_cosp, cosr_cosp);
+    //     rpy[1] = (2 * atan2f(sinp, cosp)) - (PI / 2);
+    //     // rpy[2] = atan2f(siny_cosp, cosy_cosp);
+
+    //     // Convert radian to degrees
+    //     rpy[0] *= RAD_TO_DEG;
+    //     rpy[1] *= RAD_TO_DEG;
+    //     rpy[2] *= RAD_TO_DEG;
+
+    //     // Limit roll to +/-180 degrees range
+    //     if (rpy[0] >= +180)
+    //         rpy[0] -= 360.f;
+    //     else if (rpy[0] <= -180)
+    //         rpy[0] += 360.f;
+
+    //     // Limit pitch to +/-90 degrees range
+    //     if (rpy[1] >= +90.f)
+    //         rpy[1] -= 180.f;
+    //     else if (rpy[1] <= -90.f)
+    //         rpy[1] += 180.f;
+
+    //     // Limit yaw to +/-180 degrees range
+    //     if (rpy[2] >= +180)
+    //         rpy[2] -= 360.f;
+    //     else if (rpy[2] <= -180)
+    //         rpy[2] += 360.f;
+
+    //     // Convert to linear acceleration
+    //     lin_acc[0] = a[0] + (2 * ((qw * qy) + (qx * qz)));
+    //     lin_acc[1] = a[1] + (2 * ((qy * qz) - (qw * qx)));
+    //     lin_acc[2] = a[2] - ((qw * qw) - (qx * qx) - (qy * qy) - (qz * qz));
+    // }
 
     void update_accel_gyro()
     {
@@ -669,31 +682,41 @@ private:
 
     uint8_t read_byte(uint8_t subAddress)
     {
-        uint8_t data = 0;                        // `data` will store the register data
-        wire->beginTransmission(mpu_i2c_addr);   // Initialize the Tx buffer
-        wire->write(subAddress);                 // Put slave register address in Tx buffer
+        wire->beginTransmission(mpu_i2c_addr); // Initialize the Tx buffer
+        wire->write(subAddress);               // Put slave register address in Tx buffer
+
         i2c_err_ = wire->endTransmission(false); // Send the Tx buffer, but send a restart to keep connection alive
+
         if (i2c_err_)
+        {
             print_i2c_error();
+            return 0;
+        }
+
         wire->requestFrom(mpu_i2c_addr, (size_t)1); // Read one byte from slave register address
-        if (wire->available())
-            data = wire->read(); // Fill Rx buffer with result
-        return data;             // Return data read from slave register
+
+        return wire->read(); // Return data read from slave register
     }
 
     void read_bytes(uint8_t subAddress, uint8_t count, uint8_t* dest)
     {
-        wire->beginTransmission(mpu_i2c_addr);   // Initialize the Tx buffer
-        wire->write(subAddress);                 // Put slave register address in Tx buffer
+        wire->beginTransmission(mpu_i2c_addr); // Initialize the Tx buffer
+        wire->write(subAddress);               // Put slave register address in Tx buffer
+
         i2c_err_ = wire->endTransmission(false); // Send the Tx buffer, but send a restart to keep connection alive
+
         if (i2c_err_)
-            print_i2c_error();
-        uint8_t i = 0;
-        wire->requestFrom(mpu_i2c_addr, count); // Read bytes from slave register address
-        while (wire->available())
         {
-            dest[i++] = wire->read();
-        } // Put read results in the Rx buffer
+            print_i2c_error();
+            return;
+        }
+
+        wire->requestFrom(mpu_i2c_addr, count); // Read bytes from slave register address
+
+        for (uint8_t i = 0; i < count; i++)
+        {
+            dest[i] = wire->read();
+        }
     }
 
     void print_i2c_error()
