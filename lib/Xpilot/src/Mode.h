@@ -73,7 +73,7 @@ public:
     static void runTask(void*);
     static void updateInput(void*);
 
-    static void consumeAHRS(float (&)[3], float (&)[3]);
+    static void consumeAHRS(const float (&)[3], const float (&)[3]);
 
     static void configSub(ConfigID, void*);
 

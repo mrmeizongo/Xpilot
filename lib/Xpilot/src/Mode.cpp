@@ -172,7 +172,7 @@ void Mode::runTask(void* ctx)
     (*modePointer)->run();
 }
 
-void Mode::consumeAHRS(float (&rpy)[3], float (&g)[3])
+void Mode::consumeAHRS(const float (&rpy)[3], const float (&g)[3])
 {
     imu_rpy[0] = rpy[0] * Control::RESOLUTION;
     imu_rpy[1] = rpy[1] * Control::RESOLUTION;

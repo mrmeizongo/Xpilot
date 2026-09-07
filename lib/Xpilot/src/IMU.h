@@ -10,7 +10,7 @@
 class IMU
 {
 public:
-    using Consumer = void (*)(float (&)[3], float (&)[3]);
+    using Consumer = void (*)(const float (&)[3], const float (&)[3]);
 
     IMU(void);
     void init(void);
