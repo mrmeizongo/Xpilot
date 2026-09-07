@@ -83,6 +83,14 @@ struct Config
         float gyroBiasY;
         float gyroBiasZ;
 
+        bool reverseRoll;
+        bool reversePitch;
+        bool reverseYaw;
+
+        bool reverseGyroX;
+        bool reverseGyroY;
+        bool reverseGyroZ;
+
         bool calibrated;
     };
 

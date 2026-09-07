@@ -74,6 +74,14 @@ enum class ConfigID : uint8_t
     IMU_GYRO_BIAS_Y,
     IMU_GYRO_BIAS_Z,
 
+    IMU_REVERSE_ROLL,
+    IMU_REVERSE_PITCH,
+    IMU_REVERSE_YAW,
+
+    IMU_REVERSE_GYRO_X,
+    IMU_REVERSE_GYRO_Y,
+    IMU_REVERSE_GYRO_Z,
+
     IMU_CALIBRATED,
 
     // FilterConfig

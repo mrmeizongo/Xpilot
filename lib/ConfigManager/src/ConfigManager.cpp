@@ -89,6 +89,14 @@ void ConfigManager::loadDefaults()
     _config.imuConfig.gyroBiasY = 0.f;
     _config.imuConfig.gyroBiasZ = 0.f;
 
+    _config.imuConfig.reverseRoll = false;
+    _config.imuConfig.reversePitch = false;
+    _config.imuConfig.reverseYaw = false;
+
+    _config.imuConfig.reverseGyroX = false;
+    _config.imuConfig.reverseGyroY = false;
+    _config.imuConfig.reverseGyroZ = false;
+
     _config.imuConfig.calibrated = false;
 
     _config.filterConfig.controlSlewRate = 2000;
@@ -348,6 +356,36 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
             value.f = _config.imuConfig.gyroBiasZ;
             break;
 
+        case ConfigID::IMU_REVERSE_ROLL:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.imuConfig.reverseRoll ? 1U : 0U;
+            break;
+
+        case ConfigID::IMU_REVERSE_PITCH:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.imuConfig.reversePitch ? 1U : 0U;
+            break;
+
+        case ConfigID::IMU_REVERSE_YAW:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.imuConfig.reverseYaw ? 1U : 0U;
+            break;
+
+        case ConfigID::IMU_REVERSE_GYRO_X:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.imuConfig.reverseGyroX ? 1U : 0U;
+            break;
+
+        case ConfigID::IMU_REVERSE_GYRO_Y:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.imuConfig.reverseGyroY ? 1U : 0U;
+            break;
+
+        case ConfigID::IMU_REVERSE_GYRO_Z:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.imuConfig.reverseGyroZ ? 1U : 0U;
+            break;
+
         case ConfigID::IMU_CALIBRATED:
             type = ConfigValueType::BOOL;
             value.u8 = _config.imuConfig.calibrated ? 1U : 0U;
@@ -555,6 +593,30 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.yPIDFConfig.iWindUpMax = value.f;
             break;
 
+        case ConfigID::IMU_REVERSE_ROLL:
+            _config.imuConfig.reverseRoll = (value.u8 != 0U);
+            break;
+
+        case ConfigID::IMU_REVERSE_PITCH:
+            _config.imuConfig.reversePitch = (value.u8 != 0U);
+            break;
+
+        case ConfigID::IMU_REVERSE_YAW:
+            _config.imuConfig.reverseYaw = (value.u8 != 0U);
+            break;
+
+        case ConfigID::IMU_REVERSE_GYRO_X:
+            _config.imuConfig.reverseGyroX = (value.u8 != 0U);
+            break;
+
+        case ConfigID::IMU_REVERSE_GYRO_Y:
+            _config.imuConfig.reverseGyroY = (value.u8 != 0U);
+            break;
+
+        case ConfigID::IMU_REVERSE_GYRO_Z:
+            _config.imuConfig.reverseGyroZ = (value.u8 != 0U);
+            break;
+
         case ConfigID::FILTER_SLEW_RATE:
             _config.filterConfig.controlSlewRate = value.u16;
             break;
@@ -658,6 +720,15 @@ bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
             return value.f >= 0.f;
 
         case ConfigID::FLIGHT_REVERSE_RUDDER_MIX:
+
+        case ConfigID::SRV_REVERSE:
+
+        case ConfigID::IMU_REVERSE_ROLL:
+        case ConfigID::IMU_REVERSE_PITCH:
+        case ConfigID::IMU_REVERSE_YAW:
+        case ConfigID::IMU_REVERSE_GYRO_X:
+        case ConfigID::IMU_REVERSE_GYRO_Y:
+        case ConfigID::IMU_REVERSE_GYRO_Z:
 
             return value.u8 <= 1U;
 
