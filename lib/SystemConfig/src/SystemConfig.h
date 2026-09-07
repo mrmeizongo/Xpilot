@@ -37,7 +37,7 @@
  * Uncomment to enable the respective debugging
  * CAUTION: Only uncomment one debug option at a time
  */
-// #define SCHEDULER_RATE_DEBUG
+#define SCHEDULER_RATE_DEBUG
 // #define IMU_DEBUG
 // #define IO_DEBUG
 

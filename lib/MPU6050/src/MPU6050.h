@@ -61,22 +61,34 @@ struct MPU6050Setting
     ACCEL_GYRO_DLPF_CFG accel_gyro_dlpf_cfg;
 
     MPU6050Setting(void)
-        : accel_fs_sel{ACCEL_FS_SEL::A2G}, gyro_fs_sel{GYRO_FS_SEL::G250DPS},
-          sample_rate{SAMPLE_RATE_DIV::SMPL_8KHZ}, accel_gyro_dlpf_cfg{ACCEL_GYRO_DLPF_CFG::DLPF_260HZx256HZ} {}
+        : accel_fs_sel{ACCEL_FS_SEL::A2G}
+        , gyro_fs_sel{GYRO_FS_SEL::G250DPS}
+        , sample_rate{SAMPLE_RATE_DIV::SMPL_8KHZ}
+        , accel_gyro_dlpf_cfg{ACCEL_GYRO_DLPF_CFG::DLPF_260HZx256HZ}
+    {
+    }
 
-    MPU6050Setting(ACCEL_FS_SEL _accel_fs_sel, GYRO_FS_SEL _gyro_fs_sel, SAMPLE_RATE_DIV _sample_rate, ACCEL_GYRO_DLPF_CFG _accel_gyro_dlpf_cfg)
-        : accel_fs_sel{_accel_fs_sel}, gyro_fs_sel{_gyro_fs_sel},
-          sample_rate{_sample_rate}, accel_gyro_dlpf_cfg{_accel_gyro_dlpf_cfg} {}
+    MPU6050Setting(ACCEL_FS_SEL _accel_fs_sel,
+                   GYRO_FS_SEL _gyro_fs_sel,
+                   SAMPLE_RATE_DIV _sample_rate,
+                   ACCEL_GYRO_DLPF_CFG _accel_gyro_dlpf_cfg)
+        : accel_fs_sel{_accel_fs_sel}
+        , gyro_fs_sel{_gyro_fs_sel}
+        , sample_rate{_sample_rate}
+        , accel_gyro_dlpf_cfg{_accel_gyro_dlpf_cfg}
+    {
+    }
 };
 
-template <typename WireType>
-class MPU6050_
+template <typename WireType> class MPU6050_
 {
 public:
     static constexpr uint16_t CALIB_GYRO_SENSITIVITY{131};    // LSB/degrees/sec
     static constexpr uint16_t CALIB_ACCEL_SENSITIVITY{16384}; // LSB/g
 
-    bool setup(const uint8_t addr = MPU6050_DEFAULT_ADDRESS, const MPU6050Setting &mpu_setting = MPU6050Setting(), WireType &w = Wire)
+    bool setup(const uint8_t addr = MPU6050_DEFAULT_ADDRESS,
+               const MPU6050Setting& mpu_setting = MPU6050Setting(),
+               WireType& w = Wire)
     {
         // addr should be valid for MPU
         if ((addr < MPU6050_DEFAULT_ADDRESS) || (addr > MPU6050_DEFAULT_ADDRESS + 7))
@@ -237,10 +249,7 @@ public:
             n_filter_iter = n;
     }
 
-    bool selftest()
-    {
-        return self_test_impl();
-    }
+    bool selftest() { return self_test_impl(); }
 
 private:
     static constexpr uint8_t MPU6050_DEFAULT_ADDRESS{0x68}; // Device address when ADO = 0
@@ -274,7 +283,7 @@ private:
     bool has_connected{false};
 
     // I2C
-    WireType *wire;
+    WireType* wire;
     uint8_t i2c_err_;
 
     void initMPU6050()
@@ -376,12 +385,14 @@ private:
         read_accel_gyro(raw_acc_gyro_data);
 
         // Transform the acceleration value into actual g's
-        a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution; // get actual g value, this depends on the set resolution
+        a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) *
+               acc_resolution; // get actual g value, this depends on the set resolution
         a[1] = ((float)raw_acc_gyro_data[1] - acc_bias[1]) * acc_resolution;
         a[2] = ((float)raw_acc_gyro_data[2] - acc_bias[2]) * acc_resolution;
 
         // Transform the gyro value into actual degrees per second
-        g[0] = ((float)raw_acc_gyro_data[3] - gyro_bias[0]) * gyro_resolution; // get actual gyro value, this depends on the set resolution
+        g[0] = ((float)raw_acc_gyro_data[3] - gyro_bias[0]) *
+               gyro_resolution; // get actual gyro value, this depends on the set resolution
         g[1] = ((float)raw_acc_gyro_data[4] - gyro_bias[1]) * gyro_resolution;
         g[2] = ((float)raw_acc_gyro_data[5] - gyro_bias[2]) * gyro_resolution;
     }
@@ -392,10 +403,13 @@ private:
         temperature = (float)(temperature_count / 340) + 36.53; // Temperature in degrees centigrade
     }
 
-    void read_accel_gyro(int16_t *destination)
+    void read_accel_gyro(int16_t* destination)
     {
-        uint8_t raw_data[14];                                       // x/y/z accel register data stored here
-        read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);                 // Read the 14 raw data registers into data array, register data(temperature) 6 & 7 not used
+        uint8_t raw_data[14]; // x/y/z accel register data stored here
+        read_bytes(
+            ACCEL_XOUT_H,
+            14,
+            &raw_data[0]); // Read the 14 raw data registers into data array, register data(temperature) 6 & 7 not used
         destination[0] = ((int16_t)raw_data[0] << 8) | raw_data[1]; // Turn the MSB and LSB into a signed 16-bit value
         destination[1] = ((int16_t)raw_data[2] << 8) | raw_data[3];
         destination[2] = ((int16_t)raw_data[4] << 8) | raw_data[5];
@@ -444,7 +458,7 @@ private:
         write_byte(FIFO_EN, 0x00);   // Disable gyro and accelerometer sensors for FIFO after samples collected
     }
 
-    void collect_acc_gyro_data_to(float *a_bias, float *g_bias)
+    void collect_acc_gyro_data_to(float* a_bias, float* g_bias)
     {
         uint8_t data[12];                     // data array to hold accelerometer and gyro x, y, z, data
         read_bytes(FIFO_COUNTH, 2, &data[0]); // read FIFO sample count
@@ -510,7 +524,7 @@ private:
             aAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
             aAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
 
-            read_bytes(GYRO_XOUT_H, 6, &raw_data[0]);               // Read the six raw data registers sequentially into data array
+            read_bytes(GYRO_XOUT_H, 6, &raw_data[0]); // Read the six raw data registers sequentially into data array
             gAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
             gAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
             gAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
@@ -535,7 +549,7 @@ private:
             aSTAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
             aSTAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
 
-            read_bytes(GYRO_XOUT_H, 6, &raw_data[0]);                 // Read the six raw data registers sequentially into data array
+            read_bytes(GYRO_XOUT_H, 6, &raw_data[0]); // Read the six raw data registers sequentially into data array
             gSTAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
             gSTAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
             gSTAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
@@ -571,19 +585,29 @@ private:
         self_test_result[5] = self_test_data[2] & 0x1F; // Zg
 
         // Retrieve factory self - test value from self - test code reads
-        factoryTrim[0] = self_test_result[0] != 0 ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[0] - 1) / pow(2, 5) - 2) / 0.34)) : 0.0f; // FT[Xa]
-        factoryTrim[1] = self_test_result[1] != 0 ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[1] - 1) / pow(2, 5) - 2) / 0.34)) : 0.0f; // FT[Ya]
-        factoryTrim[2] = self_test_result[2] != 0 ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[2] - 1) / pow(2, 5) - 2) / 0.34)) : 0.0f; // FT[Za]
-        factoryTrim[3] = self_test_result[3] != 0 ? (float)(25 * 131 * pow(1.046, (self_test_result[3] - 1))) : 0.0f;                            // FT[Xg]
-        factoryTrim[4] = self_test_result[4] != 0 ? (float)(-25 * 131 * pow(1.046, (self_test_result[4] - 1))) : 0.0f;                           // FT[Yg]
-        factoryTrim[5] = self_test_result[5] != 0 ? (float)(25 * 131 * pow(1.046, (self_test_result[5] - 1))) : 0.0f;                            // FT[Zg]
+        factoryTrim[0] = self_test_result[0] != 0
+                             ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[0] - 1) / pow(2, 5) - 2) / 0.34))
+                             : 0.0f; // FT[Xa]
+        factoryTrim[1] = self_test_result[1] != 0
+                             ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[1] - 1) / pow(2, 5) - 2) / 0.34))
+                             : 0.0f; // FT[Ya]
+        factoryTrim[2] = self_test_result[2] != 0
+                             ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[2] - 1) / pow(2, 5) - 2) / 0.34))
+                             : 0.0f; // FT[Za]
+        factoryTrim[3] =
+            self_test_result[3] != 0 ? (float)(25 * 131 * pow(1.046, (self_test_result[3] - 1))) : 0.0f; // FT[Xg]
+        factoryTrim[4] =
+            self_test_result[4] != 0 ? (float)(-25 * 131 * pow(1.046, (self_test_result[4] - 1))) : 0.0f; // FT[Yg]
+        factoryTrim[5] =
+            self_test_result[5] != 0 ? (float)(25 * 131 * pow(1.046, (self_test_result[5] - 1))) : 0.0f; // FT[Zg]
 
         // Report results as a ratio of (STR - FT)/FT; the change from Factory Trim of the Self-Test Response
         // To get percent, must multiply by 100
         for (int i = 0; i < 3; i++)
         {
-            self_test_result[i] = 100.0 * ((float)(aSTAvg[i] - aAvg[i])) / factoryTrim[i];         // Report percent differences
-            self_test_result[i + 3] = 100.0 * ((float)(gSTAvg[i] - gAvg[i])) / factoryTrim[i + 3]; // Report percent differences
+            self_test_result[i] = 100.0 * ((float)(aSTAvg[i] - aAvg[i])) / factoryTrim[i]; // Report percent differences
+            self_test_result[i + 3] =
+                100.0 * ((float)(gSTAvg[i] - gAvg[i])) / factoryTrim[i + 3]; // Report percent differences
         }
 
         bool b = true;
@@ -598,19 +622,19 @@ private:
     {
         switch (accel_af_sel)
         {
-        // Possible accelerometer scales (and their register bit settings) are:
-        // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11).
-        // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
-        case ACCEL_FS_SEL::A2G:
-            return 2.0 / 32767.0;
-        case ACCEL_FS_SEL::A4G:
-            return 4.0 / 32767.0;
-        case ACCEL_FS_SEL::A8G:
-            return 8.0 / 32767.0;
-        case ACCEL_FS_SEL::A16G:
-            return 16.0 / 32767.0;
-        default:
-            return 0.;
+            // Possible accelerometer scales (and their register bit settings) are:
+            // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11).
+            // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
+            case ACCEL_FS_SEL::A2G:
+                return 2.0 / 32767.0;
+            case ACCEL_FS_SEL::A4G:
+                return 4.0 / 32767.0;
+            case ACCEL_FS_SEL::A8G:
+                return 8.0 / 32767.0;
+            case ACCEL_FS_SEL::A16G:
+                return 16.0 / 32767.0;
+            default:
+                return 0.;
         }
     }
 
@@ -618,19 +642,19 @@ private:
     {
         switch (gyro_fs_sel)
         {
-        // Possible gyro scales (and their register bit settings) are:
-        // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11).
-        // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
-        case GYRO_FS_SEL::G250DPS:
-            return 250.0 / 32767.0;
-        case GYRO_FS_SEL::G500DPS:
-            return 500.0 / 32767.0;
-        case GYRO_FS_SEL::G1000DPS:
-            return 1000.0 / 32767.0;
-        case GYRO_FS_SEL::G2000DPS:
-            return 2000.0 / 32767.0;
-        default:
-            return 0.;
+            // Possible gyro scales (and their register bit settings) are:
+            // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11).
+            // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
+            case GYRO_FS_SEL::G250DPS:
+                return 250.0 / 32767.0;
+            case GYRO_FS_SEL::G500DPS:
+                return 500.0 / 32767.0;
+            case GYRO_FS_SEL::G1000DPS:
+                return 1000.0 / 32767.0;
+            case GYRO_FS_SEL::G2000DPS:
+                return 2000.0 / 32767.0;
+            default:
+                return 0.;
         }
     }
     void write_byte(uint8_t subAddress, uint8_t data)
@@ -657,7 +681,7 @@ private:
         return data;             // Return data read from slave register
     }
 
-    void read_bytes(uint8_t subAddress, uint8_t count, uint8_t *dest)
+    void read_bytes(uint8_t subAddress, uint8_t count, uint8_t* dest)
     {
         wire->beginTransmission(mpu_i2c_addr);   // Initialize the Tx buffer
         wire->write(subAddress);                 // Put slave register address in Tx buffer
