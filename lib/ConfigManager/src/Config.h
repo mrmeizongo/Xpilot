@@ -42,6 +42,7 @@ struct Config
         int16_t min;
         int16_t trim;
         int16_t max;
+        bool reverse;
     };
 
     struct FlightConfig

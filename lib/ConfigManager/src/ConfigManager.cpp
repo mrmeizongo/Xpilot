@@ -45,6 +45,7 @@ void ConfigManager::loadDefaults()
     _config.srvConfig.min = 1000;
     _config.srvConfig.trim = 1500;
     _config.srvConfig.max = 2000;
+    _config.srvConfig.reverse = false;
 
     _config.flightConfig.maxRollRateDegs = 60;
     _config.flightConfig.maxPitchRateDegs = 45;
@@ -181,6 +182,11 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
         case ConfigID::SRV_MAX:
             type = ConfigValueType::INT16;
             value.i16 = _config.srvConfig.max;
+            break;
+
+        case ConfigID::SRV_REVERSE:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.srvConfig.reverse ? 1U : 0U;
             break;
 
         case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:
@@ -441,6 +447,10 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
 
         case ConfigID::SRV_MAX:
             _config.srvConfig.max = value.i16;
+            break;
+
+        case ConfigID::SRV_REVERSE:
+            _config.srvConfig.reverse = (value.u8 != 0U);
             break;
 
         case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:

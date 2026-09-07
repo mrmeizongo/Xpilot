@@ -27,6 +27,7 @@ enum class ConfigID : uint8_t
     SRV_MIN,
     SRV_TRIM,
     SRV_MAX,
+    SRV_REVERSE,
 
     // FlightConfig
     FLIGHT_MAX_ROLL_RATE_DEGS,
