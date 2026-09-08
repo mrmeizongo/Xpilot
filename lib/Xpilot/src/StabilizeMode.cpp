@@ -57,22 +57,4 @@ void StabilizeMode::run(void)
     output_rpy[0] = rollPIDF.Compute(rollDemand, imu_g[0]);
     output_rpy[1] = pitchPIDF.Compute(pitchDemand, imu_g[1]);
     output_rpy[2] = yawPIDF.Compute(input_rpy[2], imu_g[2]);
-
-    output_rpy[0] = constrain(output_rpy[0], -Control::RESOLUTION, Control::RESOLUTION);
-    output_rpy[1] = constrain(output_rpy[1], -Control::RESOLUTION, Control::RESOLUTION);
-    output_rpy[2] = constrain(output_rpy[2], -Control::RESOLUTION, Control::RESOLUTION);
-
-    mixerOutputs = airplaneMixer.mix(output_rpy[0], output_rpy[1], output_rpy[2]);
-
-    SRVout[Actuators::Channel::CH1] = mapToSRV(mixerOutputs.leftAileron);
-
-    SRVout[Actuators::Channel::CH2] = mapToSRV(mixerOutputs.rightAileron);
-
-    SRVout[Actuators::Channel::CH3] = mapToSRV(mixerOutputs.elevator);
-
-    SRVout[Actuators::Channel::CH4] = mapToSRV(mixerOutputs.rudder);
-#if defined(USE_FLAPERONS)
-    flaperonMixer();
-#endif
-    actuators.setServoOut(SRVout); // Set servo output
 }

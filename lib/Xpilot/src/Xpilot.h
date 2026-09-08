@@ -55,7 +55,7 @@ public:
     {
         static_cast<Xpilot*>(ctx)->printFlightModeInputUpdateTaskStats();
     }
-    static void printActuatorTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printActuatorTaskStats(); }
+    static void printFlightModeOutputTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeOutputTaskStats(); }
 
     // Only functions called from the main setup and loop functions
     void setup(void);
@@ -70,7 +70,7 @@ public:
     void printFlightModeRunTaskStats(void);
     void printFlightModeUpdateTaskStats(void);
     void printFlightModeInputUpdateTaskStats(void);
-    void printActuatorTaskStats(void);
+    void printFlightModeOutputTaskStats(void);
 
     const Mode* getCurrentFlightMode(void) const { return currentMode; }
     bool inFailsafe(void) const { return sysFailsafeActive; }
@@ -96,7 +96,7 @@ private:
     static uint8_t flightModeUpdateTaskId;
     static uint8_t flightModeInputUpdateTaskId;
     static uint8_t flightModeRunTaskId;
-    static uint8_t actuatorTaskId;
+    static uint8_t flightModeOutputTaskId;
     static uint8_t serialConfigTaskId;
 
     Scheduler scheduler; // Scheduler object to manage periodic tasks

@@ -42,9 +42,6 @@ inline int16_t mapToSRV(int16_t output)
 {
     const int32_t range = config().srvConfig.max - config().srvConfig.min;
 
-    if (config().srvConfig.reverse)
-        output = -output;
-
     return static_cast<int16_t>(config().srvConfig.min +
                                 ((output + Control::RESOLUTION) * range) / (2 * Control::RESOLUTION));
 }
@@ -72,6 +69,7 @@ public:
     // Sceduler trampoline functions
     static void runTask(void*);
     static void updateInput(void*);
+    static void processOutput(void*);
 
     static void consumeAHRS(const float (&)[3], const float (&)[3]);
 

@@ -131,19 +131,23 @@ void Mode::update(void)
                                   config().rollRxConfig.min,
                                   config().rollRxConfig.trim,
                                   config().rollRxConfig.max,
-                                  config().rollRxConfig.deadband);
+                                  config().rollRxConfig.deadband,
+                                  config().rollRxConfig.reverse);
 
     input_rpy[1] = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH),
                                   config().pitchRxConfig.min,
                                   config().pitchRxConfig.trim,
                                   config().pitchRxConfig.max,
-                                  config().pitchRxConfig.deadband);
+                                  config().pitchRxConfig.deadband,
+                                  config().pitchRxConfig.reverse);
 
     input_rpy[2] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW),
                                   config().yawRxConfig.min,
                                   config().yawRxConfig.trim,
                                   config().yawRxConfig.max,
-                                  config().yawRxConfig.deadband);
+                                  config().yawRxConfig.deadband,
+                                  config().yawRxConfig.reverse);
+
 #if defined(USE_FLAPERONS)
     int16_t flapPwm = radio.getPWM(Radio::CHANNEL::AUX2);
     flapPwm = constrain(flapPwm, RX_PWM_MIN, RX_PWM_TRIM);
@@ -158,6 +162,13 @@ void Mode::applyRudderMix(void)
     input_rpy[2] += config().flightConfig.reverseRudderMix ? -contribution : contribution;
 }
 
+void Mode::runTask(void* ctx)
+{
+    Mode** modePointer = static_cast<Mode**>(ctx);
+
+    (*modePointer)->run();
+}
+
 void Mode::updateInput(void* ctx)
 {
     Mode** modePointer = static_cast<Mode**>(ctx);
@@ -165,11 +176,29 @@ void Mode::updateInput(void* ctx)
     (*modePointer)->update();
 }
 
-void Mode::runTask(void* ctx)
+void Mode::processOutput(void* ctx)
 {
-    Mode** modePointer = static_cast<Mode**>(ctx);
+    (void)ctx;
 
-    (*modePointer)->run();
+    output_rpy[0] = constrain(output_rpy[0], -Control::RESOLUTION, Control::RESOLUTION);
+    output_rpy[1] = constrain(output_rpy[1], -Control::RESOLUTION, Control::RESOLUTION);
+    output_rpy[2] = constrain(output_rpy[2], -Control::RESOLUTION, Control::RESOLUTION);
+
+    mixerOutputs = airplaneMixer.mix(output_rpy[0], output_rpy[1], output_rpy[2]);
+
+    SRVout[Actuators::Channel::CH1] = mapToSRV(mixerOutputs.leftAileron);
+
+    SRVout[Actuators::Channel::CH2] = mapToSRV(mixerOutputs.rightAileron);
+
+    SRVout[Actuators::Channel::CH3] = mapToSRV(mixerOutputs.elevator);
+
+    SRVout[Actuators::Channel::CH4] = mapToSRV(mixerOutputs.rudder);
+
+#if defined(USE_FLAPERONS)
+    flaperonMixer();
+#endif
+
+    actuators.writeServos(SRVout);
 }
 
 void Mode::consumeAHRS(const float (&rpy)[3], const float (&g)[3])

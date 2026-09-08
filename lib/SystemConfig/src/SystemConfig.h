@@ -25,7 +25,7 @@
 #define FLIGHT_MODE_RUN_RATE_HZ CONTROL_LOOP_RATE_HZ // Flight mode run period in hz
 #define FLIGHT_MODE_UPDATE_RATE_HZ 25                // Flight mode update period in hz
 #define RADIO_INPUT_PROCESS_RATE_HZ 50               // Radio input period in hz
-#define WRITE_SERVO_RATE_HZ 50                       // Write servo output period in hz
+#define FLIGHT_MODE_OUTPUT_RATE_HZ 50                // Flight mode output period in hz
 #define TASK_PRINT_RATE_HZ 2                         // Task rate debug print period in hz
 #define SERIAL_TASK_RATE_HZ 20                       // Serial task period in hz
 
@@ -44,12 +44,12 @@
 // #define PRINT_FM_UPDATE_TASK_STAT
 // #define PRINT_FM_MODE_INPUT_UPDATE_TASK_STAT
 // #define PRINT_FM_RUN_TASK_STAT
-// #define PRINT_SERVO_TASK_STAT
+// #define PRINT_FM_OUTPUT_TASK_STAT
 
 // Any debugging should disable serial communication with xp_serial.py
 #if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) || defined(PRINT_IMU_TASK_STAT) ||             \
     defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) ||              \
-    defined(PRINT_SERVO_TASK_STAT)
+    defined(PRINT_FM_OUTPUT_TASK_STAT)
 #if defined(USE_SERIAL_TASK)
 #undef USE_SERIAL_TASK
 #endif
