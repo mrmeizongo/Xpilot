@@ -184,15 +184,27 @@ void Mode::processOutput(void* ctx)
     output_rpy[1] = constrain(output_rpy[1], -Control::RESOLUTION, Control::RESOLUTION);
     output_rpy[2] = constrain(output_rpy[2], -Control::RESOLUTION, Control::RESOLUTION);
 
+    if (config().rollSrvConfig.reverse)
+        output_rpy[0] = -output_rpy[0];
+
+    if (config().pitchSrvConfig.reverse)
+        output_rpy[1] = -output_rpy[1];
+
+    if (config().yawSrvConfig.reverse)
+        output_rpy[2] = -output_rpy[2];
+
     mixerOutputs = airplaneMixer.mix(output_rpy[0], output_rpy[1], output_rpy[2]);
 
-    SRVout[Actuators::Channel::CH1] = mapToSRV(mixerOutputs.leftAileron);
+    SRVout[Actuators::Channel::CH1] =
+        mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
 
-    SRVout[Actuators::Channel::CH2] = mapToSRV(mixerOutputs.rightAileron);
+    SRVout[Actuators::Channel::CH2] =
+        mapToSRV(mixerOutputs.rightAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
 
-    SRVout[Actuators::Channel::CH3] = mapToSRV(mixerOutputs.elevator);
+    SRVout[Actuators::Channel::CH3] =
+        mapToSRV(mixerOutputs.elevator, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
 
-    SRVout[Actuators::Channel::CH4] = mapToSRV(mixerOutputs.rudder);
+    SRVout[Actuators::Channel::CH4] = mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
 
 #if defined(USE_FLAPERONS)
     flaperonMixer();

@@ -13,12 +13,12 @@ Actuators::Actuators(void) {}
 // Set up output servos
 void Actuators::init(void)
 {
-    controlServo[CH1].attach(AIL1PIN_OUTPUT, config().srvConfig.min, config().srvConfig.max);
-    controlServo[CH2].attach(AIL2PIN_OUTPUT, config().srvConfig.min, config().srvConfig.max);
-    controlServo[CH3].attach(ELEVPIN_OUTPUT, config().srvConfig.min, config().srvConfig.max);
-    controlServo[CH4].attach(RUDDPIN_OUTPUT, config().srvConfig.min, config().srvConfig.max);
+    controlServo[CH1].attach(AIL1PIN_OUTPUT, config().rollSrvConfig.min, config().rollSrvConfig.max);
+    controlServo[CH2].attach(AIL2PIN_OUTPUT, config().rollSrvConfig.min, config().rollSrvConfig.max);
+    controlServo[CH3].attach(ELEVPIN_OUTPUT, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
+    controlServo[CH4].attach(RUDDPIN_OUTPUT, config().yawSrvConfig.min, config().yawSrvConfig.max);
 #if defined(USE_AUXOUT1)
-    controlServo[CH5].attach(AUX1PIN_OUTPUT, config().srvConfig.min, config().srvConfig.max);
+    controlServo[CH5].attach(AUX1PIN_OUTPUT, config().auxSrvConfig.min, config().auxSrvConfig.max);
 #endif
 }
 

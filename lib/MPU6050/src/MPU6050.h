@@ -177,13 +177,17 @@ public:
         quat_filter.mahony6DOF(an, ae, ad, gn, ge, gd, q);
 
         update_rpy(q[0], q[1], q[2], q[3]);
+
+        // Simply copy the calculated rpy
         _rpy[0] = rpy[0];
         _rpy[1] = rpy[1];
         _rpy[2] = rpy[2];
 
+        // Gyro y and z need to be inverted to adhere to the convention already mentioned above
+        // We don't need them in radians for our purpose
         _g[0] = g[0];
-        _g[1] = g[1];
-        _g[2] = g[2];
+        _g[1] = -g[1];
+        _g[2] = -g[2];
 
         return true;
     }

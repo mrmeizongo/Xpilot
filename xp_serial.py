@@ -134,61 +134,77 @@ CONFIG_NAMES = {
     14: "RC_YAW_DB",
     15: "RC_YAW_REVERSE",
 
-    16: "SRV_MIN",
-    17: "SRV_TRIM",
-    18: "SRV_MAX",
+    16: "SRV_ROLL_MIN",
+    17: "SRV_ROLL_TRIM",
+    18: "SRV_ROLL_MAX",
+    19: "SRV_ROLL_REVERSE",
 
-    19: "FLIGHT_MAX_ROLL_RATE_DEGS",
-    20: "FLIGHT_MAX_PITCH_RATE_DEGS",
-    21: "FLIGHT_MAX_YAW_RATE_DEGS",
+    20: "SRV_PITCH_MIN",
+    21: "SRV_PITCH_TRIM",
+    22: "SRV_PITCH_MAX",
+    23: "SRV_PITCH_REVERSE",
 
-    22: "FLIGHT_MAX_ROLL_ANGLE_DEGS",
-    23: "FLIGHT_MAX_PITCH_ANGLE_DEGS",
+    24: "SRV_YAW_MIN",
+    25: "SRV_YAW_TRIM",
+    26: "SRV_YAW_MAX",
+    27: "SRV_YAW_REVERSE",
 
-    24: "FLIGHT_ROLL_ANGLE_KP",
-    25: "FLIGHT_PITCH_ANGLE_KP",
+    28: "SRV_AUX_MIN",
+    29: "SRV_AUX_TRIM",
+    30: "SRV_AUX_MAX",
+    31: "SRV_AUX_REVERSE",
 
-    26: "FLIGHT_FLAPERON_SCALE_FACTOR",
-    27: "FLIGHT_MAX_FLAPERON",
+    32: "FLIGHT_MAX_ROLL_RATE_DEGS",
+    33: "FLIGHT_MAX_PITCH_RATE_DEGS",
+    34: "FLIGHT_MAX_YAW_RATE_DEGS",
 
-    28: "FLIGHT_REVERSE_RUDDER_MIX",
-    29: "FLIGHT_RUDDER_MIX_SCALE_FACTOR",
+    35: "FLIGHT_MAX_ROLL_ANGLE_DEGS",
+    36: "FLIGHT_MAX_PITCH_ANGLE_DEGS",
 
-    30: "PIDF_ROLL_KP",
-    31: "PIDF_ROLL_KI",
-    32: "PIDF_ROLL_KD",
-    33: "PIDF_ROLL_KF",
-    34: "PIDF_ROLL_I_WINDUP_MAX",
+    37: "FLIGHT_ROLL_ANGLE_KP",
+    38: "FLIGHT_PITCH_ANGLE_KP",
 
-    35: "PIDF_PITCH_KP",
-    36: "PIDF_PITCH_KI",
-    37: "PIDF_PITCH_KD",
-    38: "PIDF_PITCH_KF",
-    39: "PIDF_PITCH_I_WINDUP_MAX",
+    39: "FLIGHT_FLAPERON_SCALE_FACTOR",
+    40: "FLIGHT_MAX_FLAPERON",
 
-    40: "PIDF_YAW_KP",
-    41: "PIDF_YAW_KI",
-    42: "PIDF_YAW_KD",
-    43: "PIDF_YAW_KF",
-    44: "PIDF_YAW_I_WINDUP_MAX",
+    41: "FLIGHT_REVERSE_RUDDER_MIX",
+    42: "FLIGHT_RUDDER_MIX_SCALE_FACTOR",
 
-    45: "IMU_ACC_BIAS_X",
-    46: "IMU_ACC_BIAS_Y",
-    47: "IMU_ACC_BIAS_Z",
+    43: "PIDF_ROLL_KP",
+    44: "PIDF_ROLL_KI",
+    45: "PIDF_ROLL_KD",
+    46: "PIDF_ROLL_KF",
+    47: "PIDF_ROLL_I_WINDUP_MAX",
 
-    48: "IMU_GYRO_BIAS_X",
-    49: "IMU_GYRO_BIAS_Y",
-    50: "IMU_GYRO_BIAS_Z",
+    48: "PIDF_PITCH_KP",
+    49: "PIDF_PITCH_KI",
+    50: "PIDF_PITCH_KD",
+    51: "PIDF_PITCH_KF",
+    52: "PIDF_PITCH_I_WINDUP_MAX",
 
-    51: "IMU_CALIBRATED",
+    53: "PIDF_YAW_KP",
+    54: "PIDF_YAW_KI",
+    55: "PIDF_YAW_KD",
+    56: "PIDF_YAW_KF",
+    57: "PIDF_YAW_I_WINDUP_MAX",
 
-    52: "FILTER_SLEW_RATE",
-    53: "FILTER_LPF_FREQ",
-    54: "FILTER_PROCESS_DT",
+    58: "IMU_ACC_BIAS_X",
+    59: "IMU_ACC_BIAS_Y",
+    60: "IMU_ACC_BIAS_Z",
+
+    61: "IMU_GYRO_BIAS_X",
+    62: "IMU_GYRO_BIAS_Y",
+    63: "IMU_GYRO_BIAS_Z",
+
+    64: "IMU_CALIBRATED",
+
+    65: "FILTER_SLEW_RATE",
+    66: "FILTER_LPF_FREQ",
+    67: "FILTER_PROCESS_DT",
 }
 
 
-CONFIG_COUNT = 55
+CONFIG_COUNT = 68
 
 
 CONFIG_IDS_BY_NAME = {
@@ -226,64 +242,83 @@ CONFIG_TYPES = {
     14: ValueType.UINT8,
     15: ValueType.BOOL,
 
-    # SrvConfig
+    # Roll SrvConfig
     16: ValueType.INT16,
     17: ValueType.INT16,
     18: ValueType.INT16,
+    19: ValueType.BOOL,
 
-    # FlightConfig
-    19: ValueType.INT16,
+    # Pitch SrvConfig
     20: ValueType.INT16,
     21: ValueType.INT16,
-
     22: ValueType.INT16,
-    23: ValueType.INT16,
+    23: ValueType.BOOL,
 
-    24: ValueType.FLOAT,
-    25: ValueType.FLOAT,
+    # Yaw SrvConfig
+    24: ValueType.INT16,
+    25: ValueType.INT16,
+    26: ValueType.INT16,
+    27: ValueType.BOOL,
 
-    26: ValueType.FLOAT,
-    27: ValueType.INT16,
+    # Aux SrvConfig
+    28: ValueType.INT16,
+    29: ValueType.INT16,
+    30: ValueType.INT16,
+    31: ValueType.BOOL,
 
-    28: ValueType.BOOL,
-    29: ValueType.FLOAT,
+    # FlightConfig
+    32: ValueType.INT16,
+    33: ValueType.INT16,
+    34: ValueType.INT16,
 
-    # RollPIDF
-    30: ValueType.FLOAT,
-    31: ValueType.FLOAT,
-    32: ValueType.FLOAT,
-    33: ValueType.FLOAT,
-    34: ValueType.FLOAT,
+    35: ValueType.INT16,
+    36: ValueType.INT16,
 
-    # PitchPIDF
-    35: ValueType.FLOAT,
-    36: ValueType.FLOAT,
     37: ValueType.FLOAT,
     38: ValueType.FLOAT,
-    39: ValueType.FLOAT,
 
-    # YawPIDF
-    40: ValueType.FLOAT,
-    41: ValueType.FLOAT,
+    39: ValueType.FLOAT,
+    40: ValueType.INT16,
+
+    41: ValueType.BOOL,
     42: ValueType.FLOAT,
+
+    # RollPIDF
     43: ValueType.FLOAT,
     44: ValueType.FLOAT,
-
-    # IMUConfig
     45: ValueType.FLOAT,
     46: ValueType.FLOAT,
     47: ValueType.FLOAT,
 
+    # PitchPIDF
     48: ValueType.FLOAT,
     49: ValueType.FLOAT,
     50: ValueType.FLOAT,
+    51: ValueType.FLOAT,
+    52: ValueType.FLOAT,
 
-    51: ValueType.BOOL,
+    # YawPIDF
+    53: ValueType.FLOAT,
+    54: ValueType.FLOAT,
+    55: ValueType.FLOAT,
+    56: ValueType.FLOAT,
+    57: ValueType.FLOAT,
+
+    # IMUConfig
+    58: ValueType.FLOAT,
+    59: ValueType.FLOAT,
+    60: ValueType.FLOAT,
+
+    61: ValueType.FLOAT,
+    62: ValueType.FLOAT,
+    63: ValueType.FLOAT,
+
+    64: ValueType.BOOL,
 
     # FilterConfig
-    52: ValueType.UINT16,
-    53: ValueType.UINT16,
-    54: ValueType.FLOAT,
+    65: ValueType.UINT16,
+    66: ValueType.UINT16,
+    67: ValueType.FLOAT,
 }
 
 

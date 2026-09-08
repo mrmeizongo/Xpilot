@@ -38,12 +38,11 @@ Flight stabilization software
 #include "SystemConfig.h"
 #include <Arduino.h>
 
-inline int16_t mapToSRV(int16_t output)
+inline int16_t mapToSRV(int16_t _output, int16_t _min, int16_t _max)
 {
-    const int32_t range = config().srvConfig.max - config().srvConfig.min;
+    const int32_t range = _max - _min;
 
-    return static_cast<int16_t>(config().srvConfig.min +
-                                ((output + Control::RESOLUTION) * range) / (2 * Control::RESOLUTION));
+    return static_cast<int16_t>(_min + ((_output + Control::RESOLUTION) * range) / (2 * Control::RESOLUTION));
 }
 
 // Abstract flight mode class

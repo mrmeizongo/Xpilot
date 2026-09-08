@@ -27,9 +27,25 @@ enum class ConfigID : uint8_t
     RC_YAW_REVERSE,
 
     // SRVConfig
-    SRV_MIN,
-    SRV_TRIM,
-    SRV_MAX,
+    SRV_ROLL_MIN,
+    SRV_ROLL_TRIM,
+    SRV_ROLL_MAX,
+    SRV_ROLL_REVERSE,
+
+    SRV_PITCH_MIN,
+    SRV_PITCH_TRIM,
+    SRV_PITCH_MAX,
+    SRV_PITCH_REVERSE,
+
+    SRV_YAW_MIN,
+    SRV_YAW_TRIM,
+    SRV_YAW_MAX,
+    SRV_YAW_REVERSE,
+
+    SRV_AUX_MIN,
+    SRV_AUX_TRIM,
+    SRV_AUX_MAX,
+    SRV_AUX_REVERSE,
 
     // FlightConfig
     FLIGHT_MAX_ROLL_RATE_DEGS,

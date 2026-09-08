@@ -43,6 +43,7 @@ struct Config
         int16_t min;
         int16_t trim;
         int16_t max;
+        bool reverse;
     };
 
     struct FlightConfig
@@ -99,7 +100,10 @@ struct Config
     RxConfig pitchRxConfig;
     RxConfig yawRxConfig;
 
-    SRVConfig srvConfig;
+    SRVConfig rollSrvConfig;
+    SRVConfig pitchSrvConfig;
+    SRVConfig yawSrvConfig;
+    SRVConfig auxSrvConfig;
 
     FlightConfig flightConfig;
 
