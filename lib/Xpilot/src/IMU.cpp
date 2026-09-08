@@ -10,6 +10,7 @@ IMU::IMU(void)
 {
     _rpy[0] = _rpy[1] = _rpy[2] = 0.f;
     _g[0] = _g[1] = _g[2] = 0.f;
+    _consumer = nullptr;
 }
 
 void IMU::init(void)
