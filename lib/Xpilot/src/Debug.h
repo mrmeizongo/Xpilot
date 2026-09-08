@@ -95,6 +95,12 @@ void Xpilot::printIMU(void)
     Serial.println(imu.getPitch());
     Serial.print(F("Yaw: "));
     Serial.println(imu.getYaw());
+    Serial.print(F("Gyro X: "));
+    Serial.println(imu.getGyroX());
+    Serial.print(F("Gyro Y: "));
+    Serial.println(imu.getGyroY());
+    Serial.print(F("Gyro Z: "));
+    Serial.println(imu.getGyroZ());
 }
 
 void Xpilot::printSchedulerRate(void)
