@@ -41,21 +41,35 @@ BOOL
     RC_ROLL_TRIM                        INT16
     RC_ROLL_MAX                         INT16
     RC_ROLL_DB                          UINT8
+    RC_ROLL_REVERSE                     BOOL
 
     RC_PITCH_MIN                        INT16
     RC_PITCH_TRIM                       INT16
     RC_PITCH_MAX                        INT16
     RC_PITCH_DB                         UINT8
+    RC_PITCH_REVERSE                    BOOL
 
     RC_YAW_MIN                          INT16
     RC_YAW_TRIM                         INT16
     RC_YAW_MAX                          INT16
     RC_YAW_DB                           UINT8
+    RC_YAW_REVERSE                      BOOL
 
     // SRVConfig
-    SRV_MIN                             INT16
-    SRV_TRIM                            INT16
-    SRV_MAX                             INT16
+    SRV_ROLL_MIN                        INT16
+    SRV_ROLL_TRIM                       INT16
+    SRV_ROLL_MAX                        INT16
+    SRV_ROLL_REVERSE                    BOOL
+    
+    SRV_PITCH_MIN                       INT16
+    SRV_PITCH_TRIM                      INT16
+    SRV_PITCH_MAX                       INT16
+    SRV_PITCH_REVERSE                   BOOL
+    
+    SRV_YAW_MIN                         INT16
+    SRV_YAW_TRIM                        INT16
+    SRV_YAW_MAX                         INT16
+    SRV_YAW_REVERSE                     BOOL
 
     // FlightConfig
     FLIGHT_CONTROL_RES                  INT16

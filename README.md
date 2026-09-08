@@ -98,6 +98,14 @@ Rudder mixing for coordinated turns is enabled automatically in rate and stabili
 
 ## NOTICE
 
+For proper operation of the Xpilot flight stabilization system some default airplane conventions need to be established. Set up transmitter so these are true
+
+* Roll right = Positive
+* Pitch up = Positive
+* Yaw right = Positive
+
+If needed, reverse these in Xpilot via [XP_SERIAL](XP_SERIAL.md) although that should not be necessary if servos are installed correctly.  
+
 Throttle is always under manual control.
 
 Rate/Expo set up on the transmitter should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode.
