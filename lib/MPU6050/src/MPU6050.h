@@ -10,7 +10,7 @@
 // Accel sensitivity - A2G (most sensitive)
 enum class ACCEL_FS_SEL : uint8_t
 {
-    A2G,
+    A2G = 0U,
     A4G,
     A8G,
     A16G
@@ -19,7 +19,7 @@ enum class ACCEL_FS_SEL : uint8_t
 // Gyro sensitivity - G250DPS (most sensitive)
 enum class GYRO_FS_SEL : uint8_t
 {
-    G250DPS,
+    G250DPS = 0U,
     G500DPS,
     G1000DPS,
     G2000DPS
@@ -30,7 +30,7 @@ enum class GYRO_FS_SEL : uint8_t
 // If ACCEL_GYRO_DLPF_CFG is set to DLPF_260HZx256HZ or DLPF_RESERVED, gyro output and Sample Rate is 8kHz, accelerometer is still 1kHz
 enum class SAMPLE_RATE_DIV : uint8_t
 {
-    SMPL_8KHZ = 0,
+    SMPL_8KHZ = 0U,
     SMPL_500HZ,
     SMPL_333HZ,
     SMPL_250HZ,
@@ -43,13 +43,13 @@ enum class SAMPLE_RATE_DIV : uint8_t
 // AccelxGyro filter Bandwidth
 enum class ACCEL_GYRO_DLPF_CFG : uint8_t
 {
-    DLPF_260HZx256HZ = 0, // Accel delay 0ms, Gyro delay 0.98ms
-    DLPF_184HZx188HZ,     // Accel delay 2.0ms, Gyro delay 1.9ms
-    DLPF_94HZx98HZ,       // Accel delay 3.0ms, Gyro delay 2.8ms
-    DLPF_44HZx42HZ,       // Accel delay 4.9ms, Gyro delay 4.8ms
-    DLPF_21HZx20HZ,       // Accel delay 8.5ms, Gyro delay 8.3ms
-    DLPF_10HZx10HZ,       // Accel delay 13.8ms, Gyro delay 13.4ms
-    DLPF_5HZx5HZ,         // Accel delay 19.0ms, Gyro delay 18.6ms
+    DLPF_260HZx256HZ = 0U, // Accel delay 0ms, Gyro delay 0.98ms
+    DLPF_184HZx188HZ,      // Accel delay 2.0ms, Gyro delay 1.9ms
+    DLPF_94HZx98HZ,        // Accel delay 3.0ms, Gyro delay 2.8ms
+    DLPF_44HZx42HZ,        // Accel delay 4.9ms, Gyro delay 4.8ms
+    DLPF_21HZx20HZ,        // Accel delay 8.5ms, Gyro delay 8.3ms
+    DLPF_10HZx10HZ,        // Accel delay 13.8ms, Gyro delay 13.4ms
+    DLPF_5HZx5HZ,          // Accel delay 19.0ms, Gyro delay 18.6ms
     DLPF_RESERVED
 };
 
@@ -96,6 +96,7 @@ public:
         {
             return false;
         }
+
         mpu_i2c_addr = addr;
         setting = mpu_setting;
         quat_filter = QuaternionFilter(_filterDt);
@@ -110,12 +111,14 @@ public:
         {
             has_connected = false;
         }
+
         return has_connected;
     }
 
     void sleep(bool b)
     {
         byte c = read_byte(PWR_MGMT_1); // read the value, change sleep bit to match b, write byte back to register
+
         if (b)
         {
             c |= 0x40; // sets the sleep bit
@@ -124,6 +127,7 @@ public:
         {
             c &= 0xBF; // mask 1011111 keeps all the previous bits
         }
+
         write_byte(PWR_MGMT_1, c);
     }
 
@@ -237,6 +241,7 @@ public:
         acc_bias[1] = y;
         acc_bias[2] = z;
     }
+
     void setGyroBias(const float x, const float y, const float z)
     {
         gyro_bias[0] = x;
@@ -252,6 +257,7 @@ private:
 
     // settings
     MPU6050Setting setting;
+
     float acc_resolution{0.f};  // scale resolutions per LSB for the sensors
     float gyro_resolution{0.f}; // scale resolutions per LSB for the sensors
 
@@ -272,6 +278,7 @@ private:
     float q[4] = {1.0f, 0.0f, 0.0f, 0.0f}; // vector to hold quaternion
     float rpy[3]{0.f, 0.f, 0.f};
     // float lin_acc[3]{0.f, 0.f, 0.f}; // linear acceleration (acceleration with gravity component subtracted)
+
     QuaternionFilter quat_filter;
 
     bool has_connected{false};
@@ -353,64 +360,18 @@ private:
         rpy[2] *= RAD_TO_DEG;
     }
 
-    // void update_rpy(float qw, float qx, float qy, float qz)
-    // {
-    //     // This arises from the definition of the homogeneous rotation matrix constructed from quaternions to euler angles.
-    //     // See https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_angles_(in_3-2-1_sequence)_conversion
-    //     float sinr_cosp = 2 * ((qw * qx) + (qy * qz));
-    //     float cosr_cosp = 1 - (2 * ((qx * qx) + (qy * qy)));
-    //     float sinp = sqrt(1 + (2 * ((qw * qy) - (qx * qz))));
-    //     float cosp = sqrt(1 - (2 * ((qw * qy) - (qx * qz))));
-    //     float siny_cosp = 2 * ((qw * qz) + (qx * qy));
-    //     float cosy_cosp = 1 - (2 * ((qy * qy) + (qz * qz)));
-
-    //     rpy[0] = atan2f(sinr_cosp, cosr_cosp);
-    //     rpy[1] = (2 * atan2f(sinp, cosp)) - (PI / 2);
-    //     // rpy[2] = atan2f(siny_cosp, cosy_cosp);
-
-    //     // Convert radian to degrees
-    //     rpy[0] *= RAD_TO_DEG;
-    //     rpy[1] *= RAD_TO_DEG;
-    //     rpy[2] *= RAD_TO_DEG;
-
-    //     // Limit roll to +/-180 degrees range
-    //     if (rpy[0] >= +180)
-    //         rpy[0] -= 360.f;
-    //     else if (rpy[0] <= -180)
-    //         rpy[0] += 360.f;
-
-    //     // Limit pitch to +/-90 degrees range
-    //     if (rpy[1] >= +90.f)
-    //         rpy[1] -= 180.f;
-    //     else if (rpy[1] <= -90.f)
-    //         rpy[1] += 180.f;
-
-    //     // Limit yaw to +/-180 degrees range
-    //     if (rpy[2] >= +180)
-    //         rpy[2] -= 360.f;
-    //     else if (rpy[2] <= -180)
-    //         rpy[2] += 360.f;
-
-    //     // Convert to linear acceleration
-    //     lin_acc[0] = a[0] + (2 * ((qw * qy) + (qx * qz)));
-    //     lin_acc[1] = a[1] + (2 * ((qy * qz) - (qw * qx)));
-    //     lin_acc[2] = a[2] - ((qw * qw) - (qx * qx) - (qy * qy) - (qz * qz));
-    // }
-
     void update_accel_gyro()
     {
         int16_t raw_acc_gyro_data[6]; // holds 16 bits in 2's complement from the MPU6050 accel/gyro data register
         read_accel_gyro(raw_acc_gyro_data);
 
         // Transform the acceleration value into actual g's
-        a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) *
-               acc_resolution; // get actual g value, this depends on the set resolution
+        a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution;
         a[1] = ((float)raw_acc_gyro_data[1] - acc_bias[1]) * acc_resolution;
         a[2] = ((float)raw_acc_gyro_data[2] - acc_bias[2]) * acc_resolution;
 
         // Transform the gyro value into actual degrees per second
-        g[0] = ((float)raw_acc_gyro_data[3] - gyro_bias[0]) *
-               gyro_resolution; // get actual gyro value, this depends on the set resolution
+        g[0] = ((float)raw_acc_gyro_data[3] - gyro_bias[0]) * gyro_resolution;
         g[1] = ((float)raw_acc_gyro_data[4] - gyro_bias[1]) * gyro_resolution;
         g[2] = ((float)raw_acc_gyro_data[5] - gyro_bias[2]) * gyro_resolution;
     }
@@ -424,11 +385,10 @@ private:
     void read_accel_gyro(int16_t* destination)
     {
         uint8_t raw_data[14]; // x/y/z accel register data stored here
-        read_bytes(
-            ACCEL_XOUT_H,
-            14,
-            &raw_data[0]); // Read the 14 raw data registers into data array, register data(temperature) 6 & 7 not used
-        destination[0] = ((int16_t)raw_data[0] << 8) | raw_data[1]; // Turn the MSB and LSB into a signed 16-bit value
+        read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);
+
+        // Read the 14 raw data registers into data array, register data(temperature) 6 & 7 not used
+        destination[0] = ((int16_t)raw_data[0] << 8) | raw_data[1];
         destination[1] = ((int16_t)raw_data[2] << 8) | raw_data[3];
         destination[2] = ((int16_t)raw_data[4] << 8) | raw_data[5];
         destination[3] = ((int16_t)raw_data[8] << 8) | raw_data[9];
