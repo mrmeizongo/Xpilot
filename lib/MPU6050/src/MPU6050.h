@@ -107,10 +107,6 @@ public:
             initMPU6050();
             has_connected = true;
         }
-        else
-        {
-            has_connected = false;
-        }
 
         return has_connected;
     }
