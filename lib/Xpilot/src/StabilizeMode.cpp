@@ -38,6 +38,8 @@ void StabilizeMode::update(void)
     Mode::update();
 
     input_rpy[2] *= config().flightConfig.maxYawRateDegs;
+
+    applyRudderMix();
 }
 
 void StabilizeMode::run(void)

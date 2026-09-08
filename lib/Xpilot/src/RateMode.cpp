@@ -18,6 +18,8 @@ void RateMode::update(void)
     input_rpy[1] *= config().flightConfig.maxPitchRateDegs;
 
     input_rpy[2] *= config().flightConfig.maxYawRateDegs;
+
+    applyRudderMix();
 }
 
 void RateMode::run(void)

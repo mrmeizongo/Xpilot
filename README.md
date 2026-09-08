@@ -85,7 +85,7 @@ There are 3 flight modes; 1 = passthrough/manual, 2 = rate, and 3 = stabilize.
 
 Rate mode is the most popular among inexperienced flyers. If mode switch is not configured, rate mode is the default.  
 
-Passthrough mode is for advanced flyers. It passes the output through a slew rate limiter before the servos receive the command. The slew rate is configurable.
+Passthrough mode is for advanced flyers. The input is passed through a slew rate limiter before the servos receive the command. The slew rate is configurable.
 
 Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. Default aileron-to-rudder mixing value is 30%.
 
