@@ -178,23 +178,15 @@ CONFIG_NAMES = {
     47: "IMU_GYRO_BIAS_Y",
     48: "IMU_GYRO_BIAS_Z",
 
-    49: "IMU_REVERSE_ROLL",
-    50: "IMU_REVERSE_PITCH",
-    51: "IMU_REVERSE_YAW",
+    49: "IMU_CALIBRATED",
 
-    52: "IMU_REVERSE_GYRO_X",
-    53: "IMU_REVERSE_GYRO_Y",
-    54: "IMU_REVERSE_GYRO_Z",
-
-    55: "IMU_CALIBRATED",
-
-    56: "FILTER_SLEW_RATE",
-    57: "FILTER_LPF_FREQ",
-    58: "FILTER_PROCESS_DT",
+    50: "FILTER_SLEW_RATE",
+    51: "FILTER_LPF_FREQ",
+    52: "FILTER_PROCESS_DT",
 }
 
 
-CONFIG_COUNT = 59
+CONFIG_COUNT = 53
 
 
 CONFIG_IDS_BY_NAME = {
@@ -283,19 +275,11 @@ CONFIG_TYPES = {
     48: ValueType.FLOAT,
 
     49: ValueType.BOOL,
-    50: ValueType.BOOL,
-    51: ValueType.BOOL,
-
-    52: ValueType.BOOL,
-    53: ValueType.BOOL,
-    54: ValueType.BOOL,
-
-    55: ValueType.BOOL,
 
     # FilterConfig
-    56: ValueType.UINT16,
-    57: ValueType.UINT16,
-    58: ValueType.FLOAT,
+    50: ValueType.UINT16,
+    51: ValueType.UINT16,
+    52: ValueType.FLOAT,
 }
 
 
