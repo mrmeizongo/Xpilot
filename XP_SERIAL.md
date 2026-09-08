@@ -478,6 +478,7 @@ Radio deadbands
 Servo minimum values
 Servo trim values
 Servo maximum values
+Servo reversal
 
 PID/PIDF gains
 

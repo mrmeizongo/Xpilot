@@ -100,11 +100,11 @@ Rudder mixing for coordinated turns is enabled automatically in rate and stabili
 
 For proper operation of the Xpilot flight stabilization system some default airplane conventions need to be established. Set up transmitter so these are true
 
-* Roll right = Positive
-* Pitch up = Positive
-* Yaw right = Positive
+* Roll right (Roll stick right) = Positive channel output
+* Pitch up (Pitch stick down) = Positive channel output
+* Yaw right (Yaw stick right) = Positive channel output
 
-If needed, reverse these in Xpilot via [XP_SERIAL](XP_SERIAL.md) although that should not be necessary if servos are installed correctly.  
+If servos were installed in reverse of expected motion, see [XP_SERIAL](XP_SERIAL.md) on how to correct them using the Xpilot config manager.  
 
 Throttle is always under manual control.
 
