@@ -513,7 +513,8 @@ If the new value is stored correctly but the subsystem continues using the old v
 
 Cached parameters should either:
 
-* register a `ConfigManager` subscriber, or
+* register a `ConfigManager` subscriber,
+* if subsystem is referenced by a subscriber to `ConfigManager`, a case can be added to the callback, or
 * intentionally require reboot/reinitialization.
 
 ---

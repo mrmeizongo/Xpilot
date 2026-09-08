@@ -888,7 +888,10 @@ bool ConfigManager::load()
 void ConfigManager::registerSubscriber(Callback cb, void* ctx)
 {
     if (subscriberCount >= MAX_SUBSCRIBERS)
+    {
+        Serial.println(F("Config manager sub max"));
         return;
+    }
 
     subscribers[subscriberCount++] = {cb, ctx};
 }
