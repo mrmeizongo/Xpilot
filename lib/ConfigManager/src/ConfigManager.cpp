@@ -473,7 +473,7 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
 
 bool ConfigManager::set(ConfigID id, const ConfigValue& value)
 {
-    if (!validate(id, value))
+    if (!validateSet(id, value))
     {
         return false;
     }
@@ -731,7 +731,10 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
     return true;
 }
 
-bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
+// Primary settable config determinant
+// If configID is not included in cases, it is not directly settable via xp_serial.py
+// If configID is included in cases, it validates range of provided value
+bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 {
     switch (id)
     {
@@ -775,6 +778,19 @@ bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
 
             return value.u8 < 256;
 
+        case ConfigID::FLIGHT_REVERSE_RUDDER_MIX:
+
+        case ConfigID::RC_ROLL_REVERSE:
+        case ConfigID::RC_PITCH_REVERSE:
+        case ConfigID::RC_YAW_REVERSE:
+
+        case ConfigID::SRV_ROLL_REVERSE:
+        case ConfigID::SRV_PITCH_REVERSE:
+        case ConfigID::SRV_YAW_REVERSE:
+        case ConfigID::SRV_AUX_REVERSE:
+
+            return value.u8 <= 1U;
+
         case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:
         case ConfigID::FLIGHT_MAX_PITCH_RATE_DEGS:
         case ConfigID::FLIGHT_MAX_YAW_RATE_DEGS:
@@ -782,18 +798,7 @@ bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
         case ConfigID::FLIGHT_MAX_ROLL_ANGLE_DEGS:
         case ConfigID::FLIGHT_MAX_PITCH_ANGLE_DEGS:
 
-            return value.i16 >= 0 && value.i16 <= 360;
-
-        case ConfigID::FLIGHT_FLAPERON_SCALE_FACTOR:
-
-        case ConfigID::FLIGHT_RUDDER_MIX_SCALE_FACTOR:
-
-            return value.f >= .01f && value.f <= 1.f;
-
-        case ConfigID::FILTER_LPF_FREQ:
-        case ConfigID::FILTER_SLEW_RATE:
-
-            return value.u16 > 0;
+            return value.i16 > 0;
 
         case ConfigID::PIDF_ROLL_KP:
         case ConfigID::PIDF_ROLL_KI:
@@ -813,26 +818,20 @@ bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
         case ConfigID::FLIGHT_ROLL_ANGLE_KP:
         case ConfigID::FLIGHT_PITCH_ANGLE_KP:
 
-            return value.f >= 0.f && value.f <= static_cast<float>(Control::RESOLUTION);
-
         case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
         case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
         case ConfigID::PIDF_YAW_I_WINDUP_MAX:
 
+        case ConfigID::FLIGHT_FLAPERON_SCALE_FACTOR:
+
+        case ConfigID::FLIGHT_RUDDER_MIX_SCALE_FACTOR:
+
             return value.f >= 0.f;
 
-        case ConfigID::FLIGHT_REVERSE_RUDDER_MIX:
+        case ConfigID::FILTER_LPF_FREQ:
+        case ConfigID::FILTER_SLEW_RATE:
 
-        case ConfigID::RC_ROLL_REVERSE:
-        case ConfigID::RC_PITCH_REVERSE:
-        case ConfigID::RC_YAW_REVERSE:
-
-        case ConfigID::SRV_ROLL_REVERSE:
-        case ConfigID::SRV_PITCH_REVERSE:
-        case ConfigID::SRV_YAW_REVERSE:
-        case ConfigID::SRV_AUX_REVERSE:
-
-            return value.u8 <= 1U;
+            return value.u16 > 0;
 
         default:
             return false;
