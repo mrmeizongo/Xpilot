@@ -6,16 +6,16 @@ void Mode::init(void)
     // Changing airframe type requires a reset to take effect
     airplaneMixer.setAirframeType(config().airframeConfig.type);
 
-    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.processDT};
-    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.processDT};
-    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.processDT};
+    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.dt};
+    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.dt};
+    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.dt};
 
     rollPIDF = PIDF<int32_t, int16_t>{config().rPIDFConfig.Kp / Control::RESOLUTION,
                                       config().rPIDFConfig.Ki / Control::RESOLUTION,
                                       config().rPIDFConfig.Kd / Control::RESOLUTION,
                                       config().rPIDFConfig.Kf / Control::RESOLUTION,
                                       config().rPIDFConfig.iWindUpMax,
-                                      config().filterConfig.processDT,
+                                      config().filterConfig.dt,
                                       config().filterConfig.lowPassFilterFreq};
 
     pitchPIDF = PIDF<int32_t, int16_t>{config().pPIDFConfig.Kp / Control::RESOLUTION,
@@ -23,7 +23,7 @@ void Mode::init(void)
                                        config().pPIDFConfig.Kd / Control::RESOLUTION,
                                        config().pPIDFConfig.Kf / Control::RESOLUTION,
                                        config().pPIDFConfig.iWindUpMax,
-                                       config().filterConfig.processDT,
+                                       config().filterConfig.dt,
                                        config().filterConfig.lowPassFilterFreq};
 
     yawPIDF = PIDF<int32_t, int16_t>{config().yPIDFConfig.Kp / Control::RESOLUTION,
@@ -31,7 +31,7 @@ void Mode::init(void)
                                      config().yPIDFConfig.Kd / Control::RESOLUTION,
                                      config().yPIDFConfig.Kf / Control::RESOLUTION,
                                      config().yPIDFConfig.iWindUpMax,
-                                     config().filterConfig.processDT,
+                                     config().filterConfig.dt,
                                      config().filterConfig.lowPassFilterFreq};
 
     imu.registerConsumer(consumeAHRS);

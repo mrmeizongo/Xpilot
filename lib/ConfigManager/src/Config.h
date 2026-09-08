@@ -91,7 +91,7 @@ struct Config
     {
         uint16_t controlSlewRate;
         uint16_t lowPassFilterFreq;
-        float processDT;
+        float dt;
     };
 
     AirframeConfig airframeConfig;

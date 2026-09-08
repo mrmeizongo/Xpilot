@@ -97,7 +97,7 @@ enum class ConfigID : uint8_t
     // FilterConfig
     FILTER_SLEW_RATE,
     FILTER_LPF_FREQ,
-    FILTER_PROCESS_DT,
+    FILTER_DT,
 
     // End-of-list
     COUNT

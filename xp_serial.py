@@ -200,7 +200,7 @@ CONFIG_NAMES = {
 
     65: "FILTER_SLEW_RATE",
     66: "FILTER_LPF_FREQ",
-    67: "FILTER_PROCESS_DT",
+    67: "FILTER_DT",
 }
 
 

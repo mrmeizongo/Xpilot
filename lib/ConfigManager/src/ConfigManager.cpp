@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "ConfigManager.h"
+#include "SystemConfig.h"
 
 #include <EEPROM.h>
 #include <string.h>
@@ -111,7 +112,7 @@ void ConfigManager::loadDefaults()
 
     _config.filterConfig.controlSlewRate = 2000;
     _config.filterConfig.lowPassFilterFreq = 10;
-    _config.filterConfig.processDT = 0.004;
+    _config.filterConfig.dt = 1.f / CONTROL_LOOP_RATE_HZ;
 
     _dirty = true;
 }
@@ -456,9 +457,9 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
             value.u16 = _config.filterConfig.lowPassFilterFreq;
             break;
 
-        case ConfigID::FILTER_PROCESS_DT:
+        case ConfigID::FILTER_DT:
             type = ConfigValueType::FLOAT;
-            value.f = _config.filterConfig.processDT;
+            value.f = _config.filterConfig.dt;
             break;
 
             // ------------------------------------------------------------
@@ -716,10 +717,6 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.filterConfig.lowPassFilterFreq = value.u16;
             break;
 
-        case ConfigID::FILTER_PROCESS_DT:
-            _config.filterConfig.processDT = value.f;
-            break;
-
         default:
             return false;
     }
@@ -836,10 +833,6 @@ bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
         case ConfigID::SRV_AUX_REVERSE:
 
             return value.u8 <= 1U;
-
-        case ConfigID::FILTER_PROCESS_DT:
-
-            return value.f > 0.f && value.f <= 1.f;
 
         default:
             return false;

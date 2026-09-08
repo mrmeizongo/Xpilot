@@ -37,13 +37,11 @@ void IMU::init(void)
         ACCEL_FS_SEL::A2G, GYRO_FS_SEL::G250DPS, SAMPLE_RATE_DIV::SMPL_500HZ, ACCEL_GYRO_DLPF_CFG::DLPF_44HZx42HZ);
 
     // Initialize MPU
-    if (!mpu6050.setup(MPU6050_ADDRESS, setting, config().filterConfig.processDT))
+    if (!mpu6050.setup(MPU6050_ADDRESS, setting, config().filterConfig.dt))
     {
+        Serial.println("Invalid MPU!");
         while (true)
-        {
-            Serial.println("Invalid MPU!");
-            delay(1000);
-        }
+            ;
     }
 
     mpu6050.setAccBias(config().imuConfig.accBiasX, config().imuConfig.accBiasY, config().imuConfig.accBiasZ);
