@@ -12,22 +12,24 @@ enum class ConfigID : uint8_t
     RC_ROLL_TRIM,
     RC_ROLL_MAX,
     RC_ROLL_DB,
+    RC_ROLL_REVERSE,
 
     RC_PITCH_MIN,
     RC_PITCH_TRIM,
     RC_PITCH_MAX,
     RC_PITCH_DB,
+    RC_PITCH_REVERSE,
 
     RC_YAW_MIN,
     RC_YAW_TRIM,
     RC_YAW_MAX,
     RC_YAW_DB,
+    RC_YAW_REVERSE,
 
     // SRVConfig
     SRV_MIN,
     SRV_TRIM,
     SRV_MAX,
-    SRV_REVERSE,
 
     // FlightConfig
     FLIGHT_MAX_ROLL_RATE_DEGS,

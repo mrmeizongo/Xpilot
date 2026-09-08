@@ -31,21 +31,23 @@ void ConfigManager::loadDefaults()
     _config.rollRxConfig.trim = 1500;
     _config.rollRxConfig.max = 1900;
     _config.rollRxConfig.deadband = 8;
+    _config.rollRxConfig.reverse = false;
 
     _config.pitchRxConfig.min = 1100;
     _config.pitchRxConfig.trim = 1500;
     _config.pitchRxConfig.max = 1900;
     _config.pitchRxConfig.deadband = 8;
+    _config.pitchRxConfig.reverse = false;
 
     _config.yawRxConfig.min = 1100;
     _config.yawRxConfig.trim = 1500;
     _config.yawRxConfig.max = 1900;
     _config.yawRxConfig.deadband = 8;
+    _config.yawRxConfig.reverse = false;
 
     _config.srvConfig.min = 1000;
     _config.srvConfig.trim = 1500;
     _config.srvConfig.max = 2000;
-    _config.srvConfig.reverse = false;
 
     _config.flightConfig.maxRollRateDegs = 60;
     _config.flightConfig.maxPitchRateDegs = 45;
@@ -129,6 +131,11 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
             value.u8 = _config.rollRxConfig.deadband;
             break;
 
+        case ConfigID::RC_ROLL_REVERSE:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.rollRxConfig.reverse ? 1U : 0U;
+            break;
+
         case ConfigID::RC_PITCH_MIN:
             type = ConfigValueType::INT16;
             value.i16 = _config.pitchRxConfig.min;
@@ -147,6 +154,11 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
         case ConfigID::RC_PITCH_DB:
             type = ConfigValueType::UINT8;
             value.u8 = _config.pitchRxConfig.deadband;
+            break;
+
+        case ConfigID::RC_PITCH_REVERSE:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.pitchRxConfig.reverse ? 1U : 0U;
             break;
 
         case ConfigID::RC_YAW_MIN:
@@ -169,6 +181,11 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
             value.u8 = _config.yawRxConfig.deadband;
             break;
 
+        case ConfigID::RC_YAW_REVERSE:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.yawRxConfig.reverse ? 1U : 0U;
+            break;
+
         case ConfigID::SRV_MIN:
             type = ConfigValueType::INT16;
             value.i16 = _config.srvConfig.min;
@@ -182,11 +199,6 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
         case ConfigID::SRV_MAX:
             type = ConfigValueType::INT16;
             value.i16 = _config.srvConfig.max;
-            break;
-
-        case ConfigID::SRV_REVERSE:
-            type = ConfigValueType::BOOL;
-            value.u8 = _config.srvConfig.reverse ? 1U : 0U;
             break;
 
         case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:
@@ -405,6 +417,10 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.rollRxConfig.deadband = value.u8;
             break;
 
+        case ConfigID::RC_ROLL_REVERSE:
+            _config.rollRxConfig.reverse = (value.u8 != 0U);
+            break;
+
         case ConfigID::RC_PITCH_MIN:
             _config.pitchRxConfig.min = value.i16;
             break;
@@ -419,6 +435,10 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
 
         case ConfigID::RC_PITCH_DB:
             _config.pitchRxConfig.deadband = value.u8;
+            break;
+
+        case ConfigID::RC_PITCH_REVERSE:
+            _config.pitchRxConfig.reverse = (value.u8 != 0U);
             break;
 
         case ConfigID::RC_YAW_MIN:
@@ -437,6 +457,10 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.yawRxConfig.deadband = value.u8;
             break;
 
+        case ConfigID::RC_YAW_REVERSE:
+            _config.yawRxConfig.reverse = (value.u8 != 0U);
+            break;
+
         case ConfigID::SRV_MIN:
             _config.srvConfig.min = value.i16;
             break;
@@ -447,10 +471,6 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
 
         case ConfigID::SRV_MAX:
             _config.srvConfig.max = value.i16;
-            break;
-
-        case ConfigID::SRV_REVERSE:
-            _config.srvConfig.reverse = (value.u8 != 0U);
             break;
 
         case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:
@@ -586,6 +606,7 @@ bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
     switch (id)
     {
         case ConfigID::AIRFRAME_TYPE:
+
             return value.u8 < static_cast<uint8_t>(Config::AirframeType::COUNT);
 
         case ConfigID::RC_ROLL_MIN:
@@ -655,11 +676,14 @@ bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
         case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
         case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
         case ConfigID::PIDF_YAW_I_WINDUP_MAX:
+
             return value.f >= 0.f;
 
         case ConfigID::FLIGHT_REVERSE_RUDDER_MIX:
 
-        case ConfigID::SRV_REVERSE:
+        case ConfigID::RC_ROLL_REVERSE:
+        case ConfigID::RC_PITCH_REVERSE:
+        case ConfigID::RC_YAW_REVERSE:
 
             return value.u8 <= 1U;
 
