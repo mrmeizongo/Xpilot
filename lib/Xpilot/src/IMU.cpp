@@ -7,10 +7,10 @@
 #define I2C_CLOCK_400KHZ 400000 // I2C clock speed in Hz
 
 IMU::IMU(void)
+    : _rpy{0.f, 0.f, 0.f}
+    , _g{0.f, 0.f, 0.f}
+    , _consumer{nullptr}
 {
-    _rpy[0] = _rpy[1] = _rpy[2] = 0.f;
-    _g[0] = _g[1] = _g[2] = 0.f;
-    _consumer = nullptr;
 }
 
 void IMU::init(void)
