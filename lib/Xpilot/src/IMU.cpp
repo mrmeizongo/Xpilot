@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "SystemConfig.h"
+#include "SysConfig.h"
 #include "FlightConfigAccess.h"
 #include "IMU.h"
 

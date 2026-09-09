@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "ConfigManager.h"
-#include "SystemConfig.h"
+#include "SysConfig.h"
 
 #include <EEPROM.h>
 #include <string.h>

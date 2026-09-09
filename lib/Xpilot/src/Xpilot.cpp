@@ -3,7 +3,7 @@
 #include "Radio.h"
 #include "Debug.h"
 #include "Actuators.h"
-#include "SystemConfig.h"
+#include "SysConfig.h"
 #include "FlightConfigAccess.h"
 
 static constexpr uint32_t SERIAL_BAUD_RATE = 250000; // Serial baud rate

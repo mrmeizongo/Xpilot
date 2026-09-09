@@ -34,7 +34,7 @@ Flight stabilization software
 #define _RADIO_H
 
 #include <stdint.h>
-#include "SystemConfig.h"
+#include "SysConfig.h"
 #include "FlightConfigAccess.h"
 
 constexpr int16_t RX_PWM_MIN = 600;            // Lowest valid pwm expected from transmitter
@@ -43,7 +43,7 @@ constexpr int16_t RX_PWM_MAX = 2400;           // Highest valid pwm expected fro
 constexpr int16_t RX_FAILSAFE_PWM = 1746;      // My rx PWM output for all channels on signal loss
 constexpr uint8_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining a failsafe condition
 constexpr int16_t RX_TIMEOUT_MS = 110;         // Rx timeout; 5 missed 22ms PWM frames triggers a failsafe
-constexpr int16_t RX_3_SW_POS_THRESHOLD = 200; // 3 position switch input separator
+constexpr int16_t RX_3_SW_POS_THRESHOLD = 150; // 3 position switch input separator
 
 inline int32_t
 normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inputMax, uint8_t deadband, bool reverse)

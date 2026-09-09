@@ -35,7 +35,7 @@ Flight stabilization software
 #include "PIDF.h"
 #include "Radio.h"
 #include "SlewRateLimiter.h"
-#include "SystemConfig.h"
+#include "SysConfig.h"
 #include <Arduino.h>
 
 inline int16_t mapToSRV(int16_t _output, int16_t _min, int16_t _max)
