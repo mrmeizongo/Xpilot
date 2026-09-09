@@ -57,11 +57,11 @@ normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inpu
 
     if (delta > 0)
     {
-        output = (delta * Control::RESOLUTION) / (inputMax - inputTrim);
+        output = (delta * config().controlConfig.controlResolution) / (inputMax - inputTrim);
     }
     else
     {
-        output = (delta * Control::RESOLUTION) / (inputTrim - inputMin);
+        output = (delta * config().controlConfig.controlResolution) / (inputTrim - inputMin);
     }
 
     return reverse ? -output : output;

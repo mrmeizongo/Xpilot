@@ -2,11 +2,6 @@
 #define _CONFIG_H
 #include <stdint.h>
 
-namespace Control
-{
-constexpr int16_t RESOLUTION = 1000;
-}
-
 // Parameters that can be changed at runtime.
 struct Config
 {
@@ -87,10 +82,11 @@ struct Config
         bool calibrated;
     };
 
-    struct ProcessingConfig
+    struct ControlConfig
     {
         uint16_t controlSlewRate;
         uint16_t lowPassFilterFreq;
+        int16_t controlResolution;
         float dt;
     };
 
@@ -113,7 +109,7 @@ struct Config
 
     IMUConfig imuConfig;
 
-    ProcessingConfig processingConfig;
+    ControlConfig controlConfig;
 };
 
 #endif //_CONFIG_G

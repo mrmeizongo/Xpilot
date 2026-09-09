@@ -2,7 +2,7 @@
 #define _AIRPLANE_MIXER
 
 #include <Arduino.h>
-#include <Config.h>
+#include "FlightConfigAccess.h"
 
 class AirplaneMixer
 {
@@ -24,7 +24,7 @@ public:
 
     explicit AirplaneMixer(Config::AirframeType type = Config::AirframeType::CONVENTIONAL)
         : _type(type)
-        , _commandLimit(Control::RESOLUTION)
+        , _commandLimit(config().controlConfig.controlResolution)
     {
     }
 

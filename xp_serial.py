@@ -198,13 +198,14 @@ CONFIG_NAMES = {
 
     64: "IMU_CALIBRATED",
 
-    65: "PROCESSING_SLEW_RATE",
-    66: "PROCESSING_LPF_FREQ",
-    67: "PROCESSING_DT",
+    65: "CONTROL_SLEW_RATE",
+    66: "CONTROL_LPF_FREQ",
+    67: "CONTROL_RESOLUTION",
+    68: "CONTROL_DT",
 }
 
 
-CONFIG_COUNT = 68
+CONFIG_COUNT = 69
 
 
 CONFIG_IDS_BY_NAME = {
@@ -315,10 +316,11 @@ CONFIG_TYPES = {
 
     64: ValueType.BOOL,
 
-    # ProcessingConfig
+    # ControlConfig
     65: ValueType.UINT16,
     66: ValueType.UINT16,
-    67: ValueType.FLOAT,
+    67: ValueType.INT16,
+    68: ValueType.FLOAT,
 }
 
 

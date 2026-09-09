@@ -5,33 +5,33 @@ void Mode::init(void)
 {
     airplaneMixer.setAirframeType(config().airframeConfig.type);
 
-    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().processingConfig.controlSlewRate, config().processingConfig.dt};
-    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().processingConfig.controlSlewRate, config().processingConfig.dt};
-    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().processingConfig.controlSlewRate, config().processingConfig.dt};
+    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
+    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
+    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
 
-    rollPIDF = PIDF<int32_t, int16_t>{config().rPIDFConfig.Kp / Control::RESOLUTION,
-                                      config().rPIDFConfig.Ki / Control::RESOLUTION,
-                                      config().rPIDFConfig.Kd / Control::RESOLUTION,
-                                      config().rPIDFConfig.Kf / Control::RESOLUTION,
+    rollPIDF = PIDF<int32_t, int16_t>{config().rPIDFConfig.Kp / config().controlConfig.controlResolution,
+                                      config().rPIDFConfig.Ki / config().controlConfig.controlResolution,
+                                      config().rPIDFConfig.Kd / config().controlConfig.controlResolution,
+                                      config().rPIDFConfig.Kf / config().controlConfig.controlResolution,
                                       config().rPIDFConfig.iWindUpMax,
-                                      config().processingConfig.dt,
-                                      config().processingConfig.lowPassFilterFreq};
+                                      config().controlConfig.dt,
+                                      config().controlConfig.lowPassFilterFreq};
 
-    pitchPIDF = PIDF<int32_t, int16_t>{config().pPIDFConfig.Kp / Control::RESOLUTION,
-                                       config().pPIDFConfig.Ki / Control::RESOLUTION,
-                                       config().pPIDFConfig.Kd / Control::RESOLUTION,
-                                       config().pPIDFConfig.Kf / Control::RESOLUTION,
+    pitchPIDF = PIDF<int32_t, int16_t>{config().pPIDFConfig.Kp / config().controlConfig.controlResolution,
+                                       config().pPIDFConfig.Ki / config().controlConfig.controlResolution,
+                                       config().pPIDFConfig.Kd / config().controlConfig.controlResolution,
+                                       config().pPIDFConfig.Kf / config().controlConfig.controlResolution,
                                        config().pPIDFConfig.iWindUpMax,
-                                       config().processingConfig.dt,
-                                       config().processingConfig.lowPassFilterFreq};
+                                       config().controlConfig.dt,
+                                       config().controlConfig.lowPassFilterFreq};
 
-    yawPIDF = PIDF<int32_t, int16_t>{config().yPIDFConfig.Kp / Control::RESOLUTION,
-                                     config().yPIDFConfig.Ki / Control::RESOLUTION,
-                                     config().yPIDFConfig.Kd / Control::RESOLUTION,
-                                     config().yPIDFConfig.Kf / Control::RESOLUTION,
+    yawPIDF = PIDF<int32_t, int16_t>{config().yPIDFConfig.Kp / config().controlConfig.controlResolution,
+                                     config().yPIDFConfig.Ki / config().controlConfig.controlResolution,
+                                     config().yPIDFConfig.Kd / config().controlConfig.controlResolution,
+                                     config().yPIDFConfig.Kf / config().controlConfig.controlResolution,
                                      config().yPIDFConfig.iWindUpMax,
-                                     config().processingConfig.dt,
-                                     config().processingConfig.lowPassFilterFreq};
+                                     config().controlConfig.dt,
+                                     config().controlConfig.lowPassFilterFreq};
 
     imu.registerConsumer(consumeAHRS);
     configManager.registerSubscriber(configSub, this);
@@ -47,26 +47,26 @@ void Mode::configSub(ConfigID id, void* ctx)
             airplaneMixer.setAirframeType(config().airframeConfig.type);
             break;
 
-        case ConfigID::PROCESSING_SLEW_RATE:
-            rollSlew.setRate(config().processingConfig.controlSlewRate);
-            pitchSlew.setRate(config().processingConfig.controlSlewRate);
-            yawSlew.setRate(config().processingConfig.controlSlewRate);
+        case ConfigID::CONTROL_SLEW_RATE:
+            rollSlew.setRate(config().controlConfig.controlSlewRate);
+            pitchSlew.setRate(config().controlConfig.controlSlewRate);
+            yawSlew.setRate(config().controlConfig.controlSlewRate);
             break;
 
         case ConfigID::PIDF_ROLL_KP:
-            rollPIDF.setKp(config().rPIDFConfig.Kp / Control::RESOLUTION);
+            rollPIDF.setKp(config().rPIDFConfig.Kp / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_ROLL_KI:
-            rollPIDF.setKi(config().rPIDFConfig.Ki / Control::RESOLUTION);
+            rollPIDF.setKi(config().rPIDFConfig.Ki / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_ROLL_KD:
-            rollPIDF.setKd(config().rPIDFConfig.Kd / Control::RESOLUTION);
+            rollPIDF.setKd(config().rPIDFConfig.Kd / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_ROLL_KF:
-            rollPIDF.setKf(config().rPIDFConfig.Kf / Control::RESOLUTION);
+            rollPIDF.setKf(config().rPIDFConfig.Kf / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
@@ -74,19 +74,19 @@ void Mode::configSub(ConfigID id, void* ctx)
             break;
 
         case ConfigID::PIDF_PITCH_KP:
-            pitchPIDF.setKp(config().pPIDFConfig.Kp / Control::RESOLUTION);
+            pitchPIDF.setKp(config().pPIDFConfig.Kp / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_PITCH_KI:
-            pitchPIDF.setKi(config().pPIDFConfig.Ki / Control::RESOLUTION);
+            pitchPIDF.setKi(config().pPIDFConfig.Ki / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_PITCH_KD:
-            pitchPIDF.setKd(config().pPIDFConfig.Kd / Control::RESOLUTION);
+            pitchPIDF.setKd(config().pPIDFConfig.Kd / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_PITCH_KF:
-            pitchPIDF.setKf(config().pPIDFConfig.Kf / Control::RESOLUTION);
+            pitchPIDF.setKf(config().pPIDFConfig.Kf / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
@@ -94,19 +94,19 @@ void Mode::configSub(ConfigID id, void* ctx)
             break;
 
         case ConfigID::PIDF_YAW_KP:
-            yawPIDF.setKp(config().yPIDFConfig.Kp / Control::RESOLUTION);
+            yawPIDF.setKp(config().yPIDFConfig.Kp / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_YAW_KI:
-            yawPIDF.setKi(config().yPIDFConfig.Ki / Control::RESOLUTION);
+            yawPIDF.setKi(config().yPIDFConfig.Ki / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_YAW_KD:
-            yawPIDF.setKd(config().yPIDFConfig.Kd / Control::RESOLUTION);
+            yawPIDF.setKd(config().yPIDFConfig.Kd / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_YAW_KF:
-            yawPIDF.setKf(config().yPIDFConfig.Kf / Control::RESOLUTION);
+            yawPIDF.setKf(config().yPIDFConfig.Kf / config().controlConfig.controlResolution);
             break;
 
         case ConfigID::PIDF_YAW_I_WINDUP_MAX:
@@ -179,9 +179,12 @@ void Mode::processOutput(void* ctx)
 {
     (void)ctx;
 
-    output_rpy[0] = constrain(output_rpy[0], -Control::RESOLUTION, Control::RESOLUTION);
-    output_rpy[1] = constrain(output_rpy[1], -Control::RESOLUTION, Control::RESOLUTION);
-    output_rpy[2] = constrain(output_rpy[2], -Control::RESOLUTION, Control::RESOLUTION);
+    output_rpy[0] =
+        constrain(output_rpy[0], -config().controlConfig.controlResolution, config().controlConfig.controlResolution);
+    output_rpy[1] =
+        constrain(output_rpy[1], -config().controlConfig.controlResolution, config().controlConfig.controlResolution);
+    output_rpy[2] =
+        constrain(output_rpy[2], -config().controlConfig.controlResolution, config().controlConfig.controlResolution);
 
     if (config().rollSrvConfig.reverse)
         output_rpy[0] = -output_rpy[0];
@@ -214,13 +217,13 @@ void Mode::processOutput(void* ctx)
 
 void Mode::consumeAHRS(const float (&rpy)[3], const float (&g)[3])
 {
-    imu_rpy[0] = rpy[0] * Control::RESOLUTION;
-    imu_rpy[1] = rpy[1] * Control::RESOLUTION;
-    imu_rpy[2] = rpy[2] * Control::RESOLUTION;
+    imu_rpy[0] = rpy[0] * config().controlConfig.controlResolution;
+    imu_rpy[1] = rpy[1] * config().controlConfig.controlResolution;
+    imu_rpy[2] = rpy[2] * config().controlConfig.controlResolution;
 
-    imu_g[0] = g[0] * Control::RESOLUTION;
-    imu_g[1] = g[1] * Control::RESOLUTION;
-    imu_g[2] = g[2] * Control::RESOLUTION;
+    imu_g[0] = g[0] * config().controlConfig.controlResolution;
+    imu_g[1] = g[1] * config().controlConfig.controlResolution;
+    imu_g[2] = g[2] * config().controlConfig.controlResolution;
 }
 
 void Mode::setFailsafeInputs(void)

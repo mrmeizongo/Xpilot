@@ -3,9 +3,9 @@
 
 inline int32_t stabilizeDemand(int32_t input, int32_t angle, int16_t maxRate, int16_t maxAngle, float levelKp)
 {
-    const int32_t rateLimit = static_cast<int32_t>(maxRate) * Control::RESOLUTION;
+    const int32_t rateLimit = static_cast<int32_t>(maxRate) * config().controlConfig.controlResolution;
 
-    const int32_t angleLimit = static_cast<int32_t>(maxAngle) * Control::RESOLUTION;
+    const int32_t angleLimit = static_cast<int32_t>(maxAngle) * config().controlConfig.controlResolution;
 
     const int32_t correctionTarget = input > 0 ? angleLimit : (input < 0) ? -angleLimit : 0;
 

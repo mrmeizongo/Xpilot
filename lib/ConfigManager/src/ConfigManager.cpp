@@ -110,9 +110,10 @@ void ConfigManager::loadDefaults()
 
     _config.imuConfig.calibrated = false;
 
-    _config.processingConfig.controlSlewRate = 2000;
-    _config.processingConfig.lowPassFilterFreq = 10;
-    _config.processingConfig.dt = 1.f / CONTROL_LOOP_RATE_HZ;
+    _config.controlConfig.controlSlewRate = 2000;
+    _config.controlConfig.lowPassFilterFreq = 10;
+    _config.controlConfig.controlResolution = 1000;
+    _config.controlConfig.dt = 1.f / CONTROL_LOOP_RATE_HZ;
 
     _dirty = true;
 }
@@ -447,19 +448,23 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
             value.u8 = _config.imuConfig.calibrated ? 1U : 0U;
             break;
 
-        case ConfigID::PROCESSING_SLEW_RATE:
+        case ConfigID::CONTROL_SLEW_RATE:
             type = ConfigValueType::INT16;
-            value.u16 = _config.processingConfig.controlSlewRate;
+            value.u16 = _config.controlConfig.controlSlewRate;
             break;
 
-        case ConfigID::PROCESSING_LPF_FREQ:
+        case ConfigID::CONTROL_LPF_FREQ:
             type = ConfigValueType::INT16;
-            value.u16 = _config.processingConfig.lowPassFilterFreq;
+            value.u16 = _config.controlConfig.lowPassFilterFreq;
             break;
 
-        case ConfigID::PROCESSING_DT:
+        case ConfigID::CONTROL_RESOLUTION:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.controlConfig.controlResolution;
+
+        case ConfigID::CONTROL_DT:
             type = ConfigValueType::FLOAT;
-            value.f = _config.processingConfig.dt;
+            value.f = _config.controlConfig.dt;
             break;
 
             // ------------------------------------------------------------
@@ -709,12 +714,16 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.yPIDFConfig.iWindUpMax = value.f;
             break;
 
-        case ConfigID::PROCESSING_SLEW_RATE:
-            _config.processingConfig.controlSlewRate = value.u16;
+        case ConfigID::CONTROL_SLEW_RATE:
+            _config.controlConfig.controlSlewRate = value.u16;
             break;
 
-        case ConfigID::PROCESSING_LPF_FREQ:
-            _config.processingConfig.lowPassFilterFreq = value.u16;
+        case ConfigID::CONTROL_LPF_FREQ:
+            _config.controlConfig.lowPassFilterFreq = value.u16;
+            break;
+
+        case ConfigID::CONTROL_RESOLUTION:
+            _config.controlConfig.controlResolution = value.i16;
             break;
 
         default:
@@ -798,6 +807,8 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
         case ConfigID::FLIGHT_MAX_ROLL_ANGLE_DEGS:
         case ConfigID::FLIGHT_MAX_PITCH_ANGLE_DEGS:
 
+        case ConfigID::CONTROL_RESOLUTION:
+
             return value.i16 > 0;
 
         case ConfigID::PIDF_ROLL_KP:
@@ -828,8 +839,8 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 
             return value.f >= 0.f;
 
-        case ConfigID::PROCESSING_LPF_FREQ:
-        case ConfigID::PROCESSING_SLEW_RATE:
+        case ConfigID::CONTROL_LPF_FREQ:
+        case ConfigID::CONTROL_SLEW_RATE:
 
             return value.u16 > 0;
 

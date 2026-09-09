@@ -42,7 +42,8 @@ inline int16_t mapToSRV(int16_t _output, int16_t _min, int16_t _max)
 {
     const int32_t range = _max - _min;
 
-    return static_cast<int16_t>(_min + ((_output + Control::RESOLUTION) * range) / (2 * Control::RESOLUTION));
+    return static_cast<int16_t>(_min + ((_output + config().controlConfig.controlResolution) * range) /
+                                           (2 * config().controlConfig.controlResolution));
 }
 
 // Abstract flight mode class
