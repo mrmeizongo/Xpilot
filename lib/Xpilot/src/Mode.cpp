@@ -5,33 +5,33 @@ void Mode::init(void)
 {
     airplaneMixer.setAirframeType(config().airframeConfig.type);
 
-    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.dt};
-    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.dt};
-    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.dt};
+    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().processingConfig.controlSlewRate, config().processingConfig.dt};
+    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().processingConfig.controlSlewRate, config().processingConfig.dt};
+    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().processingConfig.controlSlewRate, config().processingConfig.dt};
 
     rollPIDF = PIDF<int32_t, int16_t>{config().rPIDFConfig.Kp / Control::RESOLUTION,
                                       config().rPIDFConfig.Ki / Control::RESOLUTION,
                                       config().rPIDFConfig.Kd / Control::RESOLUTION,
                                       config().rPIDFConfig.Kf / Control::RESOLUTION,
                                       config().rPIDFConfig.iWindUpMax,
-                                      config().filterConfig.dt,
-                                      config().filterConfig.lowPassFilterFreq};
+                                      config().processingConfig.dt,
+                                      config().processingConfig.lowPassFilterFreq};
 
     pitchPIDF = PIDF<int32_t, int16_t>{config().pPIDFConfig.Kp / Control::RESOLUTION,
                                        config().pPIDFConfig.Ki / Control::RESOLUTION,
                                        config().pPIDFConfig.Kd / Control::RESOLUTION,
                                        config().pPIDFConfig.Kf / Control::RESOLUTION,
                                        config().pPIDFConfig.iWindUpMax,
-                                       config().filterConfig.dt,
-                                       config().filterConfig.lowPassFilterFreq};
+                                       config().processingConfig.dt,
+                                       config().processingConfig.lowPassFilterFreq};
 
     yawPIDF = PIDF<int32_t, int16_t>{config().yPIDFConfig.Kp / Control::RESOLUTION,
                                      config().yPIDFConfig.Ki / Control::RESOLUTION,
                                      config().yPIDFConfig.Kd / Control::RESOLUTION,
                                      config().yPIDFConfig.Kf / Control::RESOLUTION,
                                      config().yPIDFConfig.iWindUpMax,
-                                     config().filterConfig.dt,
-                                     config().filterConfig.lowPassFilterFreq};
+                                     config().processingConfig.dt,
+                                     config().processingConfig.lowPassFilterFreq};
 
     imu.registerConsumer(consumeAHRS);
     configManager.registerSubscriber(configSub, this);
@@ -47,10 +47,10 @@ void Mode::configSub(ConfigID id, void* ctx)
             airplaneMixer.setAirframeType(config().airframeConfig.type);
             break;
 
-        case ConfigID::FILTER_SLEW_RATE:
-            rollSlew.setRate(config().filterConfig.controlSlewRate);
-            pitchSlew.setRate(config().filterConfig.controlSlewRate);
-            yawSlew.setRate(config().filterConfig.controlSlewRate);
+        case ConfigID::PROCESSING_SLEW_RATE:
+            rollSlew.setRate(config().processingConfig.controlSlewRate);
+            pitchSlew.setRate(config().processingConfig.controlSlewRate);
+            yawSlew.setRate(config().processingConfig.controlSlewRate);
             break;
 
         case ConfigID::PIDF_ROLL_KP:

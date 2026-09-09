@@ -198,9 +198,9 @@ CONFIG_NAMES = {
 
     64: "IMU_CALIBRATED",
 
-    65: "FILTER_SLEW_RATE",
-    66: "FILTER_LPF_FREQ",
-    67: "FILTER_DT",
+    65: "PROCESSING_SLEW_RATE",
+    66: "PROCESSING_LPF_FREQ",
+    67: "PROCESSING_DT",
 }
 
 
@@ -315,7 +315,7 @@ CONFIG_TYPES = {
 
     64: ValueType.BOOL,
 
-    # FilterConfig
+    # ProcessingConfig
     65: ValueType.UINT16,
     66: ValueType.UINT16,
     67: ValueType.FLOAT,

@@ -110,9 +110,9 @@ void ConfigManager::loadDefaults()
 
     _config.imuConfig.calibrated = false;
 
-    _config.filterConfig.controlSlewRate = 2000;
-    _config.filterConfig.lowPassFilterFreq = 10;
-    _config.filterConfig.dt = 1.f / CONTROL_LOOP_RATE_HZ;
+    _config.processingConfig.controlSlewRate = 2000;
+    _config.processingConfig.lowPassFilterFreq = 10;
+    _config.processingConfig.dt = 1.f / CONTROL_LOOP_RATE_HZ;
 
     _dirty = true;
 }
@@ -447,19 +447,19 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
             value.u8 = _config.imuConfig.calibrated ? 1U : 0U;
             break;
 
-        case ConfigID::FILTER_SLEW_RATE:
+        case ConfigID::PROCESSING_SLEW_RATE:
             type = ConfigValueType::INT16;
-            value.u16 = _config.filterConfig.controlSlewRate;
+            value.u16 = _config.processingConfig.controlSlewRate;
             break;
 
-        case ConfigID::FILTER_LPF_FREQ:
+        case ConfigID::PROCESSING_LPF_FREQ:
             type = ConfigValueType::INT16;
-            value.u16 = _config.filterConfig.lowPassFilterFreq;
+            value.u16 = _config.processingConfig.lowPassFilterFreq;
             break;
 
-        case ConfigID::FILTER_DT:
+        case ConfigID::PROCESSING_DT:
             type = ConfigValueType::FLOAT;
-            value.f = _config.filterConfig.dt;
+            value.f = _config.processingConfig.dt;
             break;
 
             // ------------------------------------------------------------
@@ -709,12 +709,12 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.yPIDFConfig.iWindUpMax = value.f;
             break;
 
-        case ConfigID::FILTER_SLEW_RATE:
-            _config.filterConfig.controlSlewRate = value.u16;
+        case ConfigID::PROCESSING_SLEW_RATE:
+            _config.processingConfig.controlSlewRate = value.u16;
             break;
 
-        case ConfigID::FILTER_LPF_FREQ:
-            _config.filterConfig.lowPassFilterFreq = value.u16;
+        case ConfigID::PROCESSING_LPF_FREQ:
+            _config.processingConfig.lowPassFilterFreq = value.u16;
             break;
 
         default:
@@ -828,8 +828,8 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 
             return value.f >= 0.f;
 
-        case ConfigID::FILTER_LPF_FREQ:
-        case ConfigID::FILTER_SLEW_RATE:
+        case ConfigID::PROCESSING_LPF_FREQ:
+        case ConfigID::PROCESSING_SLEW_RATE:
 
             return value.u16 > 0;
 

@@ -87,7 +87,7 @@ struct Config
         bool calibrated;
     };
 
-    struct FilterConfig
+    struct ProcessingConfig
     {
         uint16_t controlSlewRate;
         uint16_t lowPassFilterFreq;
@@ -113,7 +113,7 @@ struct Config
 
     IMUConfig imuConfig;
 
-    FilterConfig filterConfig;
+    ProcessingConfig processingConfig;
 };
 
 #endif //_CONFIG_G

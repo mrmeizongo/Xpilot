@@ -94,10 +94,10 @@ enum class ConfigID : uint8_t
 
     IMU_CALIBRATED,
 
-    // FilterConfig
-    FILTER_SLEW_RATE,
-    FILTER_LPF_FREQ,
-    FILTER_DT,
+    // ProcessingConfig
+    PROCESSING_SLEW_RATE,
+    PROCESSING_LPF_FREQ,
+    PROCESSING_DT,
 
     // End-of-list
     COUNT
