@@ -30,6 +30,7 @@ template <typename T, typename U> class SlewRateLimiter
 public:
     SlewRateLimiter()
         : _output{U{}}
+        , _ratePerSecond{1000}
         , _maxChangeRate{1}
     {
     }
