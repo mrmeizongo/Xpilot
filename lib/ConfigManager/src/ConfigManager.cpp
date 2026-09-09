@@ -31,19 +31,19 @@ void ConfigManager::loadDefaults()
     _config.rollRxConfig.min = 1100;
     _config.rollRxConfig.trim = 1500;
     _config.rollRxConfig.max = 1900;
-    _config.rollRxConfig.deadband = 8;
+    _config.rollRxConfig.deadband = 12;
     _config.rollRxConfig.reverse = false;
 
     _config.pitchRxConfig.min = 1100;
     _config.pitchRxConfig.trim = 1500;
     _config.pitchRxConfig.max = 1900;
-    _config.pitchRxConfig.deadband = 8;
+    _config.pitchRxConfig.deadband = 12;
     _config.pitchRxConfig.reverse = false;
 
     _config.yawRxConfig.min = 1100;
     _config.yawRxConfig.trim = 1500;
     _config.yawRxConfig.max = 1900;
-    _config.yawRxConfig.deadband = 8;
+    _config.yawRxConfig.deadband = 12;
     _config.yawRxConfig.reverse = false;
 
     _config.rollSrvConfig.min = 1000;
@@ -722,10 +722,6 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.controlConfig.lowPassFilterFreq = value.u16;
             break;
 
-        case ConfigID::CONTROL_RESOLUTION:
-            _config.controlConfig.controlResolution = value.i16;
-            break;
-
         default:
             return false;
     }
@@ -806,8 +802,6 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 
         case ConfigID::FLIGHT_MAX_ROLL_ANGLE_DEGS:
         case ConfigID::FLIGHT_MAX_PITCH_ANGLE_DEGS:
-
-        case ConfigID::CONTROL_RESOLUTION:
 
             return value.i16 > 0;
 
