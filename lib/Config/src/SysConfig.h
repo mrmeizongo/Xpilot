@@ -4,7 +4,7 @@
 #define SYSTEM_CONFIG_VERSION "3"
 
 // Uncomment to use flaperons
-#define USE_FLAPERONS
+// #define USE_FLAPERONS
 
 #if defined(USE_FLAPERONS)
 #define USE_AUXIN2
