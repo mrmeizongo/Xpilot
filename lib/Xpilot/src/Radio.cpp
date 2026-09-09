@@ -11,6 +11,9 @@ volatile static uint32_t aux1CurrentTime = 0, aux1StartTime = 0, aux1Pulses = 0;
 #if defined(USE_AUXIN2)
 volatile static uint32_t aux2CurrentTime = 0, aux2StartTime = 0, aux2Pulses = 0;
 #endif
+#if defined(USE_AUXIN3)
+volatile static uint32_t aux3CurrentTime = 0, aux3StartTime = 0, aux3Pulses = 0;
+#endif
 // -------------------------
 
 Radio::Radio(void)
@@ -41,6 +44,11 @@ void Radio::init(void)
     pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
 #endif
+#if defined(USE_AUXIN3)
+    // Auxiliary switch 3 setup
+    pinMode(AUX3PIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(AUX3PIN_INT, CHANGE);
+#endif
 }
 
 void Radio::processInput(void)
@@ -53,6 +61,9 @@ void Radio::processInput(void)
         setPWM(aux1Pulses, CHANNEL::AUX1);
 #if defined(USE_AUXIN2)
         setPWM(aux2Pulses, CHANNEL::AUX2);
+#endif
+#if defined(USE_AUXIN3)
+        setPWM(aux3Pulses, CHANNEL::AUX3);
 #endif
     }
 
@@ -69,6 +80,28 @@ void Radio::setPWM(uint32_t pulse, CHANNEL ch)
     lastValidRxTimeMs[ch] = millis();
 }
 
+uint8_t Radio::requiredChannels()
+{
+    switch (config().airframeConfig.type)
+    {
+        case Config::AirframeType::CONVENTIONAL:
+        case Config::AirframeType::V_TAIL:
+        case Config::AirframeType::FLYING_WING_RUDDER:
+        case Config::AirframeType::CUSTOM:
+            return REQ_ROLL | REQ_PITCH | REQ_YAW;
+
+        case Config::AirframeType::FLYING_WING_NO_RUDDER:
+        case Config::AirframeType::AILERON_ELEVATOR:
+            return REQ_ROLL | REQ_PITCH;
+
+        case Config::AirframeType::RUDDER_ELEVATOR:
+            return REQ_PITCH | REQ_YAW;
+
+        default:
+            return NONE;
+    }
+}
+
 /**
  * Only roll, pitch and yaw channels are monitored for a failsafe
  * Rx should be configured to set rpy channels to max on signal loss
@@ -77,8 +110,7 @@ void Radio::FailSafe()
 {
     const uint32_t now = millis();
 
-    const uint8_t req = requiredChannels(config().airframeConfig.type);
-
+    const uint8_t req = requiredChannels();
     bool timeout = false;
     bool rxFailsafe = true;
 
@@ -157,6 +189,15 @@ void PinChangeInterruptEvent(AUX2PIN_INT)(void)
     aux2CurrentTime = micros();
     aux2Pulses = aux2CurrentTime - aux2StartTime;
     aux2StartTime = aux2CurrentTime;
+}
+#endif
+
+#if defined(USE_AUXIN3)
+void PinChangeInterruptEvent(AUX3PIN_INT)(void)
+{
+    aux3CurrentTime = micros();
+    aux3Pulses = aux3CurrentTime - aux3StartTime;
+    aux3StartTime = aux3CurrentTime;
 }
 #endif
 // ----------------------------

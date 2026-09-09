@@ -67,36 +67,6 @@ normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inpu
     return reverse ? -output : output;
 }
 
-enum CHANNELMASK : uint8_t
-{
-    NONE = 0x0,
-    REQ_ROLL = 1 << 0,
-    REQ_PITCH = 1 << 1,
-    REQ_YAW = 1 << 2
-};
-
-inline uint8_t requiredChannels(Config::AirframeType type)
-{
-    switch (type)
-    {
-        case Config::AirframeType::CONVENTIONAL:
-        case Config::AirframeType::V_TAIL:
-        case Config::AirframeType::FLYING_WING_RUDDER:
-        case Config::AirframeType::CUSTOM:
-            return REQ_ROLL | REQ_PITCH | REQ_YAW;
-
-        case Config::AirframeType::FLYING_WING_NO_RUDDER:
-        case Config::AirframeType::AILERON_ELEVATOR:
-            return REQ_ROLL | REQ_PITCH;
-
-        case Config::AirframeType::RUDDER_ELEVATOR:
-            return REQ_PITCH | REQ_YAW;
-
-        default:
-            return NONE;
-    }
-}
-
 class Radio
 {
 public:
@@ -108,6 +78,9 @@ public:
         AUX1,
 #if defined(USE_AUXIN2)
         AUX2,
+#endif
+#if defined(USE_AUXIN3)
+        AUX3,
 #endif
         CHANNEL_COUNT
     };
@@ -185,6 +158,16 @@ private:
     bool failSafeTimerStarted;
 
     void FailSafe();
+
+    enum CHANNELMASK : uint8_t
+    {
+        NONE = 0x0,
+        REQ_ROLL = 1 << 0,
+        REQ_PITCH = 1 << 1,
+        REQ_YAW = 1 << 2
+    };
+
+    uint8_t requiredChannels();
 };
 
 extern Radio radio;
