@@ -152,8 +152,10 @@ public:
 
     bool update(float _rpy[3], float _g[3])
     {
-        if (!(has_connected && (read_byte(INT_STATUS) & 0x01)))
-            return false;
+        bool dataAvailable = has_connected && (read_byte(INT_STATUS) & 0x01);
+
+        if (!dataAvailable)
+            return dataAvailable;
 
         update_accel_gyro();
         // update_temperature();
@@ -189,7 +191,7 @@ public:
         _g[1] = -g[1];
         _g[2] = -g[2];
 
-        return true;
+        return dataAvailable;
     }
 
     float getRoll() const { return rpy[0]; }
