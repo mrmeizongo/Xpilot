@@ -3,7 +3,6 @@
 
 void Mode::init(void)
 {
-    // Changing airframe type requires a reset to take effect
     airplaneMixer.setAirframeType(config().airframeConfig.type);
 
     rollSlew = SlewRateLimiter<int32_t, int16_t>{config().filterConfig.controlSlewRate, config().filterConfig.dt};
