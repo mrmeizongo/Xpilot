@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "Actuators.h"
-#include "GPIODef.h"
+#include "GPIOConfig.h"
 #include "FlightConfigAccess.h"
 
 // ISO C++ forbids in-class initialization of non-const static members

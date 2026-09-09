@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <util/atomic.h>
-#include "GPIODef.h"
+#include "GPIOConfig.h"
 #include "Radio.h"
 #include "PinChangeInterrupt.h"
 
