@@ -319,9 +319,15 @@ This prevents partially reinitialized subsystems from operating with inconsisten
 
 Not every `ConfigID` that can be read is externally writable.
 
-Some parameters represent system-generated state rather than user configuration.
+Some parameters represent system-generated state or system dependent values rather than user configuration.
 
-A notable example is IMU calibration bias data.
+A notable example is IMU calibration bias data. Another is the control resolution.
+
+All configurations should be modified via xp_serial.py.
+
+Do not attempt to modify values directly in the implementation file.
+
+This ensures consistency and prevents catastrophic failure of the program.
 
 The following types of values are intentionally read-only from the normal `SET` interface:
 
