@@ -77,7 +77,7 @@ void ConfigManager::loadDefaults()
     _config.flightConfig.pitchAngleKp = 1.f;
 
     _config.flightConfig.flaperonScaleFactor = 1.f;
-    _config.flightConfig.flaperonMax = 500;
+    _config.flightConfig.flaperonMax = 400;
 
     _config.flightConfig.reverseRudderMix = false;
     _config.flightConfig.rudderMixScale = 0.3f;
@@ -642,8 +642,8 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
 
         case ConfigID::FLIGHT_FLAPERON_SCALE_FACTOR:
             _config.flightConfig.flaperonScaleFactor = value.f;
-            _config.flightConfig.flaperonMax = static_cast<uint16_t>((_config.rollRxConfig.max - _config.rollRxConfig.trim) *
-                                                                     _config.flightConfig.flaperonScaleFactor);
+            _config.flightConfig.flaperonMax = static_cast<int16_t>((_config.rollRxConfig.max - _config.rollRxConfig.trim) *
+                                                                    _config.flightConfig.flaperonScaleFactor);
             break;
 
         case ConfigID::FLIGHT_REVERSE_RUDDER_MIX:

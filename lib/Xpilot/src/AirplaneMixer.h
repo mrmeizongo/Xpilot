@@ -22,18 +22,37 @@ public:
     AirplaneMixer(AirplaneMixer&&) = default;
     AirplaneMixer& operator=(AirplaneMixer&&) = default;
 
-    explicit AirplaneMixer(Config::AirframeType type = Config::AirframeType::CONVENTIONAL)
-        : _type(type)
-        , _commandLimit(config().controlConfig.controlResolution)
+    explicit AirplaneMixer(Config::AirframeType type = Config::AirframeType::CONVENTIONAL,
+                           int16_t limit = 1000,
+                           bool reverseRoll = false,
+                           bool reversePitch = false,
+                           bool reverseYaw = false)
+        : _type{type}
+        , _commandLimit{limit}
+        , _reverseRollOutput{reverseRoll}
+        , _reversePitchOutput{reversePitch}
+        , _reverseYawOutput{reverseYaw}
     {
     }
 
-    Outputs mix(int16_t roll, int16_t pitch, int16_t yaw) const;
+    Outputs mix(int16_t roll, int16_t pitch, int16_t yaw, int16_t flaperon) const;
 
-    void setAirframeType(Config::AirframeType type) { _type = type; }
+    int32_t mixRudderInput(const int32_t&, const int32_t&);
+
     Config::AirframeType getAirframeType() const { return _type; }
+    void setAirframeType(Config::AirframeType type) { _type = type; }
 
     int16_t getCommandLimit() const { return _commandLimit; }
+    void setCommandLimit(int16_t limit) { _commandLimit = limit; }
+
+    bool getRollReverse() const { return _reverseRollOutput; }
+    void setRollReverse(bool roll) { _reverseRollOutput = roll; }
+
+    bool getPitchReverse() const { return _reversePitchOutput; }
+    void setPitchReverse(bool pitch) { _reversePitchOutput = pitch; }
+
+    bool getYawReverse() const { return _reverseYawOutput; }
+    void setYawReverse(bool yaw) { _reverseYawOutput = yaw; }
 
 protected:
     /*
@@ -48,6 +67,10 @@ protected:
 private:
     Config::AirframeType _type;
     int16_t _commandLimit;
+
+    bool _reverseRollOutput;
+    bool _reversePitchOutput;
+    bool _reverseYawOutput;
 
     void mixConventional(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const;
 

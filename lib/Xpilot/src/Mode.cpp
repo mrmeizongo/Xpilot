@@ -3,7 +3,11 @@
 
 void Mode::init(void)
 {
-    airplaneMixer.setAirframeType(config().airframeConfig.type);
+    airplaneMixer = AirplaneMixer(config().airframeConfig.type,
+                                  config().controlConfig.controlResolution,
+                                  config().rollSrvConfig.reverse,
+                                  config().pitchSrvConfig.reverse,
+                                  config().yawSrvConfig.reverse);
 
     rollSlew = SlewRateLimiter<int32_t, int16_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
     pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
@@ -45,6 +49,18 @@ void Mode::configSub(ConfigID id, void* ctx)
     {
         case ConfigID::AIRFRAME_TYPE:
             airplaneMixer.setAirframeType(config().airframeConfig.type);
+            break;
+
+        case ConfigID::SRV_ROLL_REVERSE:
+            airplaneMixer.setRollReverse(config().rollSrvConfig.reverse);
+            break;
+
+        case ConfigID::SRV_PITCH_REVERSE:
+            airplaneMixer.setPitchReverse(config().pitchSrvConfig.reverse);
+            break;
+
+        case ConfigID::SRV_YAW_REVERSE:
+            airplaneMixer.setYawReverse(config().yawSrvConfig.reverse);
             break;
 
         case ConfigID::CONTROL_SLEW_RATE:
@@ -148,17 +164,15 @@ void Mode::update(void)
                                   config().yawRxConfig.reverse);
 
 #if defined(USE_FLAPERONS)
-    int16_t flapPwm = radio.getPWM(Radio::CHANNEL::AUX2);
-    flapPwm = constrain(flapPwm, RX_PWM_MIN, RX_PWM_TRIM);
-    flaperonOut = static_cast<int16_t>((RX_PWM_TRIM - flapPwm) * config().flightConfig.flaperonScaleFactor);
+    flaperonInput = normalizeInput(radio.getPWM(Radio::CHANNEL::AUX2),
+                                   config().rollRxConfig.min,
+                                   config().rollRxConfig.trim,
+                                   config().rollRxConfig.max,
+                                   config().rollRxConfig.deadband,
+                                   false);
+
+    flaperonInput = static_cast<int16_t>(flaperonInput * config().flightConfig.flaperonScaleFactor);
 #endif
-}
-
-void Mode::applyRudderMix(void)
-{
-    int16_t contribution = static_cast<int16_t>(input_rpy[0] * config().flightConfig.rudderMixScale);
-
-    input_rpy[2] += config().flightConfig.reverseRudderMix ? -contribution : contribution;
 }
 
 void Mode::runTask(void* ctx)
@@ -179,23 +193,7 @@ void Mode::processOutput(void* ctx)
 {
     (void)ctx;
 
-    output_rpy[0] =
-        constrain(output_rpy[0], -config().controlConfig.controlResolution, config().controlConfig.controlResolution);
-    output_rpy[1] =
-        constrain(output_rpy[1], -config().controlConfig.controlResolution, config().controlConfig.controlResolution);
-    output_rpy[2] =
-        constrain(output_rpy[2], -config().controlConfig.controlResolution, config().controlConfig.controlResolution);
-
-    if (config().rollSrvConfig.reverse)
-        output_rpy[0] = -output_rpy[0];
-
-    if (config().pitchSrvConfig.reverse)
-        output_rpy[1] = -output_rpy[1];
-
-    if (config().yawSrvConfig.reverse)
-        output_rpy[2] = -output_rpy[2];
-
-    mixerOutputs = airplaneMixer.mix(output_rpy[0], output_rpy[1], output_rpy[2]);
+    mixerOutputs = airplaneMixer.mix(output_rpy[0], output_rpy[1], output_rpy[2], flaperonInput);
 
     SRVout[Actuators::Channel::CH1] =
         mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
@@ -207,10 +205,6 @@ void Mode::processOutput(void* ctx)
         mapToSRV(mixerOutputs.elevator, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
 
     SRVout[Actuators::Channel::CH4] = mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
-
-#if defined(USE_FLAPERONS)
-    flaperonMixer();
-#endif
 
     actuators.writeServos(SRVout);
 }
@@ -233,6 +227,6 @@ void Mode::setFailsafeInputs(void)
     input_rpy[1] = 0;
     input_rpy[2] = 0;
 #if defined(USE_FLAPERONS)
-    flaperonOut = config().flightConfig.flaperonMax; // set flaperons to landing position
+    flaperonInput = -config().flightConfig.flaperonMax; // set flaperons to landing position
 #endif
 }

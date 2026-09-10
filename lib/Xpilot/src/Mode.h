@@ -86,7 +86,7 @@ public:
     static int16_t getYawOutput(void) { return mixerOutputs.rudder; }
 
 #if defined(USE_FLAPERONS)
-    static int16_t getFlaperon(void) { return flaperonOut; }
+    static int16_t getFlaperon(void) { return flaperonInput; }
 #endif
 
     void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }
@@ -109,17 +109,10 @@ protected:
 
     static int16_t SRVout[Actuators::Channel::CHANNEL_COUNT]; // Servo output array
 
-    static void applyRudderMix(void); // Mix roll input with yaw input for rudder control(i.e. coordinated turns)
-
     virtual void setFailsafeInputs(void); // Failsafe implementation
 
 #if defined(USE_FLAPERONS)
-    static int16_t flaperonOut;     // Flaperon position value, used in flaperon control
-    static void flaperonMixer(void) // Flaperon control, should be called in the run function of the flight mode
-    {
-        SRVout[Actuators::Channel::CH1] -= flaperonOut;
-        SRVout[Actuators::Channel::CH2] += flaperonOut;
-    }
+    static int16_t flaperonInput; // To be added to aileron input
 #endif
 
     static PIDF<int32_t, int16_t> rollPIDF;

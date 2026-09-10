@@ -1,6 +1,6 @@
 #include "AirplaneMixer.h"
 
-AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t yaw) const
+AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t yaw, int16_t flaperon) const
 {
     Outputs out{};
 
@@ -36,7 +36,34 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
             break;
     }
 
+    out.leftAileron += flaperon;
+    out.rightAileron -= flaperon;
+
+    if (_reverseRollOutput)
+    {
+        out.leftAileron = -out.leftAileron;
+        out.rightAileron = -out.rightAileron;
+    }
+
+    if (_reversePitchOutput)
+        out.elevator = -out.elevator;
+
+    if (_reverseYawOutput)
+        out.rudder = -out.rudder;
+
+    out.leftAileron = constrain(out.leftAileron, -_commandLimit, _commandLimit);
+    out.rightAileron = constrain(out.rightAileron, -_commandLimit, _commandLimit);
+    out.elevator = constrain(out.elevator, -_commandLimit, _commandLimit);
+    out.rudder = constrain(out.rudder, -_commandLimit, _commandLimit);
+
     return out;
+}
+
+int32_t AirplaneMixer::mixRudderInput(const int32_t& rollInput, const int32_t& yawInput)
+{
+    int32_t contribution = rollInput * config().flightConfig.rudderMixScale;
+
+    return yawInput + (config().flightConfig.reverseRudderMix ? -contribution : contribution);
 }
 
 /*

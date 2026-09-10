@@ -39,7 +39,7 @@ void StabilizeMode::update(void)
 
     input_rpy[2] *= config().flightConfig.maxYawRateDegs;
 
-    applyRudderMix();
+    input_rpy[2] = airplaneMixer.mixRudderInput(input_rpy[0], input_rpy[2]);
 }
 
 void StabilizeMode::run(void)

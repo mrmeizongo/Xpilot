@@ -26,5 +26,5 @@ SlewRateLimiter<int32_t, int16_t> Mode::pitchSlew;
 SlewRateLimiter<int32_t, int16_t> Mode::yawSlew;
 
 #if defined(USE_FLAPERONS)
-int16_t Mode::flaperonOut = 0;
+int16_t Mode::flaperonInput = 0;
 #endif
