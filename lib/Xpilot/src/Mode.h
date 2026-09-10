@@ -92,15 +92,13 @@ public:
     static int32_t getPitchInput(void) { return input_trpy[2]; }
     static int32_t getYawInput(void) { return input_trpy[3]; }
 
+    static int16_t getFlaperon(void) { return flaperonInput; }
+
     static int16_t getThrottleOutput(void) { return output_trpy[0]; }
     static int16_t getLeftRollOutput(void) { return mixerOutputs.leftAileron; }
     static int16_t getRightRollOutput(void) { return mixerOutputs.rightAileron; }
     static int16_t getPitchOutput(void) { return mixerOutputs.elevator; }
     static int16_t getYawOutput(void) { return mixerOutputs.rudder; }
-
-#if defined(USE_FLAPERONS)
-    static int16_t getFlaperon(void) { return flaperonInput; }
-#endif
 
     void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
@@ -124,9 +122,7 @@ protected:
 
     virtual void setFailsafeInputs(void); // Failsafe implementation
 
-#if defined(USE_FLAPERONS)
-    static int16_t flaperonInput; // To be added to aileron input
-#endif
+    static int16_t flaperonInput;
 
     static PIDF<int32_t, int16_t> rollPIDF;
     static PIDF<int32_t, int16_t> pitchPIDF;
