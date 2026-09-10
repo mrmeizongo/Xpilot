@@ -28,6 +28,12 @@ void ConfigManager::loadDefaults()
 {
     _config.airframeConfig.type = Config::AirframeType::CONVENTIONAL;
 
+    _config.throttleRxConfig.min = 1100;
+    _config.throttleRxConfig.trim = 1500;
+    _config.throttleRxConfig.max = 1900;
+    _config.throttleRxConfig.deadband = 12;
+    _config.throttleRxConfig.reverse = false;
+
     _config.rollRxConfig.min = 1100;
     _config.rollRxConfig.trim = 1500;
     _config.rollRxConfig.max = 1900;
@@ -45,6 +51,11 @@ void ConfigManager::loadDefaults()
     _config.yawRxConfig.max = 1900;
     _config.yawRxConfig.deadband = 12;
     _config.yawRxConfig.reverse = false;
+
+    _config.throttleSrvConfig.min = 1000;
+    _config.throttleSrvConfig.trim = 1500;
+    _config.throttleSrvConfig.max = 2000;
+    _config.throttleSrvConfig.reverse = false;
 
     _config.rollSrvConfig.min = 1000;
     _config.rollSrvConfig.trim = 1500;
@@ -129,6 +140,31 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
             value.u8 = static_cast<uint8_t>(_config.airframeConfig.type);
             break;
 
+        case ConfigID::RC_THROTTLE_MIN:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.throttleRxConfig.min;
+            break;
+
+        case ConfigID::RC_THROTTLE_TRIM:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.throttleRxConfig.trim;
+            break;
+
+        case ConfigID::RC_THROTTLE_MAX:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.throttleRxConfig.max;
+            break;
+
+        case ConfigID::RC_THROTTLE_DB:
+            type = ConfigValueType::UINT8;
+            value.u8 = _config.throttleRxConfig.deadband;
+            break;
+
+        case ConfigID::RC_THROTTLE_REVERSE:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.throttleRxConfig.reverse ? 1U : 0U;
+            break;
+
         case ConfigID::RC_ROLL_MIN:
             type = ConfigValueType::INT16;
             value.i16 = _config.rollRxConfig.min;
@@ -202,6 +238,26 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
         case ConfigID::RC_YAW_REVERSE:
             type = ConfigValueType::BOOL;
             value.u8 = _config.yawRxConfig.reverse ? 1U : 0U;
+            break;
+
+        case ConfigID::SRV_THROTTLE_MIN:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.throttleSrvConfig.min;
+            break;
+
+        case ConfigID::SRV_THROTTLE_TRIM:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.throttleSrvConfig.trim;
+            break;
+
+        case ConfigID::SRV_THROTTLE_MAX:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.throttleSrvConfig.max;
+            break;
+
+        case ConfigID::SRV_THROTTLE_REVERSE:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.throttleSrvConfig.reverse ? 1U : 0U;
             break;
 
         case ConfigID::SRV_ROLL_MIN:
@@ -488,6 +544,27 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
         case ConfigID::AIRFRAME_TYPE:
             _config.airframeConfig.type = static_cast<Config::AirframeType>(value.u8);
             break;
+
+        case ConfigID::RC_THROTTLE_MIN:
+            _config.throttleRxConfig.min = value.i16;
+            break;
+
+        case ConfigID::RC_THROTTLE_TRIM:
+            _config.throttleRxConfig.trim = value.i16;
+            break;
+
+        case ConfigID::RC_THROTTLE_MAX:
+            _config.throttleRxConfig.max = value.i16;
+            break;
+
+        case ConfigID::RC_THROTTLE_DB:
+            _config.throttleRxConfig.deadband = value.u8;
+            break;
+
+        case ConfigID::RC_THROTTLE_REVERSE:
+            _config.throttleRxConfig.reverse = (value.u8 != 0U);
+            break;
+
         case ConfigID::RC_ROLL_MIN:
             _config.rollRxConfig.min = value.i16;
             break;
@@ -546,6 +623,22 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
 
         case ConfigID::RC_YAW_REVERSE:
             _config.yawRxConfig.reverse = (value.u8 != 0U);
+            break;
+
+        case ConfigID::SRV_THROTTLE_MIN:
+            _config.throttleSrvConfig.min = value.i16;
+            break;
+
+        case ConfigID::SRV_THROTTLE_TRIM:
+            _config.throttleSrvConfig.trim = value.i16;
+            break;
+
+        case ConfigID::SRV_THROTTLE_MAX:
+            _config.throttleSrvConfig.max = value.i16;
+            break;
+
+        case ConfigID::SRV_THROTTLE_REVERSE:
+            _config.throttleSrvConfig.reverse = (value.u8 != 0U);
             break;
 
         case ConfigID::SRV_ROLL_MIN:
@@ -747,6 +840,10 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 
             return value.u8 < static_cast<uint8_t>(Config::AirframeType::COUNT);
 
+        case ConfigID::RC_THROTTLE_MIN:
+        case ConfigID::RC_THROTTLE_TRIM:
+        case ConfigID::RC_THROTTLE_MAX:
+
         case ConfigID::RC_ROLL_MIN:
         case ConfigID::RC_ROLL_TRIM:
         case ConfigID::RC_ROLL_MAX:
@@ -777,6 +874,7 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 
             return value.i16 >= 544 && value.i16 <= 2400;
 
+        case ConfigID::RC_THROTTLE_DB:
         case ConfigID::RC_ROLL_DB:
         case ConfigID::RC_PITCH_DB:
         case ConfigID::RC_YAW_DB:
@@ -785,10 +883,12 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 
         case ConfigID::FLIGHT_REVERSE_RUDDER_MIX:
 
+        case ConfigID::RC_THROTTLE_REVERSE:
         case ConfigID::RC_ROLL_REVERSE:
         case ConfigID::RC_PITCH_REVERSE:
         case ConfigID::RC_YAW_REVERSE:
 
+        case ConfigID::SRV_THROTTLE_REVERSE:
         case ConfigID::SRV_ROLL_REVERSE:
         case ConfigID::SRV_PITCH_REVERSE:
         case ConfigID::SRV_YAW_REVERSE:

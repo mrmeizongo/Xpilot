@@ -16,18 +16,14 @@
 #if defined(USE_AUXIN2)
 #define AUX2PIN_INPUT 6
 #endif
-#if defined(USE_AUXIN3)
-#define AUX3PIN_INPUT 7
-#endif
+#define THROTTLEPIN_INPUT 7
 
 // Output pins
 #define AIL1PIN_OUTPUT 8
 #define AIL2PIN_OUTPUT 9
 #define ELEVPIN_OUTPUT 10
 #define RUDDPIN_OUTPUT 11
-#if defined(USE_AUXOUT1)
-#define AUX1PIN_OUTPUT 12
-#endif
+#define THROTTLEPIN_OUTPUT 12
 
 // Interrupt pins
 #define AILPIN_INT 18
@@ -37,6 +33,4 @@
 #if defined(USE_AUXIN2)
 #define AUX2PIN_INT 22
 #endif
-#if defined(USE_AUXIN3)
-#define AUX3PIN_INT 23
-#endif
+#define THROTTLEPIN_INT 23

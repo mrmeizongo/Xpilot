@@ -36,8 +36,6 @@ Flight stabilization software
 #include <stdint.h>
 #include "SysConfig.h"
 
-#define CHANNEL_START 0U
-
 class Actuators
 {
 public:
@@ -46,13 +44,11 @@ public:
     // MAX_SERVOS for the Arduino Nano is 12 servos because it has 1 16 bit timer
     enum Channel : uint8_t
     {
-        CH1 = CHANNEL_START,
+        CH1 = 0U,
         CH2,
         CH3,
         CH4,
-#if defined(USE_AUXOUT1)
-        CH5, // Auxiliary output channel 1
-#endif
+        CH5,
         CHANNEL_COUNT
     };
 

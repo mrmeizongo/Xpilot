@@ -72,15 +72,13 @@ class Radio
 public:
     enum CHANNEL : uint8_t
     {
-        ROLL = 0U,
+        THROTTLE = 0U,
+        ROLL,
         PITCH,
         YAW,
         AUX1,
 #if defined(USE_AUXIN2)
         AUX2,
-#endif
-#if defined(USE_AUXIN3)
-        AUX3,
 #endif
         CHANNEL_COUNT
     };

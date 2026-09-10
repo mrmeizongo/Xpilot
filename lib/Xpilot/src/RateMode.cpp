@@ -13,18 +13,18 @@ void RateMode::update(void)
 {
     Mode::update();
 
-    input_rpy[0] *= config().flightConfig.maxRollRateDegs;
+    ROLL_INPUT *= config().flightConfig.maxRollRateDegs;
 
-    input_rpy[1] *= config().flightConfig.maxPitchRateDegs;
+    PITCH_INPUT *= config().flightConfig.maxPitchRateDegs;
 
-    input_rpy[2] *= config().flightConfig.maxYawRateDegs;
+    YAW_INPUT *= config().flightConfig.maxYawRateDegs;
 
-    input_rpy[2] = airplaneMixer.mixRudderInput(input_rpy[0], input_rpy[2]);
+    YAW_INPUT = airplaneMixer.mixRudderInput(ROLL_INPUT, YAW_INPUT);
 }
 
 void RateMode::run(void)
 {
-    output_rpy[0] = rollPIDF.Compute(input_rpy[0], imu_g[0]);
-    output_rpy[1] = pitchPIDF.Compute(input_rpy[1], imu_g[1]);
-    output_rpy[2] = yawPIDF.Compute(input_rpy[2], imu_g[2]);
+    ROLL_OUTPUT = rollPIDF.Compute(ROLL_INPUT, imu_g[0]);
+    PITCH_OUTPUT = pitchPIDF.Compute(PITCH_INPUT, imu_g[1]);
+    YAW_OUTPUT = yawPIDF.Compute(YAW_INPUT, imu_g[2]);
 }

@@ -10,12 +10,6 @@
 #define USE_AUXIN2
 #endif
 
-// Uncomment to enable auxiliary input 3
-// #define USE_AUXIN3
-
-// Uncomment to enable auxiliary output channel 1
-// #define USE_AUXOUT1
-
 // Enable communication with xp_serial.py
 #define USE_SERIAL_TASK
 

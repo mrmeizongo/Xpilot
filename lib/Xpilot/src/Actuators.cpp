@@ -13,19 +13,17 @@ Actuators::Actuators(void) {}
 // Set up output servos
 void Actuators::init(void)
 {
-    controlServo[CH1].attach(AIL1PIN_OUTPUT, config().rollSrvConfig.min, config().rollSrvConfig.max);
-    controlServo[CH2].attach(AIL2PIN_OUTPUT, config().rollSrvConfig.min, config().rollSrvConfig.max);
-    controlServo[CH3].attach(ELEVPIN_OUTPUT, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
-    controlServo[CH4].attach(RUDDPIN_OUTPUT, config().yawSrvConfig.min, config().yawSrvConfig.max);
-#if defined(USE_AUXOUT1)
-    controlServo[CH5].attach(AUX1PIN_OUTPUT, config().auxSrvConfig.min, config().auxSrvConfig.max);
-#endif
+    controlServo[CH1].attach(THROTTLEPIN_OUTPUT, config().auxSrvConfig.min, config().auxSrvConfig.max);
+    controlServo[CH2].attach(AIL1PIN_OUTPUT, config().rollSrvConfig.min, config().rollSrvConfig.max);
+    controlServo[CH3].attach(AIL2PIN_OUTPUT, config().rollSrvConfig.min, config().rollSrvConfig.max);
+    controlServo[CH4].attach(ELEVPIN_OUTPUT, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
+    controlServo[CH5].attach(RUDDPIN_OUTPUT, config().yawSrvConfig.min, config().yawSrvConfig.max);
 }
 
 // Set individual servo output values in microseconds
 void Actuators::setServoOut(Actuators::Channel ch, int16_t value)
 {
-    if (ch < CHANNEL_START || ch >= CHANNEL_COUNT)
+    if (ch < 0U || ch >= CHANNEL_COUNT)
         return;
 
     channelOut[ch] = value;
@@ -38,15 +36,13 @@ void Actuators::setServoOut(const int16_t (&SRVout)[CHANNEL_COUNT])
     channelOut[CH2] = SRVout[CH2];
     channelOut[CH3] = SRVout[CH3];
     channelOut[CH4] = SRVout[CH4];
-#if defined(USE_AUXOUT1)
     channelOut[CH5] = SRVout[CH5];
-#endif
 }
 
 // Get individual servo output value in microseconds
 int16_t Actuators::getServoOut(Actuators::Channel ch)
 {
-    if (ch < CHANNEL_START || ch >= CHANNEL_COUNT)
+    if (ch < 0U || ch >= CHANNEL_COUNT)
         return -1;
 
     return controlServo[ch].readMicroseconds();
@@ -62,9 +58,7 @@ void Actuators::writeServos(const int16_t (&SRVout)[CHANNEL_COUNT])
     controlServo[CH2].writeMicroseconds(SRVout[CH2]);
     controlServo[CH3].writeMicroseconds(SRVout[CH3]);
     controlServo[CH4].writeMicroseconds(SRVout[CH4]);
-#if defined(USE_AUXOUT1)
     controlServo[CH5].writeMicroseconds(SRVout[CH5]);
-#endif
 }
 
 Actuators actuators;

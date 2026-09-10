@@ -92,10 +92,12 @@ struct Config
 
     AirframeConfig airframeConfig;
 
+    RxConfig throttleRxConfig;
     RxConfig rollRxConfig;
     RxConfig pitchRxConfig;
     RxConfig yawRxConfig;
 
+    SRVConfig throttleSrvConfig;
     SRVConfig rollSrvConfig;
     SRVConfig pitchSrvConfig;
     SRVConfig yawSrvConfig;

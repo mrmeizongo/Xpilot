@@ -37,26 +37,26 @@ void StabilizeMode::update(void)
 {
     Mode::update();
 
-    input_rpy[2] *= config().flightConfig.maxYawRateDegs;
+    YAW_INPUT = airplaneMixer.mixRudderInput(ROLL_INPUT, YAW_INPUT);
 
-    input_rpy[2] = airplaneMixer.mixRudderInput(input_rpy[0], input_rpy[2]);
+    YAW_INPUT *= config().flightConfig.maxYawRateDegs;
 }
 
 void StabilizeMode::run(void)
 {
-    int32_t rollDemand = stabilizeDemand(input_rpy[0],
+    int32_t rollDemand = stabilizeDemand(ROLL_INPUT,
                                          imu_rpy[0],
                                          config().flightConfig.maxRollRateDegs,
                                          config().flightConfig.maxRollAngleDegs,
                                          config().flightConfig.rollAngleKp);
 
-    int32_t pitchDemand = stabilizeDemand(input_rpy[1],
+    int32_t pitchDemand = stabilizeDemand(PITCH_INPUT,
                                           imu_rpy[1],
                                           config().flightConfig.maxPitchRateDegs,
                                           config().flightConfig.maxPitchAngleDegs,
                                           config().flightConfig.pitchAngleKp);
 
-    output_rpy[0] = rollPIDF.Compute(rollDemand, imu_g[0]);
-    output_rpy[1] = pitchPIDF.Compute(pitchDemand, imu_g[1]);
-    output_rpy[2] = yawPIDF.Compute(input_rpy[2], imu_g[2]);
+    ROLL_OUTPUT = rollPIDF.Compute(rollDemand, imu_g[0]);
+    PITCH_OUTPUT = pitchPIDF.Compute(pitchDemand, imu_g[1]);
+    YAW_OUTPUT = yawPIDF.Compute(input_trpy[3], imu_g[2]);
 }

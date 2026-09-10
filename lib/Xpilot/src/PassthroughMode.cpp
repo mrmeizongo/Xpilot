@@ -2,14 +2,14 @@
 
 void PassthroughMode::enter(void)
 {
-    rollSlew.reset(output_rpy[0]);
-    pitchSlew.reset(output_rpy[1]);
-    yawSlew.reset(output_rpy[2]);
+    rollSlew.reset(ROLL_OUTPUT);
+    pitchSlew.reset(PITCH_OUTPUT);
+    yawSlew.reset(YAW_OUTPUT);
 }
 
 void PassthroughMode::run(void)
 {
-    output_rpy[0] = rollSlew.update(input_rpy[0]);
-    output_rpy[1] = pitchSlew.update(input_rpy[1]);
-    output_rpy[2] = yawSlew.update(input_rpy[2]);
+    ROLL_OUTPUT = rollSlew.update(ROLL_INPUT);
+    PITCH_OUTPUT = pitchSlew.update(PITCH_INPUT);
+    YAW_OUTPUT = yawSlew.update(YAW_INPUT);
 }

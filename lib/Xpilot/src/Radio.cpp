@@ -4,15 +4,13 @@
 #include "Radio.h"
 #include "PinChangeInterrupt.h"
 
+volatile static uint32_t throttleCurrentTime = 0, throttleStartTime = 0, throttlePulses = 0;
 volatile static uint32_t aileronCurrentTime = 0, aileronStartTime = 0, aileronPulses = 0;
 volatile static uint32_t elevatorCurrentTime = 0, elevatorStartTime = 0, elevatorPulses = 0;
 volatile static uint32_t rudderCurrentTime = 0, rudderStartTime = 0, rudderPulses = 0;
 volatile static uint32_t aux1CurrentTime = 0, aux1StartTime = 0, aux1Pulses = 0;
 #if defined(USE_AUXIN2)
 volatile static uint32_t aux2CurrentTime = 0, aux2StartTime = 0, aux2Pulses = 0;
-#endif
-#if defined(USE_AUXIN3)
-volatile static uint32_t aux3CurrentTime = 0, aux3StartTime = 0, aux3Pulses = 0;
 #endif
 // -------------------------
 
@@ -27,6 +25,9 @@ Radio::Radio(void)
 void Radio::init(void)
 {
     // All input pins use pin change interrupts
+    // Throttle setup
+    pinMode(THROTTLEPIN_INPUT, INPUT_PULLUP);
+    attachPinChangeInterrupt(THROTTLEPIN_INT, CHANGE);
     // AIleron setup
     pinMode(AILPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AILPIN_INT, CHANGE);
@@ -44,26 +45,19 @@ void Radio::init(void)
     pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
 #endif
-#if defined(USE_AUXIN3)
-    // Auxiliary switch 3 setup
-    pinMode(AUX3PIN_INPUT, INPUT_PULLUP);
-    attachPinChangeInterrupt(AUX3PIN_INT, CHANGE);
-#endif
 }
 
 void Radio::processInput(void)
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
+        setPWM(throttlePulses, CHANNEL::THROTTLE);
         setPWM(aileronPulses, CHANNEL::ROLL);
         setPWM(elevatorPulses, CHANNEL::PITCH);
         setPWM(rudderPulses, CHANNEL::YAW);
         setPWM(aux1Pulses, CHANNEL::AUX1);
 #if defined(USE_AUXIN2)
         setPWM(aux2Pulses, CHANNEL::AUX2);
-#endif
-#if defined(USE_AUXIN3)
-        setPWM(aux3Pulses, CHANNEL::AUX3);
 #endif
     }
 
@@ -155,6 +149,13 @@ void Radio::FailSafe()
  * The receiver PWM output is used to drive a pin change interrupt routine
  * The ISR simply records the time between the pulses.
  */
+void PinChangeInterruptEvent(THROTTLEPIN_INT)(void)
+{
+    throttleCurrentTime = micros();
+    throttlePulses = throttleCurrentTime - throttleStartTime;
+    throttleStartTime = throttleCurrentTime;
+}
+
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
     aileronCurrentTime = micros();
@@ -189,15 +190,6 @@ void PinChangeInterruptEvent(AUX2PIN_INT)(void)
     aux2CurrentTime = micros();
     aux2Pulses = aux2CurrentTime - aux2StartTime;
     aux2StartTime = aux2CurrentTime;
-}
-#endif
-
-#if defined(USE_AUXIN3)
-void PinChangeInterruptEvent(AUX3PIN_INT)(void)
-{
-    aux3CurrentTime = micros();
-    aux3Pulses = aux3CurrentTime - aux3StartTime;
-    aux3StartTime = aux3CurrentTime;
 }
 #endif
 // ----------------------------

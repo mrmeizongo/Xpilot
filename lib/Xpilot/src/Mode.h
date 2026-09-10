@@ -38,6 +38,17 @@ Flight stabilization software
 #include "SysConfig.h"
 #include <Arduino.h>
 
+// Defines to make channel assignments less ambiguous
+#define THROTTLE_INPUT input_trpy[0]
+#define ROLL_INPUT input_trpy[1]
+#define PITCH_INPUT input_trpy[2]
+#define YAW_INPUT input_trpy[3]
+
+#define THROTTLE_OUTPUT output_trpy[0]
+#define ROLL_OUTPUT output_trpy[1]
+#define PITCH_OUTPUT output_trpy[2]
+#define YAW_OUTPUT output_trpy[3]
+
 inline int16_t mapToSRV(int16_t _output, int16_t _min, int16_t _max)
 {
     const int32_t range = _max - _min;
@@ -76,10 +87,12 @@ public:
     static void configSub(ConfigID, void*);
 
     // Debug functions to get outputs for testing and tuning
-    static int32_t getRollInput(void) { return input_rpy[0]; }
-    static int32_t getPitchInput(void) { return input_rpy[1]; }
-    static int32_t getYawInput(void) { return input_rpy[2]; }
+    static int32_t getThrottleInput(void) { return input_trpy[0]; }
+    static int32_t getRollInput(void) { return input_trpy[1]; }
+    static int32_t getPitchInput(void) { return input_trpy[2]; }
+    static int32_t getYawInput(void) { return input_trpy[3]; }
 
+    static int16_t getThrottleOutput(void) { return output_trpy[0]; }
     static int16_t getLeftRollOutput(void) { return mixerOutputs.leftAileron; }
     static int16_t getRightRollOutput(void) { return mixerOutputs.rightAileron; }
     static int16_t getPitchOutput(void) { return mixerOutputs.elevator; }
@@ -96,8 +109,8 @@ protected:
     static int32_t imu_rpy[3]; // To hold imu rpy values
     static int32_t imu_g[3];   // To hold imu g values
 
-    static int32_t input_rpy[3];  // Input roll, pitch, and yaw
-    static int16_t output_rpy[3]; // Roll, pitch, and yaw staging outputs before mixing
+    static int32_t input_trpy[4];  // Input throttle, roll, pitch, and yaw
+    static int16_t output_trpy[4]; // Throttle, roll, pitch, and yaw staging outputs before mixing
 
     static AirplaneMixer::Outputs mixerOutputs; // Outputs from the airplane mixer
 

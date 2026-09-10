@@ -8,6 +8,12 @@ enum class ConfigID : uint8_t
     AIRFRAME_TYPE = 0U,
 
     // RCConfig
+    RC_THROTTLE_MIN,
+    RC_THROTTLE_TRIM,
+    RC_THROTTLE_MAX,
+    RC_THROTTLE_DB,
+    RC_THROTTLE_REVERSE,
+
     RC_ROLL_MIN,
     RC_ROLL_TRIM,
     RC_ROLL_MAX,
@@ -27,6 +33,11 @@ enum class ConfigID : uint8_t
     RC_YAW_REVERSE,
 
     // SRVConfig
+    SRV_THROTTLE_MIN,
+    SRV_THROTTLE_TRIM,
+    SRV_THROTTLE_MAX,
+    SRV_THROTTLE_REVERSE,
+
     SRV_ROLL_MIN,
     SRV_ROLL_TRIM,
     SRV_ROLL_MAX,
