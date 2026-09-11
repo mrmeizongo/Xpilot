@@ -26,6 +26,18 @@ void Xpilot::printIO(void)
     Serial.print(F("\t\t\t"));
     Serial.println(F("Servo Output PWM"));
 
+    Serial.print(F("Throttle: "));
+    Serial.print(radio.getPWM(Radio::CHANNEL::THROTTLE));
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Throttle: "));
+    Serial.print(currentMode->getThrottleInput());
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Throttle: "));
+    Serial.print(currentMode->getThrottleOutput());
+    Serial.print(F("\t\t\t"));
+    Serial.print(F("Throttle: "));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
+
     Serial.print(F("Aileron 1: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::ROLL));
     Serial.print(F("\t\t\t"));
@@ -36,7 +48,7 @@ void Xpilot::printIO(void)
     Serial.print(currentMode->getLeftRollOutput());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Aileron 1: "));
-    Serial.println(actuators.getServoOut(Actuators::Channel::CH1));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
 
     Serial.print(F("Aileron 2: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::ROLL));
@@ -48,7 +60,7 @@ void Xpilot::printIO(void)
     Serial.print(currentMode->getRightRollOutput());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Aileron 2: "));
-    Serial.println(actuators.getServoOut(Actuators::Channel::CH2));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
 
     Serial.print(F("Elevator: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::PITCH));
@@ -60,7 +72,7 @@ void Xpilot::printIO(void)
     Serial.print(currentMode->getPitchOutput());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Elevator: "));
-    Serial.println(actuators.getServoOut(Actuators::Channel::CH3));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
 
     Serial.print(F("Rudder: "));
     Serial.print(radio.getPWM(Radio::CHANNEL::YAW));
@@ -72,7 +84,7 @@ void Xpilot::printIO(void)
     Serial.print(currentMode->getYawOutput());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Rudder: "));
-    Serial.println(actuators.getServoOut(Actuators::Channel::CH4));
+    Serial.println(actuators.getServoOut(Actuators::Channel::CH5));
 
 #if defined(USE_FLAPERONS)
     Serial.print(F("Flaperon: "));

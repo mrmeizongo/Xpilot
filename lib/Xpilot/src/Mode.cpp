@@ -142,33 +142,33 @@ void Mode::update(void)
         return;
     }
 
-    THROTTLE_INPUT = normalizeInput(radio.getPWM(Radio::CHANNEL::THROTTLE),
-                                    config().throttleRxConfig.min,
-                                    config().throttleRxConfig.trim,
-                                    config().throttleRxConfig.max,
-                                    config().throttleRxConfig.deadband,
-                                    config().throttleRxConfig.reverse);
+    input_trpy[Radio::CHANNEL::THROTTLE] = normalizeInput(radio.getPWM(Radio::CHANNEL::THROTTLE),
+                                                          config().throttleRxConfig.min,
+                                                          config().throttleRxConfig.trim,
+                                                          config().throttleRxConfig.max,
+                                                          config().throttleRxConfig.deadband,
+                                                          config().throttleRxConfig.reverse);
 
-    ROLL_INPUT = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL),
-                                config().rollRxConfig.min,
-                                config().rollRxConfig.trim,
-                                config().rollRxConfig.max,
-                                config().rollRxConfig.deadband,
-                                config().rollRxConfig.reverse);
+    input_trpy[Radio::CHANNEL::ROLL] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL),
+                                                      config().rollRxConfig.min,
+                                                      config().rollRxConfig.trim,
+                                                      config().rollRxConfig.max,
+                                                      config().rollRxConfig.deadband,
+                                                      config().rollRxConfig.reverse);
 
-    PITCH_INPUT = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH),
-                                 config().pitchRxConfig.min,
-                                 config().pitchRxConfig.trim,
-                                 config().pitchRxConfig.max,
-                                 config().pitchRxConfig.deadband,
-                                 config().pitchRxConfig.reverse);
+    input_trpy[Radio::CHANNEL::PITCH] = normalizeInput(radio.getPWM(Radio::CHANNEL::PITCH),
+                                                       config().pitchRxConfig.min,
+                                                       config().pitchRxConfig.trim,
+                                                       config().pitchRxConfig.max,
+                                                       config().pitchRxConfig.deadband,
+                                                       config().pitchRxConfig.reverse);
 
-    YAW_INPUT = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW),
-                               config().yawRxConfig.min,
-                               config().yawRxConfig.trim,
-                               config().yawRxConfig.max,
-                               config().yawRxConfig.deadband,
-                               config().yawRxConfig.reverse);
+    input_trpy[Radio::CHANNEL::YAW] = normalizeInput(radio.getPWM(Radio::CHANNEL::YAW),
+                                                     config().yawRxConfig.min,
+                                                     config().yawRxConfig.trim,
+                                                     config().yawRxConfig.max,
+                                                     config().yawRxConfig.deadband,
+                                                     config().yawRxConfig.reverse);
 
 #if defined(USE_FLAPERONS)
     flaperonInput = normalizeInput(radio.getPWM(Radio::CHANNEL::AUX2),
@@ -200,10 +200,13 @@ void Mode::processOutput(void* ctx)
 {
     (void)ctx;
 
-    mixerOutputs = airplaneMixer.mix(ROLL_OUTPUT, PITCH_OUTPUT, YAW_OUTPUT, flaperonInput);
+    mixerOutputs = airplaneMixer.mix(output_trpy[Radio::CHANNEL::ROLL],
+                                     output_trpy[Radio::CHANNEL::PITCH],
+                                     output_trpy[Radio::CHANNEL::YAW],
+                                     flaperonInput);
 
     SRVout[Actuators::Channel::CH1] =
-        mapToSRV(THROTTLE_OUTPUT, config().throttleSrvConfig.min, config().throttleSrvConfig.max);
+        mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max);
 
     SRVout[Actuators::Channel::CH2] =
         mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
@@ -219,24 +222,24 @@ void Mode::processOutput(void* ctx)
     actuators.writeServos(SRVout);
 }
 
-void Mode::consumeAHRS(const float (&rpy)[3], const float (&g)[3])
+void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])
 {
-    imu_rpy[0] = rpy[0] * config().controlConfig.controlResolution;
-    imu_rpy[1] = rpy[1] * config().controlConfig.controlResolution;
-    imu_rpy[2] = rpy[2] * config().controlConfig.controlResolution;
+    imu_rpy[IMU::Axis::X_AXIS] = rpy[IMU::Axis::X_AXIS] * config().controlConfig.controlResolution;
+    imu_rpy[IMU::Axis::Y_AXIS] = rpy[IMU::Axis::Y_AXIS] * config().controlConfig.controlResolution;
+    imu_rpy[IMU::Axis::Z_AXIS] = rpy[IMU::Axis::Z_AXIS] * config().controlConfig.controlResolution;
 
-    imu_g[0] = g[0] * config().controlConfig.controlResolution;
-    imu_g[1] = g[1] * config().controlConfig.controlResolution;
-    imu_g[2] = g[2] * config().controlConfig.controlResolution;
+    imu_g[IMU::Axis::X_AXIS] = g[IMU::Axis::X_AXIS] * config().controlConfig.controlResolution;
+    imu_g[IMU::Axis::Y_AXIS] = g[IMU::Axis::Y_AXIS] * config().controlConfig.controlResolution;
+    imu_g[IMU::Axis::Z_AXIS] = g[IMU::Axis::Z_AXIS] * config().controlConfig.controlResolution;
 }
 
 void Mode::setFailsafeInputs(void)
 {
     // Default failsafe implementation
-    THROTTLE_INPUT = -config().controlConfig.controlResolution;
-    ROLL_INPUT = 0;
-    PITCH_INPUT = 0;
-    YAW_INPUT = 0;
+    input_trpy[Radio::CHANNEL::THROTTLE] = -config().controlConfig.controlResolution;
+    input_trpy[Radio::CHANNEL::ROLL] = 0;
+    input_trpy[Radio::CHANNEL::PITCH] = 0;
+    input_trpy[Radio::CHANNEL::YAW] = 0;
 #if defined(USE_FLAPERONS)
     flaperonInput = -config().flightConfig.flaperonMax; // set flaperons to landing position
 #endif

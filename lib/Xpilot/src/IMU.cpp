@@ -72,9 +72,9 @@ void IMU::registerConsumer(Consumer cb)
 
 void IMU::calibrate(void) { mpu6050.calibrateAccelGyro(); }
 
-void IMU::getCalibration(float (&accel)[3], float (&gyro)[3])
+void IMU::getCalibration(float (&accel)[Axis::AXIS_COUNT], float (&gyro)[Axis::AXIS_COUNT])
 {
-    for (uint8_t i = 0; i < 3; i++)
+    for (uint8_t i = Axis::X_AXIS; i < Axis::AXIS_COUNT; i++)
     {
         accel[i] = mpu6050.getAccBias(i);
         gyro[i] = mpu6050.getGyroBias(i);

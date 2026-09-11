@@ -128,7 +128,7 @@ void SerialConfigTask::processPacket(const SerialPacket& packet)
         {
             imu.calibrate();
 
-            float accel[3], gyro[3];
+            float accel[IMU::Axis::AXIS_COUNT], gyro[IMU::Axis::AXIS_COUNT];
             imu.getCalibration(accel, gyro);
 
             _configManager.setIMUCalibration(accel, gyro);

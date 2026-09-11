@@ -13,7 +13,7 @@ Actuators::Actuators(void) {}
 // Set up output servos
 void Actuators::init(void)
 {
-    controlServo[CH1].attach(THROTTLEPIN_OUTPUT, config().auxSrvConfig.min, config().auxSrvConfig.max);
+    controlServo[CH1].attach(THROTTLEPIN_OUTPUT, config().throttleSrvConfig.min, config().throttleSrvConfig.max);
     controlServo[CH2].attach(AIL1PIN_OUTPUT, config().rollSrvConfig.min, config().rollSrvConfig.max);
     controlServo[CH3].attach(AIL2PIN_OUTPUT, config().rollSrvConfig.min, config().rollSrvConfig.max);
     controlServo[CH4].attach(ELEVPIN_OUTPUT, config().pitchSrvConfig.min, config().pitchSrvConfig.max);

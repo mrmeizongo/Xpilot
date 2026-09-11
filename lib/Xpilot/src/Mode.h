@@ -29,25 +29,15 @@ Flight stabilization software
 #ifndef _MODE_H
 #define _MODE_H
 
+#include <Arduino.h>
 #include "Actuators.h"
 #include "AirplaneMixer.h"
 #include "FlightConfigAccess.h"
 #include "PIDF.h"
 #include "Radio.h"
+#include "IMU.h"
 #include "SlewRateLimiter.h"
 #include "SysConfig.h"
-#include <Arduino.h>
-
-// Defines to make channel assignments less ambiguous
-#define THROTTLE_INPUT input_trpy[0]
-#define ROLL_INPUT input_trpy[1]
-#define PITCH_INPUT input_trpy[2]
-#define YAW_INPUT input_trpy[3]
-
-#define THROTTLE_OUTPUT output_trpy[0]
-#define ROLL_OUTPUT output_trpy[1]
-#define PITCH_OUTPUT output_trpy[2]
-#define YAW_OUTPUT output_trpy[3]
 
 inline int16_t mapToSRV(int16_t _output, int16_t _min, int16_t _max)
 {
@@ -82,19 +72,21 @@ public:
     static void updateInput(void*);
     static void processOutput(void*);
 
-    static void consumeAHRS(const float (&)[3], const float (&)[3]);
+    // Callback to collect imu data
+    static void consumeAHRS(const float (&)[IMU::Axis::AXIS_COUNT], const float (&)[IMU::Axis::AXIS_COUNT]);
 
+    // Callback to receive configManager live updates
     static void configSub(ConfigID, void*);
 
     // Debug functions to get outputs for testing and tuning
-    static int32_t getThrottleInput(void) { return input_trpy[0]; }
-    static int32_t getRollInput(void) { return input_trpy[1]; }
-    static int32_t getPitchInput(void) { return input_trpy[2]; }
-    static int32_t getYawInput(void) { return input_trpy[3]; }
+    static int32_t getThrottleInput(void) { return input_trpy[Radio::CHANNEL::THROTTLE]; }
+    static int32_t getRollInput(void) { return input_trpy[Radio::CHANNEL::ROLL]; }
+    static int32_t getPitchInput(void) { return input_trpy[Radio::CHANNEL::PITCH]; }
+    static int32_t getYawInput(void) { return input_trpy[Radio::CHANNEL::YAW]; }
 
     static int16_t getFlaperon(void) { return flaperonInput; }
 
-    static int16_t getThrottleOutput(void) { return output_trpy[0]; }
+    static int16_t getThrottleOutput(void) { return output_trpy[Radio::CHANNEL::THROTTLE]; }
     static int16_t getLeftRollOutput(void) { return mixerOutputs.leftAileron; }
     static int16_t getRightRollOutput(void) { return mixerOutputs.rightAileron; }
     static int16_t getPitchOutput(void) { return mixerOutputs.elevator; }

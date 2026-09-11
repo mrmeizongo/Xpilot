@@ -13,18 +13,19 @@ void RateMode::update(void)
 {
     Mode::update();
 
-    ROLL_INPUT *= config().flightConfig.maxRollRateDegs;
+    input_trpy[Radio::CHANNEL::ROLL] *= config().flightConfig.maxRollRateDegs;
 
-    PITCH_INPUT *= config().flightConfig.maxPitchRateDegs;
+    input_trpy[Radio::CHANNEL::PITCH] *= config().flightConfig.maxPitchRateDegs;
 
-    YAW_INPUT *= config().flightConfig.maxYawRateDegs;
+    input_trpy[Radio::CHANNEL::YAW] *= config().flightConfig.maxYawRateDegs;
 
-    YAW_INPUT = airplaneMixer.mixRudderInput(ROLL_INPUT, YAW_INPUT);
+    input_trpy[Radio::CHANNEL::YAW] =
+        airplaneMixer.mixRudderInput(input_trpy[Radio::CHANNEL::ROLL], input_trpy[Radio::CHANNEL::YAW]);
 }
 
 void RateMode::run(void)
 {
-    ROLL_OUTPUT = rollPIDF.Compute(ROLL_INPUT, imu_g[0]);
-    PITCH_OUTPUT = pitchPIDF.Compute(PITCH_INPUT, imu_g[1]);
-    YAW_OUTPUT = yawPIDF.Compute(YAW_INPUT, imu_g[2]);
+    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(input_trpy[Radio::CHANNEL::ROLL], imu_g[0]);
+    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(input_trpy[Radio::CHANNEL::PITCH], imu_g[1]);
+    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], imu_g[2]);
 }
