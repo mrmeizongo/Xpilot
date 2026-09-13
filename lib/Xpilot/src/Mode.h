@@ -96,8 +96,8 @@ public:
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
 
 protected:
-    static int32_t imu_rpy[3]; // To hold imu rpy values
-    static int32_t imu_g[3];   // To hold imu g values
+    static int32_t imu_rpy[IMU::Axis::AXIS_COUNT]; // To hold imu rpy values
+    static int32_t imu_g[IMU::Axis::AXIS_COUNT];   // To hold imu g values
 
     static int32_t input_trpy[4];  // Input throttle, roll, pitch, and yaw
     static int16_t output_trpy[4]; // Throttle, roll, pitch, and yaw staging outputs before mixing

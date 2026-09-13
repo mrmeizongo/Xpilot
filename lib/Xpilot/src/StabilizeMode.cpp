@@ -46,18 +46,18 @@ void StabilizeMode::update(void)
 void StabilizeMode::run(void)
 {
     int32_t rollDemand = stabilizeDemand(input_trpy[Radio::CHANNEL::ROLL],
-                                         imu_rpy[0],
+                                         imu_rpy[IMU::Axis::X_AXIS],
                                          config().flightConfig.maxRollRateDegs,
                                          config().flightConfig.maxRollAngleDegs,
                                          config().flightConfig.rollAngleKp);
 
-    int32_t pitchDemand = stabilizeDemand(input_trpy[Radio::CHANNEL::ROLL],
-                                          imu_rpy[1],
+    int32_t pitchDemand = stabilizeDemand(input_trpy[Radio::CHANNEL::PITCH],
+                                          imu_rpy[IMU::Axis::Y_AXIS],
                                           config().flightConfig.maxPitchRateDegs,
                                           config().flightConfig.maxPitchAngleDegs,
                                           config().flightConfig.pitchAngleKp);
 
-    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(rollDemand, imu_g[0]);
-    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(pitchDemand, imu_g[1]);
-    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], imu_g[2]);
+    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(rollDemand, imu_g[IMU::Axis::X_AXIS]);
+    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(pitchDemand, imu_g[IMU::Axis::Y_AXIS]);
+    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], imu_g[IMU::Axis::Z_AXIS]);
 }
