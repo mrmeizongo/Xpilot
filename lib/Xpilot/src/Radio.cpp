@@ -106,9 +106,9 @@ void Radio::FailSafe()
 
     const uint8_t req = requiredChannels();
     bool timeout = false;
-    bool rxFailsafe = true;
+    //bool rxFailsafe = true;
 
-    for (uint8_t i = 0; i < 3; ++i)
+    for (uint8_t i = 0; i < 4; ++i)
     {
         const uint8_t mask = 1 << i;
 
@@ -117,13 +117,15 @@ void Radio::FailSafe()
             continue;
 
         // Only one channel is required to trigger a timeout
-        timeout |= (now - lastValidRxTimeMs[i]) >= RX_TIMEOUT_MS;
+        // Starts at i + 1 because throttle is always present
+        timeout |= (now - lastValidRxTimeMs[i + 1]) >= RX_TIMEOUT_MS;
 
         // All channels are required to trigger a failsafe
-        rxFailsafe &= abs(RX_FAILSAFE_PWM - raw[i]) <= RX_FAILSAFE_TOLERANCE;
+        // rxFailsafe &= abs(RX_FAILSAFE_PWM - raw[i]) <= RX_FAILSAFE_TOLERANCE;
     }
 
-    const bool signalLost = timeout || rxFailsafe;
+    // const bool signalLost = timeout || rxFailsafe;
+    const bool signalLost = timeout;
 
     if (!signalLost)
     {

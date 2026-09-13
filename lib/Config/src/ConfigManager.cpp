@@ -62,20 +62,15 @@ void ConfigManager::loadDefaults()
     _config.rollSrvConfig.max = 2000;
     _config.rollSrvConfig.reverse = false;
 
-    _config.auxSrvConfig.min = 1000;
-    _config.auxSrvConfig.trim = 1500;
-    _config.auxSrvConfig.max = 2000;
-    _config.auxSrvConfig.reverse = false;
+    _config.pitchSrvConfig.min = 1000;
+    _config.pitchSrvConfig.trim = 1500;
+    _config.pitchSrvConfig.max = 2000;
+    _config.pitchSrvConfig.reverse = false;
 
     _config.yawSrvConfig.min = 1000;
     _config.yawSrvConfig.trim = 1500;
     _config.yawSrvConfig.max = 2000;
     _config.yawSrvConfig.reverse = false;
-
-    _config.pitchSrvConfig.min = 1000;
-    _config.pitchSrvConfig.trim = 1500;
-    _config.pitchSrvConfig.max = 2000;
-    _config.pitchSrvConfig.reverse = false;
 
     _config.flightConfig.maxRollRateDegs = 60;
     _config.flightConfig.maxPitchRateDegs = 45;
@@ -318,26 +313,6 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
         case ConfigID::SRV_YAW_REVERSE:
             type = ConfigValueType::BOOL;
             value.u8 = _config.yawSrvConfig.reverse ? 1U : 0U;
-            break;
-
-        case ConfigID::SRV_AUX_MIN:
-            type = ConfigValueType::INT16;
-            value.i16 = _config.auxSrvConfig.min;
-            break;
-
-        case ConfigID::SRV_AUX_TRIM:
-            type = ConfigValueType::INT16;
-            value.i16 = _config.auxSrvConfig.trim;
-            break;
-
-        case ConfigID::SRV_AUX_MAX:
-            type = ConfigValueType::INT16;
-            value.i16 = _config.auxSrvConfig.max;
-            break;
-
-        case ConfigID::SRV_AUX_REVERSE:
-            type = ConfigValueType::BOOL;
-            value.u8 = _config.auxSrvConfig.reverse ? 1U : 0U;
             break;
 
         case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:
@@ -689,22 +664,6 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.yawSrvConfig.reverse = (value.u8 != 0U);
             break;
 
-        case ConfigID::SRV_AUX_MIN:
-            _config.auxSrvConfig.min = value.i16;
-            break;
-
-        case ConfigID::SRV_AUX_TRIM:
-            _config.auxSrvConfig.trim = value.i16;
-            break;
-
-        case ConfigID::SRV_AUX_MAX:
-            _config.auxSrvConfig.max = value.i16;
-            break;
-
-        case ConfigID::SRV_AUX_REVERSE:
-            _config.auxSrvConfig.reverse = (value.u8 != 0U);
-            break;
-
         case ConfigID::FLIGHT_MAX_ROLL_RATE_DEGS:
             _config.flightConfig.maxRollRateDegs = value.i16;
             break;
@@ -868,10 +827,6 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
         case ConfigID::SRV_YAW_TRIM:
         case ConfigID::SRV_YAW_MAX:
 
-        case ConfigID::SRV_AUX_MIN:
-        case ConfigID::SRV_AUX_TRIM:
-        case ConfigID::SRV_AUX_MAX:
-
             return value.i16 >= 544 && value.i16 <= 2400;
 
         case ConfigID::RC_THROTTLE_DB:
@@ -892,7 +847,6 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
         case ConfigID::SRV_ROLL_REVERSE:
         case ConfigID::SRV_PITCH_REVERSE:
         case ConfigID::SRV_YAW_REVERSE:
-        case ConfigID::SRV_AUX_REVERSE:
 
             return value.u8 <= 1U;
 

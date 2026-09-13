@@ -101,7 +101,6 @@ struct Config
     SRVConfig rollSrvConfig;
     SRVConfig pitchSrvConfig;
     SRVConfig yawSrvConfig;
-    SRVConfig auxSrvConfig;
 
     FlightConfig flightConfig;
 

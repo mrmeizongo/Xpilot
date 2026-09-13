@@ -160,63 +160,58 @@ CONFIG_NAMES = {
     35: "SRV_YAW_MAX",
     36: "SRV_YAW_REVERSE",
 
-    37: "SRV_AUX_MIN",
-    38: "SRV_AUX_TRIM",
-    39: "SRV_AUX_MAX",
-    40: "SRV_AUX_REVERSE",
+    37: "FLIGHT_MAX_ROLL_RATE_DEGS",
+    38: "FLIGHT_MAX_PITCH_RATE_DEGS",
+    39: "FLIGHT_MAX_YAW_RATE_DEGS",
 
-    41: "FLIGHT_MAX_ROLL_RATE_DEGS",
-    42: "FLIGHT_MAX_PITCH_RATE_DEGS",
-    43: "FLIGHT_MAX_YAW_RATE_DEGS",
+    40: "FLIGHT_MAX_ROLL_ANGLE_DEGS",
+    41: "FLIGHT_MAX_PITCH_ANGLE_DEGS",
 
-    44: "FLIGHT_MAX_ROLL_ANGLE_DEGS",
-    45: "FLIGHT_MAX_PITCH_ANGLE_DEGS",
+    42: "FLIGHT_ROLL_ANGLE_KP",
+    43: "FLIGHT_PITCH_ANGLE_KP",
 
-    46: "FLIGHT_ROLL_ANGLE_KP",
-    47: "FLIGHT_PITCH_ANGLE_KP",
+    44: "FLIGHT_FLAPERON_SCALE_FACTOR",
+    45: "FLIGHT_MAX_FLAPERON",
 
-    48: "FLIGHT_FLAPERON_SCALE_FACTOR",
-    49: "FLIGHT_MAX_FLAPERON",
+    46: "FLIGHT_REVERSE_RUDDER_MIX",
+    47: "FLIGHT_RUDDER_MIX_SCALE_FACTOR",
 
-    50: "FLIGHT_REVERSE_RUDDER_MIX",
-    51: "FLIGHT_RUDDER_MIX_SCALE_FACTOR",
+    48: "PIDF_ROLL_KP",
+    49: "PIDF_ROLL_KI",
+    50: "PIDF_ROLL_KD",
+    51: "PIDF_ROLL_KF",
+    52: "PIDF_ROLL_I_WINDUP_MAX",
 
-    52: "PIDF_ROLL_KP",
-    53: "PIDF_ROLL_KI",
-    54: "PIDF_ROLL_KD",
-    55: "PIDF_ROLL_KF",
-    56: "PIDF_ROLL_I_WINDUP_MAX",
+    53: "PIDF_PITCH_KP",
+    54: "PIDF_PITCH_KI",
+    55: "PIDF_PITCH_KD",
+    56: "PIDF_PITCH_KF",
+    57: "PIDF_PITCH_I_WINDUP_MAX",
 
-    57: "PIDF_PITCH_KP",
-    58: "PIDF_PITCH_KI",
-    59: "PIDF_PITCH_KD",
-    60: "PIDF_PITCH_KF",
-    61: "PIDF_PITCH_I_WINDUP_MAX",
+    58: "PIDF_YAW_KP",
+    59: "PIDF_YAW_KI",
+    60: "PIDF_YAW_KD",
+    61: "PIDF_YAW_KF",
+    62: "PIDF_YAW_I_WINDUP_MAX",
 
-    62: "PIDF_YAW_KP",
-    63: "PIDF_YAW_KI",
-    64: "PIDF_YAW_KD",
-    65: "PIDF_YAW_KF",
-    66: "PIDF_YAW_I_WINDUP_MAX",
+    63: "IMU_ACC_BIAS_X",
+    64: "IMU_ACC_BIAS_Y",
+    65: "IMU_ACC_BIAS_Z",
 
-    67: "IMU_ACC_BIAS_X",
-    68: "IMU_ACC_BIAS_Y",
-    69: "IMU_ACC_BIAS_Z",
+    66: "IMU_GYRO_BIAS_X",
+    67: "IMU_GYRO_BIAS_Y",
+    68: "IMU_GYRO_BIAS_Z",
 
-    70: "IMU_GYRO_BIAS_X",
-    71: "IMU_GYRO_BIAS_Y",
-    72: "IMU_GYRO_BIAS_Z",
+    69: "IMU_CALIBRATED",
 
-    73: "IMU_CALIBRATED",
-
-    74: "CONTROL_SLEW_RATE",
-    75: "CONTROL_LPF_FREQ",
-    76: "CONTROL_RESOLUTION",
-    77: "CONTROL_DT",
+    70: "CONTROL_SLEW_RATE",
+    71: "CONTROL_LPF_FREQ",
+    72: "CONTROL_RESOLUTION",
+    73: "CONTROL_DT",
 }
 
 
-CONFIG_COUNT = 78
+CONFIG_COUNT = 74
 
 
 CONFIG_IDS_BY_NAME = {
@@ -261,7 +256,7 @@ CONFIG_TYPES = {
     19: ValueType.UINT8,
     20: ValueType.BOOL,
 
-    # Throrrle SrvConfig
+    # Throttle SrvConfig
     21: ValueType.INT16,
     22: ValueType.INT16,
     23: ValueType.INT16,
@@ -285,66 +280,60 @@ CONFIG_TYPES = {
     35: ValueType.INT16,
     36: ValueType.BOOL,
 
-    # Aux SrvConfig
+    # FlightConfig
     37: ValueType.INT16,
     38: ValueType.INT16,
     39: ValueType.INT16,
-    40: ValueType.BOOL,
 
-    # FlightConfig
+    40: ValueType.INT16,
     41: ValueType.INT16,
-    42: ValueType.INT16,
-    43: ValueType.INT16,
 
-    44: ValueType.INT16,
+    42: ValueType.FLOAT,
+    43: ValueType.FLOAT,
+
+    44: ValueType.FLOAT,
     45: ValueType.INT16,
 
-    46: ValueType.FLOAT,
+    46: ValueType.BOOL,
     47: ValueType.FLOAT,
 
-    48: ValueType.FLOAT,
-    49: ValueType.INT16,
-
-    50: ValueType.BOOL,
-    51: ValueType.FLOAT,
-
     # RollPIDF
+    48: ValueType.FLOAT,
+    49: ValueType.FLOAT,
+    50: ValueType.FLOAT,
+    51: ValueType.FLOAT,
     52: ValueType.FLOAT,
+
+    # PitchPIDF
     53: ValueType.FLOAT,
     54: ValueType.FLOAT,
     55: ValueType.FLOAT,
     56: ValueType.FLOAT,
-
-    # PitchPIDF
     57: ValueType.FLOAT,
+
+    # YawPIDF
     58: ValueType.FLOAT,
     59: ValueType.FLOAT,
     60: ValueType.FLOAT,
     61: ValueType.FLOAT,
-
-    # YawPIDF
     62: ValueType.FLOAT,
+
+    # IMUConfig
     63: ValueType.FLOAT,
     64: ValueType.FLOAT,
     65: ValueType.FLOAT,
-    66: ValueType.FLOAT,
 
-    # IMUConfig
+    66: ValueType.FLOAT,
     67: ValueType.FLOAT,
     68: ValueType.FLOAT,
-    69: ValueType.FLOAT,
 
-    70: ValueType.FLOAT,
-    71: ValueType.FLOAT,
-    72: ValueType.FLOAT,
-
-    73: ValueType.BOOL,
+    69: ValueType.BOOL,
 
     # ControlConfig
-    74: ValueType.UINT16,
-    75: ValueType.UINT16,
-    76: ValueType.INT16,
-    77: ValueType.FLOAT,
+    70: ValueType.UINT16,
+    71: ValueType.UINT16,
+    72: ValueType.INT16,
+    73: ValueType.FLOAT,
 }
 
 
