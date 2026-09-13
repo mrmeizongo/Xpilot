@@ -39,17 +39,15 @@ private:
 
     static constexpr uint16_t EEPROM_ADDRESS = 0x0;
 
+    static constexpr int EEPROM_MAGIC_ADDR = EEPROM_ADDRESS;
+
+    static constexpr int EEPROM_VERSION_ADDR = EEPROM_MAGIC_ADDR + sizeof(uint16_t);
+
+    static constexpr int EEPROM_CONFIG_ADDR = EEPROM_VERSION_ADDR + sizeof(uint8_t);
+
+    static constexpr int EEPROM_CHECKSUM_ADDR = EEPROM_CONFIG_ADDR + sizeof(Config);
+
     static constexpr uint8_t MAX_SUBSCRIBERS = 1;
-
-    struct StoredConfig
-    {
-        uint16_t magic;
-        uint8_t version;
-
-        Config config;
-
-        uint16_t checksum;
-    };
 
     Config _config;
 
@@ -60,5 +58,6 @@ private:
     bool validateSet(ConfigID id, const ConfigValue& value) const;
 
     static uint16_t calculateChecksum(const uint8_t* data, uint16_t length);
+    static uint16_t calculateEEPROMChecksum(int address, uint16_t length);
 };
 #endif //_CONFIG_MANAGER_H

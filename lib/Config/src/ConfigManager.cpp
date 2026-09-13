@@ -1,9 +1,17 @@
 #include <Arduino.h>
+#include <EEPROM.h>
+#include <string.h>
 #include "ConfigManager.h"
 #include "SysConfig.h"
 
-#include <EEPROM.h>
-#include <string.h>
+constexpr uint16_t ConfigManager::EEPROM_MAGIC; // XP - XPilot firmware signature
+constexpr uint8_t ConfigManager::EEPROM_VERSION;
+constexpr uint16_t ConfigManager::EEPROM_ADDRESS;
+constexpr int ConfigManager::EEPROM_MAGIC_ADDR;
+constexpr int ConfigManager::EEPROM_VERSION_ADDR;
+constexpr int ConfigManager::EEPROM_CONFIG_ADDR;
+constexpr int ConfigManager::EEPROM_CHECKSUM_ADDR;
+constexpr uint8_t ConfigManager::MAX_SUBSCRIBERS;
 
 ConfigManager::ConfigManager()
     : _config{}
@@ -897,15 +905,15 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 
 bool ConfigManager::save()
 {
-    StoredConfig stored{};
+    const uint16_t magic = EEPROM_MAGIC;
 
-    stored.magic = EEPROM_MAGIC;
-    stored.version = EEPROM_VERSION;
-    stored.config = _config;
+    const uint16_t checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&_config), sizeof(_config));
 
-    stored.checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&stored.config), sizeof(Config));
-
-    EEPROM.put(EEPROM_ADDRESS, stored);
+    // 4 EEPROM.put are used to save on SRAM since we're running tight on that resource
+    EEPROM.put(EEPROM_MAGIC_ADDR, magic);
+    EEPROM.put(EEPROM_VERSION_ADDR, EEPROM_VERSION);
+    EEPROM.put(EEPROM_CONFIG_ADDR, _config);
+    EEPROM.put(EEPROM_CHECKSUM_ADDR, checksum);
 
     _dirty = false;
 
@@ -914,28 +922,34 @@ bool ConfigManager::save()
 
 bool ConfigManager::load()
 {
-    StoredConfig stored{};
+    uint16_t magic;
+    uint8_t version;
+    uint16_t storedChecksum;
 
-    EEPROM.get(EEPROM_ADDRESS, stored);
+    EEPROM.get(EEPROM_MAGIC_ADDR, magic);
 
-    if (stored.magic != EEPROM_MAGIC)
+    if (magic != EEPROM_MAGIC)
     {
         return false;
     }
 
-    if (stored.version != EEPROM_VERSION)
+    EEPROM.get(EEPROM_VERSION_ADDR, version);
+
+    if (version != EEPROM_VERSION)
     {
         return false;
     }
 
-    const uint16_t checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&stored.config), sizeof(Config));
+    EEPROM.get(EEPROM_CHECKSUM_ADDR, storedChecksum);
 
-    if (checksum != stored.checksum)
+    uint16_t checksum = calculateEEPROMChecksum(EEPROM_CONFIG_ADDR, sizeof(Config));
+
+    if (checksum != storedChecksum)
     {
         return false;
     }
 
-    _config = stored.config;
+    EEPROM.get(EEPROM_CONFIG_ADDR, _config);
 
     _dirty = false;
 
@@ -966,6 +980,18 @@ uint16_t ConfigManager::calculateChecksum(const uint8_t* data, uint16_t length)
     for (uint16_t i = 0; i < length; i++)
     {
         checksum += data[i];
+    }
+
+    return checksum;
+}
+
+uint16_t ConfigManager::calculateEEPROMChecksum(int address, uint16_t length)
+{
+    uint16_t checksum = 0;
+
+    for (uint16_t i = 0; i < length; i++)
+    {
+        checksum += EEPROM.read(address + i);
     }
 
     return checksum;
