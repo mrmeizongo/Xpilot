@@ -58,6 +58,5 @@ private:
     bool validateSet(ConfigID id, const ConfigValue& value) const;
 
     static uint16_t calculateChecksum(const uint8_t* data, uint16_t length);
-    static uint16_t calculateEEPROMChecksum(int address, uint16_t length);
 };
 #endif //_CONFIG_MANAGER_H

@@ -28,6 +28,58 @@ void ConfigManager::init()
     }
 }
 
+bool ConfigManager::save()
+{
+    const uint16_t checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&_config), sizeof(_config));
+
+    // 4 EEPROM.puts are used to save on SRAM
+    // Storage order is critical
+    EEPROM.put(EEPROM_MAGIC_ADDR, EEPROM_MAGIC);
+    EEPROM.put(EEPROM_VERSION_ADDR, EEPROM_VERSION);
+    EEPROM.put(EEPROM_CONFIG_ADDR, _config);
+    EEPROM.put(EEPROM_CHECKSUM_ADDR, checksum);
+
+    _dirty = false;
+
+    return true;
+}
+
+bool ConfigManager::load()
+{
+    uint16_t magic;
+    uint8_t version;
+    uint16_t storedChecksum;
+
+    EEPROM.get(EEPROM_MAGIC_ADDR, magic);
+
+    if (magic != EEPROM_MAGIC)
+    {
+        return false;
+    }
+
+    EEPROM.get(EEPROM_VERSION_ADDR, version);
+
+    if (version != EEPROM_VERSION)
+    {
+        return false;
+    }
+
+    EEPROM.get(EEPROM_CHECKSUM_ADDR, storedChecksum);
+
+    EEPROM.get(EEPROM_CONFIG_ADDR, _config);
+
+    const uint16_t checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&_config), sizeof(_config));
+
+    if (checksum != storedChecksum)
+    {
+        return false;
+    }
+
+    _dirty = false;
+
+    return true;
+}
+
 const Config& ConfigManager::config() const { return _config; }
 
 bool ConfigManager::isDirty() const { return _dirty; }
@@ -903,59 +955,6 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
     }
 }
 
-bool ConfigManager::save()
-{
-    const uint16_t magic = EEPROM_MAGIC;
-
-    const uint16_t checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&_config), sizeof(_config));
-
-    // 4 EEPROM.put are used to save on SRAM since we're running tight on that resource
-    EEPROM.put(EEPROM_MAGIC_ADDR, magic);
-    EEPROM.put(EEPROM_VERSION_ADDR, EEPROM_VERSION);
-    EEPROM.put(EEPROM_CONFIG_ADDR, _config);
-    EEPROM.put(EEPROM_CHECKSUM_ADDR, checksum);
-
-    _dirty = false;
-
-    return true;
-}
-
-bool ConfigManager::load()
-{
-    uint16_t magic;
-    uint8_t version;
-    uint16_t storedChecksum;
-
-    EEPROM.get(EEPROM_MAGIC_ADDR, magic);
-
-    if (magic != EEPROM_MAGIC)
-    {
-        return false;
-    }
-
-    EEPROM.get(EEPROM_VERSION_ADDR, version);
-
-    if (version != EEPROM_VERSION)
-    {
-        return false;
-    }
-
-    EEPROM.get(EEPROM_CHECKSUM_ADDR, storedChecksum);
-
-    uint16_t checksum = calculateEEPROMChecksum(EEPROM_CONFIG_ADDR, sizeof(Config));
-
-    if (checksum != storedChecksum)
-    {
-        return false;
-    }
-
-    EEPROM.get(EEPROM_CONFIG_ADDR, _config);
-
-    _dirty = false;
-
-    return true;
-}
-
 void ConfigManager::registerSubscriber(Subscriber sb) { _subscriber = sb; }
 
 void ConfigManager::setIMUCalibration(const float (&accelBias)[3], const float (&gyroBias)[3])
@@ -980,18 +979,6 @@ uint16_t ConfigManager::calculateChecksum(const uint8_t* data, uint16_t length)
     for (uint16_t i = 0; i < length; i++)
     {
         checksum += data[i];
-    }
-
-    return checksum;
-}
-
-uint16_t ConfigManager::calculateEEPROMChecksum(int address, uint16_t length)
-{
-    uint16_t checksum = 0;
-
-    for (uint16_t i = 0; i < length; i++)
-    {
-        checksum += EEPROM.read(address + i);
     }
 
     return checksum;
