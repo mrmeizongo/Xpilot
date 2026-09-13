@@ -38,13 +38,11 @@ void Mode::init(void)
                                      config().controlConfig.lowPassFilterFreq};
 
     imu.registerConsumer(consumeAHRS);
-    configManager.registerSubscriber(configSub, this);
+    configManager.registerSubscriber(configSub);
 }
 
-void Mode::configSub(ConfigID id, void* ctx)
+void Mode::configSub(ConfigID id)
 {
-    (void)ctx;
-
     switch (id)
     {
         case ConfigID::AIRFRAME_TYPE:

@@ -9,7 +9,6 @@
 IMU::IMU(void)
     : _rpy{0.f, 0.f, 0.f}
     , _g{0.f, 0.f, 0.f}
-    , _consumer{nullptr}
 {
 }
 
@@ -56,19 +55,11 @@ void IMU::getLatestReadings(void)
         return;
     }
 
-    _consumer(_rpy, _g);
-}
-
-void IMU::registerConsumer(Consumer cb)
-{
     if (_consumer != nullptr)
-    {
-        Serial.println(F("IMU consumer already defined"));
-        return;
-    }
-
-    _consumer = cb;
+        _consumer(_rpy, _g);
 }
+
+void IMU::registerConsumer(Consumer cb) { _consumer = cb; }
 
 void IMU::calibrate(void) { mpu6050.calibrateAccelGyro(); }
 

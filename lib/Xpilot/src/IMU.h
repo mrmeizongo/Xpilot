@@ -53,7 +53,7 @@ private:
     float _rpy[Axis::AXIS_COUNT]; // Airplane coordinate system values
     float _g[Axis::AXIS_COUNT];   // Angular velocity about the respective axis - xyz
 
-    Consumer _consumer; // IMU values consumer
+    Consumer _consumer = nullptr; // IMU values consumer
 };
 
 extern IMU imu;

@@ -76,7 +76,7 @@ public:
     static void consumeAHRS(const float (&)[IMU::Axis::AXIS_COUNT], const float (&)[IMU::Axis::AXIS_COUNT]);
 
     // Callback to receive configManager live updates
-    static void configSub(ConfigID, void*);
+    static void configSub(ConfigID);
 
     // Debug functions to get outputs for testing and tuning
     static int32_t getThrottleInput(void) { return input_trpy[Radio::CHANNEL::THROTTLE]; }

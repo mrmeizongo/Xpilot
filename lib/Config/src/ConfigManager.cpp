@@ -780,10 +780,8 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
 
     _dirty = true;
 
-    for (uint8_t i = 0; i < subscriberCount; i++)
-    {
-        subscribers[i].cb(id, subscribers[i].ctx);
-    }
+    if (_subscriber != nullptr)
+        _subscriber(id);
 
     return true;
 }
@@ -944,16 +942,7 @@ bool ConfigManager::load()
     return true;
 }
 
-void ConfigManager::registerSubscriber(Callback cb, void* ctx)
-{
-    if (subscriberCount >= MAX_SUBSCRIBERS)
-    {
-        Serial.println(F("Config manager sub max"));
-        return;
-    }
-
-    subscribers[subscriberCount++] = {cb, ctx};
-}
+void ConfigManager::registerSubscriber(Subscriber sb) { _subscriber = sb; }
 
 void ConfigManager::setIMUCalibration(const float (&accelBias)[3], const float (&gyroBias)[3])
 {
