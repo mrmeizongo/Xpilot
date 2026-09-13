@@ -198,13 +198,15 @@ void Mode::processOutput(void* ctx)
 {
     (void)ctx;
 
+    output_trpy[Radio::CHANNEL::THROTTLE] =
+        mapToSRV(input_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max);
+
     mixerOutputs = airplaneMixer.mix(output_trpy[Radio::CHANNEL::ROLL],
                                      output_trpy[Radio::CHANNEL::PITCH],
                                      output_trpy[Radio::CHANNEL::YAW],
                                      flaperonInput);
 
-    SRVout[Actuators::Channel::CH1] =
-        mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max);
+    SRVout[Actuators::Channel::CH1] = output_trpy[Radio::CHANNEL::THROTTLE];
 
     SRVout[Actuators::Channel::CH2] =
         mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
