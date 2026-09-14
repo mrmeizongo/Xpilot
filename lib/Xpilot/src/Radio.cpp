@@ -4,14 +4,16 @@
 #include "Radio.h"
 #include "PinChangeInterrupt.h"
 
-volatile static uint32_t throttleCurrentTime = 0, throttleStartTime = 0, throttlePulses = 0;
-volatile static uint32_t aileronCurrentTime = 0, aileronStartTime = 0, aileronPulses = 0;
-volatile static uint32_t elevatorCurrentTime = 0, elevatorStartTime = 0, elevatorPulses = 0;
-volatile static uint32_t rudderCurrentTime = 0, rudderStartTime = 0, rudderPulses = 0;
-volatile static uint32_t aux1CurrentTime = 0, aux1StartTime = 0, aux1Pulses = 0;
-#if defined(USE_AUXIN2)
-volatile static uint32_t aux2CurrentTime = 0, aux2StartTime = 0, aux2Pulses = 0;
+volatile static uint32_t throttleRiseTimeUs = 0, aileronRiseTimeUs = 0, elevatorRiseTimeUs = 0, rudderRiseTimeUs = 0,
+                         aux1RiseTimeUs = 0;
+volatile static uint16_t throttlePulseUs = 0, aileronPulseUs = 0, elevatorPulseUs = 0, rudderPulseUs = 0, aux1PulseUs = 0;
+
+#if defined(USE_AUX2IN)
+volatile static uint32_t aux2RiseTimeUs = 0;
+volatile static uint16_t aux2PulseUs = 0;
 #endif
+
+volatile static uint32_t lastValidTimeUs[Radio::CHANNEL::CHANNEL_COUNT];
 // -------------------------
 
 Radio::Radio(void)
@@ -40,38 +42,29 @@ void Radio::init(void)
     // Auxiliary switch 1 setup
     pinMode(AUX1PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX1PIN_INT, CHANGE);
-#if defined(USE_AUXIN2)
+#if defined(USE_AUX2IN)
     // Auxiliary switch 2 setup
     pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
 #endif
 }
 
-void Radio::processInput(void)
+void Radio::processInput()
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        setPWM(throttlePulses, CHANNEL::THROTTLE);
-        setPWM(aileronPulses, CHANNEL::ROLL);
-        setPWM(elevatorPulses, CHANNEL::PITCH);
-        setPWM(rudderPulses, CHANNEL::YAW);
-        setPWM(aux1Pulses, CHANNEL::AUX1);
-#if defined(USE_AUXIN2)
-        setPWM(aux2Pulses, CHANNEL::AUX2);
+        setPWM(CHANNEL::THROTTLE, throttlePulseUs, lastValidTimeUs[CHANNEL::THROTTLE]);
+        setPWM(CHANNEL::ROLL, aileronPulseUs, lastValidTimeUs[CHANNEL::ROLL]);
+        setPWM(CHANNEL::PITCH, elevatorPulseUs, lastValidTimeUs[CHANNEL::PITCH]);
+        setPWM(CHANNEL::YAW, rudderPulseUs, lastValidTimeUs[CHANNEL::YAW]);
+        setPWM(CHANNEL::AUX1, aux1PulseUs, lastValidTimeUs[CHANNEL::AUX1]);
+
+#if defined(USE_AUX2IN)
+        setPWM(CHANNEL::AUX2, aux2PulseUs, lastValidTimeUs[CHANNEL::AUX2]);
 #endif
     }
 
     FailSafe();
-}
-
-void Radio::setPWM(uint32_t pulse, CHANNEL ch)
-{
-    if (pulse < RX_PWM_MIN || pulse > RX_PWM_MAX)
-        return;
-
-    raw[ch] = static_cast<int16_t>(pulse);
-
-    lastValidRxTimeMs[ch] = millis();
 }
 
 uint8_t Radio::requiredChannels()
@@ -119,11 +112,11 @@ void Radio::FailSafe()
             continue;
 
         // On stale or invalid input, any one of the 4 control channels can trigger a timeout failsafe
-        timeout |= (now - lastValidRxTimeMs[i]) >= RX_TIMEOUT_MS;
+        timeout |= (now - lastValidRxTimeUs[i]) >= RX_TIMEOUT_US;
     }
 
     // During rx bind, throttle is set to a value below min(through throttle cut) to indicate loss of signal
-    rxFailsafe = raw[CHANNEL::THROTTLE] < (config().throttleRxConfig.min - RX_THROTTLE_FAILSAFE_TOLERANCE);
+    rxFailsafe = raw[CHANNEL::THROTTLE] < (config().throttleRxConfig.min - RX_THROTTLE_FAILSAFE_TOL_MS);
 
     const bool signalLost = timeout || rxFailsafe;
 
@@ -153,45 +146,33 @@ void Radio::FailSafe()
  */
 void PinChangeInterruptEvent(THROTTLEPIN_INT)(void)
 {
-    throttleCurrentTime = micros();
-    throttlePulses = throttleCurrentTime - throttleStartTime;
-    throttleStartTime = throttleCurrentTime;
+    capturePWMEdge(THROTTLEPIN_INPUT, throttleRiseTimeUs, throttlePulseUs, lastValidTimeUs[Radio::CHANNEL::THROTTLE]);
 }
 
 void PinChangeInterruptEvent(AILPIN_INT)(void)
 {
-    aileronCurrentTime = micros();
-    aileronPulses = aileronCurrentTime - aileronStartTime;
-    aileronStartTime = aileronCurrentTime;
+    capturePWMEdge(AILPIN_INPUT, aileronRiseTimeUs, aileronPulseUs, lastValidTimeUs[Radio::CHANNEL::ROLL]);
 }
 
 void PinChangeInterruptEvent(ELEVPIN_INT)(void)
 {
-    elevatorCurrentTime = micros();
-    elevatorPulses = elevatorCurrentTime - elevatorStartTime;
-    elevatorStartTime = elevatorCurrentTime;
+    capturePWMEdge(AILPIN_INPUT, elevatorRiseTimeUs, elevatorPulseUs, lastValidTimeUs[Radio::CHANNEL::PITCH]);
 }
 
 void PinChangeInterruptEvent(RUDDPIN_INT)(void)
 {
-    rudderCurrentTime = micros();
-    rudderPulses = rudderCurrentTime - rudderStartTime;
-    rudderStartTime = rudderCurrentTime;
+    capturePWMEdge(AILPIN_INPUT, rudderRiseTimeUs, rudderPulseUs, lastValidTimeUs[Radio::CHANNEL::YAW]);
 }
 
 void PinChangeInterruptEvent(AUX1PIN_INT)(void)
 {
-    aux1CurrentTime = micros();
-    aux1Pulses = aux1CurrentTime - aux1StartTime;
-    aux1StartTime = aux1CurrentTime;
+    capturePWMEdge(AILPIN_INPUT, aux1RiseTimeUs, aux1PulseUs, lastValidTimeUs[Radio::CHANNEL::AUX1]);
 }
 
-#if defined(USE_AUXIN2)
+#if defined(USE_AUX2IN)
 void PinChangeInterruptEvent(AUX2PIN_INT)(void)
 {
-    aux2CurrentTime = micros();
-    aux2Pulses = aux2CurrentTime - aux2StartTime;
-    aux2StartTime = aux2CurrentTime;
+    capturePWMEdge(AILPIN_INPUT, aux2RiseTimeUs, aux2PulseUs, lastValidTimeUs[Radio::CHANNEL::AUX2]);
 }
 #endif
 // ----------------------------
