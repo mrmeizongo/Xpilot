@@ -41,7 +41,7 @@ constexpr int16_t RX_PWM_MIN = 600;                    // Lowest valid pwm expec
 constexpr int16_t RX_PWM_TRIM = 1500;                  // Trim pwm expected from transmitter
 constexpr int16_t RX_PWM_MAX = 2400;                   // Highest valid pwm expected from transmitter
 constexpr int16_t RX_TIMEOUT_MS = 110;                 // Rx timeout; 5 missed 22ms PWM frames triggers a failsafe
-constexpr int16_t RX_3_SW_POS_THRESHOLD = 150;         // 3 position switch input separator
+constexpr int16_t RX_3_SW_POS_THRESHOLD = 133;         // 3 position switch input separator
 constexpr int16_t RX_THROTTLE_FAILSAFE_TOLERANCE = 50; // Differentiate between a commanded throttle cut and signal loss
 constexpr int16_t THROTTLE_FAILSAFE_VALUE = -800;      // Normalized failsafe value for throttle (-1000 : +1000)
 
