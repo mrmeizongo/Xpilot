@@ -125,11 +125,7 @@ public:
         static_cast<Radio*>(ctx)->processInput();
     }
 
-    void setPWM(CHANNEL ch, uint16_t rawPulse, uint32_t lastValidUs)
-    {
-        raw[ch] = rawPulse;
-        lastValidRxTimeUs[ch] = lastValidUs;
-    }
+    void setPWM(CHANNEL ch, uint16_t rawPulse) { raw[ch] = rawPulse; }
 
     uint16_t getPWM(CHANNEL ch)
     {
@@ -156,22 +152,12 @@ public:
         return THREE_POS_SW::MID_POS;
     }
 
-    uint32_t getLastValidRxTimeMs(CHANNEL ch)
-    {
-        if (ch >= CHANNEL::CHANNEL_COUNT)
-            return 0;
-
-        return lastValidRxTimeUs[ch];
-    }
-
     uint32_t getSignalLossTimeUs(void) { return signalLossTimeUs; }
 
     bool inFailsafe(void) const { return failSafe; }
 
 private:
     uint16_t raw[CHANNEL::CHANNEL_COUNT];
-
-    uint32_t lastValidRxTimeUs[CHANNEL::CHANNEL_COUNT];
 
     uint32_t signalLossTimeUs;
 
