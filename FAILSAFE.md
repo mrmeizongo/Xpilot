@@ -23,7 +23,7 @@ Throttle cut PWM:  1000us.
 
 4. In [SysConfig.h](lib/Config/src/SysConfig.h), uncomment IO_DEBUG and upload to view input and output values on the serial monitor/bus. Activate the throttle cut switch and monitor the throttle pwm input. If done correctly, it should display ~1000us and enter failsafe after 2 seconds. If not, restart this guide.
 
-5. At this point, manually activating the throttle cut will also activate the failsafe. If this behavior is not wanted(I don't know why you would), adjust the transmitter's failsafe position to a value between -100% and -113%. Failsafe tolerance is set to 52us(adjustable), verify IO_DEBUG displays between 1100 and 1050 in a commanded throttle cut and ensure failsafe is not activated. Then verify actual failsafe activation by turning off transmitter while monitoring the serial output.
+5. At this point, manually activating the throttle cut will also activate the failsafe. If this behavior is not wanted(I don't know why you would), adjust the transmitter's failsafe position to a value between -101% and -113%. Failsafe tolerance is set to 52us(adjustable), verify IO_DEBUG displays between 1100 and 1050 in a commanded throttle cut and ensure failsafe is not activated. Then verify actual failsafe activation by turning off transmitter while monitoring the serial output.
 
 ## Important
 
