@@ -21,7 +21,7 @@ Radio::Radio(void)
     failSafe = false;
     failSafeTimerStarted = false;
 
-    signalLossTimeMs = 0;
+    signalLossTimeUs = 0;
 }
 
 void Radio::init(void)
@@ -95,7 +95,7 @@ uint8_t Radio::requiredChannels()
  */
 void Radio::FailSafe()
 {
-    const uint32_t now = millis();
+    const uint32_t now = micros();
 
     const uint8_t req = requiredChannels();
 
@@ -129,12 +129,12 @@ void Radio::FailSafe()
 
     if (!failSafeTimerStarted)
     {
-        signalLossTimeMs = now;
+        signalLossTimeUs = now;
         failSafeTimerStarted = true;
         return;
     }
 
-    if (now - signalLossTimeMs >= 2000)
+    if (now - signalLossTimeUs >= 2000000UL)
         failSafe = true;
 }
 

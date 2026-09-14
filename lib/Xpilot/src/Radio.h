@@ -164,7 +164,7 @@ public:
         return lastValidRxTimeUs[ch];
     }
 
-    uint32_t getSignalLossTimeMs(void) { return signalLossTimeMs; }
+    uint32_t getSignalLossTimeUs(void) { return signalLossTimeUs; }
 
     bool inFailsafe(void) const { return failSafe; }
 
@@ -173,7 +173,7 @@ private:
 
     uint32_t lastValidRxTimeUs[CHANNEL::CHANNEL_COUNT];
 
-    uint32_t signalLossTimeMs;
+    uint32_t signalLossTimeUs;
 
     bool failSafe;
 
