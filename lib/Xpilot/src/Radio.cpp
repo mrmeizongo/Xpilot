@@ -156,23 +156,23 @@ void PinChangeInterruptEvent(AILPIN_INT)(void)
 
 void PinChangeInterruptEvent(ELEVPIN_INT)(void)
 {
-    capturePWMEdge(AILPIN_INPUT, elevatorRiseTimeUs, elevatorPulseUs, lastValidTimeUs[Radio::CHANNEL::PITCH]);
+    capturePWMEdge(ELEVPIN_INPUT, elevatorRiseTimeUs, elevatorPulseUs, lastValidTimeUs[Radio::CHANNEL::PITCH]);
 }
 
 void PinChangeInterruptEvent(RUDDPIN_INT)(void)
 {
-    capturePWMEdge(AILPIN_INPUT, rudderRiseTimeUs, rudderPulseUs, lastValidTimeUs[Radio::CHANNEL::YAW]);
+    capturePWMEdge(RUDDPIN_INPUT, rudderRiseTimeUs, rudderPulseUs, lastValidTimeUs[Radio::CHANNEL::YAW]);
 }
 
 void PinChangeInterruptEvent(AUX1PIN_INT)(void)
 {
-    capturePWMEdge(AILPIN_INPUT, aux1RiseTimeUs, aux1PulseUs, lastValidTimeUs[Radio::CHANNEL::AUX1]);
+    capturePWMEdge(AUX1PIN_INPUT, aux1RiseTimeUs, aux1PulseUs, lastValidTimeUs[Radio::CHANNEL::AUX1]);
 }
 
 #if defined(USE_AUX2IN)
 void PinChangeInterruptEvent(AUX2PIN_INT)(void)
 {
-    capturePWMEdge(AILPIN_INPUT, aux2RiseTimeUs, aux2PulseUs, lastValidTimeUs[Radio::CHANNEL::AUX2]);
+    capturePWMEdge(AUX2PIN_INPUT, aux2RiseTimeUs, aux2PulseUs, lastValidTimeUs[Radio::CHANNEL::AUX2]);
 }
 #endif
 // ----------------------------
