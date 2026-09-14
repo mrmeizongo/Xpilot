@@ -105,9 +105,11 @@ void Radio::FailSafe()
     const uint32_t now = millis();
 
     const uint8_t req = requiredChannels();
+
     bool timeout = false;
     bool rxFailsafe = false;
 
+    // Only checking throttle, roll, pitch and yaw channels
     for (uint8_t i = 0; i < 4; ++i)
     {
         const uint8_t mask = 1 << i;
@@ -116,7 +118,7 @@ void Radio::FailSafe()
         if (!(req & mask))
             continue;
 
-        // Only one trpy channel is required to trigger a timeout
+        // On stale or invalid input, any one of the 4 control channels can trigger a timeout failsafe
         timeout |= (now - lastValidRxTimeMs[i]) >= RX_TIMEOUT_MS;
     }
 
