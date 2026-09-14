@@ -31,13 +31,9 @@ public:
         static_cast<IMU*>(ctx)->getLatestReadings();
     }
 
-    int16_t getRoll(void) { return static_cast<int16_t>(_rpy[Axis::X_AXIS]); }
-    int16_t getPitch(void) { return static_cast<int16_t>(_rpy[Axis::Y_AXIS]); }
-    int16_t getYaw(void) { return static_cast<int16_t>(_rpy[Axis::Z_AXIS]); }
+    static void printIMUTask(void* ctx) { static_cast<IMU*>(ctx)->printIMU(); }
 
-    int16_t getGyroX(void) { return static_cast<int16_t>(_g[Axis::X_AXIS]); }
-    int16_t getGyroY(void) { return static_cast<int16_t>(_g[Axis::Y_AXIS]); }
-    int16_t getGyroZ(void) { return static_cast<int16_t>(_g[Axis::Z_AXIS]); }
+    void printIMU(void);
 
     /// @brief              Register a single callback to be invoked when new imu data is received
     /// @param callback     Function to execute

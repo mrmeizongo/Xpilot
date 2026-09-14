@@ -72,4 +72,24 @@ void IMU::getCalibration(float (&accel)[Axis::AXIS_COUNT], float (&gyro)[Axis::A
     }
 }
 
+void IMU::printIMU(void)
+{
+    // Clear screen
+    Serial.print("\033[2J");
+    Serial.print("\033[H");
+
+    Serial.print(F("Roll: "));
+    Serial.println(_rpy[Axis::X_AXIS]);
+    Serial.print(F("Pitch: "));
+    Serial.println(_rpy[Axis::Y_AXIS]);
+    Serial.print(F("Yaw: "));
+    Serial.println(_rpy[Axis::Z_AXIS]);
+    Serial.print(F("Gyro X: "));
+    Serial.println(_g[Axis::X_AXIS]);
+    Serial.print(F("Gyro Y: "));
+    Serial.println(_g[Axis::X_AXIS]);
+    Serial.print(F("Gyro Z: "));
+    Serial.println(_g[Axis::X_AXIS]);
+}
+
 IMU imu;

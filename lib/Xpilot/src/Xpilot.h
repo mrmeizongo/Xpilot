@@ -44,7 +44,6 @@ public:
     // Trampoline functions for the scheduler
     static void updateFlightModeTask(void* ctx) { static_cast<Xpilot*>(ctx)->updateFlightMode(); }
     static void runSerialConfigTask(void* ctx) { static_cast<Xpilot*>(ctx)->serialConfigTask.run(); }
-    static void printIMUTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIMU(); }
     static void printIOTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIO(); }
     static void printSchedulerRateTask(void* ctx) { static_cast<Xpilot*>(ctx)->printSchedulerRate(); }
     static void printIMUTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIMUTaskStats(); }
@@ -62,7 +61,6 @@ public:
     void loop(void);
 
     // Debug functions to get outputs for testing and tuning purposes.
-    void printIMU(void);
     void printIO(void);
     void printSchedulerRate(void);
     void printIMUTaskStats(void);

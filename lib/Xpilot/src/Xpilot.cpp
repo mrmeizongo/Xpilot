@@ -41,7 +41,7 @@ void Xpilot::setup(void)
     (void)scheduler.addTask(&Xpilot::printIOTask, this, TASK_PRINT_RATE_HZ);
 #endif
 #if defined(IMU_DEBUG)
-    (void)scheduler.addTask(&Xpilot::printIMUTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&IMU::printIMUTask, &imu, TASK_PRINT_RATE_HZ);
 #endif
 #if defined(SCHEDULER_RATE_DEBUG)
     (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_RATE_HZ);

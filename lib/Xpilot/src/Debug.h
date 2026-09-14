@@ -1,5 +1,4 @@
 #include "Xpilot.h"
-#include "IMU.h"
 
 #define CLEAR_TERMINAL()                                                                                                    \
     do                                                                                                                      \
@@ -96,23 +95,6 @@ void Xpilot::printIO(void)
     Serial.print(F("Flaperon Position: "));
     Serial.println((int16_t)radio.getThreeSwitchPos(Radio::CHANNEL::AUX2));
 #endif
-}
-
-void Xpilot::printIMU(void)
-{
-    CLEAR_TERMINAL();
-    Serial.print(F("Roll: "));
-    Serial.println(imu.getRoll());
-    Serial.print(F("Pitch: "));
-    Serial.println(imu.getPitch());
-    Serial.print(F("Yaw: "));
-    Serial.println(imu.getYaw());
-    Serial.print(F("Gyro X: "));
-    Serial.println(imu.getGyroX());
-    Serial.print(F("Gyro Y: "));
-    Serial.println(imu.getGyroY());
-    Serial.print(F("Gyro Z: "));
-    Serial.println(imu.getGyroZ());
 }
 
 void Xpilot::printSchedulerRate(void)
