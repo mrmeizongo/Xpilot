@@ -37,13 +37,13 @@ Flight stabilization software
 #include "SysConfig.h"
 #include "FlightConfigAccess.h"
 
-constexpr int16_t RX_PWM_MIN = 600;            // Lowest valid pwm expected from transmitter
-constexpr int16_t RX_PWM_TRIM = 1500;          // Trim pwm expected from transmitter
-constexpr int16_t RX_PWM_MAX = 2400;           // Highest valid pwm expected from transmitter
-constexpr int16_t RX_FAILSAFE_PWM = 1746;      // My rx PWM output for all channels on signal loss
-constexpr uint8_t RX_FAILSAFE_TOLERANCE = 10;  // Tolerance used for determining a failsafe condition
-constexpr int16_t RX_TIMEOUT_MS = 110;         // Rx timeout; 5 missed 22ms PWM frames triggers a failsafe
-constexpr int16_t RX_3_SW_POS_THRESHOLD = 150; // 3 position switch input separator
+constexpr int16_t RX_PWM_MIN = 600;                    // Lowest valid pwm expected from transmitter
+constexpr int16_t RX_PWM_TRIM = 1500;                  // Trim pwm expected from transmitter
+constexpr int16_t RX_PWM_MAX = 2400;                   // Highest valid pwm expected from transmitter
+constexpr int16_t RX_TIMEOUT_MS = 110;                 // Rx timeout; 5 missed 22ms PWM frames triggers a failsafe
+constexpr int16_t RX_3_SW_POS_THRESHOLD = 150;         // 3 position switch input separator
+constexpr int16_t RX_THROTTLE_FAILSAFE_TOLERANCE = 50; // Differentiate between a commanded throttle cut and signal loss
+constexpr int16_t THROTTLE_FAILSAFE_VALUE = -800;      // Normalized failsafe value for throttle (-1000 : +1000)
 
 inline int32_t
 normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inputMax, uint8_t deadband, bool reverse)
@@ -160,9 +160,10 @@ private:
     enum CHANNELMASK : uint8_t
     {
         NONE = 0x0,
-        REQ_ROLL = 1 << 0,
-        REQ_PITCH = 1 << 1,
-        REQ_YAW = 1 << 2
+        REQ_THROTTLE = 1 << 0,
+        REQ_ROLL = 1 << 1,
+        REQ_PITCH = 1 << 2,
+        REQ_YAW = 1 << 3
     };
 
     uint8_t requiredChannels();

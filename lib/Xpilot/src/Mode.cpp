@@ -236,7 +236,7 @@ void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&
 void Mode::setFailsafeInputs(void)
 {
     // Default failsafe implementation
-    input_trpy[Radio::CHANNEL::THROTTLE] = -config().controlConfig.controlResolution;
+    input_trpy[Radio::CHANNEL::THROTTLE] = THROTTLE_FAILSAFE_VALUE;
     input_trpy[Radio::CHANNEL::ROLL] = 0;
     input_trpy[Radio::CHANNEL::PITCH] = 0;
     input_trpy[Radio::CHANNEL::YAW] = 0;

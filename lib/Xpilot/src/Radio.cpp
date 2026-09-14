@@ -82,14 +82,14 @@ uint8_t Radio::requiredChannels()
         case Config::AirframeType::V_TAIL:
         case Config::AirframeType::FLYING_WING_RUDDER:
         case Config::AirframeType::CUSTOM:
-            return REQ_ROLL | REQ_PITCH | REQ_YAW;
+            return REQ_THROTTLE | REQ_ROLL | REQ_PITCH | REQ_YAW;
 
         case Config::AirframeType::FLYING_WING_NO_RUDDER:
         case Config::AirframeType::AILERON_ELEVATOR:
-            return REQ_ROLL | REQ_PITCH;
+            return REQ_THROTTLE | REQ_ROLL | REQ_PITCH;
 
         case Config::AirframeType::RUDDER_ELEVATOR:
-            return REQ_PITCH | REQ_YAW;
+            return REQ_THROTTLE | REQ_PITCH | REQ_YAW;
 
         default:
             return NONE;
@@ -106,7 +106,7 @@ void Radio::FailSafe()
 
     const uint8_t req = requiredChannels();
     bool timeout = false;
-    //bool rxFailsafe = true;
+    bool rxFailsafe = false;
 
     for (uint8_t i = 0; i < 4; ++i)
     {
@@ -116,16 +116,14 @@ void Radio::FailSafe()
         if (!(req & mask))
             continue;
 
-        // Only one channel is required to trigger a timeout
-        // Starts at i + 1 because throttle is always present
-        timeout |= (now - lastValidRxTimeMs[i + 1]) >= RX_TIMEOUT_MS;
-
-        // All channels are required to trigger a failsafe
-        // rxFailsafe &= abs(RX_FAILSAFE_PWM - raw[i]) <= RX_FAILSAFE_TOLERANCE;
+        // Only one trpy channel is required to trigger a timeout
+        timeout |= (now - lastValidRxTimeMs[i]) >= RX_TIMEOUT_MS;
     }
 
-    // const bool signalLost = timeout || rxFailsafe;
-    const bool signalLost = timeout;
+    // During rx bind, throttle is set to a value below min(through throttle cut) to indicate loss of signal
+    rxFailsafe = raw[CHANNEL::THROTTLE] < (config().throttleRxConfig.min - RX_THROTTLE_FAILSAFE_TOLERANCE);
+
+    const bool signalLost = timeout || rxFailsafe;
 
     if (!signalLost)
     {
