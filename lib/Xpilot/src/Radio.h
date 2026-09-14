@@ -39,13 +39,13 @@ Flight stabilization software
 
 #define PIN_HIGH(pin) ((PIND & _BV(pin)) != 0)
 
-constexpr uint16_t RX_PWM_MIN_US = 600;              // Lowest valid pwm expected from transmitter
-constexpr uint16_t RX_PWM_TRIM_US = 1500;            // Trim pwm expected from transmitter
-constexpr uint16_t RX_PWM_MAX_US = 2400;             // Highest valid pwm expected from transmitter
-constexpr uint32_t RX_TIMEOUT_US = 110000;           // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
-constexpr int16_t RX_3_SW_POS_THRESHOLD = 133;       // 3 position switch input separator
-constexpr uint16_t RX_THROTTLE_FAILSAFE_TOL_MS = 52; // Differentiate between a commanded throttle cut and signal loss
-constexpr int16_t THROTTLE_FAILSAFE_VALUE = -800;    // Normalized failsafe value for throttle (-1000 : +1000)
+constexpr uint16_t RX_PWM_MIN_US = 600;           // Lowest valid pwm expected from transmitter
+constexpr uint16_t RX_PWM_TRIM_US = 1500;         // Trim pwm expected from transmitter
+constexpr uint16_t RX_PWM_MAX_US = 2400;          // Highest valid pwm expected from transmitter
+constexpr uint32_t RX_TIMEOUT_US = 110000;        // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
+constexpr int16_t RX_3_SW_POS_THRESHOLD = 133;    // 3 position switch input separator
+constexpr uint16_t RX_THROTTLE_FAILSAFE_TOL = 52; // Differentiate between a commanded throttle cut and signal loss
+constexpr int16_t THROTTLE_FAILSAFE_VALUE = -800; // Normalized failsafe value for throttle (-1000 : +1000)
 
 inline int32_t
 normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inputMax, uint8_t deadband, bool reverse)

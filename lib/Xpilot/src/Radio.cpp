@@ -116,7 +116,7 @@ void Radio::FailSafe()
     }
 
     // During rx bind, throttle is set to a value below min(through throttle cut) to indicate loss of signal
-    rxFailsafe = raw[CHANNEL::THROTTLE] < (config().throttleRxConfig.min - RX_THROTTLE_FAILSAFE_TOL_MS);
+    rxFailsafe = raw[CHANNEL::THROTTLE] < (config().throttleRxConfig.min - RX_THROTTLE_FAILSAFE_TOL);
 
     const bool signalLost = timeout || rxFailsafe;
 
