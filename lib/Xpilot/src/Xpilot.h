@@ -74,18 +74,16 @@ public:
     bool inFailsafe(void) const { return sysFailsafeActive; }
 
 private:
+    void sysInit(void); // Initialize system components
+
+    bool sysFailsafeActive; // System failsafe active flag
+
     RateMode rateMode;
     StabilizeMode stabilizeMode;
     PassthroughMode passthroughMode;
 
     // This is the state of the flight stabilization system
     Mode* currentMode;
-
-    SerialConfigTask serialConfigTask;
-
-    void sysInit(void); // Initialize system components
-
-    bool sysFailsafeActive; // System failsafe active flag
     void updateFlightMode(void);
 
     // Task handlers for the scheduler to manage periodic tasks
@@ -96,6 +94,8 @@ private:
     static uint8_t flightModeRunTaskId;
     static uint8_t flightModeOutputTaskId;
     static uint8_t serialConfigTaskId;
+
+    SerialConfigTask serialConfigTask;
 
     Scheduler scheduler; // Scheduler object to manage periodic tasks
 };
