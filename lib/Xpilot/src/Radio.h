@@ -121,12 +121,10 @@ public:
         if (ch >= CHANNEL::CHANNEL_COUNT)
             return THREE_POS_SW::UNDEFINED;
 
-        const int16_t pwm = raw[ch];
-
-        if (pwm < RX_PWM_TRIM - RX_3_SW_POS_THRESHOLD)
+        if (raw[ch] < RX_PWM_TRIM - RX_3_SW_POS_THRESHOLD)
             return THREE_POS_SW::LOW_POS;
 
-        if (pwm > RX_PWM_TRIM + RX_3_SW_POS_THRESHOLD)
+        if (raw[ch] > RX_PWM_TRIM + RX_3_SW_POS_THRESHOLD)
             return THREE_POS_SW::HIGH_POS;
 
         return THREE_POS_SW::MID_POS;
