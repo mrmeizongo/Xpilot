@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include "SysConfig.h"
-#include "FlightConfigAccess.h"
-#include "Scheduler.h"
 #include "IMU.h"
+#include "SysConfig.h"
+#include "Scheduler.h"
+#include "FlightConfigAccess.h"
 
 #define MPU6050_ADDRESS 0x68    // I2C address of MPU6050
 #define I2C_CLOCK_400KHZ 400000 // I2C clock speed in Hz
