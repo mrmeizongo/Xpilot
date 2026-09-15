@@ -60,7 +60,7 @@
 
 #include "avr/ServoTimers.h"
 
-#define Servo_VERSION 2 // software version of this library
+#define Servo_VERSION 3 // software version of this library, modified 09152026
 
 #define MIN_PULSE_WIDTH 600      // the shortest pulse sent to a servo
 #define MAX_PULSE_WIDTH 2400     // the longest pulse sent to a servo
