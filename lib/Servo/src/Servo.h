@@ -76,10 +76,10 @@
 
 typedef struct
 {
-    volatile uint8_t* port = nullptr;
-    uint8_t mask;
-    uint8_t nbr : 6;      // a pin number from 0 to 63
-    uint8_t isActive : 1; // true if this channel is enabled, pin not pulsed if false
+    volatile uint8_t* port = nullptr; // Added 15 September 2026 for direct port manipulation
+    uint8_t mask;                     // Added 15 September 2026 for direct port manipulation
+    uint8_t nbr : 6;                  // a pin number from 0 to 63
+    uint8_t isActive : 1;             // true if this channel is enabled, pin not pulsed if false
 } ServoPin_t;
 
 typedef struct

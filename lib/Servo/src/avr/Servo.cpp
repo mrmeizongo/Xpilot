@@ -50,6 +50,7 @@ uint8_t ServoCount = 0; // the total number of attached servos
 #define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4) // minimum value in us for this servo
 #define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4) // maximum value in us for this servo
 
+// Added 15 September 2026 for direct port manipulation
 inline void writePin(const ServoPin_t& pin, bool value)
 {
     if (value)
@@ -241,10 +242,10 @@ uint8_t Servo::attach(int pin, int min, int max)
     {
         pinMode(pin, OUTPUT); // set servo pin to output
 
-        const uint8_t port = digitalPinToPort(pin);
+        const uint8_t port = digitalPinToPort(pin); // Added 15 September 2026 for direct port manipulation
 
-        servos[this->servoIndex].Pin.port = portOutputRegister(port);
-        servos[this->servoIndex].Pin.mask = digitalPinToBitMask(pin);
+        servos[this->servoIndex].Pin.port = portOutputRegister(port); // Added 15 September 2026 for direct port manipulation
+        servos[this->servoIndex].Pin.mask = digitalPinToBitMask(pin); // Added 15 September 2026 for direct port manipulation
         servos[this->servoIndex].Pin.nbr = pin;
 
         // todo min/max check: abs(min - MIN_PULSE_WIDTH) /4 < 128
