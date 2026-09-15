@@ -70,7 +70,7 @@ normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inpu
 }
 
 inline void
-capturePWMEdge(uint8_t pin, volatile uint32_t& riseTimeUs, volatile uint16_t& pulseUs, volatile uint32_t lastValid)
+capturePWMEdge(uint8_t pin, volatile uint32_t& riseTimeUs, volatile uint16_t& pulseUs, volatile uint32_t& lastValid)
 {
     const uint32_t now = micros();
 
@@ -125,7 +125,11 @@ public:
         static_cast<Radio*>(ctx)->processInput();
     }
 
-    void setPWM(CHANNEL ch, uint16_t rawPulse) { raw[ch] = rawPulse; }
+    void setPWM(CHANNEL ch, const volatile uint16_t& rawPulse, const volatile uint32_t& validTime)
+    {
+        raw[ch] = rawPulse;
+        lastValidRxTimeUS[ch] = validTime;
+    }
 
     uint16_t getPWM(CHANNEL ch)
     {
@@ -160,6 +164,7 @@ private:
     uint16_t raw[CHANNEL::CHANNEL_COUNT];
 
     uint32_t signalLossTimeUs;
+    uint32_t lastValidRxTimeUS[CHANNEL::CHANNEL_COUNT];
 
     bool failSafe;
 

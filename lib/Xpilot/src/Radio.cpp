@@ -53,14 +53,14 @@ void Radio::processInput()
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        setPWM(CHANNEL::THROTTLE, throttlePulseUs);
-        setPWM(CHANNEL::ROLL, aileronPulseUs);
-        setPWM(CHANNEL::PITCH, elevatorPulseUs);
-        setPWM(CHANNEL::YAW, rudderPulseUs);
-        setPWM(CHANNEL::AUX1, aux1PulseUs);
+        setPWM(CHANNEL::THROTTLE, throttlePulseUs, lastValidTimeUs[CHANNEL::THROTTLE]);
+        setPWM(CHANNEL::ROLL, aileronPulseUs, lastValidTimeUs[CHANNEL::ROLL]);
+        setPWM(CHANNEL::PITCH, elevatorPulseUs, lastValidTimeUs[CHANNEL::PITCH]);
+        setPWM(CHANNEL::YAW, rudderPulseUs, lastValidTimeUs[CHANNEL::YAW]);
+        setPWM(CHANNEL::AUX1, aux1PulseUs, lastValidTimeUs[CHANNEL::AUX1]);
 
 #if defined(USE_AUX2IN)
-        setPWM(CHANNEL::AUX2, aux2PulseUs);
+        setPWM(CHANNEL::AUX2, aux2PulseUs, lastValidTimeUs[CHANNEL::AUX2]);
 #endif
     }
 
@@ -111,11 +111,8 @@ void Radio::FailSafe()
         if (!(req & mask))
             continue;
 
-        ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-        {
-            // On stale or invalid input, any one of the 4 control channels can trigger a timeout failsafe
-            timeout |= (now - lastValidTimeUs[i]) >= RX_TIMEOUT_US;
-        }
+        // On stale or invalid input, any one of the 4 control channels can trigger a timeout failsafe
+        timeout |= (now - lastValidRxTimeUS[i]) >= RX_TIMEOUT_US;
     }
 
     // During rx bind, throttle is set to a value below min(through throttle cut) to indicate loss of signal
