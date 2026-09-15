@@ -1,10 +1,11 @@
 #include <string.h>
 #include "IMU.h"
+#include "ConfigManager.h"
 #include "SerialConfigTask.h"
+#include "FlightConfigAccess.h"
 
-SerialConfigTask::SerialConfigTask(HardwareSerial& serial, ConfigManager& configManager)
+SerialConfigTask::SerialConfigTask(HardwareSerial& serial)
     : _serial(serial)
-    , _configManager(configManager)
     , _rxState(RxState::WAITING_FOR_START)
     , _rxBuffer{}
     , _rxIndex(0)
@@ -89,7 +90,7 @@ void SerialConfigTask::processPacket(const SerialPacket& packet)
 
         case SerialCommand::SAVE:
         {
-            if (_configManager.save())
+            if (configManager.save())
             {
                 sendAck(command);
             }
@@ -103,7 +104,7 @@ void SerialConfigTask::processPacket(const SerialPacket& packet)
 
         case SerialCommand::LOAD:
         {
-            if (_configManager.load())
+            if (configManager.load())
             {
                 sendAck(command);
             }
@@ -117,7 +118,7 @@ void SerialConfigTask::processPacket(const SerialPacket& packet)
 
         case SerialCommand::DEFAULTS:
         {
-            _configManager.loadDefaults();
+            configManager.loadDefaults();
 
             sendAck(command);
 
@@ -131,7 +132,7 @@ void SerialConfigTask::processPacket(const SerialPacket& packet)
             float accel[IMU::Axis::AXIS_COUNT], gyro[IMU::Axis::AXIS_COUNT];
             imu.getCalibration(accel, gyro);
 
-            _configManager.setIMUCalibration(accel, gyro);
+            configManager.setIMUCalibration(accel, gyro);
 
             sendAck(command);
             break;
@@ -170,7 +171,7 @@ void SerialConfigTask::processSet(const SerialPacket& packet)
 
     memcpy(&value.raw, packet.value, sizeof(value.raw));
 
-    if (_configManager.set(id, value))
+    if (configManager.set(id, value))
     {
         sendAck(SerialCommand::SET);
     }
@@ -185,7 +186,7 @@ void SerialConfigTask::sendValue(ConfigID id)
     ConfigValue value{};
     ConfigValueType type;
 
-    if (!_configManager.get(id, value, type))
+    if (!configManager.get(id, value, type))
     {
         sendAck(SerialCommand::GET, SerialCommand::NACK);
 

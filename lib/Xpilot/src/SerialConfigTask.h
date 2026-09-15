@@ -27,13 +27,12 @@ Flight stabilization software
 #ifndef _SERIAL_CONFIG_TASK_H
 #define _SERIAL_CONFIG_TASK_H
 #include <Arduino.h>
-#include "ConfigManager.h"
 #include "SerialProtocol.h"
 
 class SerialConfigTask
 {
 public:
-    SerialConfigTask(HardwareSerial& serial, ConfigManager& configManager);
+    SerialConfigTask(HardwareSerial& serial);
 
     void run();
 
@@ -45,7 +44,6 @@ private:
     };
 
     HardwareSerial& _serial;
-    ConfigManager& _configManager;
 
     RxState _rxState;
 

@@ -307,3 +307,5 @@ bool Scheduler::isValidTask(int8_t taskId) const
 void Scheduler::onTimerCompareISR() { ++tickCount; }
 
 ISR(TIMER2_COMPA_vect) { Scheduler::onTimerCompareISR(); }
+
+Scheduler scheduler;

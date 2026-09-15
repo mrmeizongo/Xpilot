@@ -1,4 +1,5 @@
 #include "Xpilot.h"
+#include "Scheduler.h"
 
 #define CLEAR_TERMINAL()                                                                                                    \
     do                                                                                                                      \

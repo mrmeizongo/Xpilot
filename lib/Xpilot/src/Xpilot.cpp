@@ -4,6 +4,7 @@
 #include "Debug.h"
 #include "Actuators.h"
 #include "SysConfig.h"
+#include "Scheduler.h"
 #include "FlightConfigAccess.h"
 
 static constexpr uint32_t SERIAL_BAUD_RATE = 250000; // Serial baud rate
@@ -18,7 +19,7 @@ uint8_t Xpilot::flightModeOutputTaskId = 0;
 uint8_t Xpilot::serialConfigTaskId = 0;
 
 Xpilot::Xpilot()
-    : serialConfigTask{Serial, configManager}
+    : serialConfigTask{Serial}
 {
 }
 
@@ -39,9 +40,6 @@ void Xpilot::setup(void)
 
 #if defined(IO_DEBUG)
     (void)scheduler.addTask(&Xpilot::printIOTask, this, TASK_PRINT_RATE_HZ);
-#endif
-#if defined(IMU_DEBUG)
-    (void)scheduler.addTask(&IMU::printIMUTask, &imu, TASK_PRINT_RATE_HZ);
 #endif
 #if defined(SCHEDULER_RATE_DEBUG)
     (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_RATE_HZ);

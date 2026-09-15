@@ -59,7 +59,6 @@ public:
      * Configures Timer2 to generate a 1 ms scheduler tick.
      *
      * Timer2 is reserved by the scheduler after this call.
-     * This conflicts with Arduino tone() and any other library using Timer2.
      */
     void init(void);
 
@@ -76,8 +75,6 @@ public:
 
     /**
      * Executes all tasks that are currently due.
-     *
-     * Call this continuously from Arduino loop().
      */
     void runTasks(void);
 
@@ -88,14 +85,12 @@ public:
     bool resetStats(int8_t taskId);
 
     /**
-     * Returns milliseconds elapsed since begin().
+     * Returns milliseconds elapsed since init().
      */
     static uint32_t ticks(void);
 
     /**
      * Called by the Timer2 compare-match ISR.
-     *
-     * Do not call this manually.
      */
     static void onTimerCompareISR();
 
@@ -124,5 +119,7 @@ private:
 
     bool isValidTask(int8_t taskId) const;
 };
+
+extern Scheduler scheduler;
 
 #endif // _FLIGHT_SCHEDULER_H

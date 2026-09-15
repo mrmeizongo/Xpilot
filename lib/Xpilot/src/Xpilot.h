@@ -31,7 +31,6 @@ Flight stabilization software
 #ifndef _XPILOT_H
 #define _XPILOT_H
 #include "Mode.h"
-#include "Scheduler.h"
 #include "SerialConfigTask.h"
 
 class Xpilot
@@ -96,8 +95,6 @@ private:
     static uint8_t serialConfigTaskId;
 
     SerialConfigTask serialConfigTask;
-
-    Scheduler scheduler; // Scheduler object to manage periodic tasks
 };
 
 extern Xpilot xpilot;
