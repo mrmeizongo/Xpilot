@@ -50,7 +50,7 @@ uint8_t ServoCount = 0; // the total number of attached servos
 #define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4) // minimum value in us for this servo
 #define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4) // maximum value in us for this servo
 
-// Added 15 September 2026 for direct port manipulation
+// Added 15 September 2026 for direct GPIO port manipulation
 inline void writePin(const ServoPin_t& pin, bool value)
 {
     if (value)
