@@ -24,8 +24,8 @@ Flight stabilization software
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
-#ifndef _FLIGHT_SCHEDULER_H
-#define _FLIGHT_SCHEDULER_H
+#ifndef _SCHEDULER_H
+#define _SCHEDULER_H
 
 #include <Arduino.h>
 
@@ -122,4 +122,4 @@ private:
 
 extern Scheduler scheduler;
 
-#endif // _FLIGHT_SCHEDULER_H
+#endif // _SCHEDULER_H
