@@ -67,7 +67,7 @@
 #define DEFAULT_PULSE_WIDTH 1500 // default pulse width when servo is attached
 #define REFRESH_INTERVAL 22000   // minimum time to refresh servos in microseconds
 
-#define SERVOS_PER_TIMER 12 // the maximum number of servos controlled by one timer
+#define SERVOS_PER_TIMER 5 // the maximum number of servos controlled by one timer, modified for Xpilot's use
 #define MAX_SERVOS (_Nbr_16timers * SERVOS_PER_TIMER)
 
 #define INVALID_SERVO 255 // flag indicating an invalid servo index
