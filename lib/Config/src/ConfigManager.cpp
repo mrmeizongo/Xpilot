@@ -545,13 +545,14 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
             break;
 
         case ConfigID::CONTROL_LPF_FREQ:
-            type = ConfigValueType::INT16;
+            type = ConfigValueType::UINT16;
             value.u16 = _config.controlConfig.lowPassFilterFreq;
             break;
 
         case ConfigID::CONTROL_RESOLUTION:
-            type = ConfigValueType::INT16;
-            value.i16 = _config.controlConfig.controlResolution;
+            type = ConfigValueType::UINT16;
+            value.u16 = _config.controlConfig.controlResolution;
+            break;
 
         case ConfigID::CONTROL_DT:
             type = ConfigValueType::FLOAT;
@@ -741,7 +742,7 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             break;
 
         case ConfigID::FLIGHT_MAX_PITCH_ANGLE_DEGS:
-            _config.flightConfig.maxPitchRateDegs = value.i16;
+            _config.flightConfig.maxPitchAngleDegs = value.i16;
             break;
 
         case ConfigID::FLIGHT_ROLL_ANGLE_KP:
