@@ -156,6 +156,13 @@ void Radio::FailSafeDetector()
     {
         failSafe = false;
         failSafeTimerStarted = false;
+
+        // Update lastValidRaw
+        for (uint8_t i = CHANNEL::THROTTLE; i < CHANNEL::CHANNEL_COUNT; i++)
+        {
+            lastValidRaw[i] = raw[i];
+        }
+
         return;
     }
 
@@ -163,6 +170,7 @@ void Radio::FailSafeDetector()
     {
         signalLossTimeUs = now;
         failSafeTimerStarted = true;
+
         return;
     }
 

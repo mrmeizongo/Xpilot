@@ -146,7 +146,7 @@ public:
             return 0;
 
         if (failSafeTimerStarted)
-            return PWM_TRIM_US;
+            return lastValidRaw[ch];
 
         return raw[ch];
     }
@@ -173,6 +173,7 @@ public:
 
 private:
     uint16_t raw[CHANNEL::CHANNEL_COUNT];
+    uint16_t lastValidRaw[CHANNEL::CHANNEL_COUNT];
 
     uint32_t signalLossTimeUs;
     uint32_t lastValidRxTimeUS[CHANNEL::CHANNEL_COUNT];
