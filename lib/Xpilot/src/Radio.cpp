@@ -105,31 +105,28 @@ Radio::THROTTLE_STATE Radio::decodeThrottleState()
     return THROTTLE_STATE::NORMAL;
 }
 
-/**
- * Only roll, pitch and yaw channels are monitored for a failsafe
- * Rx should be configured to set rpy channels to max on signal loss
- */
+// Failsafe is triggered 2 seconds after an input timeout or loss of signal
 void Radio::FailSafeDetector()
 {
     const uint32_t now = micros();
 
     const uint8_t req = requiredChannels();
 
+    // Stale or invalid pwm input flag
     bool timeout = false;
 
     // Tx/Rx state
     bool rxFailsafe = false;
 
     // Check throttle, roll, pitch and yaw channels for valid signals
-    for (uint8_t i = 0; i < 4; ++i)
+    for (uint8_t i = CHANNEL::THROTTLE; i <= CHANNEL::YAW; ++i)
     {
         const uint8_t mask = 1 << i;
 
-        // Skip iteration if rx channel is not required for this airframe
         if (!(req & mask))
             continue;
 
-        // On stale or invalid input, any one of the 4 control channels can trigger a timeout failsafe
+        // Any one of the 4 control channels can trigger a timeout failsafe
         timeout |= (now - lastValidRxTimeUS[i]) >= TIMEOUT_US;
     }
 
