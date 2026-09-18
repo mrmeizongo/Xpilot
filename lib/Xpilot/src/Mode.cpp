@@ -140,12 +140,19 @@ void Mode::update(void)
         return;
     }
 
-    input_trpy[Radio::CHANNEL::THROTTLE] = normalizeInput(radio.getPWM(Radio::CHANNEL::THROTTLE),
-                                                          config().throttleRxConfig.min,
-                                                          config().throttleRxConfig.trim,
-                                                          config().throttleRxConfig.max,
-                                                          config().throttleRxConfig.deadband,
-                                                          config().throttleRxConfig.reverse);
+    if (radio.inThrottleCut())
+    {
+        input_trpy[Radio::CHANNEL::THROTTLE] = THROTTLE_SHUTOFF_VALUE;
+    }
+    else
+    {
+        input_trpy[Radio::CHANNEL::THROTTLE] = normalizeInput(radio.getPWM(Radio::CHANNEL::THROTTLE),
+                                                              config().throttleRxConfig.min,
+                                                              config().throttleRxConfig.trim,
+                                                              config().throttleRxConfig.max,
+                                                              config().throttleRxConfig.deadband,
+                                                              config().throttleRxConfig.reverse);
+    }
 
     input_trpy[Radio::CHANNEL::ROLL] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL),
                                                       config().rollRxConfig.min,
@@ -236,7 +243,7 @@ void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&
 void Mode::setFailsafeInputs(void)
 {
     // Default failsafe implementation
-    input_trpy[Radio::CHANNEL::THROTTLE] = THROTTLE_FAILSAFE_VALUE;
+    input_trpy[Radio::CHANNEL::THROTTLE] = THROTTLE_SHUTOFF_VALUE;
     input_trpy[Radio::CHANNEL::ROLL] = 0;
     input_trpy[Radio::CHANNEL::PITCH] = 0;
     input_trpy[Radio::CHANNEL::YAW] = 0;

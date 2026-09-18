@@ -14,9 +14,12 @@ void Xpilot::printIO(void)
     Serial.print(F("\t\t\t\t\t\t"));
     Serial.print(F("Flight Mode: "));
     Serial.println(xpilot.getCurrentFlightMode()->modeName4());
-    Serial.print(F("\t\t\t\t\t\t"));
+    Serial.print(F("\t\t\t\t"));
     Serial.print(F("Failsafe: "));
-    Serial.println(xpilot.inFailsafe() ? F("Active") : F("Inactive"));
+    Serial.print(xpilot.inFailsafe() ? F("Active") : F("Inactive"));
+    Serial.print(F("\t\t"));
+    Serial.print(F("Throttle cut: "));
+    Serial.println(radio.inThrottleCut() ? F("Active") : F("Inactive"));
     Serial.println();
     Serial.print(F("Radio Input PWM"));
     Serial.print(F("\t\t\t"));

@@ -22,6 +22,8 @@ Radio::Radio(void)
     failSafeTimerStarted = false;
 
     signalLossTimeUs = 0;
+
+    txThrottleCut = false;
 }
 
 void Radio::init(void)
@@ -64,7 +66,7 @@ void Radio::processInput()
 #endif
     }
 
-    FailSafe();
+    FailSafeDetector();
 }
 
 uint8_t Radio::requiredChannels()
@@ -89,20 +91,36 @@ uint8_t Radio::requiredChannels()
     }
 }
 
+// See FAILSAFE.md for more information
+Radio::THROTTLE_STATE Radio::decodeThrottleState()
+{
+    uint16_t pwm = raw[CHANNEL::THROTTLE];
+
+    if (pwm < THROTTLE_FAILSAFE_THRESHOLD)
+        return THROTTLE_STATE::FAILSAFE;
+
+    if (pwm < THROTTLE_CUT_THRESHOLD)
+        return THROTTLE_STATE::CUT;
+
+    return THROTTLE_STATE::NORMAL;
+}
+
 /**
  * Only roll, pitch and yaw channels are monitored for a failsafe
  * Rx should be configured to set rpy channels to max on signal loss
  */
-void Radio::FailSafe()
+void Radio::FailSafeDetector()
 {
     const uint32_t now = micros();
 
     const uint8_t req = requiredChannels();
 
     bool timeout = false;
+
+    // Tx/Rx state
     bool rxFailsafe = false;
 
-    // Only checking throttle, roll, pitch and yaw channels
+    // Check throttle, roll, pitch and yaw channels for valid signals
     for (uint8_t i = 0; i < 4; ++i)
     {
         const uint8_t mask = 1 << i;
@@ -112,11 +130,28 @@ void Radio::FailSafe()
             continue;
 
         // On stale or invalid input, any one of the 4 control channels can trigger a timeout failsafe
-        timeout |= (now - lastValidRxTimeUS[i]) >= RX_TIMEOUT_US;
+        timeout |= (now - lastValidRxTimeUS[i]) >= TIMEOUT_US;
     }
 
-    // During rx bind, throttle is set to a value below min(through throttle cut) to indicate loss of signal
-    rxFailsafe = raw[CHANNEL::THROTTLE] < (config().throttleRxConfig.min - RX_THROTTLE_FAILSAFE_TOL);
+    // Check throttle signal
+    switch (decodeThrottleState())
+    {
+        case THROTTLE_STATE::NORMAL:
+            txThrottleCut = false;
+            rxFailsafe = false;
+            break;
+
+        case THROTTLE_STATE::CUT:
+            txThrottleCut = true;
+            rxFailsafe = false;
+            break;
+
+        default:
+        case THROTTLE_STATE::FAILSAFE:
+            txThrottleCut = true;
+            rxFailsafe = true;
+            break;
+    }
 
     const bool signalLost = timeout || rxFailsafe;
 

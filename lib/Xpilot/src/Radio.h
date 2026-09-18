@@ -39,13 +39,14 @@ Flight stabilization software
 
 #define PIN_HIGH(pin) ((PIND & _BV(pin)) != 0)
 
-constexpr uint16_t RX_PWM_MIN_US = 600;           // Lowest valid pwm expected from transmitter
-constexpr uint16_t RX_PWM_TRIM_US = 1500;         // Trim pwm expected from transmitter
-constexpr uint16_t RX_PWM_MAX_US = 2400;          // Highest valid pwm expected from transmitter
-constexpr uint32_t RX_TIMEOUT_US = 110000;        // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
-constexpr int16_t RX_3_SW_POS_THRESHOLD = 133;    // 3 position switch input separator
-constexpr uint16_t RX_THROTTLE_FAILSAFE_TOL = 52; // Differentiate between a commanded throttle cut and signal loss
-constexpr int16_t THROTTLE_FAILSAFE_VALUE = -800; // Normalized failsafe value for throttle (-1000 : +1000)
+constexpr uint16_t PWM_MIN_US = 600;                  // Lowest valid pwm expected from transmitter
+constexpr uint16_t PWM_TRIM_US = 1500;                // Trim pwm expected from transmitter
+constexpr uint16_t PWM_MAX_US = 2400;                 // Highest valid pwm expected from transmitter
+constexpr uint32_t TIMEOUT_US = 110000;               // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
+constexpr int16_t THREE_SW_POS_THRESHOLD = 133;       // 3 position switch input separator
+constexpr uint16_t THROTTLE_CUT_THRESHOLD = 1050;     // User selected normal throttle cut threshold
+constexpr uint16_t THROTTLE_FAILSAFE_THRESHOLD = 950; // User selected failsafe throttle threshold
+constexpr int16_t THROTTLE_SHUTOFF_VALUE = -1000;     // Normalized shut off value for throttle (-1000 : +1000)
 
 inline int32_t
 normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inputMax, uint8_t deadband, bool reverse)
@@ -82,7 +83,7 @@ capturePWMEdge(uint8_t pin, volatile uint32_t& riseTimeUs, volatile uint16_t& pu
 
     const uint32_t rawPulse = now - riseTimeUs;
 
-    if (rawPulse >= RX_PWM_MIN_US && rawPulse <= RX_PWM_MAX_US)
+    if (rawPulse >= PWM_MIN_US && rawPulse <= PWM_MAX_US)
     {
         pulseUs = static_cast<uint16_t>(rawPulse);
         lastValid = now;
@@ -92,6 +93,22 @@ capturePWMEdge(uint8_t pin, volatile uint32_t& riseTimeUs, volatile uint16_t& pu
 class Radio
 {
 public:
+    enum class THROTTLE_STATE : uint8_t
+    {
+        NORMAL,
+        CUT,
+        FAILSAFE
+    };
+
+    // 3-position switch
+    enum class THREE_POS_SW : uint8_t
+    {
+        UNDEFINED = 0U, // Undefined position, should not be used
+        LOW_POS,
+        MID_POS,
+        HIGH_POS
+    };
+
     enum CHANNEL : uint8_t
     {
         THROTTLE = 0U,
@@ -103,15 +120,6 @@ public:
         AUX2,
 #endif
         CHANNEL_COUNT
-    };
-
-    // 3-position switch
-    enum class THREE_POS_SW : uint8_t
-    {
-        UNDEFINED = 0U, // Undefined position, should not be used
-        LOW_POS,
-        MID_POS,
-        HIGH_POS
     };
 
     Radio(void);
@@ -137,7 +145,7 @@ public:
             return 0;
 
         if (failSafeTimerStarted)
-            return RX_PWM_TRIM_US;
+            return PWM_TRIM_US;
 
         return raw[ch];
     }
@@ -147,16 +155,18 @@ public:
         if (ch >= CHANNEL::CHANNEL_COUNT)
             return THREE_POS_SW::UNDEFINED;
 
-        if (raw[ch] < RX_PWM_TRIM_US - RX_3_SW_POS_THRESHOLD)
+        if (raw[ch] < PWM_TRIM_US - THREE_SW_POS_THRESHOLD)
             return THREE_POS_SW::LOW_POS;
 
-        if (raw[ch] > RX_PWM_TRIM_US + RX_3_SW_POS_THRESHOLD)
+        if (raw[ch] > PWM_TRIM_US + THREE_SW_POS_THRESHOLD)
             return THREE_POS_SW::HIGH_POS;
 
         return THREE_POS_SW::MID_POS;
     }
 
     uint32_t getSignalLossTimeUs(void) { return signalLossTimeUs; }
+
+    bool inThrottleCut(void) { return txThrottleCut; }
 
     bool inFailsafe(void) const { return failSafe; }
 
@@ -170,7 +180,9 @@ private:
 
     bool failSafeTimerStarted;
 
-    void FailSafe();
+    bool txThrottleCut;
+
+    void FailSafeDetector();
 
     enum CHANNELMASK : uint8_t
     {
@@ -182,6 +194,8 @@ private:
     };
 
     uint8_t requiredChannels();
+
+    THROTTLE_STATE decodeThrottleState();
 };
 
 extern Radio radio;
