@@ -157,7 +157,7 @@ void Radio::FailSafeDetector()
         failSafe = false;
         failSafeTimerStarted = false;
 
-        // Update lastValidRaw
+        // Update all last valid pwm values
         for (uint8_t i = CHANNEL::THROTTLE; i < CHANNEL::CHANNEL_COUNT; i++)
         {
             lastValidRaw[i] = raw[i];
