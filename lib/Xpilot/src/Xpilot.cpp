@@ -28,8 +28,9 @@ void Xpilot::setup(void)
     sysInit();
 
     /*
-     * Initialize the scheduler and add system tasks
-     * The order tasks are added determines priority, with the highest priority first.
+     * Tasks added to the scheduler list are the only ones executed in the loop function
+     * The order tasks are added determines priority and is critical.
+     * Priority is in descending order
      */
     imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
     radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
