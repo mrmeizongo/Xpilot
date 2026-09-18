@@ -145,6 +145,7 @@ public:
         if (ch >= CHANNEL::CHANNEL_COUNT)
             return 0;
 
+        // Hold last valid signals if fail safe timer has started
         return failSafeTimerStarted ? lastValidRaw[ch] : raw[ch];
     }
 
