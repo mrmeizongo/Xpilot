@@ -145,10 +145,7 @@ public:
         if (ch >= CHANNEL::CHANNEL_COUNT)
             return 0;
 
-        if (failSafeTimerStarted)
-            return lastValidRaw[ch];
-
-        return raw[ch];
+        return failSafeTimerStarted ? lastValidRaw[ch] : raw[ch];
     }
 
     THREE_POS_SW getThreeSwitchPos(CHANNEL ch)
