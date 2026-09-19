@@ -7,7 +7,7 @@
 // #define USE_FLAPERONS
 
 #if defined(USE_FLAPERONS)
-#define USE_AUXIN2
+#define USE_AUX2IN
 #endif
 
 // Enable communication with xp_serial.py
