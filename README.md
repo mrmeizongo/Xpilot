@@ -108,9 +108,9 @@ If servos were installed in reverse of expected motion, see [XP_SERIAL](XP_SERIA
 
 Throttle is always under manual control.
 
-Rate/Expo set up on the transmitter should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode.
+Rate/Expo set up on the transmitter should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode after radio calibration has been performed.
 
-The IMU is calibrated through xp_serial.py.
+The IMU and Radio are calibrated through xp_serial.py.
 
 ## Build & Upload
 
