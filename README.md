@@ -93,7 +93,7 @@ Rudder mixing for coordinated turns is enabled automatically in rate and stabili
 | :--------------------: | :---------------------------------------------------------------------------------: |
 | Manual/Passthrough - 1 |                 Manual flight control surface movement, passthrough                 |
 |        Rate - 2        |                               Gyro based rate control                               |
-|     Stabilize - 3      | Gyro based rate control with wing-leveling on stick release                         |
+|     Stabilize - 3      | Gyro based rate control up to a limit with wing-leveling on stick release           |
 
 
 ## NOTICE
