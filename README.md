@@ -89,11 +89,11 @@ Passthrough mode is for advanced flyers. The input is passed through a slew rate
 
 Rudder mixing for coordinated turns is enabled automatically in rate and stabilize modes and off by default in passthrough mode. Default aileron-to-rudder mixing value is 30%.
 
-|      Flight mode       |                                     Description                                     |
-| :--------------------: | :---------------------------------------------------------------------------------: |
-| Manual/Passthrough - 1 |                 Manual flight control surface movement, passthrough                 |
-|        Rate - 2        |                               Gyro based rate control                               |
-|     Stabilize - 3      | Gyro based rate control up to a limit with wing-leveling on stick release           |
+|      Flight mode         |                                     Description                                     |
+| :----------------------  | :---------------------------------------------------------------------------------  |
+| Manual/Passthrough - 1   |                 Manual flight control surface movement, passthrough                 |
+|        Rate - 2          |                               Gyro based rate control                               |
+|     Stabilize - 3        | Gyro based rate control up to set limits with wing-leveling on stick release        |
 
 
 ## NOTICE
