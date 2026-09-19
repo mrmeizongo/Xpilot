@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import statistics
 import struct
 import sys
 import time
@@ -36,10 +37,13 @@ class Command:
     LOAD = 0x04
     DEFAULTS = 0x05
     CALIBRATE_IMU = 0x06
+    START_RADIO_STREAM = 0x07
+    STOP_RADIO_STREAM = 0x08
 
     ACK = 0x80
     NACK = 0x81
     VALUE = 0x82
+    RADIO_VALUE = 0x83
 
 
 class ValueType:
@@ -58,14 +62,17 @@ COMMAND_NAMES = {
     Command.LOAD: "LOAD",
     Command.DEFAULTS: "DEFAULTS",
     Command.CALIBRATE_IMU: "CALIBRATE_IMU",
+    Command.START_RADIO_STREAM: "START_RADIO_STREAM",
+    Command.STOP_RADIO_STREAM: "STOP_RADIO_STREAM",
 
     Command.ACK: "ACK",
     Command.NACK: "NACK",
     Command.VALUE: "VALUE",
+    Command.RADIO_VALUE: "RADIO_VALUE",
 }
 
 
-COMMAND_IDS_BY_NAME = {
+SERIAL_COMMAND_IDS_BY_NAME = {
     "GET": Command.GET,
     "SET": Command.SET,
     "SAVE": Command.SAVE,
@@ -73,6 +80,41 @@ COMMAND_IDS_BY_NAME = {
     "DEFAULTS": Command.DEFAULTS,
     "CALIBRATE_IMU": Command.CALIBRATE_IMU,
 }
+
+
+RADIO_CHANNELS = {
+    "THROTTLE": 0,
+    "ROLL": 1,
+    "PITCH": 2,
+    "YAW": 3,
+}
+
+
+RADIO_CHANNEL_NAMES = {
+    value: name
+    for name, value in RADIO_CHANNELS.items()
+}
+
+
+PRIMARY_RADIO_CHANNELS = tuple(
+    RADIO_CHANNELS.values()
+)
+
+
+RADIO_CONFIG_IDS = {
+    "THROTTLE": (1, 2, 3),
+    "ROLL": (6, 7, 8),
+    "PITCH": (11, 12, 13),
+    "YAW": (16, 17, 18),
+}
+
+
+MIN_ENDPOINT_SAMPLES = 10
+MIN_CENTER_SAMPLES = 20
+MIN_CHANNEL_SPAN_US = 400
+MIN_TRIM_MARGIN_US = 100
+MAX_CENTER_SPREAD_US = 30
+THROTTLE_CUT_WARNING_US = 1050
 
 
 TYPE_NAMES = {
@@ -461,8 +503,8 @@ def select_port(manual_port=None):
 def parse_command(text):
     text = text.strip().upper()
 
-    if text in COMMAND_IDS_BY_NAME:
-        return COMMAND_IDS_BY_NAME[text]
+    if text in SERIAL_COMMAND_IDS_BY_NAME:
+        return SERIAL_COMMAND_IDS_BY_NAME[text]
 
     # Raw HEX fallback.
     raw = text
@@ -998,6 +1040,592 @@ def receive_packet(
 
 
 # ============================================================
+# Machine-readable response handling
+# ============================================================
+
+class RadioCalibrationError(RuntimeError):
+    pass
+
+
+def parse_response_packet(packet):
+    if len(packet) != PACKET_SIZE:
+        raise RadioCalibrationError(
+            "Invalid packet length."
+        )
+
+    if packet[0] != START_BYTE:
+        raise RadioCalibrationError(
+            "Invalid packet start byte."
+        )
+
+    calculated_checksum = additive_checksum(
+        packet[:8]
+    )
+
+    if packet[8] != calculated_checksum:
+        raise RadioCalibrationError(
+            "Packet checksum mismatch."
+        )
+
+    return {
+        "command": packet[1],
+        "param_id": packet[2],
+        "value_type": packet[3],
+        "value": decode_value(
+            packet[3],
+            packet[4:8]
+        ),
+    }
+
+
+def wait_for_ack(
+    ser,
+    original_command,
+    timeout=2.0,
+    radio_handler=None
+):
+    deadline = time.monotonic() + timeout
+
+    while time.monotonic() < deadline:
+        remaining = deadline - time.monotonic()
+        packet = receive_packet(
+            ser,
+            timeout=min(0.25, remaining)
+        )
+
+        if packet is None:
+            continue
+
+        response = parse_response_packet(packet)
+        command = response["command"]
+
+        if command == Command.RADIO_VALUE:
+            if radio_handler is not None:
+                radio_handler(response)
+            continue
+
+        if (
+            command == Command.ACK
+            and response["param_id"] == original_command
+        ):
+            return
+
+        if (
+            command == Command.NACK
+            and response["param_id"] == original_command
+        ):
+            name = COMMAND_NAMES.get(
+                original_command,
+                f"0x{original_command:02X}"
+            )
+
+            raise RadioCalibrationError(
+                f"XPilot rejected {name}."
+            )
+
+    name = COMMAND_NAMES.get(
+        original_command,
+        f"0x{original_command:02X}"
+    )
+
+    raise RadioCalibrationError(
+        f"Timed out waiting for {name} acknowledgement."
+    )
+
+
+def send_command_and_wait_for_ack(
+    ser,
+    command,
+    packet=None,
+    radio_handler=None
+):
+    if packet is None:
+        packet = build_packet(
+            command=command
+        )
+
+    ser.write(packet)
+
+    wait_for_ack(
+        ser,
+        command,
+        radio_handler=radio_handler
+    )
+
+
+def request_config_value(ser, param_id):
+    ser.write(
+        build_packet(
+            command=Command.GET,
+            param_id=param_id
+        )
+    )
+
+    deadline = time.monotonic() + 2.0
+
+    while time.monotonic() < deadline:
+        packet = receive_packet(
+            ser,
+            timeout=min(
+                0.25,
+                deadline - time.monotonic()
+            )
+        )
+
+        if packet is None:
+            continue
+
+        response = parse_response_packet(packet)
+
+        if (
+            response["command"] == Command.VALUE
+            and response["param_id"] == param_id
+        ):
+            return response["value"]
+
+        if (
+            response["command"] == Command.NACK
+            and response["param_id"] == Command.GET
+        ):
+            raise RadioCalibrationError(
+                f"GET {CONFIG_NAMES[param_id]} was rejected."
+            )
+
+    raise RadioCalibrationError(
+        f"Timed out reading {CONFIG_NAMES[param_id]}."
+    )
+
+
+def set_config_value(ser, param_id, value):
+    value_type = CONFIG_TYPES[param_id]
+    encoded = encode_user_value(
+        param_id,
+        value_type,
+        str(value)
+    )
+
+    packet = build_packet(
+        command=Command.SET,
+        param_id=param_id,
+        value_type=value_type,
+        value=encoded
+    )
+
+    send_command_and_wait_for_ack(
+        ser,
+        Command.SET,
+        packet=packet
+    )
+
+
+def enter_pressed():
+    if sys.platform.startswith("win"):
+        import msvcrt
+
+        pressed = False
+
+        while msvcrt.kbhit():
+            char = msvcrt.getwch()
+
+            if char in ("\r", "\n"):
+                pressed = True
+
+        return pressed
+
+    import select
+
+    readable, _, _ = select.select(
+        [sys.stdin],
+        [],
+        [],
+        0
+    )
+
+    if readable:
+        sys.stdin.readline()
+        return True
+
+    return False
+
+
+def capture_radio_phase(ser, captured_channels):
+    samples = {
+        channel: []
+        for channel in captured_channels
+    }
+
+    def record_radio_value(response):
+        channel = response["param_id"]
+
+        if channel not in PRIMARY_RADIO_CHANNELS:
+            raise RadioCalibrationError(
+                f"Invalid streamed radio channel {channel}."
+            )
+
+        if response["value_type"] != ValueType.UINT16:
+            raise RadioCalibrationError(
+                "Streamed radio value has the wrong type."
+            )
+
+        pwm = response["value"]
+
+        if not 600 <= pwm <= 2400:
+            name = RADIO_CHANNEL_NAMES[channel]
+            raise RadioCalibrationError(
+                f"Invalid {name} PWM value: {pwm} us."
+            )
+
+        if channel in samples:
+            samples[channel].append(pwm)
+
+    ser.reset_input_buffer()
+
+    send_command_and_wait_for_ack(
+        ser,
+        Command.START_RADIO_STREAM
+    )
+
+    streaming = True
+
+    try:
+        while not enter_pressed():
+            packet = receive_packet(
+                ser,
+                timeout=0.1
+            )
+
+            if packet is None:
+                continue
+
+            response = parse_response_packet(packet)
+
+            if response["command"] == Command.RADIO_VALUE:
+                record_radio_value(response)
+                continue
+
+            if (
+                response["command"] == Command.NACK
+                and response["param_id"]
+                == Command.START_RADIO_STREAM
+            ):
+                streaming = False
+
+                raise RadioCalibrationError(
+                    "Radio stream stopped because one or more "
+                    "receiver channels became invalid, stale "
+                    f"or number of requested radio channels exceeded {len(RADIO_CHANNELS)}."
+                )
+
+    finally:
+        if streaming:
+            ser.write(
+                build_packet(
+                    command=Command.STOP_RADIO_STREAM
+                )
+            )
+
+            # Stream packets already queued ahead of the STOP ACK are
+            # still valid members of the phase and are recorded here.
+            wait_for_ack(
+                ser,
+                Command.STOP_RADIO_STREAM,
+                radio_handler=record_radio_value
+            )
+
+        ser.reset_input_buffer()
+
+    return samples
+
+
+def print_radio_calibration(calibration):
+    print(
+        "\nProposed radio calibration"
+    )
+    print(
+        "---------------------------------------------"
+    )
+    print(
+        f"{'CHANNEL':<10} "
+        f"{'MIN':>7} "
+        f"{'TRIM':>7} "
+        f"{'MAX':>7}"
+    )
+    print(
+        "---------------------------------------------"
+    )
+
+    for name in RADIO_CHANNELS:
+        values = calibration[name]
+
+        print(
+            f"{name:<10} "
+            f"{values['min']:>7} "
+            f"{values['trim']:>7} "
+            f"{values['max']:>7}"
+        )
+
+    print()
+
+
+def calculate_radio_calibration(endpoint_samples, center_samples):
+    calibration = {}
+
+    for channel in PRIMARY_RADIO_CHANNELS:
+        count = len(endpoint_samples[channel])
+
+        if count < MIN_ENDPOINT_SAMPLES:
+            name = RADIO_CHANNEL_NAMES[channel]
+
+            raise RadioCalibrationError(
+                f"Not enough endpoint samples for {name}: "
+                f"received {count}, need at least "
+                f"{MIN_ENDPOINT_SAMPLES}."
+            )
+
+    throttle_samples = endpoint_samples[
+        RADIO_CHANNELS["THROTTLE"]
+    ]
+
+    throttle_min = min(throttle_samples)
+    throttle_max = max(throttle_samples)
+
+    calibration["THROTTLE"] = {
+        "min": throttle_min,
+        "trim": (
+            throttle_min
+            + throttle_max
+        ) // 2,
+        "max": throttle_max,
+    }
+
+    for name in ("ROLL", "PITCH", "YAW"):
+        channel = RADIO_CHANNELS[name]
+        endpoints = endpoint_samples[channel]
+        centered = center_samples[channel]
+
+        if len(centered) < MIN_CENTER_SAMPLES:
+            raise RadioCalibrationError(
+                f"Not enough centered samples for {name}: "
+                f"received {len(centered)}, need at least "
+                f"{MIN_CENTER_SAMPLES}."
+            )
+
+        center_spread = max(centered) - min(centered)
+
+        if center_spread > MAX_CENTER_SPREAD_US:
+            raise RadioCalibrationError(
+                f"{name} was not held steadily at center "
+                f"(observed spread: {center_spread} us)."
+            )
+
+        calibration[name] = {
+            "min": min(endpoints),
+            "trim": int(round(
+                statistics.median(centered)
+            )),
+            "max": max(endpoints),
+        }
+
+    for name, values in calibration.items():
+        minimum = values["min"]
+        trim = values["trim"]
+        maximum = values["max"]
+
+        if not 544 <= minimum <= 2400:
+            raise RadioCalibrationError(
+                f"{name} minimum is outside the accepted range."
+            )
+
+        if not 544 <= maximum <= 2400:
+            raise RadioCalibrationError(
+                f"{name} maximum is outside the accepted range."
+            )
+
+        if not minimum < trim < maximum:
+            raise RadioCalibrationError(
+                f"{name} does not satisfy MIN < TRIM < MAX."
+            )
+
+        if maximum - minimum < MIN_CHANNEL_SPAN_US:
+            raise RadioCalibrationError(
+                f"{name} span is too small: "
+                f"{maximum - minimum} us."
+            )
+
+        if name != "THROTTLE":
+            if (
+                trim - minimum < MIN_TRIM_MARGIN_US
+                or maximum - trim < MIN_TRIM_MARGIN_US
+            ):
+                raise RadioCalibrationError(
+                    f"{name} trim is too close to an endpoint."
+                )
+
+    return calibration
+
+
+def apply_radio_calibration(ser, calibration):
+    proposed = {}
+
+    for name, config_ids in RADIO_CONFIG_IDS.items():
+        values = calibration[name]
+
+        proposed[config_ids[0]] = values["min"]
+        proposed[config_ids[1]] = values["trim"]
+        proposed[config_ids[2]] = values["max"]
+
+    original = {
+        param_id: request_config_value(
+            ser,
+            param_id
+        )
+        for param_id in proposed
+    }
+
+    try:
+        for param_id, value in proposed.items():
+            set_config_value(
+                ser,
+                param_id,
+                value
+            )
+
+        for param_id, expected in proposed.items():
+            actual = request_config_value(
+                ser,
+                param_id
+            )
+
+            if actual != expected:
+                raise RadioCalibrationError(
+                    f"Verification failed for "
+                    f"{CONFIG_NAMES[param_id]}: "
+                    f"expected {expected}, received {actual}."
+                )
+
+    except Exception:
+        rollback_errors = []
+
+        for param_id, value in original.items():
+            try:
+                set_config_value(
+                    ser,
+                    param_id,
+                    value
+                )
+
+            except Exception as error:
+                rollback_errors.append(
+                    f"{CONFIG_NAMES[param_id]}: {error}"
+                )
+
+        if rollback_errors:
+            raise RadioCalibrationError(
+                "Calibration failed and rollback was incomplete: "
+                + "; ".join(rollback_errors)
+            )
+
+        raise
+
+
+def run_radio_calibration(ser):
+    print(f"""
+{Color.MAGENTA}Radio Input Calibration{Color.RESET}
+=======================
+
+{Color.RED}Disconnect propulsion before continuing.{Color.RESET}
+Keep throttle cut OFF throughout endpoint capture.
+The calibration updates RAM only; it will not write EEPROM.
+""")
+
+    input(
+        f"Press {Color.GREEN}Enter{Color.RESET} after the aircraft is safe "
+        "and the transmitter is ready..."
+    )
+
+    print(f"""
+Move throttle, roll, pitch, and yaw through their full normal ranges.
+Briefly hold every control at each endpoint.
+
+Press {Color.GREEN}Enter{Color.RESET} when endpoint capture is complete.
+""")
+
+    endpoint_samples = capture_radio_phase(
+        ser,
+        PRIMARY_RADIO_CHANNELS
+    )
+
+    print(f"""
+    {Color.GREEN}Input captured{Color.RESET}
+    """)
+
+    print(f"""
+Release roll, pitch, and yaw and leave them centered.
+Throttle position is ignored during this phase.
+
+Press {Color.GREEN}Enter{Color.RESET} when center capture is complete.
+""")
+
+    center_samples = capture_radio_phase(
+        ser,
+        (
+            RADIO_CHANNELS["ROLL"],
+            RADIO_CHANNELS["PITCH"],
+            RADIO_CHANNELS["YAW"],
+        )
+    )
+
+    calibration = calculate_radio_calibration(
+        endpoint_samples,
+        center_samples
+    )
+
+    print(f"""
+    {Color.GREEN}Input captured{Color.RESET}
+    """)
+
+    print_radio_calibration(
+        calibration
+    )
+
+    if (
+        calibration["THROTTLE"]["min"]
+        < THROTTLE_CUT_WARNING_US
+    ):
+        print(
+            f"{Color.YELLOW}WARNING: The throttle minimum is below normal range\n"
+        )
+
+    confirmation = input(
+        "Apply these values to the active RAM configuration? "
+        "[y/N]: "
+    ).strip().lower()
+
+    if confirmation not in ("y", "yes"):
+        print(
+            f"{Color.YELLOW}Calibration discarded. "
+            f"No configuration values were changed.{Color.RESET}"
+        )
+        return
+
+    apply_radio_calibration(
+        ser,
+        calibration
+    )
+
+    print(
+        f"{Color.GREEN}Radio calibration applied and verified "
+        f"in RAM.{Color.RESET}"
+    )
+    print(
+        "Run SAVE separately to persist it to EEPROM."
+    )
+
+
+UTILITY_COMMANDS = {
+    "RADIO_CALIBRATION": run_radio_calibration,
+}
+# ============================================================
 # Tables
 # ============================================================
 
@@ -1073,7 +1701,7 @@ def print_command_table():
         "--------------------------------"
     )
 
-    for name, command in COMMAND_IDS_BY_NAME.items():
+    for name, command in SERIAL_COMMAND_IDS_BY_NAME.items():
         print(
             f"0x{command:02X}  {name}"
         )
@@ -1148,6 +1776,20 @@ and the airframe name.
     DEFAULTS
 
     CALIBRATE_IMU
+
+
+{Color.MAGENTA}RADIO CALIBRATION{Color.RESET}
+-----------------
+
+    radio_calibration
+
+Streams throttle, roll, pitch, and yaw while you capture
+their normal endpoints, then captures centered roll,
+pitch, and yaw trims. Results are displayed for approval
+before the active RAM configuration is changed.
+
+This command never writes EEPROM. Run SAVE separately
+after inspecting and testing the applied calibration.
 
 
 {Color.MAGENTA}UTILITY COMMANDS{Color.RESET}
@@ -1272,34 +1914,57 @@ def main():
             if not line:
                 continue
 
-            lowered = line.lower()
+            command_text = line.upper()
 
-            if lowered in (
-                "quit",
-                "exit",
+            if command_text in (
+                "QUIT",
+                "EXIT",
             ):
                 break
 
-            if lowered == "help":
+            if command_text == "HELP":
                 print_help()
                 continue
 
-            if lowered == "config":
+            if command_text == "CONFIG":
                 print_config_table()
                 continue
 
-            if lowered == "airframes":
+            if command_text == "AIRFRAMES":
                 print_airframe_table()
                 continue
 
-            if lowered == "commands":
+            if command_text == "COMMANDS":
                 print_command_table()
                 continue
 
-            if lowered == "ports":
+            if command_text == "PORTS":
                 print_ports(
                     get_serial_ports()
                 )
+                continue
+
+
+            utility_command = UTILITY_COMMANDS.get(command_text)
+
+            if utility_command is not None:
+                try:
+                    utility_command(
+                        ser
+                    )
+
+                except RadioCalibrationError as error:
+                    print(
+                        f"{Color.RED}Radio calibration failed: "
+                        f"{error}{Color.RESET}"
+                    )
+
+                except serial.SerialException as error:
+                    print(
+                        f"{Color.RED}Serial error: "
+                        f"{error}{Color.RESET}"
+                    )
+
                 continue
 
             try:

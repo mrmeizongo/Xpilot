@@ -178,6 +178,48 @@ void Radio::FailSafeDetector()
         failSafe = true;
 }
 
+Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch)
+{
+    if (ch >= CHANNEL::CHANNEL_COUNT)
+        return THREE_POS_SW::UNDEFINED;
+
+    if (raw[ch] < PWM_TRIM_US - THREE_SW_POS_THRESHOLD)
+        return THREE_POS_SW::LOW_POS;
+
+    if (raw[ch] > PWM_TRIM_US + THREE_SW_POS_THRESHOLD)
+        return THREE_POS_SW::HIGH_POS;
+
+    return THREE_POS_SW::MID_POS;
+}
+
+bool Radio::getValidControlPWM(uint16_t* dest, uint8_t count)
+{
+    if (failSafe || failSafeTimerStarted || (count >= Radio::CHANNEL::CHANNEL_COUNT))
+        return false;
+
+    for (uint8_t i = 0; i < count; i++)
+    {
+        dest[i] = lastValidRaw[i];
+    }
+
+    return true;
+}
+
+uint16_t Radio::getPWM(CHANNEL ch)
+{
+    if (ch >= CHANNEL::CHANNEL_COUNT)
+        return 0;
+
+    // Hold last valid signals if fail safe timer has started
+    return failSafeTimerStarted ? lastValidRaw[ch] : raw[ch];
+}
+
+void Radio::setPWM(CHANNEL ch, const volatile uint16_t& rawPulse, const volatile uint32_t& validTime)
+{
+    raw[ch] = rawPulse;
+    lastValidRxTimeUS[ch] = validTime;
+}
+
 /*
  * ISR
  * RC receivers are designed to send a 1000us-2000us pulse to the servos every 20ms - 22ms, going HIGH for the duration of the pulse and LOW otherwise

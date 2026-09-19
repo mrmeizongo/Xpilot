@@ -51,6 +51,8 @@ private:
 
     uint8_t _rxIndex;
 
+    bool _radioStreaming;
+
     void processByte(uint8_t byte);
 
     void processPacket(const SerialPacket& packet);
@@ -59,7 +61,15 @@ private:
 
     void processSet(const SerialPacket& packet);
 
+    void processStartRadioStream();
+
+    void processStopRadioStream();
+
     void sendValue(ConfigID id);
+
+    void sendRadioSnapshot();
+
+    void sendRadioValue(uint8_t channel, uint16_t pwm);
 
     void sendAck(SerialCommand originalCommand, SerialCommand ack = SerialCommand::ACK);
 

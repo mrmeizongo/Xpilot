@@ -134,34 +134,13 @@ public:
         static_cast<Radio*>(ctx)->processInput();
     }
 
-    void setPWM(CHANNEL ch, const volatile uint16_t& rawPulse, const volatile uint32_t& validTime)
-    {
-        raw[ch] = rawPulse;
-        lastValidRxTimeUS[ch] = validTime;
-    }
+    void setPWM(CHANNEL, const volatile uint16_t&, const volatile uint32_t&);
 
-    uint16_t getPWM(CHANNEL ch)
-    {
-        if (ch >= CHANNEL::CHANNEL_COUNT)
-            return 0;
+    bool getValidControlPWM(uint16_t*, uint8_t);
 
-        // Hold last valid signals if fail safe timer has started
-        return failSafeTimerStarted ? lastValidRaw[ch] : raw[ch];
-    }
+    uint16_t getPWM(CHANNEL);
 
-    THREE_POS_SW getThreeSwitchPos(CHANNEL ch)
-    {
-        if (ch >= CHANNEL::CHANNEL_COUNT)
-            return THREE_POS_SW::UNDEFINED;
-
-        if (raw[ch] < PWM_TRIM_US - THREE_SW_POS_THRESHOLD)
-            return THREE_POS_SW::LOW_POS;
-
-        if (raw[ch] > PWM_TRIM_US + THREE_SW_POS_THRESHOLD)
-            return THREE_POS_SW::HIGH_POS;
-
-        return THREE_POS_SW::MID_POS;
-    }
+    THREE_POS_SW getThreeSwitchPos(CHANNEL);
 
     uint32_t getSignalLossTimeUs(void) { return signalLossTimeUs; }
 

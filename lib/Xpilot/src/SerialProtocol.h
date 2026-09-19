@@ -48,10 +48,13 @@ enum class SerialCommand : uint8_t
     LOAD = 0x04,
     DEFAULTS = 0x05,
     CALIBRATE_IMU = 0x06,
+    START_RADIO_STREAM = 0x07,
+    STOP_RADIO_STREAM = 0x08,
 
     ACK = 0x80,
     NACK = 0x81,
-    VALUE = 0x82
+    VALUE = 0x82,
+    RADIO_VALUE = 0x83
 };
 
 struct SerialPacket
