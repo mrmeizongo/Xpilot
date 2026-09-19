@@ -1623,7 +1623,7 @@ Press {Color.GREEN}Enter{Color.RESET} when center capture is complete.
 
 
 UTILITY_COMMANDS = {
-    "RADIO_CALIBRATION": run_radio_calibration,
+    "CALIBRATE_RADIO": run_radio_calibration,
 }
 # ============================================================
 # Tables

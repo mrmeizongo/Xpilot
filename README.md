@@ -93,24 +93,26 @@ Rudder mixing for coordinated turns is enabled automatically in rate and stabili
 | :--------------------: | :---------------------------------------------------------------------------------: |
 | Manual/Passthrough - 1 |                 Manual flight control surface movement, passthrough                 |
 |        Rate - 2        |                               Gyro based rate control                               |
-|     Stabilize - 3      | Surfaces follow stick movement up-to set limits with wing-leveling on stick release |
+|     Stabilize - 3      | Gyro based rate control with wing-leveling on stick release                         |
 
 
 ## NOTICE
 
-For proper operation of the Xpilot flight stabilization system some default airplane conventions need to be established. Set up transmitter so these are true
+For proper operation of the Xpilot flight stabilization system some default airplane conventions need to be established. Set up transmitter so these are true on the output screen
 
 * Roll right (Roll stick right) = Positive channel output
 * Pitch up (Pitch stick down) = Positive channel output
 * Yaw right (Yaw stick right) = Positive channel output
 
-If servos were installed in reverse of expected motion, see [XP_SERIAL](XP_SERIAL.md) on how to correct them using the Xpilot config manager.  
+If servos were installed in reverse of expected deflection direction, see [XP_SERIAL](XP_SERIAL.md) on how to correct them using the Xpilot config manager. It is advisable to reverse the servo output instead of the radio input.
 
-Throttle is always under manual control.
+Throttle is always under manual control but a failsafe condition triggers a shutdown of the motor.
 
-Rate/Expo set up on the transmitter should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode after radio calibration has been performed.
+Rate/Expo set up on the transmitter should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode after radio calibration has been performed to determine low and high points.
 
 The IMU and Radio are calibrated through xp_serial.py.
+
+Xpilot does not monitor battery voltage. It is up to the pilot to be mindful of flight time.
 
 ## Build & Upload
 

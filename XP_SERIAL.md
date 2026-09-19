@@ -6,7 +6,7 @@ The tool communicates directly with XPilot's `ConfigManager` over the serial con
 
 ---
 
-## Commands
+## Serial Commands
 
 ```bash
 GET <configID>
@@ -15,6 +15,11 @@ SAVE
 LOAD
 DEFAULTS
 CALIBRATE_IMU
+```
+
+## Utility Commands
+```bash
+RADIO_CALIBRATION
 ```
 
 ## Value Types

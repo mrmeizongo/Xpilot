@@ -7,11 +7,13 @@ the four primary receiver inputs becomes invalid or stale.
 
 ## PC workflow
 
+If not already configured, set transmitter rates to 100%.  
+This establishes baseline mininum and maximum of outputs for all axes.  
 Run this command in the interactive utility:
 
 ```text
 ./xp_serial.py  OR  python xp_serial.py
-radio_calibration
+calibrate_radio
 ```
 
 The utility performs two capture phases:
@@ -31,7 +33,7 @@ values.
 The utility never issues the `SAVE` command when complete. Configuration saved in 
 EEPROM remains unchanged until the user explicitly sends the `SAVE` command separately.
 
-User retains the ability to modify the min, trim and max values for all 4 axis separately.
+User retains the ability to modify the min, trim and max values for all 4 axes separately.
 This can be performed by utilizing the `SET` command followed by the config ID.
 
 Example
