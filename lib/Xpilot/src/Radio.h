@@ -104,10 +104,10 @@ public:
     // 3-position switch
     enum class THREE_POS_SW : uint8_t
     {
-        UNDEFINED = 0U, // Undefined position, should not be used
-        LOW_POS,
+        LOW_POS = 0U,
         MID_POS,
-        HIGH_POS
+        HIGH_POS,
+        UNDEFINED, // Undefined position, should not be used
     };
 
     enum CHANNEL : uint8_t
@@ -140,7 +140,8 @@ public:
 
     uint16_t getPWM(CHANNEL);
 
-    THREE_POS_SW getThreeSwitchPos(CHANNEL);
+    THREE_POS_SW
+    getThreeSwitchPos(CHANNEL, uint16_t trim = PWM_TRIM_US, uint16_t threshold = THREE_SW_POS_THRESHOLD);
 
     uint32_t getSignalLossTimeUs(void) { return signalLossTimeUs; }
 
