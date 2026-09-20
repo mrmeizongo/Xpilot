@@ -78,7 +78,8 @@ public:
     {
         NORMAL,
         CUT,
-        FAILSAFE
+        FAILSAFE,
+        SIGNAL_LOST
     };
 
     // 3-position switch
@@ -90,6 +91,7 @@ public:
         UNDEFINED, // Undefined position, should not be used
     };
 
+    // Do not change the order
     enum CHANNEL : uint8_t
     {
         THROTTLE = 0U,

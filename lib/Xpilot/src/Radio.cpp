@@ -77,17 +77,17 @@ uint8_t Radio::requiredChannels()
         case Config::AirframeType::V_TAIL:
         case Config::AirframeType::FLYING_WING_RUDDER:
         case Config::AirframeType::CUSTOM:
-            return REQ_THROTTLE | REQ_ROLL | REQ_PITCH | REQ_YAW;
+            return CHANNELMASK::REQ_ROLL | CHANNELMASK::REQ_PITCH | CHANNELMASK::REQ_YAW;
 
         case Config::AirframeType::FLYING_WING_NO_RUDDER:
         case Config::AirframeType::AILERON_ELEVATOR:
-            return REQ_THROTTLE | REQ_ROLL | REQ_PITCH;
+            return CHANNELMASK::REQ_ROLL | CHANNELMASK::REQ_PITCH;
 
         case Config::AirframeType::RUDDER_ELEVATOR:
-            return REQ_THROTTLE | REQ_PITCH | REQ_YAW;
+            return CHANNELMASK::REQ_PITCH | CHANNELMASK::REQ_YAW;
 
         default:
-            return NONE;
+            return CHANNELMASK::NONE;
     }
 }
 
@@ -102,6 +102,11 @@ Radio::THROTTLE_STATE Radio::decodeThrottleState()
     if (pwm < THROTTLE_CUT_THRESHOLD)
         return THROTTLE_STATE::CUT;
 
+    uint32_t now = micros();
+
+    if (now - lastRawPWMTimeUS[CHANNEL::THROTTLE] >= TIMEOUT_US)
+        return THROTTLE_STATE::SIGNAL_LOST;
+
     return THROTTLE_STATE::NORMAL;
 }
 
@@ -115,18 +120,22 @@ void Radio::FailSafeDetector()
     // Stale or invalid pwm input flag
     bool timeout = false;
 
-    // Tx/Rx state
+    // Rx state
     bool rxFailsafe = false;
 
-    // Check throttle, roll, pitch and yaw channels for valid signals
-    for (uint8_t i = CHANNEL::THROTTLE; i <= CHANNEL::YAW; ++i)
+    // Check only roll, pitch and yaw channels for valid signals
+    // This is preferred to checking all channels
+    // It prevents loose wire connections from channels like throttle and the auxiliaries from initiating a failsafe
+    // Airplane is still flyable in the event of a loss of those channels
+    // Throttle is considered separately
+    for (uint8_t i = CHANNEL::ROLL; i <= CHANNEL::YAW; ++i)
     {
         const uint8_t mask = 1 << i;
 
         if (!(req & mask))
             continue;
 
-        // Any one of the 4 control channels can trigger a timeout failsafe
+        // Any one of the 3 control channels can trigger a timeout failsafe
         timeout |= (now - lastRawPWMTimeUS[i]) >= TIMEOUT_US;
     }
 
@@ -138,15 +147,16 @@ void Radio::FailSafeDetector()
             rxFailsafe = false;
             break;
 
-        case THROTTLE_STATE::CUT:
-            txThrottleCut = true;
-            rxFailsafe = false;
-            break;
-
-        default:
         case THROTTLE_STATE::FAILSAFE:
             txThrottleCut = true;
             rxFailsafe = true;
+            break;
+
+        default:
+        case THROTTLE_STATE::CUT:
+        case THROTTLE_STATE::SIGNAL_LOST:
+            txThrottleCut = true;
+            rxFailsafe = false;
             break;
     }
 
