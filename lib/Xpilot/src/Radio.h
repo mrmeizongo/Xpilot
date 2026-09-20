@@ -157,7 +157,7 @@ private:
 
     uint8_t requiredChannels();
 
-    THROTTLE_STATE decodeThrottleState();
+    THROTTLE_STATE decodeThrottleState(uint32_t);
 };
 
 extern Radio radio;

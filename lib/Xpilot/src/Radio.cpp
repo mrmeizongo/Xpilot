@@ -92,7 +92,7 @@ uint8_t Radio::requiredChannels()
 }
 
 // See FAILSAFE.md for more information
-Radio::THROTTLE_STATE Radio::decodeThrottleState()
+Radio::THROTTLE_STATE Radio::decodeThrottleState(uint32_t timeNow)
 {
     uint16_t pwm = rawPWM[CHANNEL::THROTTLE];
 
@@ -102,9 +102,7 @@ Radio::THROTTLE_STATE Radio::decodeThrottleState()
     if (pwm < THROTTLE_CUT_THRESHOLD)
         return THROTTLE_STATE::CUT;
 
-    uint32_t now = micros();
-
-    if (now - lastRawPWMTimeUS[CHANNEL::THROTTLE] >= TIMEOUT_US)
+    if (timeNow - lastRawPWMTimeUS[CHANNEL::THROTTLE] >= TIMEOUT_US)
         return THROTTLE_STATE::SIGNAL_LOST;
 
     return THROTTLE_STATE::NORMAL;
@@ -140,7 +138,7 @@ void Radio::FailSafeDetector()
     }
 
     // Check throttle signal
-    switch (decodeThrottleState())
+    switch (decodeThrottleState(now))
     {
         case THROTTLE_STATE::NORMAL:
             txThrottleCut = false;
