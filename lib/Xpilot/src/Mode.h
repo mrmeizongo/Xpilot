@@ -169,7 +169,7 @@ public:
     void run(void) override;
 };
 
-// Gyro-based rate control with wing leveling on stick release
+// Gyro-based rate control up to limit with wing leveling on stick release
 class StabilizeMode final : public Mode
 {
 public:
