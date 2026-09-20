@@ -83,6 +83,7 @@ private:
 
     // This is the state of the flight stabilization system
     Mode* currentMode;
+
     void updateFlightMode(void);
 
     // Task handlers for the scheduler to manage periodic tasks
