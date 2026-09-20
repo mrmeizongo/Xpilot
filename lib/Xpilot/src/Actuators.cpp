@@ -3,13 +3,6 @@
 #include "GPIOConfig.h"
 #include "FlightConfigAccess.h"
 
-// ISO C++ forbids in-class initialization of non-const static members
-// We define them here instead
-Servo Actuators::controlServo[CHANNEL_COUNT]{};
-int16_t Actuators::channelOut[CHANNEL_COUNT]{};
-
-Actuators::Actuators(void) {}
-
 // Set up output servos
 void Actuators::init(void)
 {

@@ -52,7 +52,7 @@ public:
         CHANNEL_COUNT
     };
 
-    Actuators(void);
+    Actuators(void) {}
     void init(void);
     void writeServos(void);
     void writeServos(const int16_t (&SRVout)[CHANNEL_COUNT]);
@@ -60,11 +60,9 @@ public:
     void setServoOut(const int16_t (&SRVout)[CHANNEL_COUNT]);
     int16_t getServoOut(Channel);
 
-    static void writeServosTask(void* ctx) { static_cast<Actuators*>(ctx)->writeServos(channelOut); }
-
 private:
-    static Servo controlServo[CHANNEL_COUNT]; // Control servos
-    static int16_t channelOut[CHANNEL_COUNT]; // Servo output values
+    Servo controlServo[CHANNEL_COUNT]; // Control servos
+    int16_t channelOut[CHANNEL_COUNT]; // Servo output values
 };
 
 extern Actuators actuators;
