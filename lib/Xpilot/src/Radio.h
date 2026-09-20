@@ -71,26 +71,6 @@ normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inpu
     return reverse ? -output : output;
 }
 
-inline void
-capturePWMEdge(uint8_t pin, volatile uint32_t& riseTimeUs, volatile uint16_t& pulseUs, volatile uint32_t& lastValid)
-{
-    const uint32_t now = micros();
-
-    if (PIN_HIGH(pin))
-    {
-        riseTimeUs = now;
-        return;
-    }
-
-    const uint32_t rawPulse = now - riseTimeUs;
-
-    if (rawPulse >= PWM_MIN_US && rawPulse <= PWM_MAX_US)
-    {
-        pulseUs = static_cast<uint16_t>(rawPulse);
-        lastValid = now;
-    }
-}
-
 class Radio
 {
 public:

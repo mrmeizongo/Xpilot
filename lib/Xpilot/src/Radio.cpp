@@ -222,10 +222,31 @@ void Radio::setPWM(CHANNEL ch, const volatile uint16_t& rawPulse, const volatile
 
 /*
  * ISR
- * RC receivers are designed to send a 1000us-2000us pulse to the servos every 20ms - 22ms, going HIGH for the duration of the pulse and LOW otherwise
- * The receiver PWM output is used to drive a pin change interrupt service routine
- * The ISR simply records the time between the pulses.
+ * Typiacl RC receivers are designed to send a 1ms-2ms pulse to the servos every 20ms, going HIGH for the duration of the pulse and LOW otherwise
+ * The receiver pulse output is used to drive a pin change interrupt service routine
+ * The ISR simply records the time between the pulses and store the pulses that fall within normal PWM range
  */
+
+inline void
+capturePWMEdge(uint8_t pin, volatile uint32_t& riseTimeUs, volatile uint16_t& pulseUs, volatile uint32_t& lastValid)
+{
+    const uint32_t now = micros();
+
+    if (PIN_HIGH(pin))
+    {
+        riseTimeUs = now;
+        return;
+    }
+
+    const uint16_t rawPulse = static_cast<uint16_t>(now - riseTimeUs);
+
+    if (rawPulse >= PWM_MIN_US && rawPulse <= PWM_MAX_US)
+    {
+        pulseUs = rawPulse;
+        lastValid = now;
+    }
+}
+
 void PinChangeInterruptEvent(THROTTLEPIN_INT)(void)
 {
     capturePWMEdge(THROTTLEPIN_INPUT, throttleRiseTimeUs, throttlePulseUs, lastValidTimeUs[Radio::CHANNEL::THROTTLE]);
