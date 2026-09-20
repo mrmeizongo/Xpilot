@@ -95,10 +95,23 @@ public:
     void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
 
-protected:
-    static int32_t imu_rpy[IMU::Axis::AXIS_COUNT]; // To hold imu rpy values
-    static int32_t imu_g[IMU::Axis::AXIS_COUNT];   // To hold imu g values
+    static const int32_t getIMU_RPY(uint8_t i)
+    {
+        if (i >= 3)
+            return 0;
 
+        return imu_rpy[i];
+    }
+
+    static const int32_t getIMU_G(uint8_t i)
+    {
+        if (i >= 3)
+            return 0;
+
+        return imu_g[i];
+    }
+
+protected:
     static int32_t input_trpy[4];  // Input throttle, roll, pitch, and yaw
     static int16_t output_trpy[4]; // Throttle, roll, pitch, and yaw staging outputs before mixing
 
@@ -121,6 +134,10 @@ protected:
     static PIDF<int32_t, int16_t> yawPIDF;
 
     static AirplaneMixer airplaneMixer;
+
+private:
+    static int32_t imu_rpy[IMU::Axis::AXIS_COUNT]; // To hold imu rpy values
+    static int32_t imu_g[IMU::Axis::AXIS_COUNT];   // To hold imu g values
 };
 
 // Manual control of flight surfaces

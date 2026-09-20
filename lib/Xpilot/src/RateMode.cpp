@@ -25,7 +25,7 @@ void RateMode::update(void)
 
 void RateMode::run(void)
 {
-    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(input_trpy[Radio::CHANNEL::ROLL], imu_g[IMU::Axis::X_AXIS]);
-    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(input_trpy[Radio::CHANNEL::PITCH], imu_g[IMU::Axis::Y_AXIS]);
-    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], imu_g[IMU::Axis::Z_AXIS]);
+    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(input_trpy[Radio::CHANNEL::ROLL], getIMU_G(IMU::X_AXIS));
+    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(input_trpy[Radio::CHANNEL::PITCH], getIMU_G(IMU::Axis::Y_AXIS));
+    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], getIMU_G(IMU::Axis::Z_AXIS));
 }
