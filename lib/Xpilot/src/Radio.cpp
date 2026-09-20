@@ -55,14 +55,14 @@ void Radio::processInput()
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        setPWM(CHANNEL::THROTTLE, throttlePulseUs, lastValidTimeUs[CHANNEL::THROTTLE]);
-        setPWM(CHANNEL::ROLL, aileronPulseUs, lastValidTimeUs[CHANNEL::ROLL]);
-        setPWM(CHANNEL::PITCH, elevatorPulseUs, lastValidTimeUs[CHANNEL::PITCH]);
-        setPWM(CHANNEL::YAW, rudderPulseUs, lastValidTimeUs[CHANNEL::YAW]);
-        setPWM(CHANNEL::AUX1, aux1PulseUs, lastValidTimeUs[CHANNEL::AUX1]);
+        setRawPWM(CHANNEL::THROTTLE, throttlePulseUs, lastValidTimeUs[CHANNEL::THROTTLE]);
+        setRawPWM(CHANNEL::ROLL, aileronPulseUs, lastValidTimeUs[CHANNEL::ROLL]);
+        setRawPWM(CHANNEL::PITCH, elevatorPulseUs, lastValidTimeUs[CHANNEL::PITCH]);
+        setRawPWM(CHANNEL::YAW, rudderPulseUs, lastValidTimeUs[CHANNEL::YAW]);
+        setRawPWM(CHANNEL::AUX1, aux1PulseUs, lastValidTimeUs[CHANNEL::AUX1]);
 
 #if defined(USE_AUX2IN)
-        setPWM(CHANNEL::AUX2, aux2PulseUs, lastValidTimeUs[CHANNEL::AUX2]);
+        setRawPWM(CHANNEL::AUX2, aux2PulseUs, lastValidTimeUs[CHANNEL::AUX2]);
 #endif
     }
 
@@ -94,7 +94,7 @@ uint8_t Radio::requiredChannels()
 // See FAILSAFE.md for more information
 Radio::THROTTLE_STATE Radio::decodeThrottleState()
 {
-    uint16_t pwm = raw[CHANNEL::THROTTLE];
+    uint16_t pwm = rawPWM[CHANNEL::THROTTLE];
 
     if (pwm < THROTTLE_FAILSAFE_THRESHOLD)
         return THROTTLE_STATE::FAILSAFE;
@@ -127,7 +127,7 @@ void Radio::FailSafeDetector()
             continue;
 
         // Any one of the 4 control channels can trigger a timeout failsafe
-        timeout |= (now - lastValidRxTimeUS[i]) >= TIMEOUT_US;
+        timeout |= (now - lastRawPWMTimeUS[i]) >= TIMEOUT_US;
     }
 
     // Check throttle signal
@@ -160,7 +160,7 @@ void Radio::FailSafeDetector()
         // Update all last valid pwm values
         for (uint8_t i = CHANNEL::THROTTLE; i < CHANNEL::CHANNEL_COUNT; i++)
         {
-            lastValidRaw[i] = raw[i];
+            lastValidPWM[i] = rawPWM[i];
         }
 
         return;
@@ -183,10 +183,10 @@ Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint16_t
     if (ch >= CHANNEL::CHANNEL_COUNT)
         return THREE_POS_SW::UNDEFINED;
 
-    if (raw[ch] < trim - threshold)
+    if (rawPWM[ch] < trim - threshold)
         return THREE_POS_SW::LOW_POS;
 
-    if (raw[ch] > trim + threshold)
+    if (rawPWM[ch] > trim + threshold)
         return THREE_POS_SW::HIGH_POS;
 
     return THREE_POS_SW::MID_POS;
@@ -199,7 +199,7 @@ bool Radio::getValidControlPWM(uint16_t* dest, uint8_t count)
 
     for (uint8_t i = 0; i < count; i++)
     {
-        dest[i] = lastValidRaw[i];
+        dest[i] = lastValidPWM[i];
     }
 
     return true;
@@ -210,14 +210,13 @@ uint16_t Radio::getPWM(CHANNEL ch)
     if (ch >= CHANNEL::CHANNEL_COUNT)
         return 0;
 
-    // Hold last valid signals if fail safe timer has started
-    return failSafeTimerStarted ? lastValidRaw[ch] : raw[ch];
+    return lastValidPWM[ch];
 }
 
-void Radio::setPWM(CHANNEL ch, const volatile uint16_t& rawPulse, const volatile uint32_t& validTime)
+void Radio::setRawPWM(CHANNEL ch, const volatile uint16_t& rawPulse, const volatile uint32_t& validTime)
 {
-    raw[ch] = rawPulse;
-    lastValidRxTimeUS[ch] = validTime;
+    rawPWM[ch] = rawPulse;
+    lastRawPWMTimeUS[ch] = validTime;
 }
 
 /*

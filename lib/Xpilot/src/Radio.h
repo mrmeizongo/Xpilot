@@ -114,7 +114,7 @@ public:
         static_cast<Radio*>(ctx)->processInput();
     }
 
-    void setPWM(CHANNEL, const volatile uint16_t&, const volatile uint32_t&);
+    void setRawPWM(CHANNEL, const volatile uint16_t&, const volatile uint32_t&);
 
     bool getValidControlPWM(uint16_t*, uint8_t);
 
@@ -130,11 +130,11 @@ public:
     bool inFailsafe(void) const { return failSafe; }
 
 private:
-    uint16_t raw[CHANNEL::CHANNEL_COUNT];
-    uint16_t lastValidRaw[CHANNEL::CHANNEL_COUNT];
+    uint16_t rawPWM[CHANNEL::CHANNEL_COUNT];
+    uint16_t lastValidPWM[CHANNEL::CHANNEL_COUNT];
 
     uint32_t signalLossTimeUs;
-    uint32_t lastValidRxTimeUS[CHANNEL::CHANNEL_COUNT];
+    uint32_t lastRawPWMTimeUS[CHANNEL::CHANNEL_COUNT];
 
     bool failSafe;
 
