@@ -140,19 +140,12 @@ void Mode::update(void)
         return;
     }
 
-    if (radio.inThrottleCut())
-    {
-        input_trpy[Radio::CHANNEL::THROTTLE] = THROTTLE_SHUTOFF_VALUE;
-    }
-    else
-    {
-        input_trpy[Radio::CHANNEL::THROTTLE] = normalizeInput(radio.getPWM(Radio::CHANNEL::THROTTLE),
-                                                              config().throttleRxConfig.min,
-                                                              config().throttleRxConfig.trim,
-                                                              config().throttleRxConfig.max,
-                                                              config().throttleRxConfig.deadband,
-                                                              config().throttleRxConfig.reverse);
-    }
+    input_trpy[Radio::CHANNEL::THROTTLE] = normalizeInput(radio.getPWM(Radio::CHANNEL::THROTTLE),
+                                                          config().throttleRxConfig.min,
+                                                          config().throttleRxConfig.trim,
+                                                          config().throttleRxConfig.max,
+                                                          config().throttleRxConfig.deadband,
+                                                          config().throttleRxConfig.reverse);
 
     input_trpy[Radio::CHANNEL::ROLL] = normalizeInput(radio.getPWM(Radio::CHANNEL::ROLL),
                                                       config().rollRxConfig.min,

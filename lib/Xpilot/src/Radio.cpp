@@ -145,16 +145,18 @@ void Radio::FailSafeDetector()
             rxFailsafe = false;
             break;
 
+        case THROTTLE_STATE::CUT:
+        case THROTTLE_STATE::SIGNAL_LOST:
+            txThrottleCut = true;
+            rxFailsafe = false;
+            break;
+
         case THROTTLE_STATE::FAILSAFE:
             txThrottleCut = true;
             rxFailsafe = true;
             break;
 
         default:
-        case THROTTLE_STATE::CUT:
-        case THROTTLE_STATE::SIGNAL_LOST:
-            txThrottleCut = true;
-            rxFailsafe = false;
             break;
     }
 
@@ -166,7 +168,8 @@ void Radio::FailSafeDetector()
         failSafeTimerStarted = false;
 
         // Update all last valid pwm values
-        for (uint8_t i = CHANNEL::THROTTLE; i < CHANNEL::CHANNEL_COUNT; i++)
+        lastValidPWM[CHANNEL::THROTTLE] = txThrottleCut ? config().throttleRxConfig.min : rawPWM[CHANNEL::THROTTLE];
+        for (uint8_t i = CHANNEL::ROLL; i < CHANNEL::CHANNEL_COUNT; i++)
         {
             lastValidPWM[i] = rawPWM[i];
         }
