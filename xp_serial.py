@@ -9,6 +9,9 @@ import time
 import serial
 from serial.tools import list_ports
 
+from prompt_toolkit import prompt
+from prompt_toolkit.history import FileHistory
+
 
 # ============================================================
 # XPilot serial protocol
@@ -1904,12 +1907,12 @@ def main():
     print(
         "Type 'help' for commands.\n"
     )
+    
+    history = FileHistory(".xp_serial_history")
 
     try:
         while True:
-            line = input(
-                "\nXPilot> "
-            ).strip()
+            line = prompt("\nXpilot> ", history=history).strip()
 
             if not line:
                 continue
