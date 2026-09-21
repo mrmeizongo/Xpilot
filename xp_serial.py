@@ -1784,7 +1784,7 @@ and the airframe name.
 {Color.MAGENTA}RADIO CALIBRATION{Color.RESET}
 -----------------
 
-    radio_calibration
+    CALIBRATE_RADIO
 
 Streams throttle, roll, pitch, and yaw while you capture
 their normal endpoints, then captures centered roll,
@@ -1912,7 +1912,7 @@ def main():
 
     try:
         while True:
-            line = prompt("\nXpilot> ", history=history).strip()
+            line = prompt("Xpilot> ", history=history).strip()
 
             if not line:
                 continue
