@@ -75,11 +75,11 @@ uint8_t Radio::requiredChannels()
     {
         case Config::AirframeType::CONVENTIONAL:
         case Config::AirframeType::V_TAIL:
-        case Config::AirframeType::FLYING_WING_RUDDER:
+        case Config::AirframeType::ELEVON_WITH_RUDDER:
         case Config::AirframeType::CUSTOM:
             return CHANNELMASK::REQ_ROLL | CHANNELMASK::REQ_PITCH | CHANNELMASK::REQ_YAW;
 
-        case Config::AirframeType::FLYING_WING_NO_RUDDER:
+        case Config::AirframeType::ELEVON_NO_RUDDER:
         case Config::AirframeType::AILERON_ELEVATOR:
             return CHANNELMASK::REQ_ROLL | CHANNELMASK::REQ_PITCH;
 

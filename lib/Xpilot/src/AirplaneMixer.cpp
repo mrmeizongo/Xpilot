@@ -15,11 +15,11 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
             mixVTail(roll, pitch, yaw, out);
             break;
 
-        case Config::AirframeType::FLYING_WING_RUDDER:
+        case Config::AirframeType::ELEVON_WITH_RUDDER:
             mixFlyingWingRudder(roll, pitch, yaw, out);
             break;
 
-        case Config::AirframeType::FLYING_WING_NO_RUDDER:
+        case Config::AirframeType::ELEVON_NO_RUDDER:
             mixFlyingWingNoRudder(roll, pitch, out);
             break;
 

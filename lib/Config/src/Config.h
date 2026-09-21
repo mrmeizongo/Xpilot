@@ -9,8 +9,8 @@ struct Config
     {
         CONVENTIONAL = 0,
         V_TAIL,
-        FLYING_WING_RUDDER,
-        FLYING_WING_NO_RUDDER,
+        ELEVON_WITH_RUDDER,
+        ELEVON_NO_RUDDER,
         RUDDER_ELEVATOR,
         AILERON_ELEVATOR,
         CUSTOM,
