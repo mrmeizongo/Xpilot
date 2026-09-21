@@ -42,7 +42,7 @@ public:
     // Maintain consecutive flight control surface numbering starting from 0
     // Ensure NUM_CHANNELS is the last enum in the list and does not exceed MAX_SERVOS in Servo library
     // MAX_SERVOS for the Arduino Nano is 12 servos because it has 1 16 bit timer
-    enum Channel : uint8_t
+    enum CHANNEL : uint8_t
     {
         CH1 = 0U,
         CH2,
@@ -56,9 +56,9 @@ public:
     void init(void);
     void writeServos(void);
     void writeServos(const int16_t (&SRVout)[CHANNEL_COUNT]);
-    void setServoOut(Channel, int16_t);
+    void setServoOut(CHANNEL, int16_t);
     void setServoOut(const int16_t (&SRVout)[CHANNEL_COUNT]);
-    int16_t getServoOut(Channel);
+    int16_t getServoOut(CHANNEL);
 
 private:
     Servo controlServo[CHANNEL_COUNT]; // Control servos

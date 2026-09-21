@@ -13,7 +13,7 @@ AirplaneMixer::Outputs Mode::mixerOutputs{0, 0, 0, 0};
 int32_t Mode::imu_rpy[3]{0, 0, 0};
 int32_t Mode::imu_g[3]{0, 0, 0};
 
-int16_t Mode::SRVout[Actuators::Channel::CHANNEL_COUNT]{0, 0, 0, 0, 0};
+int16_t Mode::SRVout[Actuators::CHANNEL::CHANNEL_COUNT]{0, 0, 0, 0, 0};
 
 PIDF<int32_t, int16_t> Mode::rollPIDF;
 PIDF<int32_t, int16_t> Mode::pitchPIDF;

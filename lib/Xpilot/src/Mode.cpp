@@ -206,18 +206,18 @@ void Mode::processOutput(void* ctx)
                                      output_trpy[Radio::CHANNEL::YAW],
                                      flaperonInput);
 
-    SRVout[Actuators::Channel::CH1] = output_trpy[Radio::CHANNEL::THROTTLE];
+    SRVout[Actuators::CHANNEL::CH1] = output_trpy[Radio::CHANNEL::THROTTLE];
 
-    SRVout[Actuators::Channel::CH2] =
+    SRVout[Actuators::CHANNEL::CH2] =
         mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
 
-    SRVout[Actuators::Channel::CH3] =
+    SRVout[Actuators::CHANNEL::CH3] =
         mapToSRV(mixerOutputs.rightAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
 
-    SRVout[Actuators::Channel::CH4] =
+    SRVout[Actuators::CHANNEL::CH4] =
         mapToSRV(mixerOutputs.elevator, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
 
-    SRVout[Actuators::Channel::CH5] = mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
+    SRVout[Actuators::CHANNEL::CH5] = mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
 
     actuators.writeServos(SRVout);
 }

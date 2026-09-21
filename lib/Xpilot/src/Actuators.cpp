@@ -14,7 +14,7 @@ void Actuators::init(void)
 }
 
 // Set individual servo output values in microseconds
-void Actuators::setServoOut(Actuators::Channel ch, int16_t value)
+void Actuators::setServoOut(Actuators::CHANNEL ch, int16_t value)
 {
     if (ch < 0U || ch >= CHANNEL_COUNT)
         return;
@@ -33,7 +33,7 @@ void Actuators::setServoOut(const int16_t (&SRVout)[CHANNEL_COUNT])
 }
 
 // Get individual servo output value in microseconds
-int16_t Actuators::getServoOut(Actuators::Channel ch)
+int16_t Actuators::getServoOut(Actuators::CHANNEL ch)
 {
     if (ch < 0U || ch >= CHANNEL_COUNT)
         return -1;
