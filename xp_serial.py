@@ -136,8 +136,8 @@ TYPE_NAMES = {
 AIRFRAME_TYPES = {
     "CONVENTIONAL": 0,
     "V_TAIL": 1,
-    "FLYING_WING_RUDDER": 2,
-    "FLYING_WING_NO_RUDDER": 3,
+    "ELEVON_WITH_RUDDER": 2,
+    "ELEVON_NO_RUDDER": 3,
     "RUDDER_ELEVATOR": 4,
     "AILERON_ELEVATOR": 5,
     "CUSTOM": 6,
@@ -573,8 +573,8 @@ def parse_airframe_type(text):
 
         CONVENTIONAL
         V_TAIL
-        FLYING_WING_RUDDER
-        FLYING_WING_NO_RUDDER
+        ELEVON_RUDDER
+        ELEVON_NO_RUDDER
         RUDDER_ELEVATOR
         AILERON_ELEVATOR
         CUSTOM

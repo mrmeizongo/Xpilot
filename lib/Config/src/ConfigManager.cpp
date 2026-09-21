@@ -33,7 +33,6 @@ bool ConfigManager::save()
     const uint16_t checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&_config), sizeof(_config));
 
     // 4 EEPROM.puts are used to save on SRAM
-    // Storage order is critical
     EEPROM.put(EEPROM_MAGIC_ADDR, EEPROM_MAGIC);
     EEPROM.put(EEPROM_VERSION_ADDR, EEPROM_VERSION);
     EEPROM.put(EEPROM_CONFIG_ADDR, _config);
