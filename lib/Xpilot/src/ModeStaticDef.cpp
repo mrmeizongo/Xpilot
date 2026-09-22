@@ -21,8 +21,8 @@ PIDF<int32_t, int16_t> Mode::yawPIDF;
 
 AirplaneMixer Mode::airplaneMixer;
 
-SlewRateLimiter<int32_t, int16_t> Mode::rollSlew;
-SlewRateLimiter<int32_t, int16_t> Mode::pitchSlew;
-SlewRateLimiter<int32_t, int16_t> Mode::yawSlew;
+SlewRateLimiter<int32_t> Mode::rollSlew;
+SlewRateLimiter<int32_t> Mode::pitchSlew;
+SlewRateLimiter<int32_t> Mode::yawSlew;
 
 int16_t Mode::flaperonInput = 0;

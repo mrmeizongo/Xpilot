@@ -9,9 +9,9 @@ void Mode::init(void)
                                   config().pitchSrvConfig.reverse,
                                   config().yawSrvConfig.reverse);
 
-    rollSlew = SlewRateLimiter<int32_t, int16_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
-    pitchSlew = SlewRateLimiter<int32_t, int16_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
-    yawSlew = SlewRateLimiter<int32_t, int16_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
+    rollSlew = SlewRateLimiter<int32_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
+    pitchSlew = SlewRateLimiter<int32_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
+    yawSlew = SlewRateLimiter<int32_t>{config().controlConfig.controlSlewRate, config().controlConfig.dt};
 
     rollPIDF = PIDF<int32_t, int16_t>{config().rPIDFConfig.Kp / config().controlConfig.controlResolution,
                                       config().rPIDFConfig.Ki / config().controlConfig.controlResolution,
@@ -180,7 +180,7 @@ void Mode::update(void)
 #endif
 }
 
-void Mode::runTask(void* ctx)
+void Mode::runControllers(void* ctx)
 {
     Mode** modePointer = static_cast<Mode**>(ctx);
 

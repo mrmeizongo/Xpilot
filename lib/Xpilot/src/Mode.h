@@ -68,7 +68,7 @@ public:
     void init(void);
 
     // Sceduler trampoline functions
-    static void runTask(void*);
+    static void runControllers(void*);
     static void updateInput(void*);
     static void processOutput(void*);
 
@@ -117,9 +117,9 @@ protected:
 
     static AirplaneMixer::Outputs mixerOutputs; // Outputs from the airplane mixer
 
-    static SlewRateLimiter<int32_t, int16_t> rollSlew;
-    static SlewRateLimiter<int32_t, int16_t> pitchSlew;
-    static SlewRateLimiter<int32_t, int16_t> yawSlew;
+    static SlewRateLimiter<int32_t> rollSlew;
+    static SlewRateLimiter<int32_t> pitchSlew;
+    static SlewRateLimiter<int32_t> yawSlew;
 
     Radio::THREE_POS_SW modeSwitchPosition; // Mode switch position for this mode
 

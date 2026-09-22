@@ -32,40 +32,40 @@ void Xpilot::setup(void)
      * The order tasks are added determines priority and is critical.
      * Priority is in descending order
      */
-    imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_RATE_HZ);
-    radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_RATE_HZ);
-    flightModeUpdateTaskId = scheduler.addTask(&Xpilot::updateFlightModeTask, this, FLIGHT_MODE_UPDATE_RATE_HZ);
-    flightModeInputUpdateTaskId = scheduler.addTask(&Mode::updateInput, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
-    flightModeRunTaskId = scheduler.addTask(&Mode::runTask, &currentMode, FLIGHT_MODE_RUN_RATE_HZ);
-    flightModeOutputTaskId = scheduler.addTask(&Mode::processOutput, &currentMode, FLIGHT_MODE_OUTPUT_RATE_HZ);
+    imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_HZ);
+    radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_HZ);
+    flightModeUpdateTaskId = scheduler.addTask(&Xpilot::updateFlightModeTask, this, FLIGHT_MODE_CHANGE_HZ);
+    flightModeInputUpdateTaskId = scheduler.addTask(&Mode::updateInput, &currentMode, FLIGHT_MODE_UPDATE_HZ);
+    flightModeRunTaskId = scheduler.addTask(&Mode::runControllers, &currentMode, FLIGHT_MODE_RUN_HZ);
+    flightModeOutputTaskId = scheduler.addTask(&Mode::processOutput, &currentMode, FLIGHT_MODE_OUTPUT_HZ);
 
 #if defined(IO_DEBUG)
-    (void)scheduler.addTask(&Xpilot::printIOTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printIOTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(SCHEDULER_RATE_DEBUG)
-    (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_IMU_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printIMUTaskStatTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printIMUTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_RADIO_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printRadioTaskStatTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printRadioTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_FM_UPDATE_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeUpdateTaskStatTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printFlightModeUpdateTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_FM_MODE_INPUT_UPDATE_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeInputUpdateTaskStatTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printFlightModeInputUpdateTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_FM_RUN_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeRunTaskStatTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printFlightModeRunTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_FM_OUTPUT_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeOutputTaskStatTask, this, TASK_PRINT_RATE_HZ);
+    (void)scheduler.addTask(&Xpilot::printFlightModeOutputTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 
 #if defined(USE_SERIAL_TASK)
-    serialConfigTaskId = scheduler.addTask(&Xpilot::runSerialConfigTask, this, SERIAL_TASK_RATE_HZ);
+    serialConfigTaskId = scheduler.addTask(&Xpilot::runSerialConfigTask, this, SERIAL_TASK_HZ);
 #endif
 
     scheduler.init();
@@ -91,7 +91,7 @@ void Xpilot::sysInit(void)
     currentMode = &rateMode; // Rate mode is the default mode of operation on startup
 }
 
-void Xpilot::updateFlightMode(void)
+void Xpilot::changeFlightMode(void)
 {
     Mode* requestedMode = currentMode;
 

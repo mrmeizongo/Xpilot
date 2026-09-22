@@ -41,7 +41,7 @@ public:
     Xpilot& operator=(const Xpilot&) = delete; // Prevent this class from being assignable
 
     // Trampoline functions for the scheduler
-    static void updateFlightModeTask(void* ctx) { static_cast<Xpilot*>(ctx)->updateFlightMode(); }
+    static void updateFlightModeTask(void* ctx) { static_cast<Xpilot*>(ctx)->changeFlightMode(); }
     static void runSerialConfigTask(void* ctx) { static_cast<Xpilot*>(ctx)->serialConfigTask.run(); }
     static void printIOTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIO(); }
     static void printSchedulerRateTask(void* ctx) { static_cast<Xpilot*>(ctx)->printSchedulerRate(); }
@@ -84,7 +84,7 @@ private:
     // This is the state of the flight stabilization system
     Mode* currentMode;
 
-    void updateFlightMode(void);
+    void changeFlightMode(void);
 
     // Task handlers for the scheduler to manage periodic tasks
     static uint8_t imuTaskId;
