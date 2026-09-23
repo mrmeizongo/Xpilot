@@ -42,6 +42,12 @@ BOOL
     AIRFRAME_TYPE                       UINT8
 
     // RCConfig
+    RC_THROTTLE_MIN                     INT16
+    RC_THROTTLE_TRIM                    INT16
+    RC_THROTTLE_MAX                     INT16
+    RC_THROTTLE_DB                      UINT8
+    RC_THROTTLE_REVERSE                 BOOL
+    
     RC_ROLL_MIN                         INT16
     RC_ROLL_TRIM                        INT16
     RC_ROLL_MAX                         INT16
@@ -59,8 +65,25 @@ BOOL
     RC_YAW_MAX                          INT16
     RC_YAW_DB                           UINT8
     RC_YAW_REVERSE                      BOOL
+    
+    RC_AUX1_MIN                          INT16
+    RC_AUX1_TRIM                         INT16
+    RC_AUX1_MAX                          INT16
+    RC_AUX1_DB                           UINT8
+    RC_AUX1_REVERSE                      BOOL
+    
+    RC_AUX2_MIN                          INT16
+    RC_AUX2_TRIM                         INT16
+    RC_AUX2_MAX                          INT16
+    RC_AUX2_DB                           UINT8
+    RC_AUX2_REVERSE                      BOOL
 
     // SRVConfig
+    SRV_THROTTLE_MIN                     INT16
+    SRV_THROTTLE_TRIM                    INT16
+    SRV_THROTTLE_MAX                     INT16
+    SRV_THROTTLE_REVERSE                 BOOL
+    
     SRV_ROLL_MIN                        INT16
     SRV_ROLL_TRIM                       INT16
     SRV_ROLL_MAX                        INT16
@@ -77,14 +100,15 @@ BOOL
     SRV_YAW_REVERSE                     BOOL
 
     // FlightConfig
-    FLIGHT_CONTROL_RES                  INT16
-
     FLIGHT_MAX_ROLL_RATE_DEGS           INT16
     FLIGHT_MAX_PITCH_RATE_DEGS          INT16
     FLIGHT_MAX_YAW_RATE_DEGS            INT16
 
     FLIGHT_MAX_ROLL_ANGLE_DEGS          INT16
     FLIGHT_MAX_PITCH_ANGLE_DEGS         INT16
+
+    FLIGHT_ROLL_ANGLE_KP                FLOAT
+    FLIGHT_PITCH_ANGLE_KP               FLOAT
 
     FLIGHT_FLAPERON_SCALE_FACTOR        FLOAT
     FLIGHT_MAX_FLAPERON                 INT16
@@ -123,9 +147,10 @@ BOOL
     IMU_CALIBRATED                      BOOL
 
     // FilterConfig
-    FILTER_SLEW_RATE                    INT16
-    FILTER_LPF_FREQ                     INT16
-    FILTER_PROCESS_DT                   FLOAT
+    CONTROL_SLEW_RATE                   UINT16
+    CONTROL_LPF_FREQ                    UINT16
+    CONTROL_RESOLUTION                  INT16
+    CONTROL_DT                          FLOAT
 ```
 
 ## Airframe Types

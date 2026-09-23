@@ -41,18 +41,16 @@ public:
     Xpilot& operator=(const Xpilot&) = delete; // Prevent this class from being assignable
 
     // Trampoline functions for the scheduler
-    static void updateFlightModeTask(void* ctx) { static_cast<Xpilot*>(ctx)->changeFlightMode(); }
+    static void changeFlightModeTask(void* ctx) { static_cast<Xpilot*>(ctx)->changeFlightMode(); }
     static void runSerialConfigTask(void* ctx) { static_cast<Xpilot*>(ctx)->serialConfigTask.run(); }
-    static void printIOTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIO(); }
+
     static void printSchedulerRateTask(void* ctx) { static_cast<Xpilot*>(ctx)->printSchedulerRate(); }
+    static void printIOTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIO(); }
     static void printIMUTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIMUTaskStats(); }
     static void printRadioTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printRadioTaskStats(); }
-    static void printFlightModeRunTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeRunTaskStats(); }
+    static void printFlightModeChangeTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeChangeTaskStats(); }
     static void printFlightModeUpdateTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeUpdateTaskStats(); }
-    static void printFlightModeInputUpdateTaskStatTask(void* ctx)
-    {
-        static_cast<Xpilot*>(ctx)->printFlightModeInputUpdateTaskStats();
-    }
+    static void printFlightModeRunTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeRunTaskStats(); }
     static void printFlightModeOutputTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeOutputTaskStats(); }
 
     // Only functions called from the main setup and loop functions
@@ -60,13 +58,14 @@ public:
     void loop(void);
 
     // Debug functions to get outputs for testing and tuning purposes.
-    void printIO(void);
     void printSchedulerRate(void);
+    void printIO(void);
+
     void printIMUTaskStats(void);
     void printRadioTaskStats(void);
-    void printFlightModeRunTaskStats(void);
+    void printFlightModeChangeTaskStats(void);
     void printFlightModeUpdateTaskStats(void);
-    void printFlightModeInputUpdateTaskStats(void);
+    void printFlightModeRunTaskStats(void);
     void printFlightModeOutputTaskStats(void);
 
     const Mode* getCurrentFlightMode(void) const { return currentMode; }
@@ -89,11 +88,10 @@ private:
     // Task handlers for the scheduler to manage periodic tasks
     static uint8_t imuTaskId;
     static uint8_t radioTaskId;
+    static uint8_t flightModeChangeTaskId;
     static uint8_t flightModeUpdateTaskId;
-    static uint8_t flightModeInputUpdateTaskId;
     static uint8_t flightModeRunTaskId;
     static uint8_t flightModeOutputTaskId;
-    static uint8_t serialConfigTaskId;
 
     SerialConfigTask serialConfigTask;
 };

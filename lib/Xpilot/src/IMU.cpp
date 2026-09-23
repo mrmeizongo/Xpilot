@@ -48,8 +48,8 @@ void IMU::init(void)
     mpu6050.setAccBias(config().imuConfig.accBiasX, config().imuConfig.accBiasY, config().imuConfig.accBiasZ);
     mpu6050.setGyroBias(config().imuConfig.gyroBiasX, config().imuConfig.gyroBiasY, config().imuConfig.gyroBiasZ);
 
-#if defined(IMU_DEBUG)
-    (void)scheduler.addTask(&IMU::printIMUTask, &imu, TASK_PRINT_RATE_HZ);
+#if defined(PRINT_IMU)
+    (void)scheduler.addTask(&IMU::printIMUTask, &imu, TASK_PRINT_HZ);
 #endif
 }
 

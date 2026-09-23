@@ -38,21 +38,22 @@
  * Uncomment to enable the respective debugging
  * CAUTION: Only uncomment one debug option at a time
  */
-// #define SCHEDULER_RATE_DEBUG
-// #define IMU_DEBUG
-// #define IO_DEBUG
+// #define PRINT_SCHEDULER_RATE
+// #define PRINT_IO
+
+// #define PRINT_IMU
 
 // #define PRINT_IMU_TASK_STAT
 // #define PRINT_RADIO_TASK_STAT
+// #define PRINT_FM_CHANGE_TASK_STAT
 // #define PRINT_FM_UPDATE_TASK_STAT
-// #define PRINT_FM_MODE_INPUT_UPDATE_TASK_STAT
 // #define PRINT_FM_RUN_TASK_STAT
 // #define PRINT_FM_OUTPUT_TASK_STAT
 
 // Any debugging should disable serial communication with xp_serial.py
-#if defined(SCHEDULER_RATE_DEBUG) || defined(IMU_DEBUG) || defined(IO_DEBUG) || defined(PRINT_IMU_TASK_STAT) ||             \
-    defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) ||              \
-    defined(PRINT_FM_OUTPUT_TASK_STAT)
+#if defined(PRINT_SCHEDULER_RATE) || defined(PRINT_IO) || defined(PRINT_IMU) || defined(PRINT_IMU_TASK_STAT) ||             \
+    defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_FM_CHANGE_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) ||           \
+    defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_OUTPUT_TASK_STAT)
 #if defined(USE_SERIAL_TASK)
 #undef USE_SERIAL_TASK
 #endif
