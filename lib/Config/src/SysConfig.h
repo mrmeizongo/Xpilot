@@ -1,27 +1,24 @@
 #ifndef _SYSTEM_CONFIG_H
 #define _SYSTEM_CONFIG_H
 
-#define SYSTEM_CONFIG_VERSION "3"
+#define SYSTEM_CONFIG_VERSION "4"
 
 // Uncomment to use flaperons
 // #define USE_FLAPERONS
-
-#if defined(USE_FLAPERONS)
-#define USE_AUX2IN
-#endif
 
 // Enable communication with xp_serial.py
 #define USE_SERIAL_TASK
 
 // Task scheduler config
-#define CONTROL_LOOP_RATE_HZ 250                     // Control loop period in hz
-#define IMU_UPDATE_RATE_HZ CONTROL_LOOP_RATE_HZ      // IMU update period in hz
-#define FLIGHT_MODE_RUN_RATE_HZ CONTROL_LOOP_RATE_HZ // Flight mode run period in hz
-#define FLIGHT_MODE_UPDATE_RATE_HZ 25                // Flight mode update period in hz
-#define RADIO_INPUT_PROCESS_RATE_HZ 50               // Radio input period in hz
-#define FLIGHT_MODE_OUTPUT_RATE_HZ 50                // Flight mode output period in hz
-#define TASK_PRINT_RATE_HZ 2                         // Task rate debug print period in hz
-#define SERIAL_TASK_RATE_HZ 20                       // Serial task period in hz
+#define CONTROL_LOOP_HZ 250                // Control loop period in hz
+#define IMU_UPDATE_HZ CONTROL_LOOP_HZ      // IMU update period in hz
+#define FLIGHT_MODE_RUN_HZ CONTROL_LOOP_HZ // Flight mode run period in hz
+#define FLIGHT_MODE_CHANGE_HZ 25           // Flight mode change period in hz
+#define FLIGHT_MODE_UPDATE_HZ 50           // Flight mode update period in hz
+#define FLIGHT_MODE_OUTPUT_HZ 50           // Flight mode output period in hz
+#define RADIO_INPUT_PROCESS_HZ 50          // Radio input period in hz
+#define TASK_PRINT_HZ 2                    // Task rate debug print period in hz
+#define SERIAL_TASK_HZ 20                  // Serial task period in hz
 
 // Debug config
 

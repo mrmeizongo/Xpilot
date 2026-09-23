@@ -97,7 +97,7 @@ void Xpilot::printIO(void)
     Serial.print(currentMode->getFlaperon());
     Serial.print(F("\t\t\t"));
     Serial.print(F("Flaperon Position: "));
-    Serial.println((int16_t)radio.getThreeSwitchPos(Radio::CHANNEL::AUX2));
+    Serial.println((int16_t)radio.getThreeSwitchPos(Radio::CHANNEL::AUX2, config().aux2RxConfig.trim, 68));
 #endif
 }
 
