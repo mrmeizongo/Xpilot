@@ -39,11 +39,11 @@ Flight stabilization software
 
 #define PIN_HIGH(pin) ((PIND & _BV(pin)) != 0)
 
-constexpr uint16_t PWM_MIN_US = 600;            // Lowest valid pwm expected from transmitter
-constexpr uint16_t PWM_TRIM_US = 1500;          // Trim pwm expected from transmitter
-constexpr uint16_t PWM_MAX_US = 2400;           // Highest valid pwm expected from transmitter
-constexpr uint32_t TIMEOUT_US = 110000;         // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
-constexpr int16_t THREE_SW_POS_THRESHOLD = 136; // 3 position switch input separator
+constexpr uint16_t PWM_MIN_US = 600;       // Lowest valid pwm expected from transmitter
+constexpr uint16_t PWM_TRIM_US = 1500;     // Trim pwm expected from transmitter
+constexpr uint16_t PWM_MAX_US = 2400;      // Highest valid pwm expected from transmitter
+constexpr uint32_t TIMEOUT_US = 110000;    // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
+constexpr uint8_t THREE_POS_SW_SEP = 136U; // 3 position switch separator
 
 constexpr uint16_t THROTTLE_CUT_THRESHOLD = 1050;     // User selected normal throttle cut threshold (-125% throttle)
 constexpr uint16_t THROTTLE_FAILSAFE_THRESHOLD = 950; // User selected failsafe throttle threshold (-150% throttle)
@@ -122,7 +122,7 @@ public:
     uint16_t getPWM(CHANNEL);
 
     THREE_POS_SW
-    getThreeSwitchPos(CHANNEL, uint16_t trim = PWM_TRIM_US, uint16_t threshold = THREE_SW_POS_THRESHOLD);
+    getThreeSwitchPos(CHANNEL, uint16_t trim = PWM_TRIM_US, uint8_t positionSep = THREE_POS_SW_SEP);
 
     uint32_t getSignalLossTimeUs(void) { return signalLossTimeUs; }
 

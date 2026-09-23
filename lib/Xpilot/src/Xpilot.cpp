@@ -109,7 +109,7 @@ void Xpilot::changeFlightMode(void)
         sysFailsafeActive = false;
 
         const Radio::THREE_POS_SW switchPos =
-            radio.getThreeSwitchPos(Radio::CHANNEL::AUX1, config().aux1RxConfig.trim, 136U);
+            radio.getThreeSwitchPos(Radio::CHANNEL::AUX1, config().aux1RxConfig.trim, THREE_POS_SW_SEP);
 
         if (switchPos == Radio::THREE_POS_SW::UNDEFINED)
             return;

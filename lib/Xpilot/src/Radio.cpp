@@ -185,15 +185,15 @@ void Radio::FailSafeDetector()
         failSafe = true;
 }
 
-Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint16_t threshold)
+Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint8_t positionSep)
 {
     if (ch >= CHANNEL::CHANNEL_COUNT)
         return THREE_POS_SW::UNDEFINED;
 
-    if (rawPWM[ch] < trim - threshold)
+    if (rawPWM[ch] < trim - positionSep)
         return THREE_POS_SW::LOW_POS;
 
-    if (rawPWM[ch] > trim + threshold)
+    if (rawPWM[ch] > trim + positionSep)
         return THREE_POS_SW::HIGH_POS;
 
     return THREE_POS_SW::MID_POS;
