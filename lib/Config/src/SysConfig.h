@@ -16,7 +16,7 @@
  * Trim = 50% down
  * Low = 100% down
  */
-#define USE_FLAPERONS
+// #define USE_FLAPERONS
 
 // Enable communication with xp_serial.py
 #define USE_SERIAL_TASK
