@@ -169,7 +169,7 @@ void Mode::update(void)
                                                      config().yawRxConfig.reverse);
 
 #if defined(USE_FLAPERONS)
-    // Only channel's config min and max are passed to normalizeInput to output 0 to -1000
+    // Only the channel's config min and max are passed to normalizeInput to output 0 to -1000
     // Aux2's radio max config is passed as the trim argument for normalizeInput
     // The trim config is not required
     flaperonInput = normalizeInput(radio.getPWM(Radio::CHANNEL::AUX2),
