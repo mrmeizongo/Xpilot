@@ -168,11 +168,13 @@ void Mode::update(void)
                                                      config().yawRxConfig.deadband,
                                                      config().yawRxConfig.reverse);
 
+// Only min and max are used
+// max is passed as argument for trim because switch position high=flush with wing
 #if defined(USE_FLAPERONS)
     flaperonInput = normalizeInput(radio.getPWM(Radio::CHANNEL::AUX2),
-                                   config().rollRxConfig.min,
-                                   config().rollRxConfig.trim,
-                                   config().rollRxConfig.max,
+                                   config().aux2RxConfig.min,
+                                   config().aux2RxConfig.max,
+                                   0,
                                    config().aux2RxConfig.deadband,
                                    false);
 

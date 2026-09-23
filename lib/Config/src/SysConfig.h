@@ -3,8 +3,20 @@
 
 #define SYSTEM_CONFIG_VERSION "4"
 
-// Uncomment to use flaperons
-// #define USE_FLAPERONS
+/*
+ * Uncomment to use flaperons
+ * For flap/flaperon control, a 3 position switch on the TX is used
+ * The same output can be used to directly control flap servos
+ * 
+ * Positions
+ * 0-------1------2
+ * Low---Trim---High
+ * 
+ * High = flap/flaperon flush with wing
+ * Trim = 50% down
+ * Low = 100% down
+ */
+#define USE_FLAPERONS
 
 // Enable communication with xp_serial.py
 #define USE_SERIAL_TASK
