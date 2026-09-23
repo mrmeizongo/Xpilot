@@ -96,6 +96,8 @@ struct Config
     RxConfig rollRxConfig;
     RxConfig pitchRxConfig;
     RxConfig yawRxConfig;
+    RxConfig aux1RxConfig;
+    RxConfig aux2RxConfig;
 
     SRVConfig throttleSrvConfig;
     SRVConfig rollSrvConfig;

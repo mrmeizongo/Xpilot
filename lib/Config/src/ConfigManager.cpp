@@ -111,6 +111,18 @@ void ConfigManager::loadDefaults()
     _config.yawRxConfig.deadband = 12;
     _config.yawRxConfig.reverse = false;
 
+    _config.aux1RxConfig.min = 1100;
+    _config.aux1RxConfig.trim = 1500;
+    _config.aux1RxConfig.max = 1900;
+    _config.aux1RxConfig.deadband = 12;
+    _config.aux1RxConfig.reverse = false;
+
+    _config.aux2RxConfig.min = 1100;
+    _config.aux2RxConfig.trim = 1500;
+    _config.aux2RxConfig.max = 1900;
+    _config.aux2RxConfig.deadband = 12;
+    _config.aux2RxConfig.reverse = false;
+
     _config.throttleSrvConfig.min = 1000;
     _config.throttleSrvConfig.trim = 1500;
     _config.throttleSrvConfig.max = 2000;
@@ -291,8 +303,57 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
 
         case ConfigID::RC_YAW_REVERSE:
             type = ConfigValueType::BOOL;
-            value.u8 = _config.yawRxConfig.reverse ? 1U : 0U;
+            value.u8 = _config.aux1RxConfig.reverse ? 1U : 0U;
             break;
+
+        case ConfigID::RC_AUX1_MIN:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.aux1RxConfig.min;
+            break;
+
+        case ConfigID::RC_AUX1_TRIM:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.aux1RxConfig.trim;
+            break;
+
+        case ConfigID::RC_AUX1_MAX:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.aux1RxConfig.max;
+            break;
+
+        case ConfigID::RC_AUX1_DB:
+            type = ConfigValueType::UINT8;
+            value.u8 = _config.aux1RxConfig.deadband;
+            break;
+
+        case ConfigID::RC_AUX1_REVERSE:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.aux1RxConfig.reverse ? 1U : 0U;
+            break;
+
+        case ConfigID::RC_AUX2_MIN:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.aux2RxConfig.min;
+            break;
+
+        case ConfigID::RC_AUX2_TRIM:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.aux2RxConfig.trim;
+            break;
+
+        case ConfigID::RC_AUX2_MAX:
+            type = ConfigValueType::INT16;
+            value.i16 = _config.aux2RxConfig.max;
+            break;
+
+        case ConfigID::RC_AUX2_DB:
+            type = ConfigValueType::UINT8;
+            value.u8 = _config.aux2RxConfig.deadband;
+            break;
+
+        case ConfigID::RC_AUX2_REVERSE:
+            type = ConfigValueType::BOOL;
+            value.u8 = _config.aux2RxConfig.reverse ? 1U : 0U;
 
         case ConfigID::SRV_THROTTLE_MIN:
             type = ConfigValueType::INT16;
@@ -660,6 +721,46 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
             _config.yawRxConfig.reverse = (value.u8 != 0U);
             break;
 
+        case ConfigID::RC_AUX1_MIN:
+            _config.aux1RxConfig.min = value.i16;
+            break;
+
+        case ConfigID::RC_AUX1_TRIM:
+            _config.aux1RxConfig.trim = value.i16;
+            break;
+
+        case ConfigID::RC_AUX1_MAX:
+            _config.aux1RxConfig.max = value.i16;
+            break;
+
+        case ConfigID::RC_AUX1_DB:
+            _config.aux1RxConfig.deadband = value.u8;
+            break;
+
+        case ConfigID::RC_AUX1_REVERSE:
+            _config.aux1RxConfig.reverse = (value.u8 != 0U);
+            break;
+
+        case ConfigID::RC_AUX2_MIN:
+            _config.aux2RxConfig.min = value.i16;
+            break;
+
+        case ConfigID::RC_AUX2_TRIM:
+            _config.aux2RxConfig.trim = value.i16;
+            break;
+
+        case ConfigID::RC_AUX2_MAX:
+            _config.aux2RxConfig.max = value.i16;
+            break;
+
+        case ConfigID::RC_AUX2_DB:
+            _config.aux2RxConfig.deadband = value.u8;
+            break;
+
+        case ConfigID::RC_AUX2_REVERSE:
+            _config.aux2RxConfig.reverse = (value.u8 != 0U);
+            break;
+
         case ConfigID::SRV_THROTTLE_MIN:
             _config.throttleSrvConfig.min = value.i16;
             break;
@@ -873,6 +974,14 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
         case ConfigID::RC_YAW_TRIM:
         case ConfigID::RC_YAW_MAX:
 
+        case ConfigID::RC_AUX1_MIN:
+        case ConfigID::RC_AUX1_TRIM:
+        case ConfigID::RC_AUX1_MAX:
+
+        case ConfigID::RC_AUX2_MIN:
+        case ConfigID::RC_AUX2_TRIM:
+        case ConfigID::RC_AUX2_MAX:
+
         case ConfigID::SRV_ROLL_MIN:
         case ConfigID::SRV_ROLL_TRIM:
         case ConfigID::SRV_ROLL_MAX:
@@ -891,6 +1000,8 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
         case ConfigID::RC_ROLL_DB:
         case ConfigID::RC_PITCH_DB:
         case ConfigID::RC_YAW_DB:
+        case ConfigID::RC_AUX1_DB:
+        case ConfigID::RC_AUX2_DB:
 
             return value.u8 < 256;
 
@@ -900,6 +1011,8 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
         case ConfigID::RC_ROLL_REVERSE:
         case ConfigID::RC_PITCH_REVERSE:
         case ConfigID::RC_YAW_REVERSE:
+        case ConfigID::RC_AUX1_REVERSE:
+        case ConfigID::RC_AUX2_REVERSE:
 
         case ConfigID::SRV_THROTTLE_REVERSE:
         case ConfigID::SRV_ROLL_REVERSE:

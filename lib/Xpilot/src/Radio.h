@@ -99,9 +99,8 @@ public:
         PITCH,
         YAW,
         AUX1,
-#if defined(USE_AUX2IN)
         AUX2,
-#endif
+
         CHANNEL_COUNT
     };
 

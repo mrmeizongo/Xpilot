@@ -194,8 +194,8 @@ void SerialConfigTask::sendValue(ConfigID id)
 
 void SerialConfigTask::sendRadioSnapshot()
 {
-    // Request 4 radio channels, i.e. throttle, roll, pitch and yaw
-    const uint8_t channel_count = 4;
+    // Request all 6 channels
+    const uint8_t channel_count = 6;
     uint16_t pwm[channel_count];
 
     if (!radio.getValidControlPWM(pwm, channel_count))
@@ -205,7 +205,7 @@ void SerialConfigTask::sendRadioSnapshot()
         return;
     }
 
-    for (uint8_t channel = 0; channel < 4; ++channel)
+    for (uint8_t channel = 0; channel < channel_count; channel++)
         sendRadioValue(channel, pwm[channel]);
 }
 

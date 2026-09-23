@@ -32,6 +32,18 @@ enum class ConfigID : uint8_t
     RC_YAW_DB,
     RC_YAW_REVERSE,
 
+    RC_AUX1_MIN,
+    RC_AUX1_TRIM,
+    RC_AUX1_MAX,
+    RC_AUX1_DB,
+    RC_AUX1_REVERSE,
+
+    RC_AUX2_MIN,
+    RC_AUX2_TRIM,
+    RC_AUX2_MAX,
+    RC_AUX2_DB,
+    RC_AUX2_REVERSE,
+
     // SRVConfig
     SRV_THROTTLE_MIN,
     SRV_THROTTLE_TRIM,

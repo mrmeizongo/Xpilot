@@ -170,10 +170,10 @@ void Mode::update(void)
 
 #if defined(USE_FLAPERONS)
     flaperonInput = normalizeInput(radio.getPWM(Radio::CHANNEL::AUX2),
-                                   config().rollRxConfig.min,
-                                   config().rollRxConfig.trim,
-                                   config().rollRxConfig.max,
-                                   config().rollRxConfig.deadband,
+                                   config().aux2RxConfig.min,
+                                   config().aux2RxConfig.trim,
+                                   config().aux2RxConfig.max,
+                                   config().aux2RxConfig.deadband,
                                    false);
 
     flaperonInput *= config().flightConfig.flaperonScaleFactor;

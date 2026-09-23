@@ -5,13 +5,9 @@
 #include "PinChangeInterrupt.h"
 
 volatile static uint32_t throttleRiseTimeUs = 0, aileronRiseTimeUs = 0, elevatorRiseTimeUs = 0, rudderRiseTimeUs = 0,
-                         aux1RiseTimeUs = 0;
-volatile static uint16_t throttlePulseUs = 0, aileronPulseUs = 0, elevatorPulseUs = 0, rudderPulseUs = 0, aux1PulseUs = 0;
-
-#if defined(USE_AUX2IN)
-volatile static uint32_t aux2RiseTimeUs = 0;
-volatile static uint16_t aux2PulseUs = 0;
-#endif
+                         aux1RiseTimeUs = 0, aux2RiseTimeUs = 0;
+volatile static uint16_t throttlePulseUs = 0, aileronPulseUs = 0, elevatorPulseUs = 0, rudderPulseUs = 0, aux1PulseUs = 0,
+                         aux2PulseUs = 0;
 
 volatile static uint32_t lastValidTimeUs[Radio::CHANNEL::CHANNEL_COUNT];
 // -------------------------
@@ -32,23 +28,26 @@ void Radio::init(void)
     // Throttle setup
     pinMode(THROTTLEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(THROTTLEPIN_INT, CHANGE);
+
     // AIleron setup
     pinMode(AILPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AILPIN_INT, CHANGE);
+
     // Elevator setup
     pinMode(ELEVPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(ELEVPIN_INT, CHANGE);
+
     // Rudder setup
     pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
+
     // Auxiliary switch 1 setup
     pinMode(AUX1PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX1PIN_INT, CHANGE);
-#if defined(USE_AUX2IN)
+
     // Auxiliary switch 2 setup
     pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
-#endif
 }
 
 void Radio::processInput()
@@ -60,10 +59,7 @@ void Radio::processInput()
         setRawPWM(CHANNEL::PITCH, elevatorPulseUs, lastValidTimeUs[CHANNEL::PITCH]);
         setRawPWM(CHANNEL::YAW, rudderPulseUs, lastValidTimeUs[CHANNEL::YAW]);
         setRawPWM(CHANNEL::AUX1, aux1PulseUs, lastValidTimeUs[CHANNEL::AUX1]);
-
-#if defined(USE_AUX2IN)
         setRawPWM(CHANNEL::AUX2, aux2PulseUs, lastValidTimeUs[CHANNEL::AUX2]);
-#endif
     }
 
     FailSafeDetector();
@@ -205,7 +201,7 @@ Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint16_t
 
 bool Radio::getValidControlPWM(uint16_t* dest, uint8_t count)
 {
-    if (failSafe || failSafeTimerStarted || (count >= Radio::CHANNEL::CHANNEL_COUNT))
+    if (failSafe || failSafeTimerStarted || (count > Radio::CHANNEL::CHANNEL_COUNT))
         return false;
 
     for (uint8_t i = 0; i < count; i++)
@@ -282,12 +278,10 @@ void PinChangeInterruptEvent(AUX1PIN_INT)(void)
     capturePWMEdge(AUX1PIN_INPUT, aux1RiseTimeUs, aux1PulseUs, lastValidTimeUs[Radio::CHANNEL::AUX1]);
 }
 
-#if defined(USE_AUX2IN)
 void PinChangeInterruptEvent(AUX2PIN_INT)(void)
 {
     capturePWMEdge(AUX2PIN_INPUT, aux2RiseTimeUs, aux2PulseUs, lastValidTimeUs[Radio::CHANNEL::AUX2]);
 }
-#endif
 // ----------------------------
 
 Radio radio;

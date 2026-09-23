@@ -90,6 +90,8 @@ RADIO_CHANNELS = {
     "ROLL": 1,
     "PITCH": 2,
     "YAW": 3,
+    "AUX1": 4,
+    "AUX2": 5,
 }
 
 
@@ -109,6 +111,8 @@ RADIO_CONFIG_IDS = {
     "ROLL": (6, 7, 8),
     "PITCH": (11, 12, 13),
     "YAW": (16, 17, 18),
+    "AUX1": (21, 22, 23),
+    "AUX2": (26, 27, 28),
 }
 
 
@@ -184,79 +188,91 @@ CONFIG_NAMES = {
     18: "RC_YAW_MAX",
     19: "RC_YAW_DB",
     20: "RC_YAW_REVERSE",
+    
+    21: "RC_AUX1_MIN",
+    22: "RC_AUX1_TRIM",
+    23: "RC_AUX1_MAX",
+    24: "RC_AUX1_DB",
+    25: "RC_AUX1_REVERSE",
+    
+    26: "RC_AUX2_MIN",
+    27: "RC_AUX2_TRIM",
+    28: "RC_AUX2_MAX",
+    29: "RC_AUX2_DB",
+    30: "RC_AUX2_REVERSE",
 
-    21: "SRV_THROTTLE_MIN",
-    22: "SRV_THROTTLE_TRIM",
-    23: "SRV_THROTTLE_MAX",
-    24: "SRV_THROTTLE_REVERSE",
+    31: "SRV_THROTTLE_MIN",
+    32: "SRV_THROTTLE_TRIM",
+    33: "SRV_THROTTLE_MAX",
+    34: "SRV_THROTTLE_REVERSE",
 
-    25: "SRV_ROLL_MIN",
-    26: "SRV_ROLL_TRIM",
-    27: "SRV_ROLL_MAX",
-    28: "SRV_ROLL_REVERSE",
+    35: "SRV_ROLL_MIN",
+    36: "SRV_ROLL_TRIM",
+    37: "SRV_ROLL_MAX",
+    38: "SRV_ROLL_REVERSE",
 
-    29: "SRV_PITCH_MIN",
-    30: "SRV_PITCH_TRIM",
-    31: "SRV_PITCH_MAX",
-    32: "SRV_PITCH_REVERSE",
+    39: "SRV_PITCH_MIN",
+    40: "SRV_PITCH_TRIM",
+    41: "SRV_PITCH_MAX",
+    42: "SRV_PITCH_REVERSE",
 
-    33: "SRV_YAW_MIN",
-    34: "SRV_YAW_TRIM",
-    35: "SRV_YAW_MAX",
-    36: "SRV_YAW_REVERSE",
+    43: "SRV_YAW_MIN",
+    44: "SRV_YAW_TRIM",
+    45: "SRV_YAW_MAX",
+    46: "SRV_YAW_REVERSE",
 
-    37: "FLIGHT_MAX_ROLL_RATE_DEGS",
-    38: "FLIGHT_MAX_PITCH_RATE_DEGS",
-    39: "FLIGHT_MAX_YAW_RATE_DEGS",
+    47: "FLIGHT_MAX_ROLL_RATE_DEGS",
+    48: "FLIGHT_MAX_PITCH_RATE_DEGS",
+    49: "FLIGHT_MAX_YAW_RATE_DEGS",
 
-    40: "FLIGHT_MAX_ROLL_ANGLE_DEGS",
-    41: "FLIGHT_MAX_PITCH_ANGLE_DEGS",
+    50: "FLIGHT_MAX_ROLL_ANGLE_DEGS",
+    51: "FLIGHT_MAX_PITCH_ANGLE_DEGS",
 
-    42: "FLIGHT_ROLL_ANGLE_KP",
-    43: "FLIGHT_PITCH_ANGLE_KP",
+    52: "FLIGHT_ROLL_ANGLE_KP",
+    53: "FLIGHT_PITCH_ANGLE_KP",
 
-    44: "FLIGHT_FLAPERON_SCALE_FACTOR",
-    45: "FLIGHT_MAX_FLAPERON",
+    54: "FLIGHT_FLAPERON_SCALE_FACTOR",
+    55: "FLIGHT_MAX_FLAPERON",
 
-    46: "FLIGHT_REVERSE_RUDDER_MIX",
-    47: "FLIGHT_RUDDER_MIX_SCALE_FACTOR",
+    56: "FLIGHT_REVERSE_RUDDER_MIX",
+    57: "FLIGHT_RUDDER_MIX_SCALE_FACTOR",
 
-    48: "PIDF_ROLL_KP",
-    49: "PIDF_ROLL_KI",
-    50: "PIDF_ROLL_KD",
-    51: "PIDF_ROLL_KF",
-    52: "PIDF_ROLL_I_WINDUP_MAX",
+    58: "PIDF_ROLL_KP",
+    69: "PIDF_ROLL_KI",
+    60: "PIDF_ROLL_KD",
+    61: "PIDF_ROLL_KF",
+    62: "PIDF_ROLL_I_WINDUP_MAX",
 
-    53: "PIDF_PITCH_KP",
-    54: "PIDF_PITCH_KI",
-    55: "PIDF_PITCH_KD",
-    56: "PIDF_PITCH_KF",
-    57: "PIDF_PITCH_I_WINDUP_MAX",
+    63: "PIDF_PITCH_KP",
+    64: "PIDF_PITCH_KI",
+    65: "PIDF_PITCH_KD",
+    66: "PIDF_PITCH_KF",
+    67: "PIDF_PITCH_I_WINDUP_MAX",
 
-    58: "PIDF_YAW_KP",
-    59: "PIDF_YAW_KI",
-    60: "PIDF_YAW_KD",
-    61: "PIDF_YAW_KF",
-    62: "PIDF_YAW_I_WINDUP_MAX",
+    68: "PIDF_YAW_KP",
+    69: "PIDF_YAW_KI",
+    70: "PIDF_YAW_KD",
+    71: "PIDF_YAW_KF",
+    72: "PIDF_YAW_I_WINDUP_MAX",
 
-    63: "IMU_ACC_BIAS_X",
-    64: "IMU_ACC_BIAS_Y",
-    65: "IMU_ACC_BIAS_Z",
+    73: "IMU_ACC_BIAS_X",
+    74: "IMU_ACC_BIAS_Y",
+    75: "IMU_ACC_BIAS_Z",
 
-    66: "IMU_GYRO_BIAS_X",
-    67: "IMU_GYRO_BIAS_Y",
-    68: "IMU_GYRO_BIAS_Z",
+    76: "IMU_GYRO_BIAS_X",
+    77: "IMU_GYRO_BIAS_Y",
+    78: "IMU_GYRO_BIAS_Z",
 
-    69: "IMU_CALIBRATED",
+    79: "IMU_CALIBRATED",
 
-    70: "CONTROL_SLEW_RATE",
-    71: "CONTROL_LPF_FREQ",
-    72: "CONTROL_RESOLUTION",
-    73: "CONTROL_DT",
+    80: "CONTROL_SLEW_RATE",
+    81: "CONTROL_LPF_FREQ",
+    82: "CONTROL_RESOLUTION",
+    83: "CONTROL_DT",
 }
 
 
-CONFIG_COUNT = 74
+CONFIG_COUNT = 84
 
 
 CONFIG_IDS_BY_NAME = {
@@ -301,84 +317,98 @@ CONFIG_TYPES = {
     19: ValueType.UINT8,
     20: ValueType.BOOL,
 
-    # Throttle SrvConfig
+    # Aux1RC
     21: ValueType.INT16,
     22: ValueType.INT16,
     23: ValueType.INT16,
-    24: ValueType.BOOL,
+    24: ValueType.UINT8,
+    25: ValueType.BOOL,
 
-    # Roll SrvConfig
-    25: ValueType.INT16,
+    # Aux2RC
     26: ValueType.INT16,
     27: ValueType.INT16,
-    28: ValueType.BOOL,
+    28: ValueType.INT16,
+    29: ValueType.UINT8,
+    30: ValueType.BOOL,
+
+    # Throttle SrvConfig
+    31: ValueType.INT16,
+    32: ValueType.INT16,
+    33: ValueType.INT16,
+    34: ValueType.BOOL,
+
+    # Roll SrvConfig
+    35: ValueType.INT16,
+    36: ValueType.INT16,
+    37: ValueType.INT16,
+    38: ValueType.BOOL,
 
     # Pitch SrvConfig
-    29: ValueType.INT16,
-    30: ValueType.INT16,
-    31: ValueType.INT16,
-    32: ValueType.BOOL,
-
-    # Yaw SrvConfig
-    33: ValueType.INT16,
-    34: ValueType.INT16,
-    35: ValueType.INT16,
-    36: ValueType.BOOL,
-
-    # FlightConfig
-    37: ValueType.INT16,
-    38: ValueType.INT16,
     39: ValueType.INT16,
-
     40: ValueType.INT16,
     41: ValueType.INT16,
+    42: ValueType.BOOL,
 
-    42: ValueType.FLOAT,
-    43: ValueType.FLOAT,
-
-    44: ValueType.FLOAT,
+    # Yaw SrvConfig
+    43: ValueType.INT16,
+    44: ValueType.INT16,
     45: ValueType.INT16,
-
     46: ValueType.BOOL,
-    47: ValueType.FLOAT,
 
-    # RollPIDF
-    48: ValueType.FLOAT,
-    49: ValueType.FLOAT,
-    50: ValueType.FLOAT,
-    51: ValueType.FLOAT,
+    # FlightConfig
+    47: ValueType.INT16,
+    48: ValueType.INT16,
+    49: ValueType.INT16,
+
+    50: ValueType.INT16,
+    51: ValueType.INT16,
+
     52: ValueType.FLOAT,
-
-    # PitchPIDF
     53: ValueType.FLOAT,
+
     54: ValueType.FLOAT,
-    55: ValueType.FLOAT,
-    56: ValueType.FLOAT,
+    55: ValueType.INT16,
+
+    56: ValueType.BOOL,
     57: ValueType.FLOAT,
 
-    # YawPIDF
+    # RollPIDF
     58: ValueType.FLOAT,
     59: ValueType.FLOAT,
     60: ValueType.FLOAT,
     61: ValueType.FLOAT,
     62: ValueType.FLOAT,
 
-    # IMUConfig
+    # PitchPIDF
     63: ValueType.FLOAT,
     64: ValueType.FLOAT,
     65: ValueType.FLOAT,
-
     66: ValueType.FLOAT,
     67: ValueType.FLOAT,
-    68: ValueType.FLOAT,
 
-    69: ValueType.BOOL,
+    # YawPIDF
+    68: ValueType.FLOAT,
+    69: ValueType.FLOAT,
+    70: ValueType.FLOAT,
+    71: ValueType.FLOAT,
+    72: ValueType.FLOAT,
+
+    # IMUConfig
+    73: ValueType.FLOAT,
+    74: ValueType.FLOAT,
+    75: ValueType.FLOAT,
+
+    76: ValueType.FLOAT,
+    77: ValueType.FLOAT,
+    78: ValueType.FLOAT,
+
+    79: ValueType.BOOL,
 
     # ControlConfig
-    70: ValueType.UINT16,
-    71: ValueType.UINT16,
-    72: ValueType.INT16,
-    73: ValueType.FLOAT,
+    80: ValueType.UINT16,
+    81: ValueType.UINT16,
+    82: ValueType.INT16,
+    83: ValueType.FLOAT,
 }
 
 
@@ -1401,7 +1431,7 @@ def calculate_radio_calibration(endpoint_samples, center_samples):
         "max": throttle_max,
     }
 
-    for name in ("ROLL", "PITCH", "YAW"):
+    for name in ("ROLL", "PITCH", "YAW", "AUX1", "AUX2"):
         channel = RADIO_CHANNELS[name]
         endpoints = endpoint_samples[channel]
         centered = center_samples[channel]
@@ -1411,14 +1441,6 @@ def calculate_radio_calibration(endpoint_samples, center_samples):
                 f"Not enough centered samples for {name}: "
                 f"received {len(centered)}, need at least "
                 f"{MIN_CENTER_SAMPLES}."
-            )
-
-        center_spread = max(centered) - min(centered)
-
-        if center_spread > MAX_CENTER_SPREAD_US:
-            raise RadioCalibrationError(
-                f"{name} was not held steadily at center "
-                f"(observed spread: {center_spread} us)."
             )
 
         calibration[name] = {
@@ -1547,7 +1569,7 @@ The calibration updates RAM only; it will not write EEPROM.
     )
 
     print(f"""
-Move throttle, roll, pitch, and yaw through their full normal ranges.
+Move all channels through their full normal ranges.
 Briefly hold every control at each endpoint.
 
 Press {Color.GREEN}Enter{Color.RESET} when endpoint capture is complete.
@@ -1563,7 +1585,7 @@ Press {Color.GREEN}Enter{Color.RESET} when endpoint capture is complete.
     """)
 
     print(f"""
-Release roll, pitch, and yaw and leave them centered.
+Release all channels and leave them in the centered position.
 Throttle position is ignored during this phase.
 
 Press {Color.GREEN}Enter{Color.RESET} when center capture is complete.
@@ -1575,6 +1597,8 @@ Press {Color.GREEN}Enter{Color.RESET} when center capture is complete.
             RADIO_CHANNELS["ROLL"],
             RADIO_CHANNELS["PITCH"],
             RADIO_CHANNELS["YAW"],
+            RADIO_CHANNELS["AUX1"],
+            RADIO_CHANNELS["AUX2"],
         )
     )
 
