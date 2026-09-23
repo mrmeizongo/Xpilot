@@ -18,8 +18,8 @@ calibrate_radio
 
 The utility performs two capture phases:
 
-1. Capture the normal minimum and maximum of throttle, roll, pitch, and yaw.
-2. Capture centered roll, pitch, and yaw values and calculate their median.
+1. Capture the normal minimum and maximum of throttle, roll, pitch, yaw and the auxiliary channels.
+2. Capture centered roll, pitch, yaw and auxiliary channel values and calculate their median.
 
 Throttle trim is calculated as the midpoint between its captured normal
 minimum and maximum. Deadband and reversal settings are not changed.
@@ -53,6 +53,5 @@ After every `SET` operation, be sure to verify the operation succeeded by using 
 - Throttle cut must remain off during endpoint capture.
 - A throttle minimum below 1050 us produces a warning because it may represent
   the throttle-cut signal rather than the normal endpoint.
-- Each channel must span at least 400 us.
-- Roll, pitch, and yaw center data must contain at least 20 samples and remain
+- Roll, pitch, yaw and auxiliary center data must contain at least 20 samples and remain
   within a 30 us spread.
