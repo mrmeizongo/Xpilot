@@ -176,7 +176,7 @@ void Mode::update(void)
                                    config().rollRxConfig.deadband,
                                    false);
 
-    flaperonInput = static_cast<int16_t>(flaperonInput * config().flightConfig.flaperonScaleFactor);
+    flaperonInput *= config().flightConfig.flaperonScaleFactor;
 #endif
 }
 
