@@ -1056,7 +1056,7 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
 
         case ConfigID::FLIGHT_RUDDER_MIX_SCALE_FACTOR:
 
-            return value.f >= 0.f;
+            return value.f >= 0.f && value.f < 1.f;
 
         case ConfigID::CONTROL_LPF_FREQ:
         case ConfigID::CONTROL_SLEW_RATE:

@@ -180,6 +180,7 @@ void Mode::update(void)
                                    false);
 
     flaperonInput *= config().flightConfig.flaperonScaleFactor;
+    flaperonInput = constrain(flaperonInput, 0, -config().controlConfig.controlResolution);
 #endif
 }
 
