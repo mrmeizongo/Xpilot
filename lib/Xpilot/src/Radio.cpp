@@ -99,7 +99,7 @@ Radio::THROTTLE_STATE Radio::decodeThrottleState(uint32_t timeNow)
         return THROTTLE_STATE::CUT;
 
     if (timeNow - lastRawPWMTimeUS[CHANNEL::THROTTLE] >= TIMEOUT_US)
-        return THROTTLE_STATE::SIGNAL_LOST;
+        return THROTTLE_STATE::TIMEOUT;
 
     return THROTTLE_STATE::NORMAL;
 }
@@ -142,7 +142,7 @@ void Radio::FailSafeDetector()
             break;
 
         case THROTTLE_STATE::CUT:
-        case THROTTLE_STATE::SIGNAL_LOST:
+        case THROTTLE_STATE::TIMEOUT:
             txThrottleCut = true;
             rxFailsafe = false;
             break;

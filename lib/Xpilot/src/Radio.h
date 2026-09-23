@@ -79,7 +79,7 @@ public:
         NORMAL,
         CUT,
         FAILSAFE,
-        SIGNAL_LOST
+        TIMEOUT
     };
 
     // 3-position switch
