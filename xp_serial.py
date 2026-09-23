@@ -1929,14 +1929,14 @@ def main():
 
     print("Connected.")
     print(
-        "Type 'help' for commands.\n"
+        "Type 'help' for commands."
     )
     
     history = FileHistory(".xp_serial_history")
 
     try:
         while True:
-            line = prompt("Xpilot> ", history=history).strip()
+            line = prompt("\nXpilot> ", history=history).strip()
 
             if not line:
                 continue
