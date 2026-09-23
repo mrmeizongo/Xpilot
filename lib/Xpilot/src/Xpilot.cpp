@@ -139,4 +139,3 @@ void Xpilot::changeFlightMode(void)
     currentMode = requestedMode;
     currentMode->enter();
 }
-// ---------------------------
