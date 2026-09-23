@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include "IMU.h"
 #include "SysConfig.h"
-#include "Scheduler.h"
 #include "FlightConfigAccess.h"
 
 #define MPU6050_ADDRESS 0x68    // I2C address of MPU6050
@@ -47,10 +46,6 @@ void IMU::init(void)
 
     mpu6050.setAccBias(config().imuConfig.accBiasX, config().imuConfig.accBiasY, config().imuConfig.accBiasZ);
     mpu6050.setGyroBias(config().imuConfig.gyroBiasX, config().imuConfig.gyroBiasY, config().imuConfig.gyroBiasZ);
-
-#if defined(PRINT_IMU)
-    (void)scheduler.addTask(&IMU::printIMUTask, &imu, TASK_PRINT_HZ);
-#endif
 }
 
 void IMU::getLatestReadings(void)
