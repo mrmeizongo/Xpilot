@@ -168,9 +168,10 @@ void Mode::update(void)
                                                      config().yawRxConfig.deadband,
                                                      config().yawRxConfig.reverse);
 
-// Only min and max are used
-// max is passed as argument for trim because switch position high=flush with wing
 #if defined(USE_FLAPERONS)
+    // Only channel's config min and max are passed to normalizeInput to output 0 to -1000
+    // Aux2's radio max config is passed as the trim argument for normalizeInput
+    // The trim config is not required
     flaperonInput = normalizeInput(radio.getPWM(Radio::CHANNEL::AUX2),
                                    config().aux2RxConfig.min,
                                    config().aux2RxConfig.max,

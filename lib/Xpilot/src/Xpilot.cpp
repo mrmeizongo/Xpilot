@@ -97,10 +97,10 @@ void Xpilot::changeFlightMode(void)
 
     if (radio.inFailsafe())
     {
+        sysFailsafeActive = true;
+
         if (currentMode == &stabilizeMode)
             return;
-
-        sysFailsafeActive = true;
 
         // Stabilize mode is the default failsafe mode
         requestedMode = &stabilizeMode;
@@ -112,8 +112,6 @@ void Xpilot::changeFlightMode(void)
         const Radio::THREE_POS_SW switchPos =
             radio.getThreeSwitchPos(Radio::CHANNEL::AUX1, config().aux1RxConfig.trim, 136U);
 
-        // Default mode not specified, rx mode pwm wire is probably not connected, is configured incorrectly
-        // Either way, remain in current mode
         if (switchPos == Radio::THREE_POS_SW::UNDEFINED)
             return;
 

@@ -43,7 +43,7 @@ constexpr uint16_t PWM_MIN_US = 600;            // Lowest valid pwm expected fro
 constexpr uint16_t PWM_TRIM_US = 1500;          // Trim pwm expected from transmitter
 constexpr uint16_t PWM_MAX_US = 2400;           // Highest valid pwm expected from transmitter
 constexpr uint32_t TIMEOUT_US = 110000;         // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
-constexpr int16_t THREE_SW_POS_THRESHOLD = 133; // 3 position switch input separator
+constexpr int16_t THREE_SW_POS_THRESHOLD = 136; // 3 position switch input separator
 
 constexpr uint16_t THROTTLE_CUT_THRESHOLD = 1050;     // User selected normal throttle cut threshold (-125% throttle)
 constexpr uint16_t THROTTLE_FAILSAFE_THRESHOLD = 950; // User selected failsafe throttle threshold (-150% throttle)
