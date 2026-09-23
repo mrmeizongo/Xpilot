@@ -982,6 +982,10 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
         case ConfigID::RC_AUX2_TRIM:
         case ConfigID::RC_AUX2_MAX:
 
+        case ConfigID::SRV_THROTTLE_MIN:
+        case ConfigID::SRV_THROTTLE_TRIM:
+        case ConfigID::SRV_THROTTLE_MAX:
+
         case ConfigID::SRV_ROLL_MIN:
         case ConfigID::SRV_ROLL_TRIM:
         case ConfigID::SRV_ROLL_MAX:
@@ -1051,6 +1055,8 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
         case ConfigID::PIDF_ROLL_I_WINDUP_MAX:
         case ConfigID::PIDF_PITCH_I_WINDUP_MAX:
         case ConfigID::PIDF_YAW_I_WINDUP_MAX:
+
+            return value.f >= 0.f;
 
         case ConfigID::FLIGHT_FLAPERON_SCALE_FACTOR:
 
