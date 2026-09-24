@@ -24,6 +24,7 @@
 #define THROTTLEPIN_OUTPUT 12
 
 // Interrupt pins
+// See lib/PinChangeInterrupt/src/PinChangeInterruptSettings.h
 #define AILPIN_INT 18
 #define ELEVPIN_INT 19
 #define RUDDPIN_INT 20
