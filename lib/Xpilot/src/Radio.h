@@ -124,8 +124,6 @@ public:
 
     void setRawPWM(CHANNEL, const volatile uint16_t&, const volatile uint32_t&);
 
-    bool getValidControlPWM(uint16_t*, uint8_t);
-
     uint16_t getPWM(CHANNEL);
 
     THREE_POS_SW

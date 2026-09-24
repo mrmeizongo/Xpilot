@@ -199,19 +199,6 @@ Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint8_t 
     return THREE_POS_SW::MID_POS;
 }
 
-bool Radio::getValidControlPWM(uint16_t* dest, uint8_t count)
-{
-    if (failSafe || failSafeTimerStarted || (count > Radio::CHANNEL::CHANNEL_COUNT))
-        return false;
-
-    for (uint8_t i = 0; i < count; i++)
-    {
-        dest[i] = lastValidPWM[i];
-    }
-
-    return true;
-}
-
 uint16_t Radio::getPWM(CHANNEL ch)
 {
     if (ch >= CHANNEL::CHANNEL_COUNT)

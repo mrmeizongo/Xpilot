@@ -196,17 +196,9 @@ void SerialConfigTask::sendRadioSnapshot()
 {
     // Request all 6 channels
     const uint8_t channel_count = 6;
-    uint16_t pwm[channel_count];
-
-    if (!radio.getValidControlPWM(pwm, channel_count))
-    {
-        _radioStreaming = false;
-        sendAck(SerialCommand::START_RADIO_STREAM, SerialCommand::NACK);
-        return;
-    }
 
     for (uint8_t channel = 0; channel < channel_count; channel++)
-        sendRadioValue(channel, pwm[channel]);
+        sendRadioValue(channel, radio.getPWM(static_cast<Radio::CHANNEL>(channel)));
 }
 
 void SerialConfigTask::sendRadioValue(uint8_t channel, uint16_t pwm)
