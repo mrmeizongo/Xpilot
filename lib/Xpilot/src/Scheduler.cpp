@@ -43,30 +43,6 @@ static_assert((TIMER2_COMPARE_VALUE >= 1UL) && (TIMER2_COMPARE_VALUE <= 255UL),
               "Timer2 compare value range 1 <= TIMER2_COMPARE_VALUE <= 255");
 }
 
-Scheduler::Scheduler(void)
-{
-    for (uint8_t i = 0; i < MAX_TASKS; ++i)
-    {
-        tasks_[i].callback = nullptr;
-        tasks_[i].context = nullptr;
-        tasks_[i].nextRunTick = 0;
-        tasks_[i].frequencyHz = 0;
-        tasks_[i].periodMs = 0;
-        tasks_[i].occupied = false;
-        tasks_[i].enabled = false;
-
-        tasks_[i].stats.runCount = 0;
-        tasks_[i].stats.missedPeriods = 0;
-        tasks_[i].stats.overrunCount = 0;
-        tasks_[i].stats.lastRuntimeUs = 0;
-        tasks_[i].stats.maxRuntimeUs = 0;
-        tasks_[i].stats.lastLoopRateUpdateUs = 0;
-        tasks_[i].stats.loopRateHz = 0;
-        tasks_[i].stats.loopCounter = 0;
-    }
-    lastTask_ = INVALID_TASK_ID;
-}
-
 void Scheduler::init(void)
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
@@ -131,14 +107,7 @@ int8_t Scheduler::addTask(TaskCallback callback, void* context, uint16_t frequen
             task.occupied = true;
             task.enabled = true;
 
-            task.stats.runCount = 0;
-            task.stats.missedPeriods = 0;
-            task.stats.overrunCount = 0;
-            task.stats.lastRuntimeUs = 0;
-            task.stats.maxRuntimeUs = 0;
-            task.stats.lastLoopRateUpdateUs = 0;
-            task.stats.loopRateHz = 0;
-            task.stats.loopCounter = 0;
+            task.stats = TaskStats{};
 
             // startDelayMs == 0, means run after one period, otherwise run after startDelayMs
             // This allows system initialization to complete before the first task execution.
@@ -157,7 +126,7 @@ int8_t Scheduler::addTask(TaskCallback callback, void* context, uint16_t frequen
 
 void Scheduler::runTasks(void)
 {
-    for (uint8_t i = 0; i <= lastTask_; ++i)
+    for (int8_t i = 0; i <= lastTask_; ++i)
     {
         Task& task = tasks_[i];
 
@@ -230,7 +199,7 @@ void Scheduler::runTasks(void)
 
 bool Scheduler::isValidTask(int8_t taskId) const
 {
-    if (taskId < 0 || taskId > lastTask_)
+    if (taskId <= INVALID_TASK_ID || taskId > lastTask_)
     {
         return false;
     }
@@ -246,6 +215,40 @@ bool Scheduler::isEnabled(int8_t taskId) const
     }
 
     return tasks_[taskId].enabled;
+}
+
+bool Scheduler::disableTask(int8_t taskId)
+{
+    if (!isValidTask(taskId))
+    {
+        return false;
+    }
+
+    tasks_[taskId].enabled = false;
+
+    return true;
+}
+
+bool Scheduler::removeTask(int8_t taskId)
+{
+    if (!isValidTask(taskId))
+    {
+        return false;
+    }
+
+    tasks_[taskId] = Task{};
+
+    return true;
+}
+
+void Scheduler::removeAllTasks(void)
+{
+    for (int8_t i = 0; i <= lastTask_; ++i)
+    {
+        tasks_[i] = Task{};
+    }
+
+    lastTask_ = INVALID_TASK_ID;
 }
 
 bool Scheduler::deadlineReached(uint32_t currentTick, uint32_t deadlineTick)
@@ -276,16 +279,7 @@ bool Scheduler::resetStats(int8_t taskId)
         return false;
     }
 
-    TaskStats& stats = tasks_[taskId].stats;
-
-    stats.runCount = 0;
-    stats.missedPeriods = 0;
-    stats.overrunCount = 0;
-    stats.lastRuntimeUs = 0;
-    stats.maxRuntimeUs = 0;
-    stats.lastLoopRateUpdateUs = 0;
-    stats.loopRateHz = 0;
-    stats.loopCounter = 0;
+    tasks_[taskId].stats = TaskStats{};
 
     return true;
 }

@@ -43,17 +43,20 @@ public:
 
     struct TaskStats
     {
-        uint32_t runCount;
-        uint32_t missedPeriods;
-        uint32_t overrunCount;
-        uint32_t lastRuntimeUs;
-        uint32_t maxRuntimeUs;
-        uint32_t lastLoopRateUpdateUs;
-        uint16_t loopRateHz;
-        uint16_t loopCounter;
+        uint32_t runCount = 0;
+        uint32_t missedPeriods = 0;
+        uint32_t overrunCount = 0;
+        uint32_t lastRuntimeUs = 0;
+        uint32_t maxRuntimeUs = 0;
+        uint32_t lastLoopRateUpdateUs = 0;
+        uint16_t loopRateHz = 0;
+        uint16_t loopCounter = 0;
     };
 
-    Scheduler(void);
+    Scheduler(void)
+        : lastTask_{INVALID_TASK_ID}
+    {
+    }
 
     /**
      * Configures Timer2 to generate a 1 ms scheduler tick.
@@ -78,11 +81,17 @@ public:
      */
     void runTasks(void);
 
-    bool isEnabled(int8_t taskId) const;
+    bool isEnabled(int8_t taskId) const; // Returns true if task is enabled
 
-    bool getStats(int8_t taskId, TaskStats& stats) const;
+    bool disableTask(int8_t taskId); // Returns true if operation is successful
 
-    bool resetStats(int8_t taskId);
+    bool removeTask(int8_t taskId); // Returns true if operation is successful, does not compact/shift task array
+
+    void removeAllTasks(void); // Clean slate
+
+    bool getStats(int8_t taskId, TaskStats& stats) const; // Returns true if operation is successful
+
+    bool resetStats(int8_t taskId); // Returns true if operation is successful
 
     /**
      * Returns milliseconds elapsed since init().
@@ -97,17 +106,17 @@ public:
 private:
     struct Task
     {
-        TaskCallback callback;
-        void* context;
+        TaskCallback callback = nullptr;
+        void* context = nullptr;
 
-        uint32_t nextRunTick;
-        uint16_t frequencyHz;
-        uint32_t periodMs;
+        uint32_t nextRunTick = 0;
+        uint16_t frequencyHz = 0;
+        uint32_t periodMs = 0;
 
-        bool occupied;
-        bool enabled;
+        bool occupied = false;
+        bool enabled = false;
 
-        TaskStats stats;
+        TaskStats stats{};
     };
 
     Task tasks_[MAX_TASKS];
