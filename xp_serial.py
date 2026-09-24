@@ -1456,12 +1456,12 @@ def calculate_radio_calibration(endpoint_samples, center_samples):
         trim = values["trim"]
         maximum = values["max"]
 
-        if not 544 <= minimum <= 2400:
+        if not 600 <= minimum <= 2400:
             raise RadioCalibrationError(
                 f"{name} minimum is outside the accepted range."
             )
 
-        if not 544 <= maximum <= 2400:
+        if not 600 <= maximum <= 2400:
             raise RadioCalibrationError(
                 f"{name} maximum is outside the accepted range."
             )
@@ -1584,9 +1584,17 @@ Press {Color.GREEN}Enter{Color.RESET} when endpoint capture is complete.
     {Color.GREEN}Input captured{Color.RESET}
     """)
 
-    print(f"""
+    input(f"""
 Release all channels and leave them in the centered position.
 Throttle position is ignored during this phase.
+
+Press {Color.GREEN}Enter{Color.RESET} when all controls are centered
+and ready for capture...
+""")
+
+    print(f"""
+Capture started.
+Keep all controls centered.
 
 Press {Color.GREEN}Enter{Color.RESET} when center capture is complete.
 """)
@@ -1602,14 +1610,14 @@ Press {Color.GREEN}Enter{Color.RESET} when center capture is complete.
         )
     )
 
+    print(f"""
+    {Color.GREEN}Input captured{Color.RESET}
+    """)
+
     calibration = calculate_radio_calibration(
         endpoint_samples,
         center_samples
     )
-
-    print(f"""
-    {Color.GREEN}Input captured{Color.RESET}
-    """)
 
     print_radio_calibration(
         calibration
