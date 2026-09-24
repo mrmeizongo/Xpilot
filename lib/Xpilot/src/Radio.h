@@ -57,15 +57,22 @@ normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inpu
     if (abs(delta) <= deadband)
         return 0;
 
-    int32_t output;
+    int32_t output = 0;
+    int16_t range = 0;
 
     if (delta > 0)
     {
-        output = (delta * config().controlConfig.controlResolution) / (inputMax - inputTrim);
+        range = inputMax - inputTrim;
+
+        if (range != 0)
+            output = (delta * config().controlConfig.controlResolution) / range;
     }
     else
     {
-        output = (delta * config().controlConfig.controlResolution) / (inputTrim - inputMin);
+        range = inputTrim - inputMin;
+
+        if (range != 0)
+            output = (delta * config().controlConfig.controlResolution) / range;
     }
 
     return reverse ? -output : output;

@@ -164,7 +164,7 @@ void Radio::FailSafeDetector()
         failSafeTimerStarted = false;
 
         // Update all last valid pwm values
-        lastValidPWM[CHANNEL::THROTTLE] = txThrottleCut ? config().throttleRxConfig.min : rawPWM[CHANNEL::THROTTLE];
+        lastValidPWM[CHANNEL::THROTTLE] = txThrottleCut ? THROTTLE_CUT_THRESHOLD : rawPWM[CHANNEL::THROTTLE];
         for (uint8_t i = CHANNEL::ROLL; i < CHANNEL::CHANNEL_COUNT; i++)
         {
             lastValidPWM[i] = rawPWM[i];

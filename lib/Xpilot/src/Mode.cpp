@@ -175,7 +175,7 @@ void Mode::update(void)
     flaperonInput = normalizeInput(radio.getPWM(Radio::CHANNEL::AUX2),
                                    config().aux2RxConfig.min,
                                    config().aux2RxConfig.max,
-                                   0,
+                                   config().aux2RxConfig.max,
                                    config().aux2RxConfig.deadband,
                                    false);
 

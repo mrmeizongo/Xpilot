@@ -35,6 +35,15 @@ Flight stabilization software
 #include <Servo.h>
 #include <stdint.h>
 #include "SysConfig.h"
+#include "FlightConfigAccess.h"
+
+inline int16_t mapToSRV(int16_t _output, int16_t _min, int16_t _max)
+{
+    const int32_t range = _max - _min;
+
+    return static_cast<int16_t>(_min + ((_output + config().controlConfig.controlResolution) * range) /
+                                           (2 * config().controlConfig.controlResolution));
+}
 
 class Actuators
 {
