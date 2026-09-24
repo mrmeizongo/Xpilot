@@ -172,6 +172,7 @@ void Mode::update(void)
     // Only the channel's config min and max are passed to normalizeInput to output 0 to -1000
     // The channel's radio max config is passed as the trim argument for normalizeInput
     // The channel's radio trim config is not required as it sits between min and max
+    // We pass the channel's radio max config as the max argument for semantic reasons
     flaperonInput = normalizeInput(radio.getPWM(Radio::CHANNEL::AUX2),
                                    config().aux2RxConfig.min,
                                    config().aux2RxConfig.max,
