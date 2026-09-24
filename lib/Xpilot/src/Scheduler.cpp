@@ -228,6 +228,16 @@ void Scheduler::runTasks(void)
     }
 }
 
+bool Scheduler::isValidTask(int8_t taskId) const
+{
+    if (taskId < 0 || taskId > lastTask_)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool Scheduler::isEnabled(int8_t taskId) const
 {
     if (!isValidTask(taskId))
@@ -236,6 +246,15 @@ bool Scheduler::isEnabled(int8_t taskId) const
     }
 
     return tasks_[taskId].enabled;
+}
+
+bool Scheduler::deadlineReached(uint32_t currentTick, uint32_t deadlineTick)
+{
+    /*
+     * Signed subtraction allows correct comparisons across uint32_t
+     * timer rollover, provided deadlines are less than 2^31 ms apart.
+     */
+    return static_cast<int32_t>(currentTick - deadlineTick) >= 0;
 }
 
 bool Scheduler::getStats(int8_t taskId, TaskStats& stats) const
@@ -283,25 +302,6 @@ uint32_t Scheduler::ticks(void)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { tickSnapshot = tickCount; }
 
     return tickSnapshot;
-}
-
-bool Scheduler::deadlineReached(uint32_t currentTick, uint32_t deadlineTick)
-{
-    /*
-     * Signed subtraction allows correct comparisons across uint32_t
-     * timer rollover, provided deadlines are less than 2^31 ms apart.
-     */
-    return static_cast<int32_t>(currentTick - deadlineTick) >= 0;
-}
-
-bool Scheduler::isValidTask(int8_t taskId) const
-{
-    if (taskId < 0 || taskId > lastTask_)
-    {
-        return false;
-    }
-
-    return true;
 }
 
 void Scheduler::onTimerCompareISR() { ++tickCount; }
