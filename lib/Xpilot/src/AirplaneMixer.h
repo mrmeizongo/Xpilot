@@ -22,8 +22,8 @@ public:
     AirplaneMixer(AirplaneMixer&&) = default;
     AirplaneMixer& operator=(AirplaneMixer&&) = default;
 
-    explicit AirplaneMixer(Config::AirframeType type = Config::AirframeType::CONVENTIONAL,
-                           int16_t limit = 1000,
+    explicit AirplaneMixer(Config::AirframeType type = Config::AirframeType::NONE,
+                           int16_t limit = config().controlConfig.controlResolution,
                            bool reverseRoll = false,
                            bool reversePitch = false,
                            bool reverseYaw = false)
@@ -71,6 +71,8 @@ private:
     bool _reverseRollOutput;
     bool _reversePitchOutput;
     bool _reverseYawOutput;
+
+    void mixNone(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const;
 
     void mixConventional(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const;
 

@@ -85,7 +85,7 @@ bool ConfigManager::isDirty() const { return _dirty; }
 
 void ConfigManager::loadDefaults()
 {
-    _config.airframeConfig.type = Config::AirframeType::CONVENTIONAL;
+    _config.airframeConfig.type = Config::AirframeType::NONE;
 
     _config.throttleRxConfig.min = 1000;
     _config.throttleRxConfig.trim = 1500;

@@ -6,7 +6,6 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
 
     switch (_type)
     {
-        default:
         case Config::AirframeType::CONVENTIONAL:
             mixConventional(roll, pitch, yaw, out);
             break;
@@ -34,10 +33,18 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
         case Config::AirframeType::CUSTOM:
             mixCustom(roll, pitch, yaw, out);
             break;
+
+        default:
+        case Config::AirframeType::NONE:
+            mixNone(roll, pitch, yaw, out);
+            break;
     }
 
-    out.leftAileron += flaperon;
-    out.rightAileron -= flaperon;
+    if (_type != Config::AirframeType::NONE)
+    {
+        out.leftAileron += flaperon;
+        out.rightAileron -= flaperon;
+    }
 
     if (_reverseRollOutput)
     {
@@ -64,6 +71,15 @@ int32_t AirplaneMixer::mixRudderInput(const int32_t& rollInput, const int32_t& y
     int32_t contribution = rollInput * config().flightConfig.rudderMixScale;
 
     return yawInput + (config().flightConfig.reverseRudderMix ? -contribution : contribution);
+}
+
+void AirplaneMixer::mixNone(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const
+{
+    out.leftAileron = 0;
+    out.rightAileron = 0;
+
+    out.elevator = 0;
+    out.rudder = 0;
 }
 
 /*

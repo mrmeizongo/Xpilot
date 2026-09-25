@@ -7,7 +7,8 @@ struct Config
 {
     enum class AirframeType : uint8_t
     {
-        CONVENTIONAL = 0,
+        NONE = 0,
+        CONVENTIONAL,
         V_TAIL,
         ELEVON_WITH_RUDDER,
         ELEVON_NO_RUDDER,

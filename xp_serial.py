@@ -141,13 +141,14 @@ TYPE_NAMES = {
 # ============================================================
 
 AIRFRAME_TYPES = {
-    "CONVENTIONAL": 0,
-    "V_TAIL": 1,
-    "ELEVON_WITH_RUDDER": 2,
-    "ELEVON_NO_RUDDER": 3,
-    "RUDDER_ELEVATOR": 4,
-    "AILERON_ELEVATOR": 5,
-    "CUSTOM": 6,
+    "NONE": 0,
+    "CONVENTIONAL": 1,
+    "V_TAIL": 2,
+    "ELEVON_WITH_RUDDER": 3,
+    "ELEVON_NO_RUDDER": 4,
+    "RUDDER_ELEVATOR": 5,
+    "AILERON_ELEVATOR": 6,
+    "CUSTOM": 7,
     
 }
 
