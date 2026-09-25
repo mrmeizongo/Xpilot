@@ -75,8 +75,7 @@ static inline void handle_interrupts(timer16_Sequence_t timer, volatile uint16_t
     if (SERVO_INDEX(timer, Channel[timer]) < ServoCount && Channel[timer] < SERVOS_PER_TIMER)
     {
         *OCRnA = *TCNTn + SERVO(timer, Channel[timer]).ticks;
-        if (SERVO(timer, Channel[timer]).Pin.isActive == true) // check if activated
-            writePin(SERVO(timer, Channel[timer]).Pin, HIGH);  // it's an active channel so pulse it high
+        writePin(SERVO(timer, Channel[timer]).Pin, HIGH); // it's an active channel so pulse it high
     }
     else
     {
@@ -120,6 +119,8 @@ void Timer3Service() { handle_interrupts(_timer3, &TCNT3, &OCR3A); }
 
 static void initISR(timer16_Sequence_t timer)
 {
+    Channel[timer] = -1;
+
 #if defined(_useTimer1)
     if (timer == _timer1)
     {
@@ -131,7 +132,7 @@ static void initISR(timer16_Sequence_t timer)
         TIMSK |= _BV(OCIE1A); // enable the output compare interrupt
 #else
         // here if not ATmega8 or ATmega128
-        TIFR1 |= _BV(OCF1A);   // clear any pending interrupts
+        TIFR1 = _BV(OCF1A);    // clear any pending interrupts
         TIMSK1 |= _BV(OCIE1A); // enable the output compare interrupt
 #endif
 #if defined(WIRING)
