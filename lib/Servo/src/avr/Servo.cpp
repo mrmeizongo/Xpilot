@@ -220,6 +220,37 @@ static void finISR(timer16_Sequence_t timer)
 #endif
     }
 #endif
+#if defined(_useTimer3)
+    if (timer == _timer3)
+    {
+        TCNT3 = 0; // clear the timer count
+#if defined(__AVR_ATmega128__)
+        TIFR |= _BV(OCF3A);     // clear any pending interrupts
+        ETIMSK &= ~_BV(OCIE3A); // Disable the output compare interrupt
+#else
+        TIFR3 = _BV(OCF3A);     // clear any pending interrupts
+        TIMSK3 &= ~_BV(OCIE3A); // enable the output compare interrupt
+#endif
+    }
+#endif
+
+#if defined(_useTimer4)
+    if (timer == _timer4)
+    {
+        TCNT4 = 0;              // clear the timer count
+        TIFR4 = _BV(OCF4A);     // clear any pending interrupts
+        TIMSK4 &= ~_BV(OCIE4A); // Disable the output compare interrupt
+    }
+#endif
+
+#if defined(_useTimer5)
+    if (timer == _timer5)
+    {
+        TCNT5 = 0;              // clear the timer count
+        TIFR5 = _BV(OCF5A);     // clear any pending interrupts
+        TIMSK5 &= ~_BV(OCIE5A); // Disable the output compare interrupt
+    }
+#endif
 #endif
 }
 
