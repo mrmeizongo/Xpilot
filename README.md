@@ -73,7 +73,7 @@ This is sufficient for the flight characteristics of the UAV this software was d
 
 ## Info
 
-These pin numbers with the exception of MPU6050 can be reconfigured in [GPIOConfig.h](lib/SystemConfig/src/GPIODef.h). However, changing the pins for the channel inputs to Xpilot will require modifications to the PinChangeInterrupt library.
+These pin numbers with the exception of MPU6050 can be reconfigured in [GPIOConfig.h](lib/SystemConfig/src/GPIODef.h). However, changing the pins for the channel inputs to Xpilot might require modifications to the PinChangeInterruptSettings file in the PinChangeInterrupt library.
 
 <p align="center">
   <img src="assets/img/Schematics.png" />
@@ -96,7 +96,11 @@ Rudder mixing for coordinated turns is enabled automatically in rate and stabili
 |     Stabilize - 3        | Gyro based rate control up to set limits with wing-leveling on stick release        |
 
 
-## NOTICE
+## Setup Information
+
+After uploading the program to the board, run the `./xp_serial.py` command to configure airplane. At a minimum, the airframe type needs to be set.
+
+Radio and IMU calibrations should be performed for optimal performance. See [XP_SERIAL](XP_SERIAL.md).
 
 For proper operation of the Xpilot flight stabilization system some default airplane conventions need to be established. Set up transmitter so these are true on the output screen
 
@@ -104,15 +108,17 @@ For proper operation of the Xpilot flight stabilization system some default airp
 * Pitch up (Pitch stick down) = Positive channel output
 * Yaw right (Yaw stick right) = Positive channel output
 
-If servos were installed in reverse of expected deflection direction, see [XP_SERIAL](XP_SERIAL.md) on how to correct them using the Xpilot config manager. It is advisable to reverse the servo output instead of the radio input.
+If servos were installed in reverse of expected deflection direction, see [XP_SERIAL](XP_SERIAL.md) on how to correct them using the Xpilot config manager. It is advisable to reverse the servo output instead of the radio input to correct this.
 
 Throttle is always under manual control but a failsafe condition triggers a shutdown of the motor.
 
-Rate/Expo set up on the transmitter should NOT be used for Rate(2)/Stabilize(3) flight modes. You can however configure Rate/Expo for passthrough(1) flight mode after radio calibration has been performed to determine low and high points.
+Rate set up on the transmitter should NOT be used for all 3 flight modes. You can however configure Expo after radio calibration has been performed to determine low and high points.
+
+A slew rate can be defined for use in Passthrough mode. This provides better control over radio Rate.
 
 The IMU and Radio are calibrated through xp_serial.py.
 
-Xpilot does not monitor battery voltage. It is up to the pilot to be mindful of flight time.
+Xpilot does not monitor battery voltage. It is up to the pilot to be mindful of battery level.
 
 ## Build & Upload
 

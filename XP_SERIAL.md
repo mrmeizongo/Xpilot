@@ -156,13 +156,14 @@ BOOL
 ## Airframe Types
 
 ```bash
-CONVENTIONAL                            0
-V_TAIL                                  1
-FLYING_WING_RUDDER                      2
-FLYING_WING_NO_RUDDER                   3
-RUDDER_ELEVATOR                         4
-AILERON_ELEVATOR                        5
-CUSTOM                                  6
+NONE                                    0
+CONVENTIONAL                            1
+V_TAIL                                  2
+FLYING_WING_RUDDER                      3
+FLYING_WING_NO_RUDDER                   4
+RUDDER_ELEVATOR                         5
+AILERON_ELEVATOR                        6
+CUSTOM                                  7
 ```
 
 ---
