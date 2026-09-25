@@ -206,8 +206,20 @@ static void finISR(timer16_Sequence_t timer)
         timerDetach(TIMER3OUTCOMPAREA_INT);
     }
 #else
-    //For Arduino - in future: call here to a currently undefined function to reset the timer
-    (void)timer; // squash "unused parameter 'timer' [-Wunused-parameter]" warning
+// For Arduino
+#if defined(_useTimer1)
+    if (timer == _timer1)
+    {
+        TCNT1 = 0; // Clear timer count
+#if defined(__AVR_ATmega8__) || defined(__AVR_ATmega128__)
+        TIFR |= _BV(OCF1A);     // clear any pending interrupts
+        TIMSK &= _ ~BV(OCIE1A); // enable the output compare interrupt
+#else
+        TIFR1 = _BV(OCF1A);     // clear any pending interrupts
+        TIMSK1 &= ~_BV(OCIE1A); // disable timer 1 output compare interrupt
+#endif
+    }
+#endif
 #endif
 }
 
