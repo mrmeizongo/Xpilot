@@ -27,8 +27,9 @@
     ((clockCyclesPerMicrosecond() * _us) / 8) // converts microseconds to ticks (assumes prescaler of 8)  // 12 Aug 2009
 #define ticksToUs(_ticks) (((unsigned)_ticks * 8) / clockCyclesPerMicrosecond()) // converts from ticks back to microseconds
 
-// compensation ticks to trim adjust for digitalWrite delays // 12 August 2009, not needed anymore 15 Sept 2026
-// #define TRIM_DURATION 0
+// compensation ticks to trim adjust for digitalWrite delays - 12 August 2009
+// Not needed anymore - 15 Sept 2026
+// #define TRIM_DURATION 2
 
 //#define NBR_TIMERS        (MAX_SERVOS / SERVOS_PER_TIMER)
 
