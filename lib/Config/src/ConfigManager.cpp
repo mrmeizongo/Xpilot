@@ -87,39 +87,39 @@ void ConfigManager::loadDefaults()
 {
     _config.airframeConfig.type = Config::AirframeType::CONVENTIONAL;
 
-    _config.throttleRxConfig.min = 1100;
+    _config.throttleRxConfig.min = 1000;
     _config.throttleRxConfig.trim = 1500;
-    _config.throttleRxConfig.max = 1900;
+    _config.throttleRxConfig.max = 2000;
     _config.throttleRxConfig.deadband = 12;
     _config.throttleRxConfig.reverse = false;
 
-    _config.rollRxConfig.min = 1100;
+    _config.rollRxConfig.min = 1000;
     _config.rollRxConfig.trim = 1500;
-    _config.rollRxConfig.max = 1900;
+    _config.rollRxConfig.max = 2000;
     _config.rollRxConfig.deadband = 12;
     _config.rollRxConfig.reverse = false;
 
-    _config.pitchRxConfig.min = 1100;
+    _config.pitchRxConfig.min = 1000;
     _config.pitchRxConfig.trim = 1500;
-    _config.pitchRxConfig.max = 1900;
+    _config.pitchRxConfig.max = 2000;
     _config.pitchRxConfig.deadband = 12;
     _config.pitchRxConfig.reverse = false;
 
-    _config.yawRxConfig.min = 1100;
+    _config.yawRxConfig.min = 1000;
     _config.yawRxConfig.trim = 1500;
-    _config.yawRxConfig.max = 1900;
+    _config.yawRxConfig.max = 2000;
     _config.yawRxConfig.deadband = 12;
     _config.yawRxConfig.reverse = false;
 
-    _config.aux1RxConfig.min = 1100;
+    _config.aux1RxConfig.min = 1000;
     _config.aux1RxConfig.trim = 1500;
-    _config.aux1RxConfig.max = 1900;
+    _config.aux1RxConfig.max = 2000;
     _config.aux1RxConfig.deadband = 12;
     _config.aux1RxConfig.reverse = false;
 
-    _config.aux2RxConfig.min = 1100;
+    _config.aux2RxConfig.min = 1000;
     _config.aux2RxConfig.trim = 1500;
-    _config.aux2RxConfig.max = 1900;
+    _config.aux2RxConfig.max = 2000;
     _config.aux2RxConfig.deadband = 12;
     _config.aux2RxConfig.reverse = false;
 
