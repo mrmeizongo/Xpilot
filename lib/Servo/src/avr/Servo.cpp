@@ -84,6 +84,7 @@ static inline void handle_interrupts(timer16_Sequence_t timer, volatile uint16_t
             *OCRnA = (unsigned int)usToTicks(REFRESH_INTERVAL);
         else
             *OCRnA = *TCNTn + 4; // at least REFRESH_INTERVAL has elapsed
+
         Channel[timer] =
             -1; // this will get incremented at the end of the refresh period to start again at the first channel
     }

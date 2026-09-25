@@ -60,14 +60,14 @@
 
 #include "avr/ServoTimers.h"
 
-#define Servo_VERSION 3 // software version of this library, modified 09152026
+#define Servo_VERSION 4 // software version of this library, modified for XPilot Sept 25, 2026
 
-#define MIN_PULSE_WIDTH 600      // the shortest pulse sent to a servo
-#define MAX_PULSE_WIDTH 2400     // the longest pulse sent to a servo
+#define MIN_PULSE_WIDTH 1000     // the shortest pulse sent to a servo, modified Sept 25, 2026
+#define MAX_PULSE_WIDTH 2000     // the longest pulse sent to a servo
 #define DEFAULT_PULSE_WIDTH 1500 // default pulse width when servo is attached
 #define REFRESH_INTERVAL 22000   // minimum time to refresh servos in microseconds
 
-#define SERVOS_PER_TIMER 5 // the maximum number of servos controlled by one timer, modified for Xpilot's use
+#define SERVOS_PER_TIMER 10 // the maximum number of servos controlled by one timer
 #define MAX_SERVOS (_Nbr_16timers * SERVOS_PER_TIMER)
 
 #define INVALID_SERVO 255 // flag indicating an invalid servo index
