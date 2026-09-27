@@ -142,17 +142,17 @@ public:
     bool inFailsafe(void) const { return failSafe; }
 
 private:
-    uint16_t rawPWM[CHANNEL::CHANNEL_COUNT];
-    uint16_t lastValidPWM[CHANNEL::CHANNEL_COUNT];
-
-    uint32_t signalLossTimeUs;
-    uint32_t lastRawPWMTimeUS[CHANNEL::CHANNEL_COUNT];
-
     bool failSafe;
 
     bool failSafeTimerStarted;
 
     bool txThrottleCut;
+
+    uint16_t rawPWM[CHANNEL::CHANNEL_COUNT];
+    uint16_t lastValidPWM[CHANNEL::CHANNEL_COUNT];
+
+    uint32_t signalLossTimeUs;
+    uint32_t lastRawPWMTimeUS[CHANNEL::CHANNEL_COUNT];
 
     void FailSafeDetector();
 
