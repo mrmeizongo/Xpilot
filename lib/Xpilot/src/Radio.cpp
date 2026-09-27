@@ -12,16 +12,6 @@ volatile static uint16_t throttlePulseUs = 0, aileronPulseUs = 0, elevatorPulseU
 volatile static uint32_t lastValidTimeUs[Radio::CHANNEL::CHANNEL_COUNT];
 // -------------------------
 
-Radio::Radio(void)
-{
-    failSafe = false;
-    failSafeTimerStarted = false;
-
-    signalLossTimeUs = 0;
-
-    txThrottleCut = false;
-}
-
 void Radio::init(void)
 {
     // All input pins use pin change interrupts
@@ -29,7 +19,7 @@ void Radio::init(void)
     pinMode(THROTTLEPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(THROTTLEPIN_INT, CHANGE);
 
-    // AIleron setup
+    // Aileron setup
     pinMode(AILPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AILPIN_INT, CHANGE);
 
@@ -41,11 +31,11 @@ void Radio::init(void)
     pinMode(RUDDPIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(RUDDPIN_INT, CHANGE);
 
-    // Auxiliary switch 1 setup
+    // Auxiliary channel 1 setup
     pinMode(AUX1PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX1PIN_INT, CHANGE);
 
-    // Auxiliary switch 2 setup
+    // Auxiliary channel 2 setup
     pinMode(AUX2PIN_INPUT, INPUT_PULLUP);
     attachPinChangeInterrupt(AUX2PIN_INT, CHANGE);
 }

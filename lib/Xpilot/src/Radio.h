@@ -111,7 +111,13 @@ public:
         CHANNEL_COUNT
     };
 
-    Radio(void);
+    Radio(void)
+        : failSafe{false}
+        , failSafeTimerStarted{false}
+        , txThrottleCut{true}
+        , signalLossTimeUs{0}
+    {
+    }
 
     void init(void);
 
