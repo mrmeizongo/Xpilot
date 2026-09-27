@@ -60,7 +60,11 @@ void IMU::getLatestReadings(void)
         _consumer(_rpy, _g);
 }
 
-void IMU::registerConsumer(Consumer cb) { _consumer = cb; }
+void IMU::registerConsumer(Consumer cb)
+{
+    if (_consumer == nullptr)
+        _consumer = cb;
+}
 
 void IMU::calibrate(void)
 {
