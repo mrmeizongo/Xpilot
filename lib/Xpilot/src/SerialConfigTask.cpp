@@ -1,7 +1,6 @@
 #include <string.h>
 #include "IMU.h"
 #include "Radio.h"
-#include "ConfigManager.h"
 #include "SerialConfigTask.h"
 #include "FlightConfigAccess.h"
 
