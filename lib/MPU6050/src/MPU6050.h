@@ -83,8 +83,8 @@ struct MPU6050Setting
 template <typename WireType> class MPU6050_
 {
 public:
-    static constexpr uint16_t CALIB_GYRO_SENSITIVITY{131};    // LSB/degrees/sec
-    static constexpr uint16_t CALIB_ACCEL_SENSITIVITY{16384}; // LSB/g
+    static constexpr float CALIB_ACCEL_SENSITIVITY{16384.f}; // LSB/g
+    static constexpr uint16_t ACCEL_GYRO_RESOLUTION{CALIB_ACCEL_SENSITIVITY * 2};
 
     bool setup(const uint8_t addr = MPU6050_DEFAULT_ADDRESS,
                const MPU6050Setting& mpu_setting = MPU6050Setting(),
@@ -273,7 +273,7 @@ private:
     // IMU Data
     float a[3]{0.f, 0.f, 0.f};
     float g[3]{0.f, 0.f, 0.f};
-    float q[4] = {1.0f, 0.0f, 0.0f, 0.0f}; // vector to hold quaternion
+    float q[4]{1.0f, 0.f, 0.f, 0.f}; // vector to hold quaternion
     float rpy[3]{0.f, 0.f, 0.f};
     // float lin_acc[3]{0.f, 0.f, 0.f}; // linear acceleration (acceleration with gravity component subtracted)
 
@@ -360,24 +360,24 @@ private:
 
     void update_accel_gyro()
     {
-        int16_t raw_acc_gyro_data[6]; // holds 16 bits in 2's complement from the MPU6050 accel/gyro data register
-        read_accel_gyro(raw_acc_gyro_data);
+        int16_t raw_data[6]; // holds 16 bits in 2's complement from the MPU6050 accel/gyro data register
+        read_accel_gyro(raw_data);
 
         // Transform the acceleration value into actual g's
-        a[0] = ((float)raw_acc_gyro_data[0] - acc_bias[0]) * acc_resolution;
-        a[1] = ((float)raw_acc_gyro_data[1] - acc_bias[1]) * acc_resolution;
-        a[2] = ((float)raw_acc_gyro_data[2] - acc_bias[2]) * acc_resolution;
+        a[0] = static_cast<float>(raw_data[0] - acc_bias[0]) * acc_resolution;
+        a[1] = static_cast<float>(raw_data[1] - acc_bias[1]) * acc_resolution;
+        a[2] = static_cast<float>(raw_data[2] - acc_bias[2]) * acc_resolution;
 
         // Transform the gyro value into actual degrees per second
-        g[0] = ((float)raw_acc_gyro_data[3] - gyro_bias[0]) * gyro_resolution;
-        g[1] = ((float)raw_acc_gyro_data[4] - gyro_bias[1]) * gyro_resolution;
-        g[2] = ((float)raw_acc_gyro_data[5] - gyro_bias[2]) * gyro_resolution;
+        g[0] = static_cast<float>(raw_data[3] - gyro_bias[0]) * gyro_resolution;
+        g[1] = static_cast<float>(raw_data[4] - gyro_bias[1]) * gyro_resolution;
+        g[2] = static_cast<float>(raw_data[5] - gyro_bias[2]) * gyro_resolution;
     }
 
     void update_temperature()
     {
-        temperature_count = read_temperature_data();            // Read the adc values
-        temperature = (float)(temperature_count / 340) + 36.53; // Temperature in degrees centigrade
+        temperature_count = read_temperature_data();                            // Read the adc values
+        temperature = (static_cast<float>(temperature_count) / 340.f) + 36.53f; // Temperature in degrees centigrade
     }
 
     void read_accel_gyro(int16_t* destination)
@@ -386,19 +386,19 @@ private:
         read_bytes(ACCEL_XOUT_H, 14, &raw_data[0]);
 
         // Read the 14 raw data registers into data array, register data(temperature) 6 & 7 not used
-        destination[0] = ((int16_t)raw_data[0] << 8) | raw_data[1];
-        destination[1] = ((int16_t)raw_data[2] << 8) | raw_data[3];
-        destination[2] = ((int16_t)raw_data[4] << 8) | raw_data[5];
-        destination[3] = ((int16_t)raw_data[8] << 8) | raw_data[9];
-        destination[4] = ((int16_t)raw_data[10] << 8) | raw_data[11];
-        destination[5] = ((int16_t)raw_data[12] << 8) | raw_data[13];
+        destination[0] = (static_cast<int16_t>(raw_data[0]) << 8) | raw_data[1];
+        destination[1] = (static_cast<int16_t>(raw_data[2]) << 8) | raw_data[3];
+        destination[2] = (static_cast<int16_t>(raw_data[4]) << 8) | raw_data[5];
+        destination[3] = (static_cast<int16_t>(raw_data[8]) << 8) | raw_data[9];
+        destination[4] = (static_cast<int16_t>(raw_data[10]) << 8) | raw_data[11];
+        destination[5] = (static_cast<int16_t>(raw_data[12]) << 8) | raw_data[13];
     }
 
     int16_t read_temperature_data()
     {
-        uint8_t raw_data[2];                              // x/y/z gyro register data stored here
-        read_bytes(TEMP_OUT_H, 2, &raw_data[0]);          // Read the two raw data registers sequentially into data array
-        return ((int16_t)raw_data[0] << 8) | raw_data[1]; // Turn the MSB and LSB into a 16-bit value
+        uint8_t raw_data[2];                     // x/y/z gyro register data stored here
+        read_bytes(TEMP_OUT_H, 2, &raw_data[0]); // Read the two raw data registers sequentially into data array
+        return (static_cast<int16_t>(raw_data[0]) << 8) | raw_data[1]; // Turn the MSB and LSB into a 16-bit value
     }
 
     void set_acc_gyro_to_calibration()
@@ -426,6 +426,7 @@ private:
         write_byte(SMPLRT_DIV, 0x00);   // Set sample rate to 1 kHz (1 sample/ms)
         write_byte(GYRO_CONFIG, 0x00);  // Set gyro full-scale to 250 degrees per second, maximum sensitivity
         write_byte(ACCEL_CONFIG, 0x00); // Set accelerometer full-scale to 2 g, maximum sensitivity
+        delay(15);
 
         // Configure FIFO to capture accelerometer and gyro data for bias calculation
         write_byte(USER_CTRL, 0x40); // Enable FIFO
@@ -436,54 +437,54 @@ private:
 
     void collect_acc_gyro_data_to(float* a_bias, float* g_bias)
     {
-        uint8_t data[12];                     // data array to hold accelerometer and gyro x, y, z, data
-        read_bytes(FIFO_COUNTH, 2, &data[0]); // read FIFO sample count
-        uint16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
+        uint8_t raw_data[12];                     // data array to hold accelerometer and gyro x, y, z, data
+        read_bytes(FIFO_COUNTH, 2, &raw_data[0]); // read FIFO sample count
+
+        uint16_t fifo_count = (static_cast<uint16_t>(raw_data[0]) << 8) | raw_data[1];
         uint16_t packet_count = fifo_count / 12; // How many sets of full gyro and accelerometer data for averaging
 
         for (uint16_t ii = 0; ii < packet_count; ii++)
         {
             int16_t accel_temp[3] = {0, 0, 0}, gyro_temp[3] = {0, 0, 0};
-            read_bytes(FIFO_R_W, 12, &data[0]);                  // read data for averaging
-            accel_temp[0] = (((int16_t)data[0] << 8) | data[1]); // Form signed 16-bit integer for each sample in FIFO
-            accel_temp[1] = (((int16_t)data[2] << 8) | data[3]);
-            accel_temp[2] = (((int16_t)data[4] << 8) | data[5]);
-            gyro_temp[0] = (((int16_t)data[6] << 8) | data[7]);
-            gyro_temp[1] = (((int16_t)data[8] << 8) | data[9]);
-            gyro_temp[2] = (((int16_t)data[10] << 8) | data[11]);
+            read_bytes(FIFO_R_W, 12, &raw_data[0]); // read data for averaging
 
-            a_bias[0] += (float)accel_temp[0]; // Sum individual signed 16-bit biases to get accumulated signed 32-bit biases
-            a_bias[1] += (float)accel_temp[1];
-            a_bias[2] += (float)accel_temp[2];
-            g_bias[0] += (float)gyro_temp[0];
-            g_bias[1] += (float)gyro_temp[1];
-            g_bias[2] += (float)gyro_temp[2];
+            accel_temp[0] = (static_cast<int16_t>(raw_data[0]) << 8) | raw_data[1];
+            accel_temp[1] = (static_cast<int16_t>(raw_data[2]) << 8) | raw_data[3];
+            accel_temp[2] = (static_cast<int16_t>(raw_data[4]) << 8) | raw_data[5];
+
+            gyro_temp[0] = (static_cast<int16_t>(raw_data[6]) << 8) | raw_data[7];
+            gyro_temp[1] = (static_cast<int16_t>(raw_data[8]) << 8) | raw_data[9];
+            gyro_temp[2] = (static_cast<int16_t>(raw_data[10]) << 8) | raw_data[11];
+
+            a_bias[0] += static_cast<float>(accel_temp[0]);
+            a_bias[1] += static_cast<float>(accel_temp[1]);
+            a_bias[2] += static_cast<float>(accel_temp[2]);
+
+            g_bias[0] += static_cast<float>(gyro_temp[0]);
+            g_bias[1] += static_cast<float>(gyro_temp[1]);
+            g_bias[2] += static_cast<float>(gyro_temp[2]);
 
             delay(2);
         }
-        a_bias[0] /= (float)packet_count; // Normalize sums to get average count biases
-        a_bias[1] /= (float)packet_count;
-        a_bias[2] /= (float)packet_count;
-        g_bias[0] /= (float)packet_count;
-        g_bias[1] /= (float)packet_count;
-        g_bias[2] /= (float)packet_count;
+
+        a_bias[0] /= static_cast<float>(packet_count); // Normalize sums to get average count biases
+        a_bias[1] /= static_cast<float>(packet_count);
+        a_bias[2] /= static_cast<float>(packet_count);
+
+        g_bias[0] /= static_cast<float>(packet_count);
+        g_bias[1] /= static_cast<float>(packet_count);
+        g_bias[2] /= static_cast<float>(packet_count);
 
         // Remove gravity from the z-axis accelerometer bias calculation
-        if (a_bias[2] > 0L)
-        {
-            a_bias[2] -= (float)CALIB_ACCEL_SENSITIVITY;
-        }
-        else if (a_bias[2] < 0L)
-        {
-            a_bias[2] += (float)CALIB_ACCEL_SENSITIVITY;
-        }
+        a_bias[2] -= CALIB_ACCEL_SENSITIVITY;
     }
 
     // Accelerometer and gyroscope self test; check calibration wrt factory settings
     bool self_test_impl() // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
     {
-        uint8_t raw_data[6] = {0, 0, 0, 0, 0, 0};
-        int16_t gAvg[3] = {0}, aAvg[3] = {0}, aSTAvg[3] = {0}, gSTAvg[3] = {0};
+        uint8_t raw_data[6];
+        int16_t gAvg[3], aAvg[3], aSTAvg[3], gSTAvg[3];
+
         float factoryTrim[6];
         uint8_t FS = 0;
 
@@ -495,15 +496,15 @@ private:
         for (int ii = 0; ii < 200; ii++)
         { // get average current values of gyro and acclerometer
 
-            read_bytes(ACCEL_XOUT_H, 6, &raw_data[0]);              // Read the six raw data registers into data array
-            aAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
-            aAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
-            aAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
+            read_bytes(ACCEL_XOUT_H, 6, &raw_data[0]); // Read the six raw data registers into data array
+            aAvg[0] += (static_cast<int16_t>(raw_data[0]) << 8) | raw_data[1];
+            aAvg[1] += (static_cast<int16_t>(raw_data[2]) << 8) | raw_data[3];
+            aAvg[2] += (static_cast<int16_t>(raw_data[4]) << 8) | raw_data[5];
 
             read_bytes(GYRO_XOUT_H, 6, &raw_data[0]); // Read the six raw data registers sequentially into data array
-            gAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
-            gAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
-            gAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
+            gAvg[0] += (static_cast<int16_t>(raw_data[0]) << 8) | raw_data[1];
+            gAvg[1] += (static_cast<int16_t>(raw_data[2]) << 8) | raw_data[3];
+            gAvg[2] += (static_cast<int16_t>(raw_data[4]) << 8) | raw_data[5];
         }
 
         for (int ii = 0; ii < 3; ii++)
@@ -520,15 +521,15 @@ private:
         for (int ii = 0; ii < 200; ii++)
         { // get average self-test values of gyro and acclerometer
 
-            read_bytes(ACCEL_XOUT_H, 6, &raw_data[0]);                // Read the six raw data registers into data array
-            aSTAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
-            aSTAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
-            aSTAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
+            read_bytes(ACCEL_XOUT_H, 6, &raw_data[0]); // Read the six raw data registers into data array
+            aSTAvg[0] += (static_cast<int16_t>(raw_data[0]) << 8) | raw_data[1];
+            aSTAvg[1] += (static_cast<int16_t>(raw_data[2]) << 8) | raw_data[3];
+            aSTAvg[2] += (static_cast<int16_t>(raw_data[4]) << 8) | raw_data[5];
 
             read_bytes(GYRO_XOUT_H, 6, &raw_data[0]); // Read the six raw data registers sequentially into data array
-            gSTAvg[0] += (((int16_t)raw_data[0] << 8) | raw_data[1]); // Turn the MSB and LSB into a signed 16-bit value
-            gSTAvg[1] += (((int16_t)raw_data[2] << 8) | raw_data[3]);
-            gSTAvg[2] += (((int16_t)raw_data[4] << 8) | raw_data[5]);
+            gSTAvg[0] += (static_cast<int16_t>(raw_data[0]) << 8) | raw_data[1];
+            gSTAvg[1] += (static_cast<int16_t>(raw_data[2]) << 8) | raw_data[3];
+            gSTAvg[2] += (static_cast<int16_t>(raw_data[4]) << 8) | raw_data[5];
         }
 
         for (int ii = 0; ii < 3; ii++)
@@ -561,29 +562,38 @@ private:
         self_test_result[5] = self_test_data[2] & 0x1F; // Zg
 
         // Retrieve factory self - test value from self - test code reads
-        factoryTrim[0] = self_test_result[0] != 0
-                             ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[0] - 1) / pow(2, 5) - 2) / 0.34))
-                             : 0.0f; // FT[Xa]
-        factoryTrim[1] = self_test_result[1] != 0
-                             ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[1] - 1) / pow(2, 5) - 2) / 0.34))
-                             : 0.0f; // FT[Ya]
-        factoryTrim[2] = self_test_result[2] != 0
-                             ? (float)(4096 * 0.34 * (pow(0.92, (self_test_result[2] - 1) / pow(2, 5) - 2) / 0.34))
-                             : 0.0f; // FT[Za]
+        factoryTrim[0] =
+            self_test_result[0] != 0
+                ? static_cast<float>(4096 * 0.34 * (pow(0.92, (self_test_result[0] - 1) / pow(2, 5) - 2) / 0.34))
+                : 0.0f; // FT[Xa]
+
+        factoryTrim[1] =
+            self_test_result[1] != 0
+                ? static_cast<float>(4096 * 0.34 * (pow(0.92, (self_test_result[1] - 1) / pow(2, 5) - 2) / 0.34))
+                : 0.0f; // FT[Ya]
+
+        factoryTrim[2] =
+            self_test_result[2] != 0
+                ? static_cast<float>(4096 * 0.34 * (pow(0.92, (self_test_result[2] - 1) / pow(2, 5) - 2) / 0.34))
+                : 0.0f; // FT[Za]
+
         factoryTrim[3] =
-            self_test_result[3] != 0 ? (float)(25 * 131 * pow(1.046, (self_test_result[3] - 1))) : 0.0f; // FT[Xg]
-        factoryTrim[4] =
-            self_test_result[4] != 0 ? (float)(-25 * 131 * pow(1.046, (self_test_result[4] - 1))) : 0.0f; // FT[Yg]
+            self_test_result[3] != 0 ? static_cast<float>(25 * 131 * pow(1.046, (self_test_result[3] - 1))) : 0.0f; // FT[Xg]
+
+        factoryTrim[4] = self_test_result[4] != 0 ? static_cast<float>(-25 * 131 * pow(1.046, (self_test_result[4] - 1)))
+                                                  : 0.0f; // FT[Yg]
         factoryTrim[5] =
-            self_test_result[5] != 0 ? (float)(25 * 131 * pow(1.046, (self_test_result[5] - 1))) : 0.0f; // FT[Zg]
+            self_test_result[5] != 0 ? static_cast<float>(25 * 131 * pow(1.046, (self_test_result[5] - 1))) : 0.0f; // FT[Zg]
 
         // Report results as a ratio of (STR - FT)/FT; the change from Factory Trim of the Self-Test Response
         // To get percent, must multiply by 100
         for (int i = 0; i < 3; i++)
         {
-            self_test_result[i] = 100.0 * ((float)(aSTAvg[i] - aAvg[i])) / factoryTrim[i]; // Report percent differences
+            self_test_result[i] =
+                100.0 * (static_cast<float>(aSTAvg[i] - aAvg[i])) / factoryTrim[i]; // Report percent differences
+
             self_test_result[i + 3] =
-                100.0 * ((float)(gSTAvg[i] - gAvg[i])) / factoryTrim[i + 3]; // Report percent differences
+                100.0 * (static_cast<float>(gSTAvg[i] - gAvg[i])) / factoryTrim[i + 3]; // Report percent differences
         }
 
         bool b = true;
@@ -598,19 +608,16 @@ private:
     {
         switch (accel_af_sel)
         {
-            // Possible accelerometer scales (and their register bit settings) are:
-            // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11).
-            // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
             case ACCEL_FS_SEL::A2G:
-                return 2.0 / 32767.0;
+                return 2.f / ACCEL_GYRO_RESOLUTION;
             case ACCEL_FS_SEL::A4G:
-                return 4.0 / 32767.0;
+                return 4.f / ACCEL_GYRO_RESOLUTION;
             case ACCEL_FS_SEL::A8G:
-                return 8.0 / 32767.0;
+                return 8.f / ACCEL_GYRO_RESOLUTION;
             case ACCEL_FS_SEL::A16G:
-                return 16.0 / 32767.0;
+                return 16.f / ACCEL_GYRO_RESOLUTION;
             default:
-                return 0.;
+                return 0.f;
         }
     }
 
@@ -618,19 +625,16 @@ private:
     {
         switch (gyro_fs_sel)
         {
-            // Possible gyro scales (and their register bit settings) are:
-            // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11).
-            // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
             case GYRO_FS_SEL::G250DPS:
-                return 250.0 / 32767.0;
+                return 250.f / ACCEL_GYRO_RESOLUTION;
             case GYRO_FS_SEL::G500DPS:
-                return 500.0 / 32767.0;
+                return 500.f / ACCEL_GYRO_RESOLUTION;
             case GYRO_FS_SEL::G1000DPS:
-                return 1000.0 / 32767.0;
+                return 1000.f / ACCEL_GYRO_RESOLUTION;
             case GYRO_FS_SEL::G2000DPS:
-                return 2000.0 / 32767.0;
+                return 2000.f / ACCEL_GYRO_RESOLUTION;
             default:
-                return 0.;
+                return 0.f;
         }
     }
     void write_byte(uint8_t subAddress, uint8_t data)
