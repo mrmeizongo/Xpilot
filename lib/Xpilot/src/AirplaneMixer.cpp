@@ -15,11 +15,11 @@ AirplaneMixer::Outputs AirplaneMixer::mix(int16_t roll, int16_t pitch, int16_t y
             break;
 
         case Config::AirframeType::ELEVON_WITH_RUDDER:
-            mixFlyingWingRudder(roll, pitch, yaw, out);
+            mixElevonWithRudder(roll, pitch, yaw, out);
             break;
 
         case Config::AirframeType::ELEVON_NO_RUDDER:
-            mixFlyingWingNoRudder(roll, pitch, out);
+            mixElevonNoRudder(roll, pitch, out);
             break;
 
         case Config::AirframeType::RUDDER_ELEVATOR:
@@ -118,7 +118,7 @@ void AirplaneMixer::mixVTail(int16_t roll, int16_t pitch, int16_t yaw, Outputs& 
 }
 
 /*
- * Flying wings:
+ * Elevons:
  *
  * Pitch moves both elevons together.
  * Roll moves them differentially.
@@ -126,14 +126,14 @@ void AirplaneMixer::mixVTail(int16_t roll, int16_t pitch, int16_t yaw, Outputs& 
  * Left  = pitch + roll
  * Right = pitch - roll
  */
-void AirplaneMixer::mixFlyingWingRudder(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const
+void AirplaneMixer::mixElevonWithRudder(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const
 {
     out.rudder = yaw;
 
     mixDifferential(roll, pitch, out.leftAileron, out.rightAileron);
 }
 
-void AirplaneMixer::mixFlyingWingNoRudder(int16_t roll, int16_t pitch, Outputs& out) const
+void AirplaneMixer::mixElevonNoRudder(int16_t roll, int16_t pitch, Outputs& out) const
 {
     mixDifferential(roll, pitch, out.leftAileron, out.rightAileron);
 }

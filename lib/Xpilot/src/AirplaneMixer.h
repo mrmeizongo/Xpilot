@@ -78,9 +78,9 @@ private:
 
     void mixVTail(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const;
 
-    void mixFlyingWingRudder(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const;
+    void mixElevonWithRudder(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const;
 
-    void mixFlyingWingNoRudder(int16_t roll, int16_t pitch, Outputs& out) const;
+    void mixElevonNoRudder(int16_t roll, int16_t pitch, Outputs& out) const;
 
     void mixRudderElevator(int16_t pitch, int16_t yaw, Outputs& out) const;
 

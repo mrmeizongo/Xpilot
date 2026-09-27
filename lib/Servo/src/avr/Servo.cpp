@@ -293,13 +293,14 @@ uint8_t Servo::attach(int pin, int min, int max)
         servos[this->servoIndex].Pin.mask = digitalPinToBitMask(pin); // Added 15 September 2026 for direct port manipulation
         servos[this->servoIndex].Pin.nbr = pin;
 
-        // todo min/max check: abs(min - MIN_PULSE_WIDTH) /4 < 128
         this->min = (MIN_PULSE_WIDTH - min) / 4; //resolution of min/max is 4 us
         this->max = (MAX_PULSE_WIDTH - max) / 4;
+
         // initialize the timer if it has not already been initialized
         timer16_Sequence_t timer = SERVO_INDEX_TO_TIMER(servoIndex);
         if (isTimerActive(timer) == false)
             initISR(timer);
+
         servos[this->servoIndex].Pin.isActive = true; // this must be set after the check for isTimerActive
     }
     return this->servoIndex;
@@ -318,7 +319,7 @@ void Servo::detach()
 void Servo::write(int value)
 {
     if (value < MIN_PULSE_WIDTH)
-    { // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
+    {
         if (value < 0)
             value = 0;
         if (value > 180)
