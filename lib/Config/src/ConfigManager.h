@@ -47,13 +47,11 @@ private:
 
     static constexpr int EEPROM_CHECKSUM_ADDR = EEPROM_CONFIG_ADDR + sizeof(Config);
 
-    static constexpr uint8_t MAX_SUBSCRIBERS = 1;
-
     Config _config;
 
     bool _dirty;
 
-    Subscriber _subscriber = nullptr;
+    Subscriber _subscriber;
 
     bool validateSet(ConfigID id, const ConfigValue& value) const;
 

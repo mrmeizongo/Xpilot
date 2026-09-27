@@ -11,11 +11,11 @@ constexpr int ConfigManager::EEPROM_MAGIC_ADDR;
 constexpr int ConfigManager::EEPROM_VERSION_ADDR;
 constexpr int ConfigManager::EEPROM_CONFIG_ADDR;
 constexpr int ConfigManager::EEPROM_CHECKSUM_ADDR;
-constexpr uint8_t ConfigManager::MAX_SUBSCRIBERS;
 
 ConfigManager::ConfigManager()
     : _config{}
-    , _dirty(false)
+    , _dirty{false}
+    , _subscriber{nullptr}
 {
 }
 
@@ -1074,7 +1074,11 @@ bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
     }
 }
 
-void ConfigManager::registerSubscriber(Subscriber sb) { _subscriber = sb; }
+void ConfigManager::registerSubscriber(Subscriber sb)
+{
+    if (_subscriber == nullptr)
+        _subscriber = sb;
+}
 
 void ConfigManager::setIMUCalibration(const float (&accelBias)[3], const float (&gyroBias)[3])
 {
