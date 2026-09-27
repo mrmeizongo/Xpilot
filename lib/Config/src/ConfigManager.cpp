@@ -24,7 +24,7 @@ void ConfigManager::init()
     if (!load())
     {
         loadDefaults();
-        save();
+        // save();
     }
 }
 
