@@ -40,6 +40,10 @@ public:
     Xpilot(const Xpilot&) = delete;            // Prevent this class from being copyable
     Xpilot& operator=(const Xpilot&) = delete; // Prevent this class from being assignable
 
+    // Only functions called from the main setup and loop functions
+    void setup(void);
+    void loop(void);
+
     // Trampoline functions for the scheduler
     static void changeFlightModeTask(void* ctx) { static_cast<Xpilot*>(ctx)->changeFlightMode(); }
     static void runSerialConfigTask(void* ctx) { static_cast<Xpilot*>(ctx)->serialConfigTask.run(); }
@@ -52,10 +56,6 @@ public:
     static void printFlightModeUpdateTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeUpdateTaskStats(); }
     static void printFlightModeRunTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeRunTaskStats(); }
     static void printFlightModeOutputTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeOutputTaskStats(); }
-
-    // Only functions called from the main setup and loop functions
-    void setup(void);
-    void loop(void);
 
     // Debug functions to get outputs for testing and tuning purposes.
     void printSchedulerRate(void);
