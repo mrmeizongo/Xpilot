@@ -63,9 +63,9 @@ bool ConfigManager::load()
         return false;
     }
 
-    EEPROM.get(EEPROM_CHECKSUM_ADDR, storedChecksum);
-
     EEPROM.get(EEPROM_CONFIG_ADDR, _config);
+
+    EEPROM.get(EEPROM_CHECKSUM_ADDR, storedChecksum);
 
     const uint16_t checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&_config), sizeof(_config));
 
