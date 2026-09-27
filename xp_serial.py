@@ -1559,7 +1559,7 @@ def run_radio_calibration(ser):
 {Color.MAGENTA}Radio Input Calibration{Color.RESET}
 =======================
 
-{Color.RED}Disconnect propulsion before continuing.{Color.RESET}
+{Color.RED}Disconnect motor before continuing.{Color.RESET}
 Keep throttle cut OFF throughout endpoint capture.
 The calibration updates RAM only; it will not write EEPROM.
 """)
@@ -1587,7 +1587,7 @@ Press {Color.GREEN}Enter{Color.RESET} when endpoint capture is complete.
 
     input(f"""
 Release all channels and leave them in the centered position.
-Throttle position is ignored during this phase.
+Throttle is ignored during this phase.
 
 Press {Color.GREEN}Enter{Color.RESET} when all controls are centered
 and ready for capture...
@@ -1595,7 +1595,7 @@ and ready for capture...
 
     print(f"""
 Capture started.
-Keep all controls centered.
+Keep all controls centered for a minimum 5 seconds.
 
 Press {Color.GREEN}Enter{Color.RESET} when center capture is complete.
 """)
