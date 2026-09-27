@@ -6,7 +6,7 @@
 
 constexpr uint16_t ConfigManager::EEPROM_MAGIC; // XP - XPilot firmware signature
 constexpr uint8_t ConfigManager::EEPROM_VERSION;
-constexpr uint16_t ConfigManager::EEPROM_ADDRESS;
+constexpr uint16_t ConfigManager::EEPROM_START_ADDRESS;
 constexpr int ConfigManager::EEPROM_MAGIC_ADDR;
 constexpr int ConfigManager::EEPROM_VERSION_ADDR;
 constexpr int ConfigManager::EEPROM_CONFIG_ADDR;

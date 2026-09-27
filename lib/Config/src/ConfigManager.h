@@ -37,9 +37,9 @@ private:
 
     static constexpr uint8_t EEPROM_VERSION = 0x02;
 
-    static constexpr uint16_t EEPROM_ADDRESS = 0x0;
+    static constexpr uint16_t EEPROM_START_ADDRESS = 0x0;
 
-    static constexpr int EEPROM_MAGIC_ADDR = EEPROM_ADDRESS;
+    static constexpr int EEPROM_MAGIC_ADDR = EEPROM_START_ADDRESS;
 
     static constexpr int EEPROM_VERSION_ADDR = EEPROM_MAGIC_ADDR + sizeof(uint16_t);
 
