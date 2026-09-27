@@ -18,7 +18,8 @@ uint8_t Xpilot::flightModeRunTaskId = 0;
 uint8_t Xpilot::flightModeOutputTaskId = 0;
 
 Xpilot::Xpilot()
-    : serialConfigTask{Serial}
+    : sysFailsafeActive{true}
+    , serialConfigTask{Serial}
 {
 }
 
