@@ -39,8 +39,8 @@ void SerialConfigTask::processByte(uint8_t byte)
         {
             if (byte == SERIAL_PACKET_START)
             {
-                _rxBuffer[0] = byte;
-                _rxIndex = 1;
+                _rxIndex = 0;
+                _rxBuffer[_rxIndex++] = byte;
                 _rxState = RxState::RECEIVING_PACKET;
             }
 
@@ -61,7 +61,6 @@ void SerialConfigTask::processByte(uint8_t byte)
                 if (calculated == packet.checksum)
                     processPacket(packet);
 
-                _rxIndex = 0;
                 _rxState = RxState::WAITING_FOR_START;
             }
 
