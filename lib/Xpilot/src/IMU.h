@@ -23,8 +23,7 @@ public:
     IMU(void);
     void init(void);
     void getLatestReadings(void); // Process the IMU data and update the AHRS values
-    void calibrate(void);         // Calibrate IMU to obtain sensor bias values
-    void getCalibration(float (&)[Axis::AXIS_COUNT], float (&)[Axis::AXIS_COUNT]);
+    void calibrate(void);         // Obtain sensor bias values
 
     static void getLatestReadingsTask(void* ctx) // Trampoline function for the scheduler
     {
@@ -35,9 +34,7 @@ public:
 
     void printIMU(void);
 
-    /// @brief              Register a single callback to be invoked when new imu data is received
-    /// @param callback     Function to execute
-    /// @param ctx          Context pointer passed to the callback
+    // Register a single callback to be invoked when new imu data is received
     void registerConsumer(Consumer);
 
 private:
@@ -49,7 +46,7 @@ private:
     float _rpy[Axis::AXIS_COUNT]; // Airplane coordinate system values
     float _g[Axis::AXIS_COUNT];   // Angular velocity about the respective axis - xyz
 
-    Consumer _consumer = nullptr; // IMU values consumer
+    Consumer _consumer; // IMU values consumer
 };
 
 extern IMU imu;

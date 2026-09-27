@@ -110,11 +110,6 @@ void SerialConfigTask::processPacket(const SerialPacket& packet)
         case SerialCommand::CALIBRATE_IMU:
         {
             imu.calibrate();
-
-            float accel[IMU::Axis::AXIS_COUNT], gyro[IMU::Axis::AXIS_COUNT];
-            imu.getCalibration(accel, gyro);
-            configManager.setIMUCalibration(accel, gyro);
-
             sendAck(command);
             break;
         }

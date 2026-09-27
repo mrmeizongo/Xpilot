@@ -9,6 +9,7 @@
 IMU::IMU(void)
     : _rpy{0.f, 0.f, 0.f}
     , _g{0.f, 0.f, 0.f}
+    , _consumer{nullptr}
 {
 }
 
@@ -61,15 +62,16 @@ void IMU::getLatestReadings(void)
 
 void IMU::registerConsumer(Consumer cb) { _consumer = cb; }
 
-void IMU::calibrate(void) { mpu6050.calibrateAccelGyro(); }
-
-void IMU::getCalibration(float (&accel)[Axis::AXIS_COUNT], float (&gyro)[Axis::AXIS_COUNT])
+void IMU::calibrate(void)
 {
-    for (uint8_t i = Axis::X_AXIS; i < Axis::AXIS_COUNT; i++)
-    {
-        accel[i] = mpu6050.getAccBias(i);
-        gyro[i] = mpu6050.getGyroBias(i);
-    }
+    mpu6050.calibrateAccelGyro();
+
+    float accel[IMU::Axis::AXIS_COUNT], gyro[IMU::Axis::AXIS_COUNT];
+
+    mpu6050.getAccBias(accel);
+    mpu6050.getGyroBias(gyro);
+
+    configManager.setIMUCalibration(accel, gyro);
 }
 
 void IMU::printIMU(void)

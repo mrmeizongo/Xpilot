@@ -224,12 +224,21 @@ public:
     float getAccBias(const uint8_t i) const { return (i < 3) ? acc_bias[i] : 0.f; }
     float getGyroBias(const uint8_t i) const { return (i < 3) ? gyro_bias[i] : 0.f; }
 
-    float getAccBiasX() const { return acc_bias[0]; }
-    float getAccBiasY() const { return acc_bias[1]; }
-    float getAccBiasZ() const { return acc_bias[2]; }
-    float getGyroBiasX() const { return gyro_bias[0]; }
-    float getGyroBiasY() const { return gyro_bias[1]; }
-    float getGyroBiasZ() const { return gyro_bias[2]; }
+    void getAccBias(float (&outArray)[3])
+    {
+        for (uint8_t i = 0; i < 3; i++)
+        {
+            outArray[i] = acc_bias[i];
+        }
+    }
+
+    void getGyroBias(float (&outArray)[3])
+    {
+        for (uint8_t i = 0; i < 3; i++)
+        {
+            outArray[i] = gyro_bias[i];
+        }
+    }
 
     float getTemperature() const { return temperature; }
 
