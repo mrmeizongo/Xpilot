@@ -15,16 +15,18 @@ SerialConfigTask::SerialConfigTask(HardwareSerial& serial)
 
 void SerialConfigTask::run()
 {
-    constexpr uint8_t MAX_BYTES_PER_RUN = 18;
+    constexpr uint8_t MAX_BYTES_PER_RUN = SERIAL_PACKET_SIZE;
 
     uint8_t processed = 0;
 
+    // Process one packet per run
     while (_serial.available() > 0 && processed < MAX_BYTES_PER_RUN)
     {
         processByte(static_cast<uint8_t>(_serial.read()));
         processed++;
     }
 
+    // Stream one snapshot per run
     if (_radioStreaming)
     {
         sendRadioSnapshot();
