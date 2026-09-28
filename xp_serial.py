@@ -116,12 +116,11 @@ RADIO_CONFIG_IDS = {
 }
 
 
-MIN_ENDPOINT_SAMPLES = 10
+MIN_ENDPOINT_SAMPLES = 20
 MIN_CENTER_SAMPLES = 20
-MIN_CHANNEL_SPAN_US = 400
+MIN_CHANNEL_SPAN_US = 300
 MIN_TRIM_MARGIN_US = 100
 MAX_CENTER_SPREAD_US = 30
-THROTTLE_CUT_WARNING_US = 1050
 
 
 TYPE_NAMES = {
@@ -1623,14 +1622,6 @@ Press {Color.GREEN}Enter{Color.RESET} when center capture is complete.
     print_radio_calibration(
         calibration
     )
-
-    if (
-        calibration["THROTTLE"]["min"]
-        < THROTTLE_CUT_WARNING_US
-    ):
-        print(
-            f"{Color.YELLOW}WARNING: The throttle minimum is below normal range\n"
-        )
 
     confirmation = input(
         "Apply these values to the active RAM configuration? "
