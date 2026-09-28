@@ -1922,7 +1922,7 @@ def main():
 
         return 1
 
-    # Nano commonly resets when serial opens.
+    # For boards that reset when serial open
     time.sleep(2.0)
 
     ser.reset_input_buffer()
