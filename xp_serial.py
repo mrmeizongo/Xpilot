@@ -799,11 +799,11 @@ def decode_value(
 
 def decode_packet(packet):
     if len(packet) != PACKET_SIZE:
-        print(f"{Color.YELLOW}RX: Invalid packet length.{Color.RESET}")
+        print(f"{Color.RED}RX: Invalid packet length.{Color.RESET}")
         return
 
     if packet[0] != START_BYTE:
-        print(f"{Color.YELLOW}RX: Invalid start byte.{Color.RESET}")
+        print(f"{Color.RED}RX: Invalid start byte.{Color.RESET}")
         return
 
     calculated_checksum = additive_checksum(
