@@ -84,6 +84,8 @@ public:
     static int16_t getPitchOutput(void) { return mixerOutputs.elevator; }
     static int16_t getYawOutput(void) { return mixerOutputs.rudder; }
 
+    static void neutralizeOutputs(void);
+
     virtual void resetControllers(void);
 
     void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }

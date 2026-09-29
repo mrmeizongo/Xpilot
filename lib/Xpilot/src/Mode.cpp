@@ -64,17 +64,7 @@ void Mode::init(void)
     imu.registerConsumer(consumeAHRS);
     configManager.registerSubscriber(configSub);
 
-    const int16_t temp[Actuators::CHANNEL::CHANNEL_COUNT] = {
-        config().throttleSrvConfig.min,
-        config().rollSrvConfig.trim,
-        config().rollSrvConfig.trim,
-        config().pitchSrvConfig.trim,
-        config().yawSrvConfig.trim,
-    };
-
-    memcpy(SRVout, temp, sizeof(temp));
-
-    actuators.writeServos(SRVout);
+    neutralizeOutputs();
 }
 
 void Mode::configSub(ConfigID id)
@@ -273,6 +263,21 @@ void Mode::resetControllers(void)
     rollPIDF.reset();
     pitchPIDF.reset();
     yawPIDF.reset();
+}
+
+void Mode::neutralizeOutputs(void)
+{
+    const int16_t temp[Actuators::CHANNEL::CHANNEL_COUNT] = {
+        config().throttleSrvConfig.min,
+        config().rollSrvConfig.trim,
+        config().rollSrvConfig.trim,
+        config().pitchSrvConfig.trim,
+        config().yawSrvConfig.trim,
+    };
+
+    memcpy(SRVout, temp, sizeof(temp));
+
+    actuators.writeServos(SRVout);
 }
 
 void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])
