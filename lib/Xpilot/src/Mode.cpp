@@ -64,7 +64,9 @@ void Mode::init(void)
     imu.registerConsumer(consumeAHRS);
     configManager.registerSubscriber(configSub);
 
+    // Set servo outputs to neutral on start up
     neutralizeOutputs();
+    actuators.writeServos(SRVout);
 }
 
 void Mode::configSub(ConfigID id)
@@ -240,22 +242,27 @@ void Mode::processOutput(void* ctx)
                                                       -config().controlConfig.controlResolution,
                                                       config().controlConfig.controlResolution);
 
-    SRVout[Actuators::CHANNEL::CH1] =
-        mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max);
-
-    SRVout[Actuators::CHANNEL::CH2] =
-        mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
-
-    SRVout[Actuators::CHANNEL::CH3] =
-        mapToSRV(mixerOutputs.rightAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
-
-    SRVout[Actuators::CHANNEL::CH4] =
-        mapToSRV(mixerOutputs.elevator, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
-
-    SRVout[Actuators::CHANNEL::CH5] = mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
-
     if (Xpilot::isArmed())
-        actuators.writeServos(SRVout);
+    {
+        SRVout[Actuators::CHANNEL::CH1] =
+            mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max);
+
+        SRVout[Actuators::CHANNEL::CH2] =
+            mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
+
+        SRVout[Actuators::CHANNEL::CH3] =
+            mapToSRV(mixerOutputs.rightAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
+
+        SRVout[Actuators::CHANNEL::CH4] =
+            mapToSRV(mixerOutputs.elevator, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
+
+        SRVout[Actuators::CHANNEL::CH5] =
+            mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
+    }
+    else
+        neutralizeOutputs();
+
+    actuators.writeServos(SRVout);
 }
 
 void Mode::resetControllers(void)
@@ -276,8 +283,6 @@ void Mode::neutralizeOutputs(void)
     };
 
     memcpy(SRVout, temp, sizeof(temp));
-
-    actuators.writeServos(SRVout);
 }
 
 void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])

@@ -106,9 +106,9 @@ protected:
 
     Radio::THREE_POS_SW modeSwitchPosition; // Mode switch position for this mode
 
-    static int16_t SRVout[Actuators::CHANNEL::CHANNEL_COUNT]; // Servo output array
+    static int16_t SRVout[Actuators::CHANNEL::CHANNEL_COUNT]; // Servo pwm output array
 
-    virtual void setFailsafeInputs(void); // Failsafe implementation
+    virtual void setFailsafeInputs(void); // Calculate failsafe input
 
     static int16_t flaperonInput;
 
