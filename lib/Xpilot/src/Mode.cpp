@@ -1,5 +1,6 @@
 #include "Mode.h"
 #include "IMU.h"
+#include "LEDnotifier.h"
 #include "Xpilot.h"
 
 int32_t Mode::input_trpy[4]{};
@@ -165,6 +166,8 @@ void Mode::configSub(ConfigID id)
         default:
             break;
     }
+
+    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, SUCCESS_BLINK_DURATION);
 }
 
 void Mode::update(void)
@@ -203,7 +206,7 @@ void Mode::update(void)
                                                      config().yawRxConfig.deadband,
                                                      config().yawRxConfig.reverse);
 
-#if defined(USE_FLAPERONS)
+#if defined(ENABLE_FLAPERONS)
     // Only the channel's config min and max are passed to normalizeInput to output 0 to -1000
     // The channel's radio max config is passed as the trim argument for normalizeInput
     // The channel's radio trim config is not required as it sits between min and max
@@ -283,7 +286,7 @@ void Mode::setFailsafeInputs(void)
     input_trpy[Radio::CHANNEL::ROLL] = 0;
     input_trpy[Radio::CHANNEL::PITCH] = 0;
     input_trpy[Radio::CHANNEL::YAW] = 0;
-#if defined(USE_FLAPERONS)
+#if defined(ENABLE_FLAPERONS)
     flaperonInput = 0;
 #endif
 }

@@ -2,6 +2,7 @@
 #include "IMU.h"
 #include "Radio.h"
 #include "SerialConfigTask.h"
+#include "LEDnotifier.h"
 #include "FlightConfigAccess.h"
 
 SerialConfigTask::SerialConfigTask(HardwareSerial& serial)
@@ -126,6 +127,8 @@ void SerialConfigTask::processPacket(const SerialPacket& packet)
             sendAck(command, SerialCommand::NACK);
             break;
     }
+
+    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, SUCCESS_BLINK_DURATION);
 }
 
 void SerialConfigTask::processGet(const SerialPacket& packet)

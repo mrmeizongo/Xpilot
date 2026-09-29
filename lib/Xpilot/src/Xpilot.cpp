@@ -5,6 +5,7 @@
 #include "Actuators.h"
 #include "SysConfig.h"
 #include "Scheduler.h"
+#include "LEDnotifier.h"
 #include "FlightConfigAccess.h"
 
 static constexpr uint32_t SERIAL_BAUD_RATE = 250000; // Serial baud rate
@@ -18,6 +19,7 @@ uint8_t Xpilot::stateUpdateTaskId = 0;
 uint8_t Xpilot::flightModeUpdateTaskId = 0;
 uint8_t Xpilot::flightModeRunTaskId = 0;
 uint8_t Xpilot::flightModeOutputTaskId = 0;
+uint8_t Xpilot::ledNotifierTaskId;
 
 Xpilot::ArmState Xpilot::armState = Xpilot::ArmState::DISARMED;
 
@@ -47,6 +49,7 @@ void Xpilot::setup(void)
     flightModeUpdateTaskId = scheduler.addTask(&Mode::updateInput, &currentMode, FLIGHT_MODE_UPDATE_HZ);
     flightModeRunTaskId = scheduler.addTask(&Mode::runControllers, &currentMode, CONTROL_LOOP_HZ);
     flightModeOutputTaskId = scheduler.addTask(&Mode::processOutput, &currentMode, FLIGHT_MODE_OUTPUT_HZ);
+    ledNotifierTaskId = scheduler.addTask(&LEDNotifier::update, nullptr, STATE_UPDATE_HZ);
 
 #if defined(PRINT_SCHEDULER_RATE)
     (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_HZ);

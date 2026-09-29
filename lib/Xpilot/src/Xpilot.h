@@ -114,6 +114,7 @@ private:
     static uint8_t flightModeUpdateTaskId;
     static uint8_t flightModeRunTaskId;
     static uint8_t flightModeOutputTaskId;
+    static uint8_t ledNotifierTaskId;
 
     SerialConfigTask serialConfigTask;
 };

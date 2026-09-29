@@ -16,10 +16,12 @@
  * Trim = 50% down
  * Low = 100% down
  */
-// #define USE_FLAPERONS
+// #define ENABLE_FLAPERONS 1
+
+// #define ENABLE_LED_NOTIFIER 1
 
 // Enable communication with xp_serial.py
-#define USE_SERIAL_TASK
+#define USE_SERIAL_TASK 1
 
 // Task scheduler config
 #define CONTROL_LOOP_HZ 250       // Control loop period in hz
@@ -36,17 +38,17 @@
  * Uncomment to enable the respective debugging
  * CAUTION: Only uncomment one debug option at a time
  */
-// #define PRINT_SCHEDULER_RATE
-// #define PRINT_IO
+// #define PRINT_SCHEDULER_RATE 1
+// #define PRINT_IO 1
 
-// #define PRINT_IMU
+// #define PRINT_IMU 1
 
-// #define PRINT_IMU_TASK_STAT
-// #define PRINT_RADIO_TASK_STAT
-// #define PRINT_STATE_UPDATE_TASK_STAT
-// #define PRINT_FM_UPDATE_TASK_STAT
-// #define PRINT_FM_RUN_TASK_STAT
-// #define PRINT_FM_OUTPUT_TASK_STAT
+// #define PRINT_IMU_TASK_STAT 1
+// #define PRINT_RADIO_TASK_STAT 1
+// #define PRINT_STATE_UPDATE_TASK_STAT 1
+// #define PRINT_FM_UPDATE_TASK_STAT 1
+// #define PRINT_FM_RUN_TASK_STAT 1
+// #define PRINT_FM_OUTPUT_TASK_STAT 1
 
 // Any debugging should disable serial communication with xp_serial.py
 #if defined(PRINT_SCHEDULER_RATE) || defined(PRINT_IO) || defined(PRINT_IMU) || defined(PRINT_IMU_TASK_STAT) ||             \
