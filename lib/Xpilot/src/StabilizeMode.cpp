@@ -25,12 +25,7 @@ inline int32_t stabilizeDemand(int32_t input, int32_t angle, int16_t maxRate, in
     return constrain(demand, -rateLimit, rateLimit);
 }
 
-void StabilizeMode::enter(void)
-{
-    rollPIDF.reset();
-    pitchPIDF.reset();
-    yawPIDF.reset();
-}
+void StabilizeMode::enter(void) { Mode::resetControllers(); }
 
 // Yaw is rate controlled
 void StabilizeMode::update(void)

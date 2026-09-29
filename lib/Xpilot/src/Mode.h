@@ -84,6 +84,8 @@ public:
     static int16_t getPitchOutput(void) { return mixerOutputs.elevator; }
     static int16_t getYawOutput(void) { return mixerOutputs.rudder; }
 
+    virtual void resetControllers(void);
+
     void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
 
@@ -127,6 +129,7 @@ public:
     const char* modeName4(void) const override { return "PASS"; }
     void enter(void) override;
     void run(void) override;
+    void resetControllers(void) override;
 };
 
 // Gyro-based rate control

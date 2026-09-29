@@ -268,6 +268,13 @@ void Mode::processOutput(void* ctx)
         actuators.writeServos(SRVout);
 }
 
+void Mode::resetControllers(void)
+{
+    rollPIDF.reset();
+    pitchPIDF.reset();
+    yawPIDF.reset();
+}
+
 void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])
 {
     imu_rpy[IMU::Axis::X_AXIS] = rpy[IMU::Axis::X_AXIS] * config().controlConfig.controlResolution;

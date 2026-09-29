@@ -1,12 +1,7 @@
 #include "IMU.h"
 #include "Mode.h"
 
-void RateMode::enter(void)
-{
-    rollPIDF.reset();
-    pitchPIDF.reset();
-    yawPIDF.reset();
-}
+void RateMode::enter(void) { Mode::resetControllers(); }
 
 // Convert radio input to rate demands for all channels
 void RateMode::update(void)

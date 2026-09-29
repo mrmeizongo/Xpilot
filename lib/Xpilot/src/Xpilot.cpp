@@ -223,7 +223,10 @@ void Xpilot::updateArmState(void)
         case ArmState::WAITING_FOR_ARM_RELEASE:
         {
             if (radio.primarySticksCentered())
+            {
                 armState = ArmState::ARMED;
+                currentMode->resetControllers();
+            }
 
             break;
         }
