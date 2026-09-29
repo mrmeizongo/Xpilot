@@ -22,15 +22,13 @@
 #define USE_SERIAL_TASK
 
 // Task scheduler config
-#define CONTROL_LOOP_HZ 250                // Control loop period in hz
-#define IMU_UPDATE_HZ CONTROL_LOOP_HZ      // IMU update period in hz
-#define FLIGHT_MODE_RUN_HZ CONTROL_LOOP_HZ // Flight mode run period in hz
-#define FLIGHT_MODE_CHANGE_HZ 25           // Flight mode change period in hz
-#define FLIGHT_MODE_UPDATE_HZ 50           // Flight mode update period in hz
-#define FLIGHT_MODE_OUTPUT_HZ 50           // Flight mode output period in hz
-#define RADIO_INPUT_PROCESS_HZ 50          // Radio input period in hz
-#define TASK_PRINT_HZ 2                    // Task rate debug print period in hz
-#define SERIAL_TASK_HZ 20                  // Serial task period in hz
+#define CONTROL_LOOP_HZ 250       // Control loop period in hz
+#define STATE_UPDATE_HZ 25        // Flight mode change period in hz
+#define FLIGHT_MODE_UPDATE_HZ 50  // Flight mode update period in hz
+#define FLIGHT_MODE_OUTPUT_HZ 50  // Flight mode output period in hz
+#define RADIO_INPUT_PROCESS_HZ 50 // Radio input period in hz
+#define TASK_PRINT_HZ 2           // Task rate debug print period in hz
+#define SERIAL_TASK_HZ 20         // Serial task period in hz
 
 // Debug config
 
@@ -45,14 +43,14 @@
 
 // #define PRINT_IMU_TASK_STAT
 // #define PRINT_RADIO_TASK_STAT
-// #define PRINT_FM_CHANGE_TASK_STAT
+// #define PRINT_STATE_UPDATE_TASK_STAT
 // #define PRINT_FM_UPDATE_TASK_STAT
 // #define PRINT_FM_RUN_TASK_STAT
 // #define PRINT_FM_OUTPUT_TASK_STAT
 
 // Any debugging should disable serial communication with xp_serial.py
 #if defined(PRINT_SCHEDULER_RATE) || defined(PRINT_IO) || defined(PRINT_IMU) || defined(PRINT_IMU_TASK_STAT) ||             \
-    defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_FM_CHANGE_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) ||           \
+    defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_STATE_UPDATE_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) ||        \
     defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_OUTPUT_TASK_STAT)
 #if defined(USE_SERIAL_TASK)
 #undef USE_SERIAL_TASK

@@ -1,5 +1,28 @@
 #include "Mode.h"
 #include "IMU.h"
+#include "Xpilot.h"
+
+int32_t Mode::input_trpy[4]{};
+int16_t Mode::output_trpy[4]{};
+
+AirplaneMixer::Outputs Mode::mixerOutputs{};
+
+int32_t Mode::imu_rpy[3]{};
+int32_t Mode::imu_g[3]{};
+
+int16_t Mode::SRVout[Actuators::CHANNEL::CHANNEL_COUNT] = {};
+
+PIDF<int32_t, int16_t> Mode::rollPIDF{};
+PIDF<int32_t, int16_t> Mode::pitchPIDF{};
+PIDF<int32_t, int16_t> Mode::yawPIDF{};
+
+AirplaneMixer Mode::airplaneMixer{};
+
+SlewRateLimiter<int32_t> Mode::rollSlew{};
+SlewRateLimiter<int32_t> Mode::pitchSlew{};
+SlewRateLimiter<int32_t> Mode::yawSlew{};
+
+int16_t Mode::flaperonInput{};
 
 void Mode::init(void)
 {
@@ -39,6 +62,18 @@ void Mode::init(void)
 
     imu.registerConsumer(consumeAHRS);
     configManager.registerSubscriber(configSub);
+
+    const int16_t temp[Actuators::CHANNEL::CHANNEL_COUNT] = {
+        config().throttleSrvConfig.min,
+        config().rollSrvConfig.trim,
+        config().rollSrvConfig.trim,
+        config().pitchSrvConfig.trim,
+        config().yawSrvConfig.trim,
+    };
+
+    memcpy(SRVout, temp, sizeof(temp));
+
+    actuators.writeServos(SRVout);
 }
 
 void Mode::configSub(ConfigID id)
@@ -226,7 +261,8 @@ void Mode::processOutput(void* ctx)
 
     SRVout[Actuators::CHANNEL::CH5] = mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
 
-    actuators.writeServos(SRVout);
+    if (Xpilot::isArmed())
+        actuators.writeServos(SRVout);
 }
 
 void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])
@@ -248,6 +284,6 @@ void Mode::setFailsafeInputs(void)
     input_trpy[Radio::CHANNEL::PITCH] = 0;
     input_trpy[Radio::CHANNEL::YAW] = 0;
 #if defined(USE_FLAPERONS)
-    flaperonInput = -config().flightConfig.flaperonMax; // set flaperons to landing position
+    flaperonInput = 0;
 #endif
 }

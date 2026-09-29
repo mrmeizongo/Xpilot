@@ -32,12 +32,12 @@ Flight stabilization software
 #include <Arduino.h>
 #include "Actuators.h"
 #include "AirplaneMixer.h"
-#include "FlightConfigAccess.h"
 #include "PIDF.h"
 #include "Radio.h"
 #include "IMU.h"
-#include "SlewRateLimiter.h"
 #include "SysConfig.h"
+#include "SlewRateLimiter.h"
+#include "FlightConfigAccess.h"
 
 // Abstract flight mode class
 class Mode

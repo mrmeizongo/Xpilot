@@ -175,7 +175,7 @@ void Radio::FailSafeDetector()
         failSafe = true;
 }
 
-Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint8_t positionSep)
+Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint8_t positionSep) const
 {
     if (ch >= CHANNEL::CHANNEL_COUNT)
         return THREE_POS_SW::UNDEFINED;
@@ -201,6 +201,13 @@ void Radio::setRawPWM(CHANNEL ch, const volatile uint16_t& rawPulse, const volat
 {
     rawPWM[ch] = rawPulse;
     lastRawPWMTimeUS[ch] = validTime;
+}
+
+bool Radio::primarySticksCentered(void) const
+{
+    return abs(config().rollRxConfig.trim - static_cast<int16_t>(lastValidPWM[Radio::CHANNEL::ROLL])) <= INPUT_THRESHOLD &&
+           abs(config().pitchRxConfig.trim - static_cast<int16_t>(lastValidPWM[Radio::CHANNEL::PITCH])) <= INPUT_THRESHOLD &&
+           abs(config().yawRxConfig.trim - static_cast<int16_t>(lastValidPWM[Radio::CHANNEL::YAW])) <= INPUT_THRESHOLD;
 }
 
 /*

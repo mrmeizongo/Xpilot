@@ -341,7 +341,7 @@ void Servo::writeMicroseconds(int value)
             value = SERVO_MAX();
 
         // value = value - TRIM_DURATION;   // removed 15 Sept 2026
-        value = usToTicks(value); // convert to ticks after compensating for interrupt overhead - 12 Aug 2009
+        value = usToTicks(value); // convert to ticks after
 
         uint8_t oldSREG = SREG;
         cli();

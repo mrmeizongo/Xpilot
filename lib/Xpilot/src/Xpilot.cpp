@@ -9,17 +9,26 @@
 
 static constexpr uint32_t SERIAL_BAUD_RATE = 250000; // Serial baud rate
 
+static constexpr int32_t ARM_STATE_HOLD_TIME_MS = 2000UL;
+
 // Task handlers for the scheduler to manage periodic tasks
 uint8_t Xpilot::imuTaskId = 0;
 uint8_t Xpilot::radioTaskId = 0;
-uint8_t Xpilot::flightModeChangeTaskId = 0;
+uint8_t Xpilot::stateUpdateTaskId = 0;
 uint8_t Xpilot::flightModeUpdateTaskId = 0;
 uint8_t Xpilot::flightModeRunTaskId = 0;
 uint8_t Xpilot::flightModeOutputTaskId = 0;
 
+Xpilot::ArmState Xpilot::armState = Xpilot::ArmState::DISARMED;
+
+uint32_t Xpilot::armStateStartTime = 0;
+
+bool Xpilot::armStateTimerStarted = false;
+
+bool Xpilot::sysFailsafeActive = true;
+
 Xpilot::Xpilot()
-    : sysFailsafeActive{true}
-    , serialConfigTask{Serial}
+    : serialConfigTask{Serial}
 {
 }
 
@@ -32,11 +41,11 @@ void Xpilot::setup(void)
      * The order tasks are added determines priority and is critical.
      * Priority is in descending order
      */
-    imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, IMU_UPDATE_HZ);
+    imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, CONTROL_LOOP_HZ);
     radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_HZ);
-    flightModeChangeTaskId = scheduler.addTask(&Xpilot::changeFlightModeTask, this, FLIGHT_MODE_CHANGE_HZ);
+    stateUpdateTaskId = scheduler.addTask(&Xpilot::stateUpdateTask, this, STATE_UPDATE_HZ);
     flightModeUpdateTaskId = scheduler.addTask(&Mode::updateInput, &currentMode, FLIGHT_MODE_UPDATE_HZ);
-    flightModeRunTaskId = scheduler.addTask(&Mode::runControllers, &currentMode, FLIGHT_MODE_RUN_HZ);
+    flightModeRunTaskId = scheduler.addTask(&Mode::runControllers, &currentMode, CONTROL_LOOP_HZ);
     flightModeOutputTaskId = scheduler.addTask(&Mode::processOutput, &currentMode, FLIGHT_MODE_OUTPUT_HZ);
 
 #if defined(PRINT_SCHEDULER_RATE)
@@ -54,8 +63,8 @@ void Xpilot::setup(void)
 #if defined(PRINT_RADIO_TASK_STAT)
     (void)scheduler.addTask(&Xpilot::printRadioTaskStatTask, this, TASK_PRINT_HZ);
 #endif
-#if defined(PRINT_FM_CHANGE_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeChangeTaskStatTask, this, TASK_PRINT_HZ);
+#if defined(PRINT_STATE_UPDATE_TASK_STAT)
+    (void)scheduler.addTask(&Xpilot::printStateUpdateTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_FM_UPDATE_TASK_STAT)
     (void)scheduler.addTask(&Xpilot::printFlightModeUpdateTaskStatTask, this, TASK_PRINT_HZ);
@@ -94,7 +103,13 @@ void Xpilot::sysInit(void)
     currentMode = &rateMode; // Rate mode is the default mode of operation on startup
 }
 
-void Xpilot::changeFlightMode(void)
+void Xpilot::stateUpdate(void)
+{
+    updateArmState();
+    updateFlightMode();
+}
+
+void Xpilot::updateFlightMode(void)
 {
     Mode* requestedMode = currentMode;
 
@@ -114,9 +129,6 @@ void Xpilot::changeFlightMode(void)
 
         const Radio::THREE_POS_SW switchPos =
             radio.getThreeSwitchPos(Radio::CHANNEL::AUX1, config().aux1RxConfig.trim, THREE_POS_SW_SEP);
-
-        if (switchPos == Radio::THREE_POS_SW::UNDEFINED)
-            return;
 
         // Mode select switch position has not changed
         if (switchPos == currentMode->getModeSwitchPosition())
@@ -139,4 +151,78 @@ void Xpilot::changeFlightMode(void)
 
     currentMode = requestedMode;
     currentMode->enter();
+}
+
+bool Xpilot::armDisarmInput(void)
+{
+    if (sysFailsafeActive || radio.inFailsafe() || !radio.inThrottleCut())
+    {
+        armStateTimerStarted = false;
+        return false;
+    }
+
+    const bool inputSatisfied =
+        abs(config().rollRxConfig.min - static_cast<int16_t>(radio.getPWM(Radio::CHANNEL::ROLL))) <= INPUT_THRESHOLD &&
+        abs(config().pitchRxConfig.max - static_cast<int16_t>(radio.getPWM(Radio::CHANNEL::PITCH))) <= INPUT_THRESHOLD &&
+        abs(config().yawRxConfig.max - static_cast<int16_t>(radio.getPWM(Radio::CHANNEL::YAW))) <= INPUT_THRESHOLD;
+
+    // Gesture must remain continuously held
+    if (!inputSatisfied)
+    {
+        armStateTimerStarted = false;
+        return false;
+    }
+
+    const uint32_t now = millis();
+
+    if (!armStateTimerStarted)
+    {
+        armStateTimerStarted = true;
+        armStateStartTime = now;
+        return false;
+    }
+
+    if (now - armStateStartTime < ARM_STATE_HOLD_TIME_MS)
+        return false;
+
+    armStateTimerStarted = false;
+    return true;
+}
+
+void Xpilot::updateArmState(void)
+{
+    switch (armState)
+    {
+        case ArmState::ARMED:
+        {
+            if (armDisarmInput())
+                armState = ArmState::WAITING_FOR_DISARM_RELEASE;
+
+            break;
+        }
+
+        case ArmState::WAITING_FOR_DISARM_RELEASE:
+        {
+            if (radio.primarySticksCentered())
+                armState = ArmState::DISARMED;
+
+            break;
+        }
+
+        case ArmState::DISARMED:
+        {
+            if (armDisarmInput())
+                armState = ArmState::WAITING_FOR_ARM_RELEASE;
+
+            break;
+        }
+
+        case ArmState::WAITING_FOR_ARM_RELEASE:
+        {
+            if (radio.primarySticksCentered())
+                armState = ArmState::ARMED;
+
+            break;
+        }
+    }
 }

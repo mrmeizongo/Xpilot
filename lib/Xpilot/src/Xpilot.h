@@ -45,14 +45,14 @@ public:
     void loop(void);
 
     // Trampoline functions for the scheduler
-    static void changeFlightModeTask(void* ctx) { static_cast<Xpilot*>(ctx)->changeFlightMode(); }
+    static void stateUpdateTask(void* ctx) { static_cast<Xpilot*>(ctx)->stateUpdate(); }
     static void runSerialConfigTask(void* ctx) { static_cast<Xpilot*>(ctx)->serialConfigTask.run(); }
 
     static void printSchedulerRateTask(void* ctx) { static_cast<Xpilot*>(ctx)->printSchedulerRate(); }
     static void printIOTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIO(); }
     static void printIMUTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIMUTaskStats(); }
     static void printRadioTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printRadioTaskStats(); }
-    static void printFlightModeChangeTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeChangeTaskStats(); }
+    static void printStateUpdateTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printStateUpdateTaskStats(); }
     static void printFlightModeUpdateTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeUpdateTaskStats(); }
     static void printFlightModeRunTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeRunTaskStats(); }
     static void printFlightModeOutputTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeOutputTaskStats(); }
@@ -63,10 +63,12 @@ public:
 
     void printIMUTaskStats(void);
     void printRadioTaskStats(void);
-    void printFlightModeChangeTaskStats(void);
+    void printStateUpdateTaskStats(void);
     void printFlightModeUpdateTaskStats(void);
     void printFlightModeRunTaskStats(void);
     void printFlightModeOutputTaskStats(void);
+
+    static bool isArmed() { return armState == ArmState::ARMED || armState == ArmState::WAITING_FOR_DISARM_RELEASE; }
 
     const Mode* getCurrentFlightMode(void) const { return currentMode; }
     bool inFailsafe(void) const { return sysFailsafeActive; }
@@ -74,7 +76,29 @@ public:
 private:
     void sysInit(void); // Initialize system components
 
-    bool sysFailsafeActive; // System failsafe active flag
+    enum class ArmState : uint8_t
+    {
+        ARMED,
+        WAITING_FOR_DISARM_RELEASE,
+        DISARMED,
+        WAITING_FOR_ARM_RELEASE
+    };
+
+    static ArmState armState;
+
+    static bool armStateTimerStarted;
+
+    static uint32_t armStateStartTime;
+
+    static bool sysFailsafeActive; // System failsafe active flag
+
+    bool armDisarmInput(void);
+
+    void updateFlightMode(void);
+
+    void updateArmState(void);
+
+    void stateUpdate(void);
 
     RateMode rateMode;
     StabilizeMode stabilizeMode;
@@ -83,12 +107,10 @@ private:
     // This is the state of the flight stabilization system
     Mode* currentMode;
 
-    void changeFlightMode(void);
-
     // Task handlers for the scheduler to manage periodic tasks
     static uint8_t imuTaskId;
     static uint8_t radioTaskId;
-    static uint8_t flightModeChangeTaskId;
+    static uint8_t stateUpdateTaskId;
     static uint8_t flightModeUpdateTaskId;
     static uint8_t flightModeRunTaskId;
     static uint8_t flightModeOutputTaskId;
