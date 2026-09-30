@@ -158,12 +158,6 @@ void Xpilot::updateFlightMode(void)
 
 bool Xpilot::armDisarmInput(bool requireThrottleCut)
 {
-    if (sysFailsafeActive || radio.inFailsafe())
-    {
-        armStateTimerStarted = false;
-        return false;
-    }
-
     if (requireThrottleCut && !radio.inThrottleCut())
     {
         armStateTimerStarted = false;
