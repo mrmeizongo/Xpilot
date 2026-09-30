@@ -23,9 +23,9 @@ uint8_t Xpilot::ledNotifierTaskId;
 
 Xpilot::ArmState Xpilot::armState = Xpilot::ArmState::DISARMED;
 
-uint32_t Xpilot::armStateStartTime = 0;
+static uint32_t armStateStartTime = 0;
 
-bool Xpilot::armStateTimerStarted = false;
+static bool armStateTimerStarted = false;
 
 bool Xpilot::sysFailsafeActive = true;
 

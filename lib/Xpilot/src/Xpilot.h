@@ -86,10 +86,6 @@ private:
 
     static ArmState armState;
 
-    static bool armStateTimerStarted;
-
-    static uint32_t armStateStartTime;
-
     static bool sysFailsafeActive; // System failsafe active flag
 
     bool armDisarmInput(bool);
