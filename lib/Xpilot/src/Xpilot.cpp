@@ -8,9 +8,9 @@
 #include "LEDnotifier.h"
 #include "FlightConfigAccess.h"
 
-static constexpr uint32_t SERIAL_BAUD_RATE = 250000; // Serial baud rate
+static constexpr uint32_t SERIAL_BAUD_RATE = 250000UL; // Serial baud rate
 
-static constexpr int32_t ARM_STATE_HOLD_TIME_MS = 1000UL;
+static constexpr uint16_t ARM_STATE_HOLD_TIME_MS = 1000U;
 
 // Task handlers for the scheduler to manage periodic tasks
 uint8_t Xpilot::imuTaskId = 0;
