@@ -156,9 +156,15 @@ void Xpilot::updateFlightMode(void)
     currentMode->enter();
 }
 
-bool Xpilot::armDisarmInput(void)
+bool Xpilot::armDisarmInput(bool requireThrottleCut)
 {
-    if (sysFailsafeActive || radio.inFailsafe() || !radio.inThrottleCut())
+    if (sysFailsafeActive || radio.inFailsafe())
+    {
+        armStateTimerStarted = false;
+        return false;
+    }
+
+    if (requireThrottleCut && !radio.inThrottleCut())
     {
         armStateTimerStarted = false;
         return false;
@@ -198,7 +204,7 @@ void Xpilot::updateArmState(void)
     {
         case ArmState::ARMED:
         {
-            if (armDisarmInput())
+            if (armDisarmInput(false))
                 armState = ArmState::WAITING_FOR_DISARM_RELEASE;
 
             break;
@@ -214,7 +220,7 @@ void Xpilot::updateArmState(void)
 
         case ArmState::DISARMED:
         {
-            if (armDisarmInput())
+            if (armDisarmInput(true))
                 armState = ArmState::WAITING_FOR_ARM_RELEASE;
 
             break;

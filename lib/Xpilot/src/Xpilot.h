@@ -92,7 +92,7 @@ private:
 
     static bool sysFailsafeActive; // System failsafe active flag
 
-    bool armDisarmInput(void);
+    bool armDisarmInput(bool);
 
     void updateFlightMode(void);
 
