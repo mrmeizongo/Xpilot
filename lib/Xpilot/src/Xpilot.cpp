@@ -10,7 +10,7 @@
 
 static constexpr uint32_t SERIAL_BAUD_RATE = 250000; // Serial baud rate
 
-static constexpr int32_t ARM_STATE_HOLD_TIME_MS = 2000UL;
+static constexpr int32_t ARM_STATE_HOLD_TIME_MS = 1000UL;
 
 // Task handlers for the scheduler to manage periodic tasks
 uint8_t Xpilot::imuTaskId = 0;
