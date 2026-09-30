@@ -36,11 +36,11 @@ Flight stabilization software
  * Every packet is exactly 9 bytes
  */
 
-#ifndef _SERIAL_PROTOCOL_H
-#define _SERIAL_PROTOCOL_H
+#ifndef _XPINTERFACE_PROTOCOL_H
+#define _XPINTERFACE_PROTOCOL_H
 #include <stdint.h>
 
-enum class SerialCommand : uint8_t
+enum class Command : uint8_t
 {
     GET = 0x01,
     SET = 0x02,
@@ -57,7 +57,7 @@ enum class SerialCommand : uint8_t
     RADIO_VALUE = 0x83
 };
 
-struct SerialPacket
+struct Packet
 {
     uint8_t start;
     uint8_t command;
@@ -69,7 +69,7 @@ struct SerialPacket
     uint8_t checksum;
 };
 
-constexpr uint8_t SERIAL_PACKET_START = 0xAA;
+constexpr uint8_t PACKET_START = 0xAA;
 
-constexpr uint8_t SERIAL_PACKET_SIZE = sizeof(SerialPacket);
-#endif //_SERIAL_PROTOCOL_H
+constexpr uint8_t PACKET_SIZE = sizeof(Packet);
+#endif //_XPINTERFACE_PROTOCOL_H

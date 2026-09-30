@@ -24,15 +24,15 @@ Flight stabilization software
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ===============================================
 */
-#ifndef _SERIAL_CONFIG_TASK_H
-#define _SERIAL_CONFIG_TASK_H
+#ifndef _XP_INTERFACE_H
+#define _XP_INTERFACE_H
 #include <Arduino.h>
-#include "SerialProtocol.h"
+#include "XPInterfaceProtocol.h"
 
-class SerialConfigTask
+class XPInterface
 {
 public:
-    SerialConfigTask(HardwareSerial& serial);
+    XPInterface(HardwareSerial& serial);
 
     void run();
 
@@ -47,7 +47,7 @@ private:
 
     RxState _rxState;
 
-    uint8_t _rxBuffer[SERIAL_PACKET_SIZE];
+    uint8_t _rxBuffer[PACKET_SIZE];
 
     uint8_t _rxIndex;
 
@@ -55,11 +55,11 @@ private:
 
     void processByte(uint8_t byte);
 
-    void processPacket(const SerialPacket& packet);
+    void processPacket(const Packet& packet);
 
-    void processGet(const SerialPacket& packet);
+    void processGet(const Packet& packet);
 
-    void processSet(const SerialPacket& packet);
+    void processSet(const Packet& packet);
 
     void processStartRadioStream();
 
@@ -71,10 +71,10 @@ private:
 
     void sendRadioValue(uint8_t channel, uint16_t pwm);
 
-    void sendAck(SerialCommand originalCommand, SerialCommand ack = SerialCommand::ACK);
+    void sendAck(Command originalCommand, Command ack = Command::ACK);
 
-    void sendPacket(SerialPacket& packet);
+    void sendPacket(Packet& packet);
 
     static uint8_t calculateChecksum(const uint8_t* data, uint8_t length);
 };
-#endif //_SERIAL_CONFIG_TASK_H
+#endif //_XP_INTERFACE_H

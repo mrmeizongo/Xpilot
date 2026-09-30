@@ -1,11 +1,11 @@
 #include <string.h>
 #include "IMU.h"
 #include "Radio.h"
-#include "SerialConfigTask.h"
+#include "XPInterface.h"
 #include "LEDnotifier.h"
 #include "FlightConfigAccess.h"
 
-SerialConfigTask::SerialConfigTask(HardwareSerial& serial)
+XPInterface::XPInterface(HardwareSerial& serial)
     : _serial(serial)
     , _rxState(RxState::WAITING_FOR_START)
     , _rxBuffer{}
@@ -14,9 +14,9 @@ SerialConfigTask::SerialConfigTask(HardwareSerial& serial)
 {
 }
 
-void SerialConfigTask::run()
+void XPInterface::run()
 {
-    constexpr uint8_t MAX_BYTES_PER_RUN = SERIAL_PACKET_SIZE;
+    constexpr uint8_t MAX_BYTES_PER_RUN = PACKET_SIZE;
 
     uint8_t processed = 0;
 
@@ -34,13 +34,13 @@ void SerialConfigTask::run()
     }
 }
 
-void SerialConfigTask::processByte(uint8_t byte)
+void XPInterface::processByte(uint8_t byte)
 {
     switch (_rxState)
     {
         case RxState::WAITING_FOR_START:
         {
-            if (byte == SERIAL_PACKET_START)
+            if (byte == PACKET_START)
             {
                 _rxIndex = 0;
                 _rxBuffer[_rxIndex++] = byte;
@@ -54,12 +54,12 @@ void SerialConfigTask::processByte(uint8_t byte)
         {
             _rxBuffer[_rxIndex++] = byte;
 
-            if (_rxIndex >= SERIAL_PACKET_SIZE)
+            if (_rxIndex >= PACKET_SIZE)
             {
-                SerialPacket packet;
-                memcpy(&packet, _rxBuffer, SERIAL_PACKET_SIZE);
+                Packet packet;
+                memcpy(&packet, _rxBuffer, PACKET_SIZE);
 
-                const uint8_t calculated = calculateChecksum(_rxBuffer, SERIAL_PACKET_SIZE - 1);
+                const uint8_t calculated = calculateChecksum(_rxBuffer, PACKET_SIZE - 1);
 
                 if (calculated == packet.checksum)
                     processPacket(packet);
@@ -75,78 +75,78 @@ void SerialConfigTask::processByte(uint8_t byte)
     }
 }
 
-void SerialConfigTask::processPacket(const SerialPacket& packet)
+void XPInterface::processPacket(const Packet& packet)
 {
-    const SerialCommand command = static_cast<SerialCommand>(packet.command);
+    const Command command = static_cast<Command>(packet.command);
 
     switch (command)
     {
-        case SerialCommand::GET:
+        case Command::GET:
             processGet(packet);
             break;
 
-        case SerialCommand::SET:
+        case Command::SET:
             processSet(packet);
             break;
 
-        case SerialCommand::SAVE:
+        case Command::SAVE:
         {
-            sendAck(command, configManager.save() ? SerialCommand::ACK : SerialCommand::NACK);
+            sendAck(command, configManager.save() ? Command::ACK : Command::NACK);
             break;
         }
 
-        case SerialCommand::LOAD:
+        case Command::LOAD:
         {
-            sendAck(command, configManager.load() ? SerialCommand::ACK : SerialCommand::NACK);
+            sendAck(command, configManager.load() ? Command::ACK : Command::NACK);
             break;
         }
 
-        case SerialCommand::DEFAULTS:
+        case Command::DEFAULTS:
         {
             configManager.loadDefaults();
             sendAck(command);
             break;
         }
 
-        case SerialCommand::CALIBRATE_IMU:
+        case Command::CALIBRATE_IMU:
         {
             imu.calibrate();
             sendAck(command);
             break;
         }
 
-        case SerialCommand::START_RADIO_STREAM:
+        case Command::START_RADIO_STREAM:
             processStartRadioStream();
             break;
 
-        case SerialCommand::STOP_RADIO_STREAM:
+        case Command::STOP_RADIO_STREAM:
             processStopRadioStream();
             break;
 
         default:
-            sendAck(command, SerialCommand::NACK);
+            sendAck(command, Command::NACK);
             break;
     }
 
     LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, SUCCESS_BLINK_DURATION);
 }
 
-void SerialConfigTask::processGet(const SerialPacket& packet)
+void XPInterface::processGet(const Packet& packet)
 {
     if (packet.paramId >= static_cast<uint8_t>(ConfigID::COUNT))
     {
-        sendAck(SerialCommand::GET, SerialCommand::NACK);
+        sendAck(Command::GET, Command::NACK);
         return;
     }
 
     sendValue(static_cast<ConfigID>(packet.paramId));
 }
 
-void SerialConfigTask::processSet(const SerialPacket& packet)
+void XPInterface::processSet(const Packet& packet)
 {
     if (packet.paramId >= static_cast<uint8_t>(ConfigID::COUNT))
     {
-        sendAck(SerialCommand::SET, SerialCommand::NACK);
+        sendAck(Command::SET, Command::NACK);
         return;
     }
 
@@ -154,35 +154,35 @@ void SerialConfigTask::processSet(const SerialPacket& packet)
     ConfigValue value{};
     memcpy(&value.raw, packet.value, sizeof(value.raw));
 
-    sendAck(SerialCommand::SET, configManager.set(id, value) ? SerialCommand::ACK : SerialCommand::NACK);
+    sendAck(Command::SET, configManager.set(id, value) ? Command::ACK : Command::NACK);
 }
 
-void SerialConfigTask::processStartRadioStream()
+void XPInterface::processStartRadioStream()
 {
     _radioStreaming = true;
-    sendAck(SerialCommand::START_RADIO_STREAM);
+    sendAck(Command::START_RADIO_STREAM);
 }
 
-void SerialConfigTask::processStopRadioStream()
+void XPInterface::processStopRadioStream()
 {
     _radioStreaming = false;
-    sendAck(SerialCommand::STOP_RADIO_STREAM);
+    sendAck(Command::STOP_RADIO_STREAM);
 }
 
-void SerialConfigTask::sendValue(ConfigID id)
+void XPInterface::sendValue(ConfigID id)
 {
     ConfigValue value{};
     ConfigValueType type;
 
     if (!configManager.get(id, value, type))
     {
-        sendAck(SerialCommand::GET, SerialCommand::NACK);
+        sendAck(Command::GET, Command::NACK);
         return;
     }
 
-    SerialPacket packet{};
-    packet.start = SERIAL_PACKET_START;
-    packet.command = static_cast<uint8_t>(SerialCommand::VALUE);
+    Packet packet{};
+    packet.start = PACKET_START;
+    packet.command = static_cast<uint8_t>(Command::VALUE);
     packet.paramId = static_cast<uint8_t>(id);
     packet.type = static_cast<uint8_t>(type);
     memcpy(packet.value, &value.raw, sizeof(value.raw));
@@ -190,7 +190,7 @@ void SerialConfigTask::sendValue(ConfigID id)
     sendPacket(packet);
 }
 
-void SerialConfigTask::sendRadioSnapshot()
+void XPInterface::sendRadioSnapshot()
 {
     // Request all 6 channels
     const uint8_t channel_count = 6;
@@ -199,11 +199,11 @@ void SerialConfigTask::sendRadioSnapshot()
         sendRadioValue(channel, radio.getPWM(static_cast<Radio::CHANNEL>(channel)));
 }
 
-void SerialConfigTask::sendRadioValue(uint8_t channel, uint16_t pwm)
+void XPInterface::sendRadioValue(uint8_t channel, uint16_t pwm)
 {
-    SerialPacket packet{};
-    packet.start = SERIAL_PACKET_START;
-    packet.command = static_cast<uint8_t>(SerialCommand::RADIO_VALUE);
+    Packet packet{};
+    packet.start = PACKET_START;
+    packet.command = static_cast<uint8_t>(Command::RADIO_VALUE);
     packet.paramId = channel;
     packet.type = static_cast<uint8_t>(ConfigValueType::UINT16);
     memcpy(packet.value, &pwm, sizeof(pwm));
@@ -211,23 +211,23 @@ void SerialConfigTask::sendRadioValue(uint8_t channel, uint16_t pwm)
     sendPacket(packet);
 }
 
-void SerialConfigTask::sendAck(SerialCommand originalCommand, SerialCommand ack)
+void XPInterface::sendAck(Command originalCommand, Command ack)
 {
-    SerialPacket packet{};
-    packet.start = SERIAL_PACKET_START;
+    Packet packet{};
+    packet.start = PACKET_START;
     packet.command = static_cast<uint8_t>(ack);
     packet.paramId = static_cast<uint8_t>(originalCommand);
 
     sendPacket(packet);
 }
 
-void SerialConfigTask::sendPacket(SerialPacket& packet)
+void XPInterface::sendPacket(Packet& packet)
 {
-    packet.checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&packet), SERIAL_PACKET_SIZE - 1);
-    _serial.write(reinterpret_cast<const uint8_t*>(&packet), SERIAL_PACKET_SIZE);
+    packet.checksum = calculateChecksum(reinterpret_cast<const uint8_t*>(&packet), PACKET_SIZE - 1);
+    _serial.write(reinterpret_cast<const uint8_t*>(&packet), PACKET_SIZE);
 }
 
-uint8_t SerialConfigTask::calculateChecksum(const uint8_t* data, uint8_t length)
+uint8_t XPInterface::calculateChecksum(const uint8_t* data, uint8_t length)
 {
     uint8_t checksum = 0;
 

@@ -31,7 +31,7 @@ Flight stabilization software
 #ifndef _XPILOT_H
 #define _XPILOT_H
 #include "Mode.h"
-#include "SerialConfigTask.h"
+#include "XPInterface.h"
 
 class Xpilot
 {
@@ -46,7 +46,7 @@ public:
 
     // Trampoline functions for the scheduler
     static void stateUpdateTask(void* ctx) { static_cast<Xpilot*>(ctx)->stateUpdate(); }
-    static void runSerialConfigTask(void* ctx) { static_cast<Xpilot*>(ctx)->serialConfigTask.run(); }
+    static void xpInterfaceTask(void* ctx) { static_cast<Xpilot*>(ctx)->xpInterface.run(); }
 
     static void printSchedulerRateTask(void* ctx) { static_cast<Xpilot*>(ctx)->printSchedulerRate(); }
     static void printIOTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIO(); }
@@ -116,7 +116,7 @@ private:
     static uint8_t flightModeOutputTaskId;
     static uint8_t ledNotifierTaskId;
 
-    SerialConfigTask serialConfigTask;
+    XPInterface xpInterface;
 };
 
 extern Xpilot xpilot;

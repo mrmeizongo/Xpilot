@@ -30,7 +30,7 @@ bool Xpilot::armStateTimerStarted = false;
 bool Xpilot::sysFailsafeActive = true;
 
 Xpilot::Xpilot()
-    : serialConfigTask{Serial}
+    : xpInterface{Serial}
 {
 }
 
@@ -80,7 +80,7 @@ void Xpilot::setup(void)
 #endif
 
 #if defined(USE_SERIAL_TASK)
-    scheduler.addTask(&Xpilot::runSerialConfigTask, this, SERIAL_TASK_HZ);
+    scheduler.addTask(&Xpilot::xpInterfaceTask, this, SERIAL_TASK_HZ);
 #endif
 
     scheduler.init();
