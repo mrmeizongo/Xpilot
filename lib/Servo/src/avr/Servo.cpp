@@ -268,12 +268,12 @@ static boolean isTimerActive(timer16_Sequence_t timer)
 
 /****************** end of static functions ******************************/
 
-Servo::Servo()
+Servo::Servo(int defaultPulse)
 {
     if (ServoCount < MAX_SERVOS)
     {
-        this->servoIndex = ServoCount++;                                 // assign a servo index to this instance
-        servos[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH); // store default values  - 12 Aug 2009
+        this->servoIndex = ServoCount++;                          // assign a servo index to this instance
+        servos[this->servoIndex].ticks = usToTicks(defaultPulse); // store default values  - 12 Aug 2009
     }
     else
         this->servoIndex = INVALID_SERVO; // too many servos

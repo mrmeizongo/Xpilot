@@ -3,6 +3,15 @@
 #include "GPIOConfig.h"
 #include "FlightConfigAccess.h"
 
+Actuators::Actuators()
+    : controlServo{config().throttleRxConfig.min,
+                   config().rollRxConfig.trim,
+                   config().rollRxConfig.trim,
+                   config().pitchRxConfig.trim,
+                   config().yawRxConfig.trim}
+{
+}
+
 // Set up output servos
 void Actuators::init(void)
 {

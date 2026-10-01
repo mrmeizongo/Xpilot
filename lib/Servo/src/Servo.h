@@ -91,7 +91,7 @@ typedef struct
 class Servo
 {
 public:
-    Servo();
+    Servo(int defaultPulse = DEFAULT_PULSE_WIDTH);
     uint8_t attach(int pin);                   // attach the given pin to the next free channel
     uint8_t attach(int pin, int min, int max); // as above but also sets min and max values for writes.
     void detach();

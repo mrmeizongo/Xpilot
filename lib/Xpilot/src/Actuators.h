@@ -60,7 +60,7 @@ public:
         CHANNEL_COUNT
     };
 
-    Actuators(void) {}
+    Actuators(void);
     void init(void);
     void writeServos(void);
     void writeServos(const int16_t (&SRVout)[CHANNEL_COUNT]);

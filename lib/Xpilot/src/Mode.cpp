@@ -63,10 +63,6 @@ void Mode::init(void)
 
     imu.registerConsumer(consumeAHRS);
     configManager.registerSubscriber(configSub);
-
-    // Set servo outputs to neutral on start up
-    neutralizeOutputs();
-    actuators.writeServos(SRVout);
 }
 
 void Mode::configSub(ConfigID id)
