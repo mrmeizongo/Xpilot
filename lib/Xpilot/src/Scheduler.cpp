@@ -272,7 +272,7 @@ bool Scheduler::getStats(int8_t taskId, TaskStats& stats) const
     return true;
 }
 
-bool Scheduler::resetStats(int8_t taskId)
+bool Scheduler::resetTaskStats(int8_t taskId)
 {
     if (!isValidTask(taskId))
     {
@@ -282,6 +282,14 @@ bool Scheduler::resetStats(int8_t taskId)
     tasks_[taskId].stats = TaskStats{};
 
     return true;
+}
+
+void Scheduler::resetAllTaskStats(void)
+{
+    for (int8_t i = 0; i <= lastTask_; i++)
+    {
+        tasks_[i].stats = TaskStats{};
+    }
 }
 
 uint32_t Scheduler::ticks(void)

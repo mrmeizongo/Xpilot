@@ -91,7 +91,9 @@ public:
 
     bool getStats(int8_t taskId, TaskStats& stats) const; // Returns true if operation is successful
 
-    bool resetStats(int8_t taskId); // Returns true if operation is successful
+    bool resetTaskStats(int8_t taskId); // Returns true if operation is successful
+
+    void resetAllTaskStats(void);
 
     /**
      * Returns milliseconds elapsed since init().
