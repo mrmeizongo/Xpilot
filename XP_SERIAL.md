@@ -217,6 +217,22 @@ ROLL_RC_MAX
 
 Use the names defined by the current `ConfigID` table in `xp_serial.py`.
 
+## NOTE
+
+When Xpilot is first flashed to the mcu, actuators are uncontrollable by default. This is because the airframe type needs to be set first.
+
+```bash
+set airframe_type conventional
+```
+
+OR
+
+```bash
+set airframe_type v_tail
+```
+
+To view the
+
 ---
 
 ## View Configuration
@@ -478,11 +494,13 @@ For normal parameter tuning:
 ```text
 1. Start xp_serial.py
 2. Run config
-3. SET the desired parameter
-4. GET the parameter to verify it
-5. Test the new behavior
-6. Run config when needed to inspect the complete configuration
-7. SAVE config to EEPROM
+3. Set airframe_type
+5. Calibrate radio and imu
+6. SET the desired parameters
+7. GET the modified parameters to verify changes
+8. Test the new behavior
+9. Run config when needed to inspect the complete configuration
+10. SAVE config to EEPROM
 ```
 
 Example:
