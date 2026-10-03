@@ -270,15 +270,11 @@ void Mode::resetControllers(void)
 
 void Mode::neutralizeOutputs(void)
 {
-    const int16_t temp[Actuators::CHANNEL::CHANNEL_COUNT] = {
-        config().throttleSrvConfig.min,
-        config().rollSrvConfig.trim,
-        config().rollSrvConfig.trim,
-        config().pitchSrvConfig.trim,
-        config().yawSrvConfig.trim,
-    };
-
-    memcpy(SRVout, temp, sizeof(temp));
+    SRVout[Actuators::CHANNEL::CH1] = config().throttleSrvConfig.min;
+    SRVout[Actuators::CHANNEL::CH2] = config().rollSrvConfig.trim;
+    SRVout[Actuators::CHANNEL::CH3] = config().rollSrvConfig.trim;
+    SRVout[Actuators::CHANNEL::CH4] = config().pitchSrvConfig.trim;
+    SRVout[Actuators::CHANNEL::CH5] = config().yawSrvConfig.trim;
 }
 
 void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])
