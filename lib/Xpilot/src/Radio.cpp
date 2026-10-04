@@ -179,18 +179,29 @@ bool Radio::FailSafeDetector()
     return true;
 }
 
-Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint8_t positionSep) const
+Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim) const
 {
     if (ch >= CHANNEL::CHANNEL_COUNT)
         return THREE_POS_SW::UNDEFINED;
 
-    if (lastValidPWM[ch] < trim - positionSep)
+    if (lastValidPWM[ch] < trim - THREE_POS_SW_SEP)
         return THREE_POS_SW::LOW_POS;
 
-    if (lastValidPWM[ch] > trim + positionSep)
+    if (lastValidPWM[ch] > trim + THREE_POS_SW_SEP)
         return THREE_POS_SW::HIGH_POS;
 
     return THREE_POS_SW::MID_POS;
+}
+
+Radio::TWO_POS_SW Radio::getTwoSwitchPos(CHANNEL ch) const
+{
+    if (ch >= CHANNEL::CHANNEL_COUNT)
+        return TWO_POS_SW::UNDEFINED;
+
+    if (lastValidPWM[ch] < PWM_TRIM_US)
+        return TWO_POS_SW::LOW_POS;
+
+    return TWO_POS_SW::HIGH_POS;
 }
 
 uint16_t Radio::getPWM(CHANNEL ch)

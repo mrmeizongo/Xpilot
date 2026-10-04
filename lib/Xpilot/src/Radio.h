@@ -45,7 +45,7 @@ constexpr uint16_t PWM_MAX_US = 2400;  // Highest valid pwm expected from transm
 
 constexpr uint32_t TIMEOUT_US = 110000; // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
 
-constexpr uint8_t THREE_POS_SW_SEP = 136U; // 3 position switch separator
+constexpr uint8_t THREE_POS_SW_SEP = ((1900 - 1100) / 3) / 2; // 3 position switch separator
 
 constexpr uint8_t INPUT_THRESHOLD = 20U; // To account for small jitter in system
 
@@ -95,6 +95,14 @@ public:
         UNDEFINED, // Undefined position, should not be used
     };
 
+    // 2-position switch
+    enum class TWO_POS_SW : uint8_t
+    {
+        LOW_POS = 0U,
+        HIGH_POS,
+        UNDEFINED, // Undefined position, should not be used
+    };
+
     // Do not change the order
     enum CHANNEL : uint8_t
     {
@@ -130,7 +138,10 @@ public:
     uint16_t getPWM(CHANNEL);
 
     THREE_POS_SW
-    getThreeSwitchPos(CHANNEL, uint16_t trim = PWM_TRIM_US, uint8_t positionSep = THREE_POS_SW_SEP) const;
+    getThreeSwitchPos(CHANNEL, uint16_t trim = PWM_TRIM_US) const;
+
+    TWO_POS_SW
+    getTwoSwitchPos(CHANNEL) const;
 
     bool inThrottleCut(void) const { return txThrottleCut; }
 
