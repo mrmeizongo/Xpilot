@@ -39,12 +39,15 @@ Flight stabilization software
 
 #define PIN_HIGH(pin) ((PIND & _BV(pin)) != 0)
 
-constexpr uint16_t PWM_MIN_US = 600;       // Lowest valid pwm expected from transmitter
-constexpr uint16_t PWM_TRIM_US = 1500;     // Trim pwm expected from transmitter
-constexpr uint16_t PWM_MAX_US = 2400;      // Highest valid pwm expected from transmitter
-constexpr uint32_t TIMEOUT_US = 110000;    // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
+constexpr uint16_t PWM_MIN_US = 600;   // Lowest valid pwm expected from transmitter
+constexpr uint16_t PWM_TRIM_US = 1500; // Trim pwm expected from transmitter
+constexpr uint16_t PWM_MAX_US = 2400;  // Highest valid pwm expected from transmitter
+
+constexpr uint32_t TIMEOUT_US = 110000; // Rx timeout in micros; 5 missed PWM(22ms) frames triggers a failsafe
+
 constexpr uint8_t THREE_POS_SW_SEP = 136U; // 3 position switch separator
-constexpr uint8_t INPUT_THRESHOLD = 20U;   // To account for small jitter in system
+
+constexpr uint8_t INPUT_THRESHOLD = 20U; // To account for small jitter in system
 
 constexpr uint16_t THROTTLE_CUT_THRESHOLD = 1050;     // User selected normal throttle cut threshold (-125% throttle)
 constexpr uint16_t THROTTLE_FAILSAFE_THRESHOLD = 950; // User selected failsafe throttle threshold (-150% throttle)
@@ -62,19 +65,12 @@ normalizeInput(int16_t rawVal, int16_t inputMin, int16_t inputTrim, int16_t inpu
     int16_t range = 0;
 
     if (delta > 0)
-    {
         range = inputMax - inputTrim;
-
-        if (range != 0)
-            output = (delta * config().controlConfig.controlResolution) / range;
-    }
     else
-    {
         range = inputTrim - inputMin;
 
-        if (range != 0)
-            output = (delta * config().controlConfig.controlResolution) / range;
-    }
+    if (range != 0)
+        output = (delta * config().controlConfig.controlResolution) / range;
 
     return reverse ? -output : output;
 }

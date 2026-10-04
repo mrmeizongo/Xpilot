@@ -82,10 +82,10 @@ Radio::THROTTLE_STATE Radio::decodeThrottleState(uint32_t timeNow)
 {
     uint16_t pwm = rawPWM[CHANNEL::THROTTLE];
 
-    if (pwm < THROTTLE_FAILSAFE_THRESHOLD)
+    if (pwm <= THROTTLE_FAILSAFE_THRESHOLD)
         return THROTTLE_STATE::FAILSAFE;
 
-    if (pwm < THROTTLE_CUT_THRESHOLD)
+    if (pwm <= THROTTLE_CUT_THRESHOLD)
         return THROTTLE_STATE::CUT;
 
     if (timeNow - lastRawPWMTimeUS[CHANNEL::THROTTLE] >= TIMEOUT_US)
@@ -154,11 +154,13 @@ void Radio::FailSafeDetector()
         failSafeTimerStarted = false;
 
         // Update all last valid pwm values
-        lastValidPWM[CHANNEL::THROTTLE] = txThrottleCut ? THROTTLE_CUT_THRESHOLD : rawPWM[CHANNEL::THROTTLE];
-        for (uint8_t i = CHANNEL::ROLL; i < CHANNEL::CHANNEL_COUNT; i++)
+        for (uint8_t i = CHANNEL::THROTTLE; i < CHANNEL::CHANNEL_COUNT; i++)
         {
             lastValidPWM[i] = rawPWM[i];
         }
+
+        if (txThrottleCut)
+            lastValidPWM[CHANNEL::THROTTLE] = THROTTLE_CUT_THRESHOLD;
 
         return;
     }
@@ -180,10 +182,10 @@ Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint8_t 
     if (ch >= CHANNEL::CHANNEL_COUNT)
         return THREE_POS_SW::UNDEFINED;
 
-    if (rawPWM[ch] < trim - positionSep)
+    if (lastValidPWM[ch] < trim - positionSep)
         return THREE_POS_SW::LOW_POS;
 
-    if (rawPWM[ch] > trim + positionSep)
+    if (lastValidPWM[ch] > trim + positionSep)
         return THREE_POS_SW::HIGH_POS;
 
     return THREE_POS_SW::MID_POS;
