@@ -110,7 +110,7 @@ public:
 
     Radio(void)
         : failSafe{false}
-        , failSafeTimerStarted{false}
+        , signalLossTimerStarted{false}
         , txThrottleCut{true}
         , signalLossTimeUs{0}
     {
@@ -141,7 +141,7 @@ public:
 private:
     bool failSafe;
 
-    bool failSafeTimerStarted;
+    bool signalLossTimerStarted;
 
     bool txThrottleCut;
 
@@ -151,7 +151,7 @@ private:
     uint32_t signalLossTimeUs;
     uint32_t lastRawPWMTimeUS[CHANNEL::CHANNEL_COUNT];
 
-    void FailSafeDetector();
+    bool FailSafeDetector();
 
     enum CHANNELMASK : uint8_t
     {

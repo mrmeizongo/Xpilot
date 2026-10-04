@@ -52,7 +52,19 @@ void Radio::processInput()
         setRawPWM(CHANNEL::AUX2, aux2PulseUs, lastValidTimeUs[CHANNEL::AUX2]);
     }
 
-    FailSafeDetector();
+    const bool signalLost = FailSafeDetector();
+
+    // Update all last valid pwm values if signal is healthy
+    if (!signalLost)
+    {
+        for (uint8_t i = CHANNEL::THROTTLE; i < CHANNEL::CHANNEL_COUNT; i++)
+        {
+            lastValidPWM[i] = rawPWM[i];
+        }
+
+        if (txThrottleCut)
+            lastValidPWM[CHANNEL::THROTTLE] = THROTTLE_CUT_THRESHOLD;
+    }
 }
 
 uint8_t Radio::requiredChannels()
@@ -95,7 +107,7 @@ Radio::THROTTLE_STATE Radio::decodeThrottleState(uint32_t timeNow)
 }
 
 // Failsafe is triggered 2 seconds after an input timeout or loss of signal
-void Radio::FailSafeDetector()
+bool Radio::FailSafeDetector()
 {
     const uint32_t now = micros();
 
@@ -108,8 +120,7 @@ void Radio::FailSafeDetector()
     bool rxFailsafe = false;
 
     // Check only roll, pitch and yaw channels for valid signals
-    // This is preferred to checking all channels
-    // It prevents loose wire connections from channels like throttle and the auxiliaries from initiating a failsafe
+    // It prevents loose/broken wire connections from throttle and aux channels from initiating a failsafe
     // Airplane is still flyable in the event of a loss of those channels
     // Throttle is considered separately
     for (uint8_t i = CHANNEL::ROLL; i <= CHANNEL::YAW; ++i)
@@ -151,30 +162,21 @@ void Radio::FailSafeDetector()
     if (!signalLost)
     {
         failSafe = false;
-        failSafeTimerStarted = false;
+        signalLossTimerStarted = false;
 
-        // Update all last valid pwm values
-        for (uint8_t i = CHANNEL::THROTTLE; i < CHANNEL::CHANNEL_COUNT; i++)
-        {
-            lastValidPWM[i] = rawPWM[i];
-        }
-
-        if (txThrottleCut)
-            lastValidPWM[CHANNEL::THROTTLE] = THROTTLE_CUT_THRESHOLD;
-
-        return;
+        return false;
     }
 
-    if (!failSafeTimerStarted)
+    if (!signalLossTimerStarted)
     {
         signalLossTimeUs = now;
-        failSafeTimerStarted = true;
-
-        return;
+        signalLossTimerStarted = true;
     }
 
     if (now - signalLossTimeUs >= 2000000UL)
         failSafe = true;
+
+    return true;
 }
 
 Radio::THREE_POS_SW Radio::getThreeSwitchPos(CHANNEL ch, uint16_t trim, uint8_t positionSep) const
