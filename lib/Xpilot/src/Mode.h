@@ -46,6 +46,7 @@ public:
     Mode(const Radio::THREE_POS_SW modePos = Radio::THREE_POS_SW::UNDEFINED) // Constructor with mode switch position;
     {
         modeSwitchPosition = modePos;
+        applyRudderMixing = false;
     }
 
     virtual ~Mode() = default; // Virtual destructor for proper cleanup of derived classes
@@ -117,6 +118,8 @@ protected:
     static PIDF<int32_t, int16_t> yawPIDF;
 
     static AirplaneMixer airplaneMixer;
+
+    bool applyRudderMixing;
 };
 
 // Manual control of flight surfaces
@@ -126,6 +129,7 @@ public:
     PassthroughMode()
         : Mode(Radio::THREE_POS_SW::HIGH_POS)
     {
+        applyRudderMixing = false;
     }
 
     const char* modeName4(void) const override { return "PASS"; }
@@ -141,6 +145,7 @@ public:
     RateMode()
         : Mode(Radio::THREE_POS_SW::MID_POS)
     {
+        applyRudderMixing = true;
     }
 
     const char* modeName4(void) const override { return "RATE"; }
@@ -156,6 +161,7 @@ public:
     StabilizeMode()
         : Mode(Radio::THREE_POS_SW::LOW_POS)
     {
+        applyRudderMixing = true;
     }
 
     const char* modeName4(void) const override { return "STAB"; }

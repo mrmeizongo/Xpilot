@@ -70,7 +70,11 @@ int32_t AirplaneMixer::mixRudderInput(const int32_t& rollInput, const int32_t& y
 {
     int32_t contribution = rollInput * config().flightConfig.rudderMixScale;
 
-    return yawInput + (config().flightConfig.reverseRudderMix ? -contribution : contribution);
+    int32_t yawOutput = yawInput + (config().flightConfig.reverseRudderMix ? -contribution : contribution);
+
+    yawOutput = constrain(yawOutput, -_commandLimit, _commandLimit);
+
+    return yawOutput;
 }
 
 void AirplaneMixer::mixNone(int16_t roll, int16_t pitch, int16_t yaw, Outputs& out) const

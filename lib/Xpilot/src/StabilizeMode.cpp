@@ -32,9 +32,6 @@ void StabilizeMode::update(void)
 {
     Mode::update();
 
-    input_trpy[Radio::CHANNEL::YAW] =
-        airplaneMixer.mixRudderInput(input_trpy[Radio::CHANNEL::ROLL], input_trpy[Radio::CHANNEL::YAW]);
-
     input_trpy[Radio::CHANNEL::YAW] *= config().flightConfig.maxYawRateDegs;
 }
 

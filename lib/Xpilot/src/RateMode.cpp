@@ -13,9 +13,6 @@ void RateMode::update(void)
     input_trpy[Radio::CHANNEL::PITCH] *= config().flightConfig.maxPitchRateDegs;
 
     input_trpy[Radio::CHANNEL::YAW] *= config().flightConfig.maxYawRateDegs;
-
-    input_trpy[Radio::CHANNEL::YAW] =
-        airplaneMixer.mixRudderInput(input_trpy[Radio::CHANNEL::ROLL], input_trpy[Radio::CHANNEL::YAW]);
 }
 
 void RateMode::run(void)

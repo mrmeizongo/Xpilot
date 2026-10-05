@@ -194,6 +194,12 @@ void Mode::update(void)
                                                      config().yawRxConfig.deadband,
                                                      config().yawRxConfig.reverse);
 
+    if (applyRudderMixing)
+    {
+        input_trpy[Radio::CHANNEL::YAW] =
+            airplaneMixer.mixRudderInput(input_trpy[Radio::CHANNEL::ROLL], input_trpy[Radio::CHANNEL::YAW]);
+    }
+
 #if defined(ENABLE_FLAPERONS)
     // Only the channel's config min and max are passed to normalizeInput to output 0 to -1000
     // The channel's radio max config is passed as the trim argument for normalizeInput
