@@ -51,6 +51,7 @@ public:
     void setup(void);
     void loop(void);
 
+    const Mode* getCurrentFlightMode(void) const { return currentMode; }
     bool inFailsafe(void) const { return sysFailsafeActive; }
 
     bool isArmed() { return armState == ArmState::ARMED || armState == ArmState::WAITING_FOR_DISARM_RELEASE; }
