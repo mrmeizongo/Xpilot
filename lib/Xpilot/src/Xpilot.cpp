@@ -1,36 +1,25 @@
 #include <Arduino.h>
 #include "IMU.h"
 #include "Radio.h"
-#include "Debug.h"
 #include "Actuators.h"
 #include "SysConfig.h"
 #include "Scheduler.h"
 #include "LEDnotifier.h"
+#include "XP_Debug.h"
 #include "FlightConfigAccess.h"
 
-static constexpr uint32_t SERIAL_BAUD_RATE = 250000UL; // Serial baud rate
+constexpr uint32_t SERIAL_BAUD_RATE = 250000UL; // Serial baud rate
 
-static constexpr uint16_t ARM_STATE_HOLD_TIME_MS = 1000U;
+constexpr uint16_t ARM_STATE_HOLD_TIME_MS = 1000U;
 
-// Task handlers for the scheduler to manage periodic tasks
-uint8_t Xpilot::imuTaskId = 0;
-uint8_t Xpilot::radioTaskId = 0;
-uint8_t Xpilot::stateUpdateTaskId = 0;
-uint8_t Xpilot::flightModeUpdateTaskId = 0;
-uint8_t Xpilot::flightModeRunTaskId = 0;
-uint8_t Xpilot::flightModeOutputTaskId = 0;
-uint8_t Xpilot::ledNotifierTaskId;
+uint32_t armStateStartTime = 0;
 
-Xpilot::ArmState Xpilot::armState = Xpilot::ArmState::DISARMED;
-
-static uint32_t armStateStartTime = 0;
-
-static bool armStateTimerStarted = false;
-
-bool Xpilot::sysFailsafeActive = true;
+bool armStateTimerStarted = false;
 
 Xpilot::Xpilot()
-    : xpInterface{Serial}
+    : armState{ArmState::DISARMED}
+    , sysFailsafeActive{true}
+    , xpInterface{Serial}
 {
 }
 
@@ -51,34 +40,6 @@ void Xpilot::setup(void)
     flightModeOutputTaskId = scheduler.addTask(&Mode::processOutput, &currentMode, FLIGHT_MODE_OUTPUT_HZ);
     ledNotifierTaskId = scheduler.addTask(&LEDNotifier::update, nullptr, STATE_UPDATE_HZ);
 
-#if defined(PRINT_SCHEDULER_RATE)
-    (void)scheduler.addTask(&Xpilot::printSchedulerRateTask, this, TASK_PRINT_HZ);
-#endif
-#if defined(PRINT_IO)
-    (void)scheduler.addTask(&Xpilot::printIOTask, this, TASK_PRINT_HZ);
-#endif
-#if defined(PRINT_IMU)
-    (void)scheduler.addTask(&IMU::printIMUTask, &imu, TASK_PRINT_HZ);
-#endif
-#if defined(PRINT_IMU_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printIMUTaskStatTask, this, TASK_PRINT_HZ);
-#endif
-#if defined(PRINT_RADIO_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printRadioTaskStatTask, this, TASK_PRINT_HZ);
-#endif
-#if defined(PRINT_STATE_UPDATE_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printStateUpdateTaskStatTask, this, TASK_PRINT_HZ);
-#endif
-#if defined(PRINT_FM_UPDATE_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeUpdateTaskStatTask, this, TASK_PRINT_HZ);
-#endif
-#if defined(PRINT_FM_RUN_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeRunTaskStatTask, this, TASK_PRINT_HZ);
-#endif
-#if defined(PRINT_FM_OUTPUT_TASK_STAT)
-    (void)scheduler.addTask(&Xpilot::printFlightModeOutputTaskStatTask, this, TASK_PRINT_HZ);
-#endif
-
 #if defined(USE_SERIAL_TASK)
     scheduler.addTask(&Xpilot::xpInterfaceTask, this, SERIAL_TASK_HZ);
 #endif
@@ -96,6 +57,7 @@ void Xpilot::sysInit(void)
         ; // Wait for Serial port to open
 
     configManager.init(); // Initiailize configuration manager
+    xpDebug.init();       // Initialize debug functionality
 
     // Initialize systems
     imu.init();

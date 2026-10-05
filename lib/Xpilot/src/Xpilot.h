@@ -31,47 +31,30 @@ Flight stabilization software
 #ifndef _XPILOT_H
 #define _XPILOT_H
 #include "Mode.h"
+#include "XP_Debug.h"
 #include "XPInterface.h"
 
 class Xpilot
 {
 public:
+    friend class XP_Debug;
+
     Xpilot(void);
     Xpilot(const Xpilot&) = delete;            // Prevent this class from being copyable
     Xpilot& operator=(const Xpilot&) = delete; // Prevent this class from being assignable
-
-    // Only functions called from the main setup and loop functions
-    void setup(void);
-    void loop(void);
 
     // Trampoline functions for the scheduler
     static void stateUpdateTask(void* ctx) { static_cast<Xpilot*>(ctx)->stateUpdate(); }
     static void xpInterfaceTask(void* ctx) { static_cast<Xpilot*>(ctx)->xpInterface.run(); }
 
-    static void printSchedulerRateTask(void* ctx) { static_cast<Xpilot*>(ctx)->printSchedulerRate(); }
-    static void printIOTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIO(); }
-    static void printIMUTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printIMUTaskStats(); }
-    static void printRadioTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printRadioTaskStats(); }
-    static void printStateUpdateTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printStateUpdateTaskStats(); }
-    static void printFlightModeUpdateTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeUpdateTaskStats(); }
-    static void printFlightModeRunTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeRunTaskStats(); }
-    static void printFlightModeOutputTaskStatTask(void* ctx) { static_cast<Xpilot*>(ctx)->printFlightModeOutputTaskStats(); }
-
-    // Debug functions to get outputs for testing and tuning purposes.
-    void printSchedulerRate(void);
-    void printIO(void);
-
-    void printIMUTaskStats(void);
-    void printRadioTaskStats(void);
-    void printStateUpdateTaskStats(void);
-    void printFlightModeUpdateTaskStats(void);
-    void printFlightModeRunTaskStats(void);
-    void printFlightModeOutputTaskStats(void);
-
-    static bool isArmed() { return armState == ArmState::ARMED || armState == ArmState::WAITING_FOR_DISARM_RELEASE; }
+    // Only functions called from the main setup and loop functions
+    void setup(void);
+    void loop(void);
 
     const Mode* getCurrentFlightMode(void) const { return currentMode; }
     bool inFailsafe(void) const { return sysFailsafeActive; }
+
+    bool isArmed() { return armState == ArmState::ARMED || armState == ArmState::WAITING_FOR_DISARM_RELEASE; }
 
 private:
     void sysInit(void); // Initialize system components
@@ -84,9 +67,9 @@ private:
         WAITING_FOR_ARM_RELEASE
     };
 
-    static ArmState armState;
+    ArmState armState;
 
-    static bool sysFailsafeActive; // System failsafe active flag
+    bool sysFailsafeActive; // System failsafe active flag
 
     bool armDisarmInput(bool);
 
@@ -104,13 +87,13 @@ private:
     Mode* currentMode;
 
     // Task handlers for the scheduler to manage periodic tasks
-    static uint8_t imuTaskId;
-    static uint8_t radioTaskId;
-    static uint8_t stateUpdateTaskId;
-    static uint8_t flightModeUpdateTaskId;
-    static uint8_t flightModeRunTaskId;
-    static uint8_t flightModeOutputTaskId;
-    static uint8_t ledNotifierTaskId;
+    uint8_t imuTaskId;
+    uint8_t radioTaskId;
+    uint8_t stateUpdateTaskId;
+    uint8_t flightModeUpdateTaskId;
+    uint8_t flightModeRunTaskId;
+    uint8_t flightModeOutputTaskId;
+    uint8_t ledNotifierTaskId;
 
     XPInterface xpInterface;
 };

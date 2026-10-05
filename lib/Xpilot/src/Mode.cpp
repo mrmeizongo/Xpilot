@@ -244,7 +244,7 @@ void Mode::processOutput(void* ctx)
                                                       -config().controlConfig.controlResolution,
                                                       config().controlConfig.controlResolution);
 
-    if (Xpilot::isArmed())
+    if (xpilot.isArmed())
     {
         SRVout[Actuators::CHANNEL::CH1] =
             mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max);

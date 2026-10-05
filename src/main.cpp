@@ -34,12 +34,6 @@ Flight stabilization software
 #include <Xpilot.h>
 
 Xpilot xpilot;
-void setup()
-{
-    xpilot.setup();
-}
+void setup() { xpilot.setup(); }
 
-void loop()
-{
-    xpilot.loop();
-}
+void loop() { xpilot.loop(); }
