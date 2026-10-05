@@ -9,7 +9,7 @@ inline int32_t stabilizeDemand(int32_t input, int32_t angle, int16_t maxRate, in
 
     const int32_t angleError = targetAngle - angle;
 
-    const bool correcting = input == 0 || (input > 0 && angle >= targetAngle) || (input < 0 && angle <= targetAngle);
+    const bool correcting = input == 0 || (input > 0 && angle > targetAngle) || (input < 0 && angle < targetAngle);
 
     int32_t demand = angleError;
 
