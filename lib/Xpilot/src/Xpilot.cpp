@@ -41,7 +41,7 @@ void Xpilot::setup(void)
     ledNotifierTaskId = scheduler.addTask(&LEDNotifier::update, nullptr, STATE_UPDATE_HZ);
 
 #if defined(USE_SERIAL_TASK)
-    scheduler.addTask(&Xpilot::xpInterfaceTask, this, SERIAL_TASK_HZ);
+    (void)scheduler.addTask(&Xpilot::xpInterfaceTask, this, SERIAL_TASK_HZ);
 #endif
 
     scheduler.init();
