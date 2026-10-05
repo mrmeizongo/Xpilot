@@ -5,22 +5,16 @@ inline int32_t stabilizeDemand(int32_t input, int32_t angle, int16_t maxRate, in
 {
     const int32_t rateLimit = static_cast<int32_t>(maxRate) * config().controlConfig.controlResolution;
 
-    const int32_t angleLimit = static_cast<int32_t>(maxAngle) * config().controlConfig.controlResolution;
+    const int32_t targetAngle = input * maxAngle;
 
-    const int32_t correctionTarget = input > 0 ? angleLimit : (input < 0) ? -angleLimit : 0;
+    const int32_t angleError = targetAngle - angle;
 
-    int32_t demand;
+    const bool correcting = input == 0 || (input > 0 && angle >= targetAngle) || (input < 0 && angle <= targetAngle);
 
-    const bool correctAttitude = input == 0 || (input > 0 && angle > angleLimit) || (input < 0 && angle < -angleLimit);
+    int32_t demand = angleError;
 
-    if (correctAttitude)
-    {
-        demand = (correctionTarget - angle) * levelKp;
-    }
-    else
-    {
-        demand = input * maxRate;
-    }
+    if (correcting)
+        demand = static_cast<int32_t>(angleError * levelKp);
 
     return constrain(demand, -rateLimit, rateLimit);
 }
