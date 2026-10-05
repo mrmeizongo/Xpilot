@@ -49,11 +49,12 @@
 // #define PRINT_FM_UPDATE_TASK_STAT 1
 // #define PRINT_FM_RUN_TASK_STAT 1
 // #define PRINT_FM_OUTPUT_TASK_STAT 1
+// #define PRINT_LED_NOTIFIER_TASK_STAT 1
 
 // Any debugging should disable serial communication with xp_serial.py
 #if defined(PRINT_SCHEDULER_RATE) || defined(PRINT_IO) || defined(PRINT_IMU) || defined(PRINT_IMU_TASK_STAT) ||             \
     defined(PRINT_RADIO_TASK_STAT) || defined(PRINT_STATE_UPDATE_TASK_STAT) || defined(PRINT_FM_UPDATE_TASK_STAT) ||        \
-    defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_OUTPUT_TASK_STAT)
+    defined(PRINT_FM_RUN_TASK_STAT) || defined(PRINT_FM_OUTPUT_TASK_STAT) || defined(PRINT_LED_NOTIFIER_TASK_STAT)
 #if defined(USE_SERIAL_TASK)
 #undef USE_SERIAL_TASK
 #endif
