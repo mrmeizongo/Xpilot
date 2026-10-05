@@ -68,7 +68,7 @@ void XPDebug::printSchedulerRate(void)
     }
     if (scheduler.getStats(xpilot.flightModeUpdateTaskId, taskStats))
     {
-        Serial.print(F("Mode Update Task Loop Rate:\t"));
+        Serial.print(F("Mode Update Task Loop Rate:\t\t"));
         Serial.print(taskStats.loopRateHz);
         Serial.println();
     }
