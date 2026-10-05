@@ -97,13 +97,13 @@ void XPDebug::printIO(void)
     CLEAR_TERMINAL();
     Serial.print(F("\t\t\t\t\t\t"));
     Serial.print(F("Flight Mode: "));
-    Serial.println(xpilot.getCurrentFlightMode()->modeName4());
+    Serial.println(xpilot.currentMode->modeName4());
     Serial.print(F("\t\t"));
     Serial.print(F("Armed: "));
     Serial.print(xpilot.isArmed() ? F("Yes") : F("No"));
     Serial.print(F("\t\t"));
     Serial.print(F("Failsafe: "));
-    Serial.print(xpilot.inFailsafe() ? F("Active") : F("Inactive"));
+    Serial.print(xpilot.sysFailsafeActive ? F("Active") : F("Inactive"));
     Serial.print(F("\t\t"));
     Serial.print(F("Throttle cut: "));
     Serial.println(radio.inThrottleCut() ? F("Active") : F("Inactive"));
