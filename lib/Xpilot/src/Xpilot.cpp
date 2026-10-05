@@ -5,7 +5,7 @@
 #include "SysConfig.h"
 #include "Scheduler.h"
 #include "LEDnotifier.h"
-#include "XP_Debug.h"
+#include "XPDebug.h"
 #include "FlightConfigAccess.h"
 
 constexpr uint32_t SERIAL_BAUD_RATE = 250000UL; // Serial baud rate

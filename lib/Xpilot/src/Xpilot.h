@@ -31,13 +31,13 @@ Flight stabilization software
 #ifndef _XPILOT_H
 #define _XPILOT_H
 #include "Mode.h"
-#include "XP_Debug.h"
+#include "XPDebug.h"
 #include "XPInterface.h"
 
 class Xpilot
 {
 public:
-    friend class XP_Debug;
+    friend class XPDebug;
 
     Xpilot(void);
     Xpilot(const Xpilot&) = delete;            // Prevent this class from being copyable

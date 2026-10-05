@@ -1,4 +1,4 @@
-#include "XP_Debug.h"
+#include "XPDebug.h"
 #include "IMU.h"
 #include "Scheduler.h"
 #include "SysConfig.h"
@@ -10,41 +10,41 @@
         Serial.print("\033[H");                                                                                             \
     } while (0)
 
-void XP_Debug::init(void)
+void XPDebug::init(void)
 {
 #if defined(PRINT_SCHEDULER_RATE)
-    (void)scheduler.addTask(&XP_Debug::printSchedulerRateTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printSchedulerRateTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_IO)
-    (void)scheduler.addTask(&XP_Debug::printIOTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printIOTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_IMU)
     (void)scheduler.addTask(&IMU::printIMUTask, &imu, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_IMU_TASK_STAT)
-    (void)scheduler.addTask(&XP_Debug::printIMUTaskStatTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printIMUTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_RADIO_TASK_STAT)
-    (void)scheduler.addTask(&XP_Debug::printRadioTaskStatTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printRadioTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_STATE_UPDATE_TASK_STAT)
-    (void)scheduler.addTask(&XP_Debug::printStateUpdateTaskStatTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printStateUpdateTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_FM_UPDATE_TASK_STAT)
-    (void)scheduler.addTask(&XP_Debug::printFMUpdateTaskStatTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printFMUpdateTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_FM_RUN_TASK_STAT)
-    (void)scheduler.addTask(&XP_Debug::printFMRunTaskStatTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printFMRunTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_FM_OUTPUT_TASK_STAT)
-    (void)scheduler.addTask(&XP_Debug::printFMOutputTaskStatTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printFMOutputTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_LED_NOTIFIER_TASK_STAT)
-    (void)scheduler.addTask(&XP_Debug::printLEDNotifierTaskStatTask, this, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&XPDebug::printLEDNotifierTaskStatTask, this, TASK_PRINT_HZ);
 #endif
 }
 
-void XP_Debug::printSchedulerRate(void)
+void XPDebug::printSchedulerRate(void)
 {
     CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
@@ -92,7 +92,7 @@ void XP_Debug::printSchedulerRate(void)
     }
 }
 
-void XP_Debug::printIO(void)
+void XPDebug::printIO(void)
 {
     CLEAR_TERMINAL();
     Serial.print(F("\t\t\t\t\t\t"));
@@ -188,7 +188,7 @@ void XP_Debug::printIO(void)
 #endif
 }
 
-void XP_Debug::printIMUTaskStats(void)
+void XPDebug::printIMUTaskStats(void)
 {
     CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
@@ -214,7 +214,7 @@ void XP_Debug::printIMUTaskStats(void)
     }
 }
 
-void XP_Debug::printRadioTaskStats(void)
+void XPDebug::printRadioTaskStats(void)
 {
     CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
@@ -240,7 +240,7 @@ void XP_Debug::printRadioTaskStats(void)
     }
 }
 
-void XP_Debug::printStateUpdateTaskStats(void)
+void XPDebug::printStateUpdateTaskStats(void)
 {
     CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
@@ -266,7 +266,7 @@ void XP_Debug::printStateUpdateTaskStats(void)
     }
 }
 
-void XP_Debug::printFMUpdateTaskStats(void)
+void XPDebug::printFMUpdateTaskStats(void)
 {
     CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
@@ -292,7 +292,7 @@ void XP_Debug::printFMUpdateTaskStats(void)
     }
 }
 
-void XP_Debug::printFMRunTaskStats(void)
+void XPDebug::printFMRunTaskStats(void)
 {
     CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
@@ -318,7 +318,7 @@ void XP_Debug::printFMRunTaskStats(void)
     }
 }
 
-void XP_Debug::printFMOutputTaskStats(void)
+void XPDebug::printFMOutputTaskStats(void)
 {
     CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
@@ -344,7 +344,7 @@ void XP_Debug::printFMOutputTaskStats(void)
     }
 }
 
-void XP_Debug::printLEDNotifierTaskStats(void)
+void XPDebug::printLEDNotifierTaskStats(void)
 {
     CLEAR_TERMINAL();
     Scheduler::TaskStats taskStats;
@@ -370,4 +370,4 @@ void XP_Debug::printLEDNotifierTaskStats(void)
     }
 }
 
-XP_Debug xpDebug;
+XPDebug xpDebug;
