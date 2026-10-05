@@ -1,7 +1,7 @@
 #include "Mode.h"
 #include "IMU.h"
-#include "LEDnotifier.h"
 #include "Xpilot.h"
+#include "LEDnotifier.h"
 
 int32_t Mode::input_trpy[4]{};
 int16_t Mode::output_trpy[4]{};
