@@ -49,8 +49,6 @@ public:
         applyRudderMixing = false;
     }
 
-    virtual ~Mode() = default; // Virtual destructor for proper cleanup of derived classes
-
     virtual const char* modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
 
     virtual void enter(void) {} // Called on mode enter
