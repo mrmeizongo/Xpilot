@@ -28,7 +28,6 @@ void Xpilot::setup(void)
     sysInit();
 
     /*
-     * Tasks added to the scheduler list are the only ones executed in the loop function
      * The order tasks are added determines priority and is critical.
      * Priority is in descending order
      */
