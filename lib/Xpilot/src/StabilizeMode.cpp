@@ -1,7 +1,7 @@
 #include "IMU.h"
 #include "Mode.h"
 
-inline int32_t stabilizeDemand(int32_t input, int32_t angle, int16_t maxRate, int16_t maxAngle, float levelKp)
+inline int32_t processDemand(int32_t input, int32_t angle, int16_t maxRate, int16_t maxAngle, float levelKp)
 {
     const int32_t rateLimit = static_cast<int32_t>(maxRate) * config().controlConfig.controlResolution;
 
@@ -26,17 +26,17 @@ void StabilizeMode::update(void)
 {
     Mode::update();
 
-    input_trpy[Radio::CHANNEL::ROLL] = stabilizeDemand(input_trpy[Radio::CHANNEL::ROLL],
-                                                       imu_rpy[IMU::Axis::X_AXIS],
-                                                       config().flightConfig.maxRollRateDegs,
-                                                       config().flightConfig.maxRollAngleDegs,
-                                                       config().flightConfig.rollAngleKp);
+    input_trpy[Radio::CHANNEL::ROLL] = processDemand(input_trpy[Radio::CHANNEL::ROLL],
+                                                     imu_rpy[IMU::Axis::X_AXIS],
+                                                     config().flightConfig.maxRollRateDegs,
+                                                     config().flightConfig.maxRollAngleDegs,
+                                                     config().flightConfig.rollAngleKp);
 
-    input_trpy[Radio::CHANNEL::PITCH] = stabilizeDemand(input_trpy[Radio::CHANNEL::PITCH],
-                                                        imu_rpy[IMU::Axis::Y_AXIS],
-                                                        config().flightConfig.maxPitchRateDegs,
-                                                        config().flightConfig.maxPitchAngleDegs,
-                                                        config().flightConfig.pitchAngleKp);
+    input_trpy[Radio::CHANNEL::PITCH] = processDemand(input_trpy[Radio::CHANNEL::PITCH],
+                                                      imu_rpy[IMU::Axis::Y_AXIS],
+                                                      config().flightConfig.maxPitchRateDegs,
+                                                      config().flightConfig.maxPitchAngleDegs,
+                                                      config().flightConfig.pitchAngleKp);
 
     input_trpy[Radio::CHANNEL::YAW] *= config().flightConfig.maxYawRateDegs;
 }
