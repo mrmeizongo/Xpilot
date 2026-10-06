@@ -155,11 +155,13 @@ bool Xpilot::armDisarmInput(bool requireThrottleCut)
 
 void Xpilot::updateArmState(void)
 {
+    bool requireThrottleCut = true;
+
     switch (armState)
     {
         case ArmState::ARMED:
         {
-            if (armDisarmInput(false))
+            if (armDisarmInput(!requireThrottleCut))
                 armState = ArmState::WAITING_FOR_DISARM_RELEASE;
 
             break;
@@ -175,7 +177,7 @@ void Xpilot::updateArmState(void)
 
         case ArmState::DISARMED:
         {
-            if (armDisarmInput(true))
+            if (armDisarmInput(requireThrottleCut))
                 armState = ArmState::WAITING_FOR_ARM_RELEASE;
 
             break;
