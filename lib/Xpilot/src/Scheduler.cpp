@@ -74,6 +74,10 @@ void Scheduler::init(void)
         // Enable Timer2 compare-match A interrupt.
         TIMSK2 |= _BV(OCIE2A);
     }
+
+    Serial.print(F("Scheduler initialized with "));
+    Serial.print(lastTask_ + 1);
+    Serial.println(F(" task(s)."));
 }
 
 int8_t Scheduler::addTask(TaskCallback callback, void* context, uint16_t frequencyHz, uint16_t startDelayMs)
