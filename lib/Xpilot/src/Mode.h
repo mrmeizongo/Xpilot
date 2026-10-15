@@ -44,9 +44,8 @@ class Mode
 {
 public:
     Mode(const Radio::THREE_POS_SW modePos = Radio::THREE_POS_SW::UNDEFINED) // Constructor with mode switch position;
+        : modeSwitchPosition{modePos}
     {
-        modeSwitchPosition = modePos;
-        applyRudderMixing = false;
     }
 
     virtual const char* modeName4(void) const = 0; // Returns string representation of the flight mode. 4 characters max
