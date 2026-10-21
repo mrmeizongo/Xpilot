@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "Xpilot.h"
 #include "IMU.h"
 #include "Radio.h"
 #include "Actuators.h"
@@ -43,6 +44,7 @@ void Xpilot::setup(void)
     (void)scheduler.addTask(&Xpilot::xpInterfaceTask, this, SERIAL_TASK_HZ);
 #endif
 
+    xpDebug.init();
     scheduler.init();
 }
 
@@ -56,7 +58,6 @@ void Xpilot::sysInit(void)
         ; // Wait for Serial port to open
 
     configManager.init(); // Initiailize configuration manager
-    xpDebug.init();       // Initialize debug functionality
 
     // Initialize systems
     imu.init();

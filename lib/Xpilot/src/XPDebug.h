@@ -1,6 +1,5 @@
 #ifndef _XP_DEBUG_H
 #define _XP_DEBUG_H
-#include "Xpilot.h"
 
 class XPDebug
 {
@@ -20,6 +19,7 @@ public:
     static void printFMOutputTaskStatTask(void* ctx) { static_cast<XPDebug*>(ctx)->printFMOutputTaskStats(); }
     static void printLEDNotifierTaskStatTask(void* ctx) { static_cast<XPDebug*>(ctx)->printLEDNotifierTaskStats(); }
 
+private:
     void printSchedulerRate(void);
     void printIO(void);
 
