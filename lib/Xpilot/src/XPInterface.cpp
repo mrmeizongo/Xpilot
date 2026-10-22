@@ -63,6 +63,8 @@ void XPInterface::processByte(uint8_t byte)
 
                 if (calculated == packet.checksum)
                     processPacket(packet);
+                else
+                    sendAck(static_cast<Command>(packet.command), Command::NACK);
 
                 _rxState = RxState::WAITING_FOR_START;
             }
