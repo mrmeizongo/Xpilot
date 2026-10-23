@@ -4,7 +4,8 @@
 #include "SysConfig.h"
 
 constexpr uint8_t SUCCESS_BLINK_COUNT = 2;
-constexpr uint32_t SUCCESS_BLINK_DURATION = 250;
+constexpr uint8_t FAILURE_BLINK_COUNT = 4;
+constexpr uint32_t BLINK_DURATION = 250;
 
 #if defined(ENABLE_LED_NOTIFIER)
 
