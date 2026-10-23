@@ -154,8 +154,6 @@ void Mode::configSub(ConfigID id)
         default:
             break;
     }
-
-    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, SUCCESS_BLINK_DURATION);
 }
 
 void Mode::update(void)

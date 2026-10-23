@@ -3,10 +3,9 @@
 #include "Arduino.h"
 #include "SysConfig.h"
 
-constexpr uint8_t MSG_RX_BLINK_COUNT = 1;
 constexpr uint8_t SUCCESS_BLINK_COUNT = 2;
 constexpr uint8_t FAILURE_BLINK_COUNT = 4;
-constexpr uint32_t BLINK_DURATION = 250;
+constexpr uint32_t BLINK_DURATION = 125;
 
 #if defined(ENABLE_LED_NOTIFIER)
 
@@ -21,7 +20,7 @@ public:
 
     // Blink the LED a specified number of times with given on and off durations.
     // If count is 0, the LED will blink indefinitely.
-    static void blinkLED(uint32_t count, uint32_t onDuration, uint32_t offDuration = 0)
+    static void blinkLED(uint32_t count = 0, uint32_t onDuration = BLINK_DURATION, uint32_t offDuration = 0)
     {
         if (offDuration == 0)
             offDuration = onDuration;

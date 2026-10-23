@@ -129,8 +129,6 @@ void XPInterface::processPacket(const Packet& packet)
             sendAck(command, Command::NACK);
             break;
     }
-
-    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, BLINK_DURATION);
 }
 
 void XPInterface::processGet(const Packet& packet)
@@ -189,6 +187,7 @@ void XPInterface::sendValue(ConfigID id)
     packet.type = static_cast<uint8_t>(type);
     memcpy(packet.value, &value.raw, sizeof(value.raw));
 
+    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, BLINK_DURATION);
     sendPacket(packet);
 }
 
@@ -220,6 +219,8 @@ void XPInterface::sendAck(Command originalCommand, Command ack)
     packet.command = static_cast<uint8_t>(ack);
     packet.paramId = static_cast<uint8_t>(originalCommand);
 
+    ack == Command::ACK ? LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, BLINK_DURATION)
+                        : LEDNotifier::blinkLED(FAILURE_BLINK_COUNT, BLINK_DURATION);
     sendPacket(packet);
 }
 
