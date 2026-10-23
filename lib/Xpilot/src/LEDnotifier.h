@@ -84,7 +84,7 @@ private:
 class LEDNotifier
 {
 public:
-    static void begin(void) {}
+    static void init(void) {}
 
     static void blinkLED(uint32_t, uint32_t, uint32_t = 0) {}
 
