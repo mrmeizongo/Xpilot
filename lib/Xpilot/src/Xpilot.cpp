@@ -58,7 +58,7 @@ void Xpilot::sysInit(void)
         ; // Wait for Serial port to open
 
     configManager.init(); // Initiailize configuration manager
-    LEDNotifier::begin();
+    LEDNotifier::init();
 
     // Initialize systems
     imu.init();

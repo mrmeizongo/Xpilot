@@ -11,7 +11,7 @@ constexpr uint32_t SUCCESS_BLINK_DURATION = 250;
 class LEDNotifier
 {
 public:
-    static void begin(void)
+    static void init(void)
     {
         pinMode(LED_BUILTIN, OUTPUT);
         digitalWrite(LED_BUILTIN, LOW);
