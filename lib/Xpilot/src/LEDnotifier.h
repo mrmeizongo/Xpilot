@@ -3,6 +3,7 @@
 #include "Arduino.h"
 #include "SysConfig.h"
 
+constexpr uint8_t MSG_RX_BLINK_COUNT = 1;
 constexpr uint8_t SUCCESS_BLINK_COUNT = 2;
 constexpr uint8_t FAILURE_BLINK_COUNT = 4;
 constexpr uint32_t BLINK_DURATION = 250;

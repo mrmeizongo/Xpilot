@@ -130,7 +130,7 @@ void XPInterface::processPacket(const Packet& packet)
             break;
     }
 
-    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, SUCCESS_BLINK_DURATION);
+    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, BLINK_DURATION);
 }
 
 void XPInterface::processGet(const Packet& packet)
