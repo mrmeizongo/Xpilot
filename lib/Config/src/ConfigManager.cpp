@@ -90,37 +90,37 @@ void ConfigManager::loadDefaults()
     _config.throttleRxConfig.min = 1000;
     _config.throttleRxConfig.trim = 1500;
     _config.throttleRxConfig.max = 2000;
-    _config.throttleRxConfig.deadband = 12;
+    _config.throttleRxConfig.deadband = 16;
     _config.throttleRxConfig.reverse = false;
 
     _config.rollRxConfig.min = 1000;
     _config.rollRxConfig.trim = 1500;
     _config.rollRxConfig.max = 2000;
-    _config.rollRxConfig.deadband = 12;
+    _config.rollRxConfig.deadband = 16;
     _config.rollRxConfig.reverse = false;
 
     _config.pitchRxConfig.min = 1000;
     _config.pitchRxConfig.trim = 1500;
     _config.pitchRxConfig.max = 2000;
-    _config.pitchRxConfig.deadband = 12;
+    _config.pitchRxConfig.deadband = 16;
     _config.pitchRxConfig.reverse = false;
 
     _config.yawRxConfig.min = 1000;
     _config.yawRxConfig.trim = 1500;
     _config.yawRxConfig.max = 2000;
-    _config.yawRxConfig.deadband = 12;
+    _config.yawRxConfig.deadband = 16;
     _config.yawRxConfig.reverse = false;
 
     _config.aux1RxConfig.min = 1000;
     _config.aux1RxConfig.trim = 1500;
     _config.aux1RxConfig.max = 2000;
-    _config.aux1RxConfig.deadband = 12;
+    _config.aux1RxConfig.deadband = 16;
     _config.aux1RxConfig.reverse = false;
 
     _config.aux2RxConfig.min = 1000;
     _config.aux2RxConfig.trim = 1500;
     _config.aux2RxConfig.max = 2000;
-    _config.aux2RxConfig.deadband = 12;
+    _config.aux2RxConfig.deadband = 16;
     _config.aux2RxConfig.reverse = false;
 
     _config.throttleSrvConfig.min = 1000;
