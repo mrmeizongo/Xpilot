@@ -17,14 +17,14 @@ public:
         digitalWrite(LED_BUILTIN, LOW);
     }
 
-    static void blinkLED(uint8_t count, uint32_t onDuration, uint32_t offDuration = 0)
+    // Blink the LED a specified number of times with given on and off durations.
+    // If count is 0, the LED will blink indefinitely.
+    static void blinkLED(uint32_t count, uint32_t onDuration, uint32_t offDuration = 0)
     {
-        if (count == 0)
-            return;
-
         if (offDuration == 0)
             offDuration = onDuration;
 
+        infinite_ = (count == 0);
         blinkCount_ = count;
         onDuration_ = onDuration;
         offDuration_ = offDuration;
@@ -52,7 +52,7 @@ public:
             ledOn_ = false;
             stateStartTime_ = now;
 
-            if (--blinkCount_ == 0)
+            if (!infinite_ && --blinkCount_ == 0)
                 active_ = false;
         }
         else
@@ -72,11 +72,11 @@ private:
     static uint32_t stateStartTime_;
     static uint32_t onDuration_;
     static uint32_t offDuration_;
-
-    static uint8_t blinkCount_;
+    static uint32_t blinkCount_;
 
     static bool ledOn_;
     static bool active_;
+    static bool infinite_;
 };
 
 #else
@@ -85,7 +85,7 @@ class LEDNotifier
 public:
     static void begin(void) {}
 
-    static void blinkLED(uint8_t, uint32_t, uint32_t = 0) {}
+    static void blinkLED(uint32_t, uint32_t, uint32_t = 0) {}
 
     static void update(void*) {}
 
