@@ -309,7 +309,7 @@ uint8_t Servo::attach(int pin, int min, int max)
 void Servo::detach()
 {
     servos[this->servoIndex].Pin.isActive = false;
-    timer16_Sequence_t timer = SERVO_INDEX_TO_TIMER(servoIndex);
+    timer16_Sequence_t timer = SERVO_INDEX_TO_TIMER(this->servoIndex);
     if (isTimerActive(timer) == false)
     {
         finISR(timer);
