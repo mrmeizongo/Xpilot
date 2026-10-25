@@ -297,7 +297,7 @@ uint8_t Servo::attach(int pin, int min, int max)
         this->max = (MAX_PULSE_WIDTH - max) / 4;
 
         // initialize the timer if it has not already been initialized
-        timer16_Sequence_t timer = SERVO_INDEX_TO_TIMER(servoIndex);
+        timer16_Sequence_t timer = SERVO_INDEX_TO_TIMER(this->servoIndex);
         if (isTimerActive(timer) == false)
             initISR(timer);
 
