@@ -1,7 +1,6 @@
 #include "Mode.h"
 #include "IMU.h"
 #include "Xpilot.h"
-#include "LEDnotifier.h"
 
 int32_t Mode::input_trpy[4]{};
 int16_t Mode::output_trpy[4]{};
@@ -242,25 +241,21 @@ void Mode::processOutput(void* ctx)
                                                       -config().controlConfig.controlResolution,
                                                       config().controlConfig.controlResolution);
 
-    if (xpilot.isArmed())
-    {
-        SRVout[Actuators::CHANNEL::CH1] =
-            mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max);
+    SRVout[Actuators::CHANNEL::CH1] =
+        xpilot.isArmed()
+            ? mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max)
+            : config().throttleSrvConfig.min;
 
-        SRVout[Actuators::CHANNEL::CH2] =
-            mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
+    SRVout[Actuators::CHANNEL::CH2] =
+        mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
 
-        SRVout[Actuators::CHANNEL::CH3] =
-            mapToSRV(mixerOutputs.rightAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
+    SRVout[Actuators::CHANNEL::CH3] =
+        mapToSRV(mixerOutputs.rightAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
 
-        SRVout[Actuators::CHANNEL::CH4] =
-            mapToSRV(mixerOutputs.elevator, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
+    SRVout[Actuators::CHANNEL::CH4] =
+        mapToSRV(mixerOutputs.elevator, config().pitchSrvConfig.min, config().pitchSrvConfig.max);
 
-        SRVout[Actuators::CHANNEL::CH5] =
-            mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
-    }
-    else
-        neutralizeOutputs();
+    SRVout[Actuators::CHANNEL::CH5] = mapToSRV(mixerOutputs.rudder, config().yawSrvConfig.min, config().yawSrvConfig.max);
 
     actuators.writeServos(SRVout);
 }
@@ -270,15 +265,6 @@ void Mode::resetControllers(void)
     rollPIDF.reset();
     pitchPIDF.reset();
     yawPIDF.reset();
-}
-
-void Mode::neutralizeOutputs(void)
-{
-    SRVout[Actuators::CHANNEL::CH1] = config().throttleSrvConfig.min;
-    SRVout[Actuators::CHANNEL::CH2] = config().rollSrvConfig.trim;
-    SRVout[Actuators::CHANNEL::CH3] = config().rollSrvConfig.trim;
-    SRVout[Actuators::CHANNEL::CH4] = config().pitchSrvConfig.trim;
-    SRVout[Actuators::CHANNEL::CH5] = config().yawSrvConfig.trim;
 }
 
 void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])
