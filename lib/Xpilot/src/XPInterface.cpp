@@ -187,7 +187,7 @@ void XPInterface::sendValue(ConfigID id)
     packet.type = static_cast<uint8_t>(type);
     memcpy(packet.value, &value.raw, sizeof(value.raw));
 
-    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, BLINK_DURATION);
+    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT);
     sendPacket(packet);
 }
 
@@ -219,8 +219,7 @@ void XPInterface::sendAck(Command originalCommand, Command ack)
     packet.command = static_cast<uint8_t>(ack);
     packet.paramId = static_cast<uint8_t>(originalCommand);
 
-    ack == Command::ACK ? LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT, BLINK_DURATION)
-                        : LEDNotifier::blinkLED(FAILURE_BLINK_COUNT, BLINK_DURATION);
+    ack == Command::ACK ? LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT) : LEDNotifier::blinkLED(FAILURE_BLINK_COUNT);
     sendPacket(packet);
 }
 

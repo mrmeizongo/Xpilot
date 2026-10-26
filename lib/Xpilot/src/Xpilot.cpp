@@ -46,6 +46,8 @@ void Xpilot::setup(void)
 
     xpDebug.init();
     scheduler.init();
+
+    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT);
 }
 
 // Main Xpilot execution loop
