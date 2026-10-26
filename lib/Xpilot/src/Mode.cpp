@@ -268,6 +268,39 @@ void Mode::resetControllers(void)
     yawPIDF.reset();
 }
 
+int32_t Mode::getInput(Radio::CHANNEL ch)
+{
+    if (ch < 4)
+        return input_trpy[ch];
+
+#if defined(ENABLE_FLAPERONS)
+    if (ch == Radio::CHANNEL::AUX2)
+        return flaperonInput;
+#endif
+
+    return 0;
+}
+
+int16_t Mode::getOutput(Actuators::CHANNEL ch)
+{
+    if (ch == Actuators::CHANNEL::CH1)
+        return output_trpy[Radio::CHANNEL::THROTTLE];
+
+    switch (ch)
+    {
+        case Actuators::CHANNEL::CH2:
+            return mixerOutputs.leftAileron;
+        case Actuators::CHANNEL::CH3:
+            return mixerOutputs.rightAileron;
+        case Actuators::CHANNEL::CH4:
+            return mixerOutputs.elevator;
+        case Actuators::CHANNEL::CH5:
+            return mixerOutputs.rudder;
+        default:
+            return 0;
+    }
+}
+
 void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])
 {
     imu_rpy[IMU::Axis::X_AXIS] = rpy[IMU::Axis::X_AXIS] * config().controlConfig.controlResolution;

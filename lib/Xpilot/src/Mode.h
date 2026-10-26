@@ -68,19 +68,9 @@ public:
     // Callback to receive configManager live updates
     static void configSub(ConfigID);
 
-    // Debug functions to get outputs for testing and tuning
-    static int32_t getThrottleInput(void) { return input_trpy[Radio::CHANNEL::THROTTLE]; }
-    static int32_t getRollInput(void) { return input_trpy[Radio::CHANNEL::ROLL]; }
-    static int32_t getPitchInput(void) { return input_trpy[Radio::CHANNEL::PITCH]; }
-    static int32_t getYawInput(void) { return input_trpy[Radio::CHANNEL::YAW]; }
-
-    static int16_t getFlaperon(void) { return flaperonInput; }
-
-    static int16_t getThrottleOutput(void) { return output_trpy[Radio::CHANNEL::THROTTLE]; }
-    static int16_t getLeftRollOutput(void) { return mixerOutputs.leftAileron; }
-    static int16_t getRightRollOutput(void) { return mixerOutputs.rightAileron; }
-    static int16_t getPitchOutput(void) { return mixerOutputs.elevator; }
-    static int16_t getYawOutput(void) { return mixerOutputs.rudder; }
+    // Debug functions to get inputs/outputs for testing and tuning
+    static int32_t getInput(Radio::CHANNEL ch);
+    static int16_t getOutput(Actuators::CHANNEL ch);
 
     virtual void resetControllers(void);
 
