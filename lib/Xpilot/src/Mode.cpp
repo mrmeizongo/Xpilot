@@ -241,10 +241,11 @@ void Mode::processOutput(void* ctx)
                                                       -config().controlConfig.controlResolution,
                                                       config().controlConfig.controlResolution);
 
+    if (!xpilot.isArmed())
+        output_trpy[Radio::CHANNEL::THROTTLE] = THROTTLE_SHUTOFF_VALUE;
+
     SRVout[Actuators::CHANNEL::CH1] =
-        xpilot.isArmed()
-            ? mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max)
-            : config().throttleSrvConfig.min;
+        mapToSRV(output_trpy[Radio::CHANNEL::THROTTLE], config().throttleSrvConfig.min, config().throttleSrvConfig.max);
 
     SRVout[Actuators::CHANNEL::CH2] =
         mapToSRV(mixerOutputs.leftAileron, config().rollSrvConfig.min, config().rollSrvConfig.max);
