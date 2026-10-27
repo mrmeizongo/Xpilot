@@ -76,7 +76,7 @@ This is sufficient for the flight characteristics of the UAV this software was d
 These pin numbers with the exception of MPU6050 can be reconfigured in [GPIOConfig.h](lib/SystemConfig/src/GPIODef.h). However, changing the pins for the channel inputs to Xpilot might require modifications to the PinChangeInterruptSettings file in the PinChangeInterrupt library.
 
 <p align="center">
-  <img src="assets/img/Schematics.png" />
+  <img src="assets/img/Schematics.jpg" />
 </p>
 
 ## Flight modes
