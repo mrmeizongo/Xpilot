@@ -5,10 +5,9 @@
 
 constexpr uint8_t SUCCESS_BLINK_COUNT = 2;
 constexpr uint8_t FAILURE_BLINK_COUNT = 4;
-constexpr uint32_t BLINK_DURATION = 125;
+constexpr uint32_t BLINK_DURATION = 80;
 
 #if defined(ENABLE_LED_NOTIFIER)
-
 class LEDNotifier
 {
 public:
@@ -79,7 +78,6 @@ private:
     static bool active_;
     static bool infinite_;
 };
-
 #else
 class LEDNotifier
 {
