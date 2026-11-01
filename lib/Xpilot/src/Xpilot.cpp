@@ -17,11 +17,31 @@ uint32_t armStateStartTime = 0;
 
 bool armStateTimerStarted = false;
 
+bool requireThrottleCut = true;
+
 Xpilot::Xpilot()
     : armState{ArmState::DISARMED}
     , sysFailsafeActive{true}
     , xpInterface{Serial}
 {
+}
+
+void Xpilot::sysInit(void)
+{
+    Serial.begin(SERIAL_BAUD_RATE);
+    while (!Serial)
+        ; // Wait for Serial port to open
+
+    configManager.init(); // Initiailize configuration manager
+    LEDNotifier::init();
+
+    // Initialize systems
+    imu.init();
+    radio.init();
+    actuators.init();
+    currentMode->init();
+
+    currentMode = &rateMode; // Rate mode is the default mode of operation on startup
 }
 
 void Xpilot::setup(void)
@@ -47,34 +67,60 @@ void Xpilot::setup(void)
     xpDebug.init();
     scheduler.init();
 
-    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT);
+    LEDNotifier::blinkLED(SUCCESS_BLINK_COUNT); // Successful initialization
 }
 
 // Main Xpilot execution loop
 void Xpilot::loop(void) { scheduler.runTasks(); }
 
-void Xpilot::sysInit(void)
-{
-    Serial.begin(SERIAL_BAUD_RATE);
-    while (!Serial)
-        ; // Wait for Serial port to open
-
-    configManager.init(); // Initiailize configuration manager
-    LEDNotifier::init();
-
-    // Initialize systems
-    imu.init();
-    radio.init();
-    actuators.init();
-    currentMode->init();
-
-    currentMode = &rateMode; // Rate mode is the default mode of operation on startup
-}
-
 void Xpilot::stateUpdate(void)
 {
     updateArmState();
     updateFlightMode();
+}
+
+/* Motor is shut off when disarmed
+ * Sticks need to be centered after gesture is satisfied for arm/disarm to take effect
+ */
+void Xpilot::updateArmState(void)
+{
+    switch (armState)
+    {
+        case ArmState::ARMED:
+        {
+            if (armDisarmInput(!requireThrottleCut))
+                armState = ArmState::WAITING_FOR_DISARM_RELEASE;
+
+            break;
+        }
+
+        case ArmState::WAITING_FOR_DISARM_RELEASE:
+        {
+            if (radio.primarySticksCentered())
+                armState = ArmState::DISARMED;
+
+            break;
+        }
+
+        case ArmState::DISARMED:
+        {
+            if (armDisarmInput(requireThrottleCut))
+                armState = ArmState::WAITING_FOR_ARM_RELEASE;
+
+            break;
+        }
+
+        case ArmState::WAITING_FOR_ARM_RELEASE:
+        {
+            if (radio.primarySticksCentered())
+            {
+                armState = ArmState::ARMED;
+                currentMode->resetControllers();
+            }
+
+            break;
+        }
+    }
 }
 
 void Xpilot::updateFlightMode(void)
@@ -154,47 +200,4 @@ bool Xpilot::armDisarmInput(bool requireThrottleCut)
 
     armStateTimerStarted = false;
     return true;
-}
-
-void Xpilot::updateArmState(void)
-{
-    bool requireThrottleCut = true;
-
-    switch (armState)
-    {
-        case ArmState::ARMED:
-        {
-            if (armDisarmInput(!requireThrottleCut))
-                armState = ArmState::WAITING_FOR_DISARM_RELEASE;
-
-            break;
-        }
-
-        case ArmState::WAITING_FOR_DISARM_RELEASE:
-        {
-            if (radio.primarySticksCentered())
-                armState = ArmState::DISARMED;
-
-            break;
-        }
-
-        case ArmState::DISARMED:
-        {
-            if (armDisarmInput(requireThrottleCut))
-                armState = ArmState::WAITING_FOR_ARM_RELEASE;
-
-            break;
-        }
-
-        case ArmState::WAITING_FOR_ARM_RELEASE:
-        {
-            if (radio.primarySticksCentered())
-            {
-                armState = ArmState::ARMED;
-                currentMode->resetControllers();
-            }
-
-            break;
-        }
-    }
 }
