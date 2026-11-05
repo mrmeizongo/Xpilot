@@ -17,8 +17,6 @@ uint32_t armStateStartTime = 0;
 
 bool armStateTimerStarted = false;
 
-bool requireThrottleCut = true;
-
 Xpilot::Xpilot()
     : armState{ArmState::DISARMED}
     , sysFailsafeActive{true}
@@ -30,9 +28,9 @@ void Xpilot::sysInit(void)
 {
     Serial.begin(SERIAL_BAUD_RATE);
     while (!Serial)
-        ; // Wait for Serial port to open
+        ;
 
-    configManager.init(); // Initiailize configuration manager
+    configManager.init(); // Initiailize configuration manager as early as possible
     LEDNotifier::init();
 
     // Initialize systems
@@ -49,8 +47,9 @@ void Xpilot::setup(void)
     sysInit();
 
     /*
-     * The order tasks are added determines priority and is critical.
-     * Priority is in descending order
+     * Highest priority tasks are added first
+     * They won't preempt lower priority tasks
+     * They are just guaranteed to run first if they are due at the same time as a lower priority task.
      */
     imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, CONTROL_LOOP_HZ);
     radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_HZ);
@@ -88,7 +87,7 @@ void Xpilot::updateArmState(void)
     {
         case ArmState::ARMED:
         {
-            if (armDisarmInput(!requireThrottleCut))
+            if (armDisarmInput())
                 armState = ArmState::WAITING_FOR_DISARM_RELEASE;
 
             break;
@@ -104,7 +103,7 @@ void Xpilot::updateArmState(void)
 
         case ArmState::DISARMED:
         {
-            if (armDisarmInput(requireThrottleCut))
+            if (armDisarmInput())
                 armState = ArmState::WAITING_FOR_ARM_RELEASE;
 
             break;
@@ -166,21 +165,14 @@ void Xpilot::updateFlightMode(void)
     currentMode->enter();
 }
 
-bool Xpilot::armDisarmInput(bool requireThrottleCut)
+bool Xpilot::armDisarmInput()
 {
-    if (requireThrottleCut && !radio.inThrottleCut())
-    {
-        armStateTimerStarted = false;
-        return false;
-    }
-
-    const bool inputSatisfied =
+    const bool axisInputSatisfied =
         abs(config().rollRxConfig.min - static_cast<int16_t>(radio.getPWM(Radio::CHANNEL::ROLL))) <= INPUT_THRESHOLD &&
         abs(config().pitchRxConfig.max - static_cast<int16_t>(radio.getPWM(Radio::CHANNEL::PITCH))) <= INPUT_THRESHOLD &&
         abs(config().yawRxConfig.max - static_cast<int16_t>(radio.getPWM(Radio::CHANNEL::YAW))) <= INPUT_THRESHOLD;
 
-    // Gesture must remain continuously held
-    if (!inputSatisfied)
+    if (!axisInputSatisfied || !radio.inThrottleCut())
     {
         armStateTimerStarted = false;
         return false;

@@ -120,6 +120,14 @@ The IMU and Radio are calibrated through xp_serial.py.
 
 Xpilot does not monitor battery voltage. It is up to the pilot to be mindful of battery level.
 
+System is disarmed on startup. Arm/Disarm enables/disables motor output. Other channels function normally.
+To arm/disarm hold sticks for a minimum of 1 second;
+
+* Roll stick Left = Negative
+* Pitch stick Down = Positive
+* Yaw stick Right = Positive
+* Throttle = Cut
+
 ## Build & Upload
 
 To build and upload the project to the microcontroller, download [vscode](https://code.visualstudio.com/download) if you don't already have it and install the PlatformIO extension. With the project folder open in vscode, run the _platformio.exe run --target upload_ command in the terminal or click on the _PlatformIO:Upload button_ in the bottom status bar.
