@@ -30,12 +30,11 @@ Flight stabilization software
 #define _MODE_H
 
 #include <Arduino.h>
-#include "Actuators.h"
-#include "AirplaneMixer.h"
+#include "IMU.h"
 #include "PIDF.h"
 #include "Radio.h"
-#include "IMU.h"
-#include "SysConfig.h"
+#include "Actuators.h"
+#include "AirplaneMixer.h"
 #include "SlewRateLimiter.h"
 #include "FlightConfigAccess.h"
 
