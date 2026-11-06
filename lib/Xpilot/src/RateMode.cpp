@@ -1,5 +1,5 @@
-#include "IMU.h"
 #include "Mode.h"
+#include "IMU.h"
 
 void RateMode::enter(void) { Mode::resetControllers(); }
 

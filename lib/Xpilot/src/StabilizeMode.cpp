@@ -1,5 +1,5 @@
-#include "IMU.h"
 #include "Mode.h"
+#include "IMU.h"
 
 inline int32_t processDemand(int32_t input, int32_t angle, int16_t maxRate, int16_t maxAngle, float levelKp)
 {
