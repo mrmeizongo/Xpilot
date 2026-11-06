@@ -7,9 +7,10 @@
 #define I2C_CLOCK_400KHZ 400000 // I2C clock speed in Hz
 
 IMU::IMU(void)
-    : _rpy{0.f, 0.f, 0.f}
-    , _g{0.f, 0.f, 0.f}
-    , _consumer{nullptr}
+    : raw_rpy{0.f, 0.f, 0.f}
+    , raw_g{0.f, 0.f, 0.f}
+    , scaled_rpy{0, 0, 0}
+    , scaled_g{0, 0, 0}
 {
 }
 
@@ -49,28 +50,27 @@ void IMU::init(void)
     mpu6050.setGyroBias(config().imuConfig.gyroBiasX, config().imuConfig.gyroBiasY, config().imuConfig.gyroBiasZ);
 }
 
-void IMU::getLatestReadings(void)
+void IMU::updateAHRS(void)
 {
-    if (!mpu6050.update(_rpy, _g))
+    if (!mpu6050.update(raw_rpy, raw_g))
     {
         return;
     }
 
-    if (_consumer != nullptr)
-        _consumer(_rpy, _g);
-}
+    scaled_rpy[Axis::X_AXIS] = static_cast<int32_t>(raw_rpy[Axis::X_AXIS] * config().controlConfig.controlResolution);
+    scaled_rpy[Axis::Y_AXIS] = static_cast<int32_t>(raw_rpy[Axis::Y_AXIS] * config().controlConfig.controlResolution);
+    scaled_rpy[Axis::Z_AXIS] = static_cast<int32_t>(raw_rpy[Axis::Z_AXIS] * config().controlConfig.controlResolution);
 
-void IMU::registerConsumer(Consumer cb)
-{
-    if (_consumer == nullptr)
-        _consumer = cb;
+    scaled_g[Axis::X_AXIS] = static_cast<int32_t>(raw_g[Axis::X_AXIS] * config().controlConfig.controlResolution);
+    scaled_g[Axis::Y_AXIS] = static_cast<int32_t>(raw_g[Axis::Y_AXIS] * config().controlConfig.controlResolution);
+    scaled_g[Axis::Z_AXIS] = static_cast<int32_t>(raw_g[Axis::Z_AXIS] * config().controlConfig.controlResolution);
 }
 
 void IMU::calibrate(void)
 {
     mpu6050.calibrateAccelGyro();
 
-    float accel[IMU::Axis::AXIS_COUNT], gyro[IMU::Axis::AXIS_COUNT];
+    float accel[Axis::AXIS_COUNT], gyro[Axis::AXIS_COUNT];
 
     mpu6050.getAccBias(accel);
     mpu6050.getGyroBias(gyro);
@@ -78,24 +78,24 @@ void IMU::calibrate(void)
     configManager.setIMUCalibration(accel, gyro);
 }
 
-void IMU::printIMU(void)
+void IMU::printAHRS(void)
 {
     // Clear screen
     Serial.print("\033[2J");
     Serial.print("\033[H");
 
     Serial.print(F("Roll: "));
-    Serial.println(_rpy[Axis::X_AXIS]);
+    Serial.println(scaled_rpy[Axis::X_AXIS]);
     Serial.print(F("Pitch: "));
-    Serial.println(_rpy[Axis::Y_AXIS]);
+    Serial.println(scaled_rpy[Axis::Y_AXIS]);
     Serial.print(F("Yaw: "));
-    Serial.println(_rpy[Axis::Z_AXIS]);
+    Serial.println(scaled_rpy[Axis::Z_AXIS]);
     Serial.print(F("Gyro X: "));
-    Serial.println(_g[Axis::X_AXIS]);
+    Serial.println(scaled_g[Axis::X_AXIS]);
     Serial.print(F("Gyro Y: "));
-    Serial.println(_g[Axis::X_AXIS]);
+    Serial.println(scaled_g[Axis::Y_AXIS]);
     Serial.print(F("Gyro Z: "));
-    Serial.println(_g[Axis::X_AXIS]);
+    Serial.println(scaled_g[Axis::Z_AXIS]);
 }
 
 IMU imu;

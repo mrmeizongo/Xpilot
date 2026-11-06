@@ -81,9 +81,6 @@ protected:
     static int32_t input_trpy[4];  // Input throttle, roll, pitch, and yaw
     static int16_t output_trpy[4]; // Throttle, roll, pitch, and yaw staging outputs before mixing
 
-    static int32_t imu_rpy[IMU::Axis::AXIS_COUNT]; // To hold imu rpy values
-    static int32_t imu_g[IMU::Axis::AXIS_COUNT];   // To hold imu g values
-
     static AirplaneMixer::Outputs mixerOutputs; // Outputs from the airplane mixer
 
     static SlewRateLimiter<int32_t> rollSlew;

@@ -18,24 +18,22 @@ public:
         AXIS_COUNT
     };
 
-    using Consumer = void (*)(const float (&)[Axis::AXIS_COUNT], const float (&)[Axis::AXIS_COUNT]);
-
     IMU(void);
     void init(void);
-    void getLatestReadings(void); // Process the IMU data and update the AHRS values
-    void calibrate(void);         // Obtain sensor bias values
+    void updateAHRS(void); // Process the IMU data and update the AHRS values
+    void calibrate(void);  // Obtain sensor bias values
 
-    static void getLatestReadingsTask(void* ctx) // Trampoline function for the scheduler
+    int32_t getRPY(Axis axis) const { return scaled_rpy[axis]; }
+    int32_t getG(Axis axis) const { return scaled_g[axis]; }
+
+    static void updateAHRSTask(void* ctx) // Trampoline function for the scheduler
     {
-        static_cast<IMU*>(ctx)->getLatestReadings();
+        static_cast<IMU*>(ctx)->updateAHRS();
     }
 
-    static void printIMUTask(void* ctx) { static_cast<IMU*>(ctx)->printIMU(); }
+    static void printAHRS(void* ctx) { static_cast<IMU*>(ctx)->printAHRS(); }
 
-    void printIMU(void);
-
-    // Register a single callback to be invoked when new imu data is received
-    void registerConsumer(Consumer);
+    void printAHRS(void);
 
 private:
     /*
@@ -43,10 +41,11 @@ private:
      */
     MPU6050 mpu6050;
 
-    float _rpy[Axis::AXIS_COUNT]; // Airplane coordinate system values
-    float _g[Axis::AXIS_COUNT];   // Angular velocity about the respective axis - xyz
+    float raw_rpy[Axis::AXIS_COUNT]; // Airplane coordinate system values
+    float raw_g[Axis::AXIS_COUNT];   // Angular velocity about the respective axis - xyz
 
-    Consumer _consumer; // IMU values consumer
+    int32_t scaled_rpy[Axis::AXIS_COUNT]; // To hold imu rpy values
+    int32_t scaled_g[Axis::AXIS_COUNT];   // To hold imu g values
 };
 
 extern IMU imu;

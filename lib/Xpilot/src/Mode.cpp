@@ -7,9 +7,6 @@ int16_t Mode::output_trpy[4]{};
 
 AirplaneMixer::Outputs Mode::mixerOutputs{};
 
-int32_t Mode::imu_rpy[3]{};
-int32_t Mode::imu_g[3]{};
-
 int16_t Mode::SRVout[Actuators::CHANNEL::CHANNEL_COUNT] = {};
 
 PIDF<int32_t, int16_t> Mode::rollPIDF{};
@@ -60,7 +57,6 @@ void Mode::init(void)
                                      config().controlConfig.dt,
                                      config().controlConfig.lowPassFilterFreq};
 
-    imu.registerConsumer(consumeAHRS);
     configManager.registerSubscriber(configSub);
 }
 
@@ -299,17 +295,6 @@ int16_t Mode::getOutput(Actuators::CHANNEL ch)
         default:
             return 0;
     }
-}
-
-void Mode::consumeAHRS(const float (&rpy)[IMU::Axis::AXIS_COUNT], const float (&g)[IMU::Axis::AXIS_COUNT])
-{
-    imu_rpy[IMU::Axis::X_AXIS] = rpy[IMU::Axis::X_AXIS] * config().controlConfig.controlResolution;
-    imu_rpy[IMU::Axis::Y_AXIS] = rpy[IMU::Axis::Y_AXIS] * config().controlConfig.controlResolution;
-    imu_rpy[IMU::Axis::Z_AXIS] = rpy[IMU::Axis::Z_AXIS] * config().controlConfig.controlResolution;
-
-    imu_g[IMU::Axis::X_AXIS] = g[IMU::Axis::X_AXIS] * config().controlConfig.controlResolution;
-    imu_g[IMU::Axis::Y_AXIS] = g[IMU::Axis::Y_AXIS] * config().controlConfig.controlResolution;
-    imu_g[IMU::Axis::Z_AXIS] = g[IMU::Axis::Z_AXIS] * config().controlConfig.controlResolution;
 }
 
 void Mode::setFailsafeInputs(void)

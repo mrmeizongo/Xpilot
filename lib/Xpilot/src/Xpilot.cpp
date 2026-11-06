@@ -51,7 +51,7 @@ void Xpilot::setup(void)
      * They won't preempt lower priority tasks
      * They are just guaranteed to run first if they are due at the same time as a lower priority task.
      */
-    imuTaskId = scheduler.addTask(&IMU::getLatestReadingsTask, &imu, CONTROL_LOOP_HZ);
+    imuTaskId = scheduler.addTask(&IMU::updateAHRSTask, &imu, CONTROL_LOOP_HZ);
     radioTaskId = scheduler.addTask(&Radio::processInputTask, &radio, RADIO_INPUT_PROCESS_HZ);
     stateUpdateTaskId = scheduler.addTask(&Xpilot::stateUpdateTask, this, STATE_UPDATE_HZ);
     flightModeUpdateTaskId = scheduler.addTask(&Mode::updateInput, &currentMode, FLIGHT_MODE_UPDATE_HZ);
