@@ -227,7 +227,8 @@ bool Radio::primarySticksCentered(void) const
 
 /*
  * ISR
- * Typical RC receivers are designed to send a 1ms-2ms pulse to the servos every 20ms, going HIGH for the duration of the pulse and LOW otherwise
+ * Typical RC receivers are designed to send a 1ms-2ms pulse to the servos every 20ms, 
+ * going HIGH for the duration of the pulse and LOW otherwise
  * The receiver pulse output is used to drive a pin change interrupt service routine
  * The ISR simply records the time between the pulses and store the pulses that fall within normal PWM range
  */
