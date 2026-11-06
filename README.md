@@ -116,7 +116,7 @@ Rate set up on the transmitter should NOT be used for all 3 flight modes. You ca
 
 A slew rate can be defined for use in Passthrough mode. This provides better control over radio Rate.
 
-The IMU and Radio are calibrated through xp_serial.py.
+The IMU and Radio are calibrated through `xp_serial.py`.
 
 Xpilot does not monitor battery voltage. It is up to the pilot to be mindful of battery level.
 
@@ -127,6 +127,8 @@ To arm/disarm hold sticks for a minimum of 1 second;
 * Pitch stick Down = Positive
 * Yaw stick Right = Positive
 * Throttle = Cut
+
+On first time startup, conventional airframe type is selected. Change via `xp_serial.py` if required.  
 
 ## Build & Upload
 
