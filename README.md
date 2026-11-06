@@ -134,6 +134,8 @@ On first time startup, conventional airframe type is selected. Change via `xp_se
 
 To build and upload the project to the microcontroller, download [vscode](https://code.visualstudio.com/download) if you don't already have it and install the PlatformIO extension. With the project folder open in vscode, run the _platformio.exe run --target upload_ command in the terminal or click on the _PlatformIO:Upload button_ in the bottom status bar.
 
+The release elf file can also be used to flash the mcu.
+
 ## Preflight
 
 Be sure to go through [XP_SERIAL.md](XP_SERIAL.md) to learn how to communicate with XPilot and perform any required calibrations, modifications and preflight checks before flight.
