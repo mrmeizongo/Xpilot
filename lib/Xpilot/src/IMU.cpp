@@ -53,17 +53,13 @@ void IMU::init(void)
 void IMU::updateAHRS(void)
 {
     if (!mpu6050.update(raw_rpy, raw_g))
-    {
         return;
+
+    for (uint8_t i = Axis::X_AXIS; i < Axis::AXIS_COUNT; i++)
+    {
+        scaled_rpy[i] = static_cast<int32_t>(raw_rpy[i] * config().controlConfig.controlResolution);
+        scaled_g[i] = static_cast<int32_t>(raw_g[i] * config().controlConfig.controlResolution);
     }
-
-    scaled_rpy[Axis::X_AXIS] = static_cast<int32_t>(raw_rpy[Axis::X_AXIS] * config().controlConfig.controlResolution);
-    scaled_rpy[Axis::Y_AXIS] = static_cast<int32_t>(raw_rpy[Axis::Y_AXIS] * config().controlConfig.controlResolution);
-    scaled_rpy[Axis::Z_AXIS] = static_cast<int32_t>(raw_rpy[Axis::Z_AXIS] * config().controlConfig.controlResolution);
-
-    scaled_g[Axis::X_AXIS] = static_cast<int32_t>(raw_g[Axis::X_AXIS] * config().controlConfig.controlResolution);
-    scaled_g[Axis::Y_AXIS] = static_cast<int32_t>(raw_g[Axis::Y_AXIS] * config().controlConfig.controlResolution);
-    scaled_g[Axis::Z_AXIS] = static_cast<int32_t>(raw_g[Axis::Z_AXIS] * config().controlConfig.controlResolution);
 }
 
 void IMU::calibrate(void)

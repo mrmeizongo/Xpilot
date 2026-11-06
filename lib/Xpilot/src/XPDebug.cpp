@@ -20,7 +20,7 @@ void XPDebug::init(void)
     (void)scheduler.addTask(&XPDebug::printIOTask, this, TASK_PRINT_HZ);
 #endif
 #if defined(PRINT_IMU)
-    (void)scheduler.addTask(&IMU::printIMUTask, &imu, TASK_PRINT_HZ);
+    (void)scheduler.addTask(&IMU::printAHRS, &imu, TASK_PRINT_HZ);
 #endif
 
 #if defined(PRINT_IMU_TASK_STAT)
