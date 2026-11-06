@@ -128,7 +128,7 @@ To arm/disarm hold sticks for a minimum of 1 second;
 * Yaw stick Right = Positive
 * Throttle = Cut
 
-On first time startup, conventional airframe type is selected. Change via `xp_serial.py` if required.  
+On first time startup, conventional airframe type is selected. Change via `xp_serial.py` if required. See [XP_SERIAL](XP_SERIAL.md).  
 
 ## Build & Upload
 
