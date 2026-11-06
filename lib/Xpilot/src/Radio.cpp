@@ -123,7 +123,7 @@ bool Radio::FailSafeDetector()
     // It prevents loose/broken wire connections from throttle and aux channels from initiating a failsafe
     // Airplane is still flyable in the event of a loss of those channels
     // Throttle is considered separately
-    for (uint8_t i = CHANNEL::ROLL; i <= CHANNEL::YAW; ++i)
+    for (uint8_t i = CHANNEL::ROLL; i <= CHANNEL::YAW; i++)
     {
         const uint8_t mask = 1 << i;
 
