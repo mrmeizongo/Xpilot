@@ -187,7 +187,7 @@ void ConfigManager::loadDefaults()
 
     _config.imuConfig.calibrated = false;
 
-    _config.controlConfig.controlSlewRate = 2000;
+    _config.controlConfig.controlSlewRate = 3000;
     _config.controlConfig.lowPassFilterFreq = 10;
     _config.controlConfig.controlResolution = 1000;
     _config.controlConfig.dt = 1.f / CONTROL_LOOP_HZ;
