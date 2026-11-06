@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "IMU.h"
-#include "SysConfig.h"
 #include "FlightConfigAccess.h"
 
 #define MPU6050_ADDRESS 0x68    // I2C address of MPU6050
@@ -81,17 +80,17 @@ void IMU::printAHRS(void)
     Serial.print("\033[H");
 
     Serial.print(F("Roll: "));
-    Serial.println(scaled_rpy[Axis::X_AXIS]);
+    Serial.println(raw_rpy[Axis::X_AXIS]);
     Serial.print(F("Pitch: "));
-    Serial.println(scaled_rpy[Axis::Y_AXIS]);
+    Serial.println(raw_rpy[Axis::Y_AXIS]);
     Serial.print(F("Yaw: "));
-    Serial.println(scaled_rpy[Axis::Z_AXIS]);
+    Serial.println(raw_rpy[Axis::Z_AXIS]);
     Serial.print(F("Gyro X: "));
-    Serial.println(scaled_g[Axis::X_AXIS]);
+    Serial.println(raw_g[Axis::X_AXIS]);
     Serial.print(F("Gyro Y: "));
-    Serial.println(scaled_g[Axis::Y_AXIS]);
+    Serial.println(raw_g[Axis::Y_AXIS]);
     Serial.print(F("Gyro Z: "));
-    Serial.println(scaled_g[Axis::Z_AXIS]);
+    Serial.println(raw_g[Axis::Z_AXIS]);
 }
 
 IMU imu;
