@@ -5,6 +5,8 @@
 #define MPU6050_ADDRESS 0x68    // I2C address of MPU6050
 #define I2C_CLOCK_400KHZ 400000 // I2C clock speed in Hz
 
+static int16_t scale;
+
 IMU::IMU(void)
     : raw_rpy{0.f, 0.f, 0.f}
     , raw_g{0.f, 0.f, 0.f}
@@ -45,6 +47,8 @@ void IMU::init(void)
             ;
     }
 
+    scale = config().controlConfig.controlResolution;
+
     mpu6050.setAccBias(config().imuConfig.accBiasX, config().imuConfig.accBiasY, config().imuConfig.accBiasZ);
     mpu6050.setGyroBias(config().imuConfig.gyroBiasX, config().imuConfig.gyroBiasY, config().imuConfig.gyroBiasZ);
 }
@@ -54,15 +58,13 @@ void IMU::updateAHRS(void)
     if (!mpu6050.update(raw_rpy, raw_g))
         return;
 
-    const float res = static_cast<float>(config().controlConfig.controlResolution);
+    scaled_rpy[0] = static_cast<int32_t>(raw_rpy[0] * scale);
+    scaled_rpy[1] = static_cast<int32_t>(raw_rpy[1] * scale);
+    scaled_rpy[2] = static_cast<int32_t>(raw_rpy[2] * scale);
 
-    scaled_rpy[0] = static_cast<int32_t>(raw_rpy[0] * res);
-    scaled_rpy[1] = static_cast<int32_t>(raw_rpy[1] * res);
-    scaled_rpy[2] = static_cast<int32_t>(raw_rpy[2] * res);
-
-    scaled_g[0] = static_cast<int32_t>(raw_g[0] * res);
-    scaled_g[1] = static_cast<int32_t>(raw_g[1] * res);
-    scaled_g[2] = static_cast<int32_t>(raw_g[2] * res);
+    scaled_g[0] = static_cast<int32_t>(raw_g[0] * scale);
+    scaled_g[1] = static_cast<int32_t>(raw_g[1] * scale);
+    scaled_g[2] = static_cast<int32_t>(raw_g[2] * scale);
 }
 
 int32_t IMU::getRPY(AXIS axis) const
