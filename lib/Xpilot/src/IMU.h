@@ -21,19 +21,14 @@ public:
     IMU(void);
     void init(void);
     void updateAHRS(void); // Process the IMU data and update the AHRS values
+    void printAHRS(void);  // Debugging
     void calibrate(void);  // Obtain sensor bias values
 
     int32_t getRPY(Axis axis) const;
     int32_t getG(Axis axis) const;
 
-    static void updateAHRSTask(void* ctx) // Trampoline function for the scheduler
-    {
-        static_cast<IMU*>(ctx)->updateAHRS();
-    }
-
-    static void printAHRS(void* ctx) { static_cast<IMU*>(ctx)->printAHRS(); }
-
-    void printAHRS(void);
+    static void updateAHRSTask(void* ctx) { static_cast<IMU*>(ctx)->updateAHRS(); }
+    static void printAHRSTask(void* ctx) { static_cast<IMU*>(ctx)->printAHRS(); }
 
 private:
     /*
