@@ -23,8 +23,8 @@ public:
     void updateAHRS(void); // Process the IMU data and update the AHRS values
     void calibrate(void);  // Obtain sensor bias values
 
-    int32_t getRPY(Axis axis) const { return scaled_rpy[axis]; }
-    int32_t getG(Axis axis) const { return scaled_g[axis]; }
+    int32_t getRPY(Axis axis) const;
+    int32_t getG(Axis axis) const;
 
     static void updateAHRSTask(void* ctx) // Trampoline function for the scheduler
     {

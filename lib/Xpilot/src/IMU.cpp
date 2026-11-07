@@ -61,6 +61,22 @@ void IMU::updateAHRS(void)
     }
 }
 
+int32_t IMU::getRPY(Axis axis) const
+{
+    if (axis >= Axis::AXIS_COUNT)
+        return 0;
+
+    return scaled_rpy[axis];
+}
+
+int32_t IMU::getG(Axis axis) const
+{
+    if (axis >= Axis::AXIS_COUNT)
+        return 0;
+
+    return scaled_g[axis];
+}
+
 void IMU::calibrate(void)
 {
     mpu6050.calibrateAccelGyro();
