@@ -22,6 +22,7 @@ public:
     bool set(ConfigID id, const ConfigValue& value);
 
     bool save();
+
     bool load();
 
     void loadDefaults();
