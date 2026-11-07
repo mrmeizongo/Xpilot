@@ -27,13 +27,13 @@ void StabilizeMode::update(void)
     Mode::update();
 
     input_trpy[Radio::CHANNEL::ROLL] = processDemand(input_trpy[Radio::CHANNEL::ROLL],
-                                                     imu.getRPY(IMU::Axis::X_AXIS),
+                                                     imu.getRPY(IMU::AXIS::X_AXIS),
                                                      config().flightConfig.maxRollRateDegs,
                                                      config().flightConfig.maxRollAngleDegs,
                                                      config().flightConfig.rollAngleKp);
 
     input_trpy[Radio::CHANNEL::PITCH] = processDemand(input_trpy[Radio::CHANNEL::PITCH],
-                                                      imu.getRPY(IMU::Axis::Y_AXIS),
+                                                      imu.getRPY(IMU::AXIS::Y_AXIS),
                                                       config().flightConfig.maxPitchRateDegs,
                                                       config().flightConfig.maxPitchAngleDegs,
                                                       config().flightConfig.pitchAngleKp);
@@ -43,7 +43,7 @@ void StabilizeMode::update(void)
 
 void StabilizeMode::run(void)
 {
-    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(input_trpy[Radio::CHANNEL::ROLL], imu.getG(IMU::Axis::X_AXIS));
-    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(input_trpy[Radio::CHANNEL::PITCH], imu.getG(IMU::Axis::Y_AXIS));
-    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], imu.getG(IMU::Axis::Z_AXIS));
+    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(input_trpy[Radio::CHANNEL::ROLL], imu.getG(IMU::AXIS::X_AXIS));
+    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(input_trpy[Radio::CHANNEL::PITCH], imu.getG(IMU::AXIS::Y_AXIS));
+    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], imu.getG(IMU::AXIS::Z_AXIS));
 }

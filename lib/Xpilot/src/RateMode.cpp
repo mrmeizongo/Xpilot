@@ -1,5 +1,5 @@
-#include "Mode.h"
 #include "IMU.h"
+#include "Mode.h"
 
 void RateMode::enter(void) { Mode::resetControllers(); }
 
@@ -17,7 +17,7 @@ void RateMode::update(void)
 
 void RateMode::run(void)
 {
-    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(input_trpy[Radio::CHANNEL::ROLL], imu.getG(IMU::X_AXIS));
-    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(input_trpy[Radio::CHANNEL::PITCH], imu.getG(IMU::Y_AXIS));
-    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], imu.getG(IMU::Z_AXIS));
+    output_trpy[Radio::CHANNEL::ROLL] = rollPIDF.Compute(input_trpy[Radio::CHANNEL::ROLL], imu.getG(IMU::AXIS::X_AXIS));
+    output_trpy[Radio::CHANNEL::PITCH] = pitchPIDF.Compute(input_trpy[Radio::CHANNEL::PITCH], imu.getG(IMU::AXIS::Y_AXIS));
+    output_trpy[Radio::CHANNEL::YAW] = yawPIDF.Compute(input_trpy[Radio::CHANNEL::YAW], imu.getG(IMU::AXIS::Z_AXIS));
 }

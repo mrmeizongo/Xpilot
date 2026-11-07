@@ -10,7 +10,7 @@
 class IMU
 {
 public:
-    enum Axis : uint8_t
+    enum AXIS : uint8_t
     {
         X_AXIS = 0U,
         Y_AXIS,
@@ -20,12 +20,12 @@ public:
 
     IMU(void);
     void init(void);
-    void updateAHRS(void); // Process the IMU data and update the AHRS values
+    void updateAHRS(void); // Collect and update the AHRS values from sensor
+    void calibrate(void);  // Obtain bias values for the IMU sensors
     void printAHRS(void);  // Debugging
-    void calibrate(void);  // Obtain sensor bias values
 
-    int32_t getRPY(Axis axis) const;
-    int32_t getG(Axis axis) const;
+    int32_t getRPY(AXIS axis) const;
+    int32_t getG(AXIS axis) const;
 
     static void updateAHRSTask(void* ctx) { static_cast<IMU*>(ctx)->updateAHRS(); }
     static void printAHRSTask(void* ctx) { static_cast<IMU*>(ctx)->printAHRS(); }
@@ -36,11 +36,11 @@ private:
      */
     MPU6050 mpu6050;
 
-    float raw_rpy[Axis::AXIS_COUNT]; // Airplane coordinate system values
-    float raw_g[Axis::AXIS_COUNT];   // Angular velocity about the respective axis - xyz
+    float raw_rpy[AXIS::AXIS_COUNT]; // Airplane coordinate system values
+    float raw_g[AXIS::AXIS_COUNT];   // Angular velocity about the respective axis - xyz
 
-    int32_t scaled_rpy[Axis::AXIS_COUNT]; // To hold imu rpy values
-    int32_t scaled_g[Axis::AXIS_COUNT];   // To hold imu g values
+    int32_t scaled_rpy[AXIS::AXIS_COUNT]; // To hold imu rpy values
+    int32_t scaled_g[AXIS::AXIS_COUNT];   // To hold imu g values
 };
 
 extern IMU imu;

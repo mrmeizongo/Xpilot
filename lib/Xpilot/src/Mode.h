@@ -62,7 +62,7 @@ public:
     static void processOutput(void*);
 
     // Callback to collect imu data
-    static void consumeAHRS(const float (&)[IMU::Axis::AXIS_COUNT], const float (&)[IMU::Axis::AXIS_COUNT]);
+    static void consumeAHRS(const float (&)[IMU::AXIS::AXIS_COUNT], const float (&)[IMU::AXIS::AXIS_COUNT]);
 
     // Callback to receive configManager live updates
     static void configSub(ConfigID);

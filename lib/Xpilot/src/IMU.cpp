@@ -54,24 +54,28 @@ void IMU::updateAHRS(void)
     if (!mpu6050.update(raw_rpy, raw_g))
         return;
 
-    for (uint8_t i = Axis::X_AXIS; i < Axis::AXIS_COUNT; i++)
-    {
-        scaled_rpy[i] = static_cast<int32_t>(raw_rpy[i] * config().controlConfig.controlResolution);
-        scaled_g[i] = static_cast<int32_t>(raw_g[i] * config().controlConfig.controlResolution);
-    }
+    const float res = static_cast<float>(config().controlConfig.controlResolution);
+
+    scaled_rpy[0] = static_cast<int32_t>(raw_rpy[0] * res);
+    scaled_rpy[1] = static_cast<int32_t>(raw_rpy[1] * res);
+    scaled_rpy[2] = static_cast<int32_t>(raw_rpy[2] * res);
+
+    scaled_g[0] = static_cast<int32_t>(raw_g[0] * res);
+    scaled_g[1] = static_cast<int32_t>(raw_g[1] * res);
+    scaled_g[2] = static_cast<int32_t>(raw_g[2] * res);
 }
 
-int32_t IMU::getRPY(Axis axis) const
+int32_t IMU::getRPY(AXIS axis) const
 {
-    if (axis >= Axis::AXIS_COUNT)
+    if (axis >= AXIS::AXIS_COUNT)
         return 0;
 
     return scaled_rpy[axis];
 }
 
-int32_t IMU::getG(Axis axis) const
+int32_t IMU::getG(AXIS axis) const
 {
-    if (axis >= Axis::AXIS_COUNT)
+    if (axis >= AXIS::AXIS_COUNT)
         return 0;
 
     return scaled_g[axis];
@@ -81,7 +85,7 @@ void IMU::calibrate(void)
 {
     mpu6050.calibrateAccelGyro();
 
-    float accel[Axis::AXIS_COUNT], gyro[Axis::AXIS_COUNT];
+    float accel[AXIS::AXIS_COUNT], gyro[AXIS::AXIS_COUNT];
 
     mpu6050.getAccBias(accel);
     mpu6050.getGyroBias(gyro);
@@ -96,17 +100,17 @@ void IMU::printAHRS(void)
     Serial.print("\033[H");
 
     Serial.print(F("Roll: "));
-    Serial.println(raw_rpy[Axis::X_AXIS]);
+    Serial.println(raw_rpy[AXIS::X_AXIS]);
     Serial.print(F("Pitch: "));
-    Serial.println(raw_rpy[Axis::Y_AXIS]);
+    Serial.println(raw_rpy[AXIS::Y_AXIS]);
     Serial.print(F("Yaw: "));
-    Serial.println(raw_rpy[Axis::Z_AXIS]);
+    Serial.println(raw_rpy[AXIS::Z_AXIS]);
     Serial.print(F("Gyro X: "));
-    Serial.println(raw_g[Axis::X_AXIS]);
+    Serial.println(raw_g[AXIS::X_AXIS]);
     Serial.print(F("Gyro Y: "));
-    Serial.println(raw_g[Axis::Y_AXIS]);
+    Serial.println(raw_g[AXIS::Y_AXIS]);
     Serial.print(F("Gyro Z: "));
-    Serial.println(raw_g[Axis::Z_AXIS]);
+    Serial.println(raw_g[AXIS::Z_AXIS]);
 }
 
 IMU imu;
