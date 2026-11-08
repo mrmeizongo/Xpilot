@@ -630,7 +630,7 @@ bool ConfigManager::get(ConfigID id, ConfigValue& value, ConfigValueType& type) 
 
 bool ConfigManager::set(ConfigID id, const ConfigValue& value)
 {
-    if (!validateSet(id, value))
+    if (!validate(id, value))
     {
         return false;
     }
@@ -947,10 +947,8 @@ bool ConfigManager::set(ConfigID id, const ConfigValue& value)
     return true;
 }
 
-// Primary settable config determinant
 // If configID is not included in cases, it is not directly settable via xp_serial.py
-// If configID is included in cases, it validates range of provided value
-bool ConfigManager::validateSet(ConfigID id, const ConfigValue& value) const
+bool ConfigManager::validate(ConfigID id, const ConfigValue& value) const
 {
     switch (id)
     {

@@ -54,7 +54,7 @@ private:
 
     Subscriber _subscriber;
 
-    bool validateSet(ConfigID id, const ConfigValue& value) const;
+    bool validate(ConfigID id, const ConfigValue& value) const;
 
     static uint16_t calculateChecksum(const uint8_t* data, uint16_t length);
 };
