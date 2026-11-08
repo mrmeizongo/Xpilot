@@ -70,7 +70,6 @@ public:
 
     virtual void resetControllers(void);
 
-    void setModeSwitchPosition(Radio::THREE_POS_SW modePos) { modeSwitchPosition = modePos; }
     Radio::THREE_POS_SW getModeSwitchPosition(void) { return modeSwitchPosition; }
 
 protected:
