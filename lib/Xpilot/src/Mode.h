@@ -61,9 +61,6 @@ public:
     static void updateInput(void*);
     static void processOutput(void*);
 
-    // Callback to collect imu data
-    static void consumeAHRS(const float (&)[IMU::AXIS::AXIS_COUNT], const float (&)[IMU::AXIS::AXIS_COUNT]);
-
     // Callback to receive configManager live updates
     static void configSub(ConfigID);
 
