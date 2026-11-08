@@ -38,6 +38,8 @@ public:
 
     static void update(void* ctx)
     {
+        (void)ctx;
+
         if (!active_)
             return;
 
